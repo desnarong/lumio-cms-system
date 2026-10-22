@@ -486,7 +486,7 @@ export const TH_MESSAGES = {
   'settings.general.title': 'ข้อมูลเว็บ',
   'settings.general.name': 'ชื่อเว็บ',
   'settings.general.subdomain': 'ที่อยู่เว็บฟรี',
-  'settings.general.subdomainHint': 'เว็บของคุณจะอยู่ที่ {host}.lumio.app',
+  'settings.general.subdomainHint': 'เว็บของคุณจะอยู่ที่ {host}.example.com',
   'settings.language.title': 'ภาษาของเว็บ',
   'settings.language.hint':
     'ภาษาแรกคือภาษาหลักของเว็บ (ไม่มีคำนำหน้าในที่อยู่) ภาษาที่เพิ่มเข้ามาจะอยู่ที่ /en, /fr และเปิดปุ่ม 🌐 ให้สร้างคำแปลในหน้าแก้ไข',
@@ -1730,7 +1730,7 @@ export const EN_MESSAGES: Partial<Record<MessageKey, string>> = {
   'settings.general.title': 'Site details',
   'settings.general.name': 'Site name',
   'settings.general.subdomain': 'Free site address',
-  'settings.general.subdomainHint': 'Your site lives at {host}.lumio.app',
+  'settings.general.subdomainHint': 'Your site lives at {host}.example.com',
   'settings.language.title': 'Site languages',
   'settings.language.hint':
     'The first language is the main one (no prefix in the address); added languages live at /en, /fr and unlock the 🌐 button for creating translations in the editor',

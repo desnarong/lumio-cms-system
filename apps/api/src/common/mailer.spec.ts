@@ -24,7 +24,7 @@ describe('Mailer', () => {
 
   it('posts a plain-text message to Resend with the configured sender', async () => {
     process.env.RESEND_API_KEY = 're_test';
-    process.env.EMAIL_FROM = 'Lumio <shop@lumio.app>';
+    process.env.EMAIL_FROM = 'Lumio <shop@example.com>';
     const fetchSpy = vi
       .spyOn(globalThis, 'fetch')
       .mockResolvedValue(new Response(JSON.stringify({ id: 'email-1' }), { status: 200 }));
@@ -43,7 +43,7 @@ describe('Mailer', () => {
       to: string[];
       text: string;
     };
-    expect(body.from).toBe('Lumio <shop@lumio.app>');
+    expect(body.from).toBe('Lumio <shop@example.com>');
     expect(body.to).toEqual(['buyer@example.com']);
     expect(body.text).toBe('ขอบคุณ');
   });

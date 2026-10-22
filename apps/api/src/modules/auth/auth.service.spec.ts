@@ -10,7 +10,7 @@ import type { TwoFactorChallenge } from '@lumio/shared';
 
 const USER_ID = '00000000-0000-4000-8000-000000000001';
 const SITE_ID = '00000000-0000-4000-8000-0000000000a1';
-const EMAIL = 'owner@lumio.app';
+const EMAIL = 'owner@example.com';
 const PASSWORD = 'lumio-demo-1234';
 
 const userRow = (passwordHash: string | null = null) => ({

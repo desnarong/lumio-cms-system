@@ -54,7 +54,7 @@ export class PublishService {
 
   /**
    * Hostname the renderer serves this site on: the verified primary domain when
-   * there is one, otherwise the free `*.lumio.app` subdomain.
+   * there is one, otherwise the free `*.example.com` subdomain.
    */
   async primaryHost(siteId: string): Promise<string | null> {
     const domain = await this.db.forSite(siteId, (tx) =>

@@ -427,7 +427,7 @@ Scale: 12 / 14 / 16 / 20 / 24 / 32 / 40 px — line-height 1.5 (ไทยต้�
 ### 10.3 Multi-tenant
 - 1 แพลตฟอร์ม ดูแลหลายเว็บ: ทุกตารางมี `site_id` + Row-Level Security (RLS) ใน PostgreSQL
 - Domain mapping: `customdomain.com → site_id` ผ่านตาราง `domains` + Caddy on-demand TLS
-- Subdomain ฟรี: `mysite.lumio.app`
+- Subdomain ฟรี: `mysite.example.com`
 
 ### 10.4 Rendering Strategy
 1. กด **Publish** → Worker render หน้าเป็น static HTML → push ขึ้น CDN

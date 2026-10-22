@@ -56,8 +56,8 @@ const context = (overrides: Partial<OrderNoticeContext> = {}): OrderNoticeContex
 
   return {
     siteName: 'กาแฟบ้านดอย',
-    ownerEmail: 'owner@lumio.app',
-    publicUrl: 'https://baandoi.lumio.app',
+    ownerEmail: 'owner@example.com',
+    publicUrl: 'https://baandoi.example.com',
     settings: {
       promptPayId: '0812345678',
       shippingFee: 5_000,
@@ -91,9 +91,9 @@ describe('OrderNotifier', () => {
     };
     expect(buyer.text).toContain('0812345678');
     expect(buyer.text).toContain('LM-261022-AB12');
-    expect(buyer.text).toContain('https://baandoi.lumio.app/order/token-1');
+    expect(buyer.text).toContain('https://baandoi.example.com/order/token-1');
 
-    const owner = send.mock.calls.find((call) => call[0].to === 'owner@lumio.app')?.[0] as {
+    const owner = send.mock.calls.find((call) => call[0].to === 'owner@example.com')?.[0] as {
       subject: string;
     };
     expect(owner.subject).toContain('คำสั่งซื้อใหม่');
@@ -111,7 +111,7 @@ describe('OrderNotifier', () => {
     });
 
     expect(send).toHaveBeenCalledTimes(1);
-    expect(send.mock.calls[0]?.[0].to).toBe('owner@lumio.app');
+    expect(send.mock.calls[0]?.[0].to).toBe('owner@example.com');
   });
 
   it('tells the buyer about tracking when the order ships', async () => {

@@ -87,7 +87,7 @@ describe('DashboardService', () => {
 
     expect(summary.site).toMatchObject({
       name: 'กาแฟบ้านดอย',
-      url: 'https://baandoi.lumio.app',
+      url: 'https://baandoi.example.com',
       homeContentId: HOME_ID,
     });
     expect(summary.stats.visitors).toEqual({ value: 3, previous: 2, changePercent: 50 });

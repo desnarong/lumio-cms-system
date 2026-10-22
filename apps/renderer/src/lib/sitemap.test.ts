@@ -3,19 +3,19 @@ import { robotsPolicy, shopSitemapEntries, toSitemapEntries } from './sitemap';
 
 describe('toSitemapEntries', () => {
   it('prefixes every path with the site origin', () => {
-    const entries = toSitemapEntries('https://baandoi.lumio.app', [
+    const entries = toSitemapEntries('https://baandoi.example.com', [
       { path: '/', lastmod: '2026-10-20T00:00:00.000Z', type: 'page', alternates: [] },
       { path: '/posts/beans', lastmod: null, type: 'post', alternates: [] },
     ]);
 
-    expect(entries[0]?.url).toBe('https://baandoi.lumio.app/');
+    expect(entries[0]?.url).toBe('https://baandoi.example.com/');
     expect(entries[0]?.lastModified).toEqual(new Date('2026-10-20T00:00:00.000Z'));
-    expect(entries[1]).toEqual({ url: 'https://baandoi.lumio.app/posts/beans' });
+    expect(entries[1]).toEqual({ url: 'https://baandoi.example.com/posts/beans' });
   });
 
   it('adds hreflang alternates for a translated page', () => {
     const entries = toSitemapEntries(
-      'https://baandoi.lumio.app',
+      'https://baandoi.example.com',
       [
         {
           path: '/about',
@@ -31,20 +31,20 @@ describe('toSitemapEntries', () => {
     );
 
     expect(entries[0]?.alternates?.languages).toEqual({
-      th: 'https://baandoi.lumio.app/about',
-      en: 'https://baandoi.lumio.app/en/about',
-      'x-default': 'https://baandoi.lumio.app/about',
+      th: 'https://baandoi.example.com/about',
+      en: 'https://baandoi.example.com/en/about',
+      'x-default': 'https://baandoi.example.com/about',
     });
   });
 
   it('handles an empty sitemap', () => {
-    expect(toSitemapEntries('https://baandoi.lumio.app', [])).toEqual([]);
+    expect(toSitemapEntries('https://baandoi.example.com', [])).toEqual([]);
   });
 });
 
 describe('robotsPolicy', () => {
   it('allows crawling and points at the sitemap, skipping private paths', () => {
-    expect(robotsPolicy('baandoi.lumio.app')).toEqual({
+    expect(robotsPolicy('baandoi.example.com')).toEqual({
       rules: [
         {
           userAgent: '*',
@@ -52,7 +52,7 @@ describe('robotsPolicy', () => {
           disallow: ['/preview/', '/api/', '/cart', '/checkout', '/order/'],
         },
       ],
-      sitemap: 'https://baandoi.lumio.app/sitemap.xml',
+      sitemap: 'https://baandoi.example.com/sitemap.xml',
     });
   });
 
@@ -63,13 +63,13 @@ describe('robotsPolicy', () => {
 
 describe('shopSitemapEntries', () => {
   it('maps product paths and keeps lastmod when the API has one', () => {
-    const entries = shopSitemapEntries('https://baandoi.lumio.app', [
+    const entries = shopSitemapEntries('https://baandoi.example.com', [
       { path: '/shop/medium-roast', lastmod: '2026-10-21T00:00:00.000Z' },
       { path: '/shop/mug', lastmod: null },
     ]);
 
-    expect(entries[0]?.url).toBe('https://baandoi.lumio.app/shop/medium-roast');
+    expect(entries[0]?.url).toBe('https://baandoi.example.com/shop/medium-roast');
     expect(entries[0]?.lastModified?.toISOString()).toBe('2026-10-21T00:00:00.000Z');
-    expect(entries[1]).toEqual({ url: 'https://baandoi.lumio.app/shop/mug' });
+    expect(entries[1]).toEqual({ url: 'https://baandoi.example.com/shop/mug' });
   });
 });

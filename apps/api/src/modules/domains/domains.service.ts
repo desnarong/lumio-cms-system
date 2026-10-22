@@ -24,7 +24,7 @@ const toSummary = (domain: Domain): DomainSummary => ({
 
 /**
  * Custom domains (docs/design/18-deployment.md). A site always works on its free
- * `*.lumio.app` subdomain; connecting an owned domain is optional and only takes
+ * `*.example.com` subdomain; connecting an owned domain is optional and only takes
  * effect once DNS points at that subdomain.
  */
 @Injectable()

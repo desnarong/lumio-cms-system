@@ -7,31 +7,31 @@ describe('LoginThrottleService', () => {
     const throttle = new LoginThrottleService(new MemoryRateLimitStore());
 
     for (let attempt = 0; attempt < LOGIN_MAX_FAILURES; attempt += 1) {
-      await expect(throttle.registerAttempt('user@lumio.app')).resolves.toBeUndefined();
+      await expect(throttle.registerAttempt('user@example.com')).resolves.toBeUndefined();
     }
 
-    await expect(throttle.registerAttempt('user@lumio.app')).rejects.toMatchObject({
+    await expect(throttle.registerAttempt('user@example.com')).rejects.toMatchObject({
       code: 'rate_limited',
     });
   });
 
   it('clears the counter after a successful login', async () => {
     const throttle = new LoginThrottleService(new MemoryRateLimitStore());
-    await throttle.registerAttempt('user@lumio.app');
-    await throttle.registerAttempt('user@lumio.app');
+    await throttle.registerAttempt('user@example.com');
+    await throttle.registerAttempt('user@example.com');
 
-    await throttle.reset('user@lumio.app');
+    await throttle.reset('user@example.com');
 
-    await expect(throttle.registerAttempt('user@lumio.app')).resolves.toBeUndefined();
+    await expect(throttle.registerAttempt('user@example.com')).resolves.toBeUndefined();
   });
 
   it('counts the account case-insensitively', async () => {
     const throttle = new LoginThrottleService(new MemoryRateLimitStore());
     for (let attempt = 0; attempt < LOGIN_MAX_FAILURES; attempt += 1) {
-      await throttle.registerAttempt('User@Lumio.app');
+      await throttle.registerAttempt('User@Example.Com');
     }
 
-    await expect(throttle.registerAttempt('user@lumio.app')).rejects.toMatchObject({
+    await expect(throttle.registerAttempt('user@example.com')).rejects.toMatchObject({
       code: 'rate_limited',
     });
   });

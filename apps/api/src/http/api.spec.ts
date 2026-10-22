@@ -112,7 +112,7 @@ const startApp = async (options: {
   const address = (app.getHttpServer() as Server).address() as AddressInfo | null;
   if (address === null) throw new Error('test app did not bind a port');
   const url = `http://127.0.0.1:${address.port}`;
-  const token = signAccessToken({ id: USER_ID, email: 'owner@lumio.app' });
+  const token = signAccessToken({ id: USER_ID, email: 'owner@example.com' });
 
   return {
     url,
@@ -203,7 +203,7 @@ describe('API over HTTP', () => {
             .overrideProvider(AuthService)
             .useValue({
               login: async () => ({
-                user: { id: USER_ID, email: 'owner@lumio.app' },
+                user: { id: USER_ID, email: 'owner@example.com' },
                 accessToken: 'test-access',
                 refreshToken: 'test-refresh',
               }),
@@ -251,7 +251,7 @@ describe('API over HTTP', () => {
     it('leaves server-to-server calls (no Origin) alone', async () => {
       const response = await app.request(
         '/api/v1/auth/login',
-        jsonRequest({ email: 'owner@lumio.app', password: 'lumio-demo-1234' }),
+        jsonRequest({ email: 'owner@example.com', password: 'lumio-demo-1234' }),
       );
 
       // Reaching the handler (201) proves the request was not blocked as CSRF.
@@ -274,7 +274,7 @@ describe('API over HTTP', () => {
             .overrideProvider(AuthService)
             .useValue({
               login: async () => ({
-                user: { id: USER_ID, email: 'owner@lumio.app' },
+                user: { id: USER_ID, email: 'owner@example.com' },
                 accessToken: 'test-access',
                 refreshToken: 'test-refresh',
               }),
@@ -351,13 +351,13 @@ describe('API over HTTP', () => {
     it('logs in through the real controller and sets the refresh cookie', async () => {
       const response = await app.request(
         '/api/v1/auth/login',
-        jsonRequest({ email: 'owner@lumio.app', password: 'lumio-demo-1234' }, { origin: ALLOWED_ORIGIN }),
+        jsonRequest({ email: 'owner@example.com', password: 'lumio-demo-1234' }, { origin: ALLOWED_ORIGIN }),
       );
 
       expect(response.status).toBe(201);
       const body = await readJson(response);
       expect(body.data).toEqual({
-        user: { id: USER_ID, email: 'owner@lumio.app' },
+        user: { id: USER_ID, email: 'owner@example.com' },
         accessToken: 'test-access',
       });
       const cookie = response.headers.get('set-cookie') ?? '';
@@ -386,7 +386,7 @@ describe('API over HTTP', () => {
     });
 
     it('serves a published page without any token and marks it cacheable', async () => {
-      const response = await app.request('/api/v1/public/baandoi.lumio.app/pages/home');
+      const response = await app.request('/api/v1/public/baandoi.example.com/pages/home');
 
       expect(response.status).toBe(200);
       expect(response.headers.get('cache-control')).toBe(
@@ -399,11 +399,11 @@ describe('API over HTTP', () => {
     });
 
     it('answers 304 when the caller already holds that ETag', async () => {
-      const first = await app.request('/api/v1/public/baandoi.lumio.app/pages/home');
+      const first = await app.request('/api/v1/public/baandoi.example.com/pages/home');
       const etag = first.headers.get('etag');
       expect(etag).not.toBeNull();
 
-      const second = await app.request('/api/v1/public/baandoi.lumio.app/pages/home', {
+      const second = await app.request('/api/v1/public/baandoi.example.com/pages/home', {
         headers: { 'if-none-match': etag ?? '' },
       });
 
@@ -413,7 +413,7 @@ describe('API over HTTP', () => {
 
     it('validates the body of the anonymous page-view beacon', async () => {
       const response = await app.request(
-        '/api/v1/public/baandoi.lumio.app/collect',
+        '/api/v1/public/baandoi.example.com/collect',
         jsonRequest({ nope: true }),
       );
 
@@ -430,7 +430,7 @@ describe('API over HTTP', () => {
         configure: (builder) =>
           builder.overrideProvider(AuthService).useValue({
             login: async () => ({
-              user: { id: USER_ID, email: 'owner@lumio.app' },
+              user: { id: USER_ID, email: 'owner@example.com' },
               accessToken: 'test-access',
               refreshToken: 'test-refresh',
             }),
@@ -446,7 +446,7 @@ describe('API over HTTP', () => {
         const response = await app.request(
           '/api/v1/auth/login',
           jsonRequest(
-            { email: 'owner@lumio.app', password: 'lumio-demo-1234' },
+            { email: 'owner@example.com', password: 'lumio-demo-1234' },
             { origin: ALLOWED_ORIGIN },
           ),
         );
@@ -462,7 +462,7 @@ describe('API over HTTP', () => {
       const blocked = await app.request(
         '/api/v1/auth/login',
         jsonRequest(
-          { email: 'owner@lumio.app', password: 'lumio-demo-1234' },
+          { email: 'owner@example.com', password: 'lumio-demo-1234' },
           { origin: ALLOWED_ORIGIN },
         ),
       );
@@ -588,7 +588,7 @@ describe('API over HTTP', () => {
           builder.overrideProvider(AuthService).useValue({
             login: async () => ({ twoFactorRequired: true, challengeToken: 'ticket-1' }),
             verifyTwoFactor: async () => ({
-              user: { id: USER_ID, email: 'owner@lumio.app', name: 'สมชาย', avatarUrl: null },
+              user: { id: USER_ID, email: 'owner@example.com', name: 'สมชาย', avatarUrl: null },
               accessToken: 'access-2',
               refreshToken: 'refresh-2',
             }),
@@ -602,7 +602,7 @@ describe('API over HTTP', () => {
     it('answers the password step with a challenge instead of a session', async () => {
       const response = await app.request(
         '/api/v1/auth/login',
-        jsonRequest({ email: 'owner@lumio.app', password: 'lumio-demo-1234' }),
+        jsonRequest({ email: 'owner@example.com', password: 'lumio-demo-1234' }),
       );
 
       expect(response.status).toBe(201);
@@ -621,7 +621,7 @@ describe('API over HTTP', () => {
       expect(response.status).toBe(201);
       expect(await readJson(response)).toEqual({
         data: {
-          user: { id: USER_ID, email: 'owner@lumio.app', name: 'สมชาย', avatarUrl: null },
+          user: { id: USER_ID, email: 'owner@example.com', name: 'สมชาย', avatarUrl: null },
           accessToken: 'access-2',
         },
       });

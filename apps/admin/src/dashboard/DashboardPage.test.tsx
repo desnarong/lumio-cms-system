@@ -11,7 +11,7 @@ const summary = (overrides: Partial<DashboardSummary> = {}): DashboardSummary =>
     id: 's1',
     name: 'กาแฟบ้านดอย',
     subdomain: 'baandoi',
-    url: 'https://baandoi.lumio.app',
+    url: 'https://baandoi.example.com',
     homeContentId: 'home-1',
   },
   stats: {
@@ -133,7 +133,7 @@ describe('DashboardView', () => {
     expect(html).toContain('แก้เว็บ');
     expect(html).toContain('หน้าใหม่');
     expect(html).toContain('เขียนบทความ');
-    expect(html).toContain('https://baandoi.lumio.app');
+    expect(html).toContain('https://baandoi.example.com');
   });
 
   it('surfaces a failed reload without hiding the numbers', () => {

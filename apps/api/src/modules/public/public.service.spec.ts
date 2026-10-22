@@ -98,7 +98,7 @@ describe('PublicService host resolution', () => {
     expect(page.content?.blocks[0]?.props.text).toBe('กาแฟบ้านดอย');
   });
 
-  it('falls back to the *.lumio.app subdomain', async () => {
+  it('falls back to the *.example.com subdomain', async () => {
     const siteFindUnique = vi.fn().mockResolvedValue(siteRow());
     const db = {
       domain: { findUnique: vi.fn().mockResolvedValue(null) },
@@ -112,7 +112,7 @@ describe('PublicService host resolution', () => {
       ),
     } as unknown as PrismaService;
 
-    await new PublicService(db).getPage('baandoi.lumio.app', 'home');
+    await new PublicService(db).getPage('baandoi.example.com', 'home');
 
     expect(siteFindUnique).toHaveBeenCalledWith({ where: { subdomain: 'baandoi' } });
   });
@@ -142,7 +142,7 @@ describe('PublicService host resolution', () => {
     const page = await new PublicService(loopback).getPage('localhost:49200', 'home');
     expect(page.site.subdomain).toBe('baandoi');
 
-    await expect(service().getPage('baandoi.lumio.app', 'home')).rejects.toMatchObject({
+    await expect(service().getPage('baandoi.example.com', 'home')).rejects.toMatchObject({
       code: 'not_found',
     });
 
@@ -154,12 +154,12 @@ describe('PublicService host resolution', () => {
 describe('PublicService.getPage', () => {
   it('serves published blocks and never the draft', async () => {
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: {
         content: { findFirst: vi.fn().mockResolvedValue(contentRow()) },
         menu: { findMany: vi.fn().mockResolvedValue([]) },
       },
-    }).getPage('baandoi.lumio.app', 'home');
+    }).getPage('baandoi.example.com', 'home');
 
     expect(page.content?.blocks).toHaveLength(1);
     expect(page.content?.blocks[0]?.id).toBe('b1');
@@ -170,9 +170,9 @@ describe('PublicService.getPage', () => {
   it('asks only for published content of the site default locale', async () => {
     const findFirst = vi.fn().mockResolvedValue(contentRow());
     await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: { content: { findFirst }, menu: { findMany: vi.fn().mockResolvedValue([]) } },
-    }).getPage('baandoi.lumio.app', 'about');
+    }).getPage('baandoi.example.com', 'about');
 
     expect(findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -189,9 +189,9 @@ describe('PublicService.getPage', () => {
     ]);
 
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow({ locales: ['th', 'en'] }) },
+      domain: { hostname: 'baandoi.example.com', site: siteRow({ locales: ['th', 'en'] }) },
       tx: { content: { findFirst, findMany } },
-    }).getPage('baandoi.lumio.app', 'home', 'en');
+    }).getPage('baandoi.example.com', 'home', 'en');
 
     expect(page.locale).toBe('en');
     expect(page.isFallback).toBe(false);
@@ -211,7 +211,7 @@ describe('PublicService.getPage', () => {
       .mockResolvedValueOnce(contentRow()); // Thai fallback
 
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow({ locales: ['th', 'en'] }) },
+      domain: { hostname: 'baandoi.example.com', site: siteRow({ locales: ['th', 'en'] }) },
       tx: {
         content: {
           findFirst,
@@ -220,7 +220,7 @@ describe('PublicService.getPage', () => {
             .mockResolvedValue([{ locale: 'th', slug: 'home', title: 'หน้าแรก' }]),
         },
       },
-    }).getPage('baandoi.lumio.app', 'home', 'en');
+    }).getPage('baandoi.example.com', 'home', 'en');
 
     expect(page.isFallback).toBe(true);
     expect(page.locale).toBe('th');
@@ -229,7 +229,7 @@ describe('PublicService.getPage', () => {
 
   it('returns the redirect target when the slug moved', async () => {
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: {
         content: { findFirst: vi.fn().mockResolvedValue(null) },
         menu: { findMany: vi.fn().mockResolvedValue([]) },
@@ -237,7 +237,7 @@ describe('PublicService.getPage', () => {
           findFirst: vi.fn().mockResolvedValue({ toPath: '/about', code: 301 }),
         },
       },
-    }).getPage('baandoi.lumio.app', 'about-us');
+    }).getPage('baandoi.example.com', 'about-us');
 
     expect(page.content).toBeNull();
     expect(page.redirect).toEqual({ to: '/about', code: 301 });
@@ -246,13 +246,13 @@ describe('PublicService.getPage', () => {
   it('matches a redirect that keeps the language prefix', async () => {
     const redirectFindFirst = vi.fn().mockResolvedValue({ toPath: '/en/about', code: 301 });
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow({ locales: ['th', 'en'] }) },
+      domain: { hostname: 'baandoi.example.com', site: siteRow({ locales: ['th', 'en'] }) },
       tx: {
         content: { findFirst: vi.fn().mockResolvedValue(null) },
         menu: { findMany: vi.fn().mockResolvedValue([]) },
         redirect: { findFirst: redirectFindFirst },
       },
-    }).getPage('baandoi.lumio.app', 'about-us', 'en');
+    }).getPage('baandoi.example.com', 'about-us', 'en');
 
     expect(page.redirect).toEqual({ to: '/en/about', code: 301 });
     expect(redirectFindFirst).toHaveBeenCalledWith(
@@ -265,19 +265,19 @@ describe('PublicService.getPage', () => {
   it('404s when neither content nor a redirect matches', async () => {
     await expect(
       service({
-        domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+        domain: { hostname: 'baandoi.example.com', site: siteRow() },
         tx: {
           content: { findFirst: vi.fn().mockResolvedValue(null) },
           menu: { findMany: vi.fn().mockResolvedValue([]) },
           redirect: { findFirst: vi.fn().mockResolvedValue(null) },
         },
-      }).getPage('baandoi.lumio.app', 'missing'),
+      }).getPage('baandoi.example.com', 'missing'),
     ).rejects.toMatchObject({ code: 'not_found' });
   });
 
   it('reads the header and footer menus into the payload', async () => {
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: {
         content: { findFirst: vi.fn().mockResolvedValue(contentRow()) },
         menu: {
@@ -287,7 +287,7 @@ describe('PublicService.getPage', () => {
           ]),
         },
       },
-    }).getPage('baandoi.lumio.app', 'home');
+    }).getPage('baandoi.example.com', 'home');
 
     expect(page.menus.header).toEqual([{ label: 'หน้าแรก', href: '/', children: [] }]);
     expect(page.menus.footer[0]?.label).toBe('ติดต่อ');
@@ -295,7 +295,7 @@ describe('PublicService.getPage', () => {
 
   it('sends the global header and footer blocks of the template', async () => {
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: {
         content: { findFirst: vi.fn().mockResolvedValue(contentRow()) },
         globalBlock: {
@@ -315,7 +315,7 @@ describe('PublicService.getPage', () => {
           ]),
         },
       },
-    }).getPage('baandoi.lumio.app', 'home');
+    }).getPage('baandoi.example.com', 'home');
 
     expect(page.globalBlocks.header.map((block) => block.id)).toEqual(['h1']);
     expect(page.globalBlocks.footer.map((block) => block.id)).toEqual(['f1']);
@@ -324,7 +324,7 @@ describe('PublicService.getPage', () => {
   it('resolves the logo uploaded during onboarding into a URL', async () => {
     const page = await service({
       domain: {
-        hostname: 'baandoi.lumio.app',
+        hostname: 'baandoi.example.com',
         site: siteRow({ settings: { logoMediaId: '00000000-0000-4000-8000-0000000000b1' } }),
       },
       tx: {
@@ -337,16 +337,16 @@ describe('PublicService.getPage', () => {
           }),
         },
       },
-    }).getPage('baandoi.lumio.app', 'home');
+    }).getPage('baandoi.example.com', 'home');
 
     expect(page.site.logoUrl).toBe('http://localhost:49100/media/baandoi/logo/logo.png');
   });
 
   it('leaves the logo empty when no logo was uploaded', async () => {
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: { content: { findFirst: vi.fn().mockResolvedValue(contentRow()) } },
-    }).getPage('baandoi.lumio.app', 'home');
+    }).getPage('baandoi.example.com', 'home');
 
     expect(page.site.logoUrl).toBeNull();
   });
@@ -362,7 +362,7 @@ describe('PublicService.getPage', () => {
     ]);
 
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: {
         content: {
           findFirst: vi.fn().mockResolvedValue(
@@ -382,7 +382,7 @@ describe('PublicService.getPage', () => {
         },
         form: { findMany: formFindMany },
       },
-    }).getPage('baandoi.lumio.app', 'home');
+    }).getPage('baandoi.example.com', 'home');
 
     expect(page.forms.map((form) => form.id)).toEqual([FORM_ID]);
     expect(page.forms[0]?.fields).toHaveLength(DEFAULT_CONTACT_FORM_FIELDS.length);
@@ -394,9 +394,9 @@ describe('PublicService.getPage', () => {
   it('never queries forms when no block points at one', async () => {
     // The shared tx stub has no `form` model, so any query would throw.
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: { content: { findFirst: vi.fn().mockResolvedValue(contentRow()) } },
-    }).getPage('baandoi.lumio.app', 'home');
+    }).getPage('baandoi.example.com', 'home');
 
     expect(page.forms).toEqual([]);
   });
@@ -415,12 +415,12 @@ describe('PublicService.listPosts', () => {
     ];
 
     const list = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: {
         content: { findMany: vi.fn().mockResolvedValue(rows) },
         menu: { findMany: vi.fn().mockResolvedValue([]) },
       },
-    }).listPosts('baandoi.lumio.app', 10);
+    }).listPosts('baandoi.example.com', 10);
 
     expect(list.posts).toHaveLength(1);
     expect(list.posts[0]).toMatchObject({
@@ -441,12 +441,12 @@ describe('PublicService.listPosts', () => {
     ];
 
     const list = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: {
         content: { findMany: vi.fn().mockResolvedValue(rows) },
         menu: { findMany: vi.fn().mockResolvedValue([]) },
       },
-    }).listPosts('baandoi.lumio.app', 10);
+    }).listPosts('baandoi.example.com', 10);
 
     expect(list.posts[0]?.coverImage).toBe('http://localhost:49100/media/baandoi/posts/beans-640.webp');
   });
@@ -460,9 +460,9 @@ describe('PublicService.sitemap', () => {
     ];
 
     const sitemap = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: { content: { findMany: vi.fn().mockResolvedValue(rows) } },
-    }).sitemap('baandoi.lumio.app');
+    }).sitemap('baandoi.example.com');
 
     expect(sitemap.urls.map((url) => url.path)).toEqual(['/', '/posts/how-to-pick-beans']);
   });
@@ -474,9 +474,9 @@ describe('PublicService.sitemap', () => {
     ];
 
     const sitemap = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow({ locales: ['th', 'en'] }) },
+      domain: { hostname: 'baandoi.example.com', site: siteRow({ locales: ['th', 'en'] }) },
       tx: { content: { findMany: vi.fn().mockResolvedValue(rows) } },
-    }).sitemap('baandoi.lumio.app');
+    }).sitemap('baandoi.example.com');
 
     expect(sitemap.urls.map((url) => url.path)).toEqual(['/about', '/en/about']);
     expect(sitemap.urls[1]?.alternates.map((alt) => alt.path)).toEqual(['/about', '/en/about']);
@@ -488,9 +488,9 @@ describe('PublicService.sitemap', () => {
     ];
 
     const sitemap = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       tx: { content: { findMany: vi.fn().mockResolvedValue(rows) } },
-    }).sitemap('baandoi.lumio.app');
+    }).sitemap('baandoi.example.com');
 
     expect(sitemap.urls).toEqual([]);
   });
@@ -506,7 +506,7 @@ describe('PublicService.sitemap', () => {
           ]),
         },
       },
-    }).sitemap('baandoi.lumio.app');
+    }).sitemap('baandoi.example.com');
 
     expect(sitemap.shop).toEqual([
       { path: '/shop/medium-roast', lastmod: '2026-10-21T00:00:00.000Z' },
@@ -519,8 +519,8 @@ describe('PublicService language delivery', () => {
 
   it('reports the languages of a host for Accept-Language negotiation', async () => {
     const locales = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: bilingualSite },
-    }).locales('baandoi.lumio.app');
+      domain: { hostname: 'baandoi.example.com', site: bilingualSite },
+    }).locales('baandoi.example.com');
 
     expect(locales).toEqual({
       locales: ['th', 'en'],
@@ -531,7 +531,7 @@ describe('PublicService language delivery', () => {
 
   it('prefers a language-specific menu over the shared one', async () => {
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: bilingualSite },
+      domain: { hostname: 'baandoi.example.com', site: bilingualSite },
       tx: {
         content: { findFirst: vi.fn().mockResolvedValue(contentRow({ locale: 'en' })) },
         menu: {
@@ -541,14 +541,14 @@ describe('PublicService language delivery', () => {
           ]),
         },
       },
-    }).getPage('baandoi.lumio.app', 'home', 'en');
+    }).getPage('baandoi.example.com', 'home', 'en');
 
     expect(page.menus.header.map((item) => item.label)).toEqual(['Home']);
   });
 
   it('keeps the shared menu when the language has none of its own', async () => {
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: bilingualSite },
+      domain: { hostname: 'baandoi.example.com', site: bilingualSite },
       tx: {
         content: { findFirst: vi.fn().mockResolvedValue(contentRow({ locale: 'en' })) },
         menu: {
@@ -557,7 +557,7 @@ describe('PublicService language delivery', () => {
           ]),
         },
       },
-    }).getPage('baandoi.lumio.app', 'home', 'en');
+    }).getPage('baandoi.example.com', 'home', 'en');
 
     expect(page.menus.header.map((item) => item.label)).toEqual(['หน้าแรก']);
   });
@@ -581,7 +581,7 @@ describe('PublicService language delivery', () => {
     };
 
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: bilingualSite },
+      domain: { hostname: 'baandoi.example.com', site: bilingualSite },
       tx: {
         content: {
           findFirst: vi.fn().mockResolvedValue(
@@ -606,7 +606,7 @@ describe('PublicService language delivery', () => {
           ),
         },
       },
-    }).getPage('baandoi.lumio.app', 'home', 'en');
+    }).getPage('baandoi.example.com', 'home', 'en');
 
     expect(page.forms[0]?.name).toBe('Contact us');
     expect(page.forms[0]?.successMessage).toBe('Thank you');
@@ -626,7 +626,7 @@ describe('PublicService language delivery', () => {
       ),
     } as unknown as PrismaService;
 
-    const page = await new PublicService(db).getPage('en.baandoi.lumio.app', 'home');
+    const page = await new PublicService(db).getPage('en.baandoi.example.com', 'home');
 
     expect(siteFindUnique).toHaveBeenCalledWith({ where: { subdomain: 'baandoi' } });
     expect(page.locale).toBe('en');
@@ -646,16 +646,16 @@ describe('PublicService language delivery', () => {
       ),
     } as unknown as PrismaService;
 
-    await expect(new PublicService(db).getPage('en.baandoi.lumio.app', 'home')).rejects.toMatchObject(
+    await expect(new PublicService(db).getPage('en.baandoi.example.com', 'home')).rejects.toMatchObject(
       { code: 'not_found' },
     );
   });
 
   it('falls back to the default language for a language the site does not offer', async () => {
     const page = await service({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow({ locales: ['th'] }) },
+      domain: { hostname: 'baandoi.example.com', site: siteRow({ locales: ['th'] }) },
       tx: { content: { findFirst: vi.fn().mockResolvedValue(contentRow()) } },
-    }).getPage('baandoi.lumio.app', 'home', 'de');
+    }).getPage('baandoi.example.com', 'home', 'de');
 
     expect(page.locale).toBe('th');
     expect(page.isFallback).toBe(false);

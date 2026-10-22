@@ -3,7 +3,7 @@ import { ogImageUrl } from './og.js';
 
 describe('ogImageUrl', () => {
   it('builds an absolute preview URL with the page and site names', () => {
-    const url = new URL(ogImageUrl('https://baandoi.lumio.app', 'กาแฟบ้านดอย', 'ร้านกาแฟ'));
+    const url = new URL(ogImageUrl('https://baandoi.example.com', 'กาแฟบ้านดอย', 'ร้านกาแฟ'));
     expect(url.pathname).toBe('/og');
     expect(url.searchParams.get('title')).toBe('กาแฟบ้านดอย');
     expect(url.searchParams.get('site')).toBe('ร้านกาแฟ');

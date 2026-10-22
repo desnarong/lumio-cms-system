@@ -3,7 +3,7 @@ import { TemplatesService } from './templates.service';
 
 const withApiUrl = <T>(fn: () => T): T => {
   const previous = process.env.API_PUBLIC_URL;
-  process.env.API_PUBLIC_URL = 'https://api.lumio.app';
+  process.env.API_PUBLIC_URL = 'https://api.example.com';
   try {
     return fn();
   } finally {
@@ -18,7 +18,7 @@ describe('TemplatesService', () => {
 
     expect(templates.length).toBeGreaterThanOrEqual(3);
     for (const template of templates) {
-      expect(template.previewUrl.startsWith('https://api.lumio.app/templates/')).toBe(true);
+      expect(template.previewUrl.startsWith('https://api.example.com/templates/')).toBe(true);
       expect(template.previewUrl.endsWith('/preview.png')).toBe(true);
       expect(template.pages.length).toBeGreaterThanOrEqual(4);
     }

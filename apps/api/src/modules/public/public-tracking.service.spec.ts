@@ -28,8 +28,8 @@ describe('PublicTrackingService', () => {
     const { db, executeRaw, forSite } = stubs();
 
     await new PublicTrackingService(db).record(
-      'baandoi.lumio.app',
-      { path: 'https://baandoi.lumio.app/services?utm=1', referrer: 'https://google.com' },
+      'baandoi.example.com',
+      { path: 'https://baandoi.example.com/services?utm=1', referrer: 'https://google.com' },
       { userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)', ip: '203.0.113.9' },
     );
 
@@ -47,8 +47,8 @@ describe('PublicTrackingService', () => {
     const { db, executeRaw } = stubs();
     const service = new PublicTrackingService(db);
 
-    await service.record('baandoi.lumio.app', { path: '/', visitorId: 'v-1' }, { ip: 'a' });
-    await service.record('baandoi.lumio.app', { path: '/about', visitorId: 'v-1' }, { ip: 'b' });
+    await service.record('baandoi.example.com', { path: '/', visitorId: 'v-1' }, { ip: 'a' });
+    await service.record('baandoi.example.com', { path: '/about', visitorId: 'v-1' }, { ip: 'b' });
 
     const first = executeRaw.mock.calls[0]!.slice(1).at(-1);
     const second = executeRaw.mock.calls[1]!.slice(1).at(-1);
@@ -57,7 +57,7 @@ describe('PublicTrackingService', () => {
 
   it('falls back to the home page for an empty path', async () => {
     const { db, executeRaw } = stubs();
-    await new PublicTrackingService(db).record('baandoi.lumio.app', { path: '   ' }, {});
+    await new PublicTrackingService(db).record('baandoi.example.com', { path: '   ' }, {});
     expect(executeRaw.mock.calls[0]!.slice(1)).toContain('/');
   });
 });
@@ -79,7 +79,7 @@ describe('PublicTrackingService edge batches', () => {
     const { db, executeRaw, forSite } = stubs();
 
     const accepted = await new PublicTrackingService(db).recordMany(
-      'baandoi.lumio.app',
+      'baandoi.example.com',
       [
         { path: '/', visitorId: 'v-1', userAgent: 'Mozilla/5.0 (iPhone)', country: 'TH' },
         { path: '/services', visitorId: 'v-2', userAgent: 'Mozilla/5.0 (Windows NT 10.0)', country: 'US' },
@@ -99,7 +99,7 @@ describe('PublicTrackingService edge batches', () => {
   it('does nothing for an empty batch', async () => {
     const { db, forSite } = stubs();
     await expect(
-      new PublicTrackingService(db).recordMany('baandoi.lumio.app', []),
+      new PublicTrackingService(db).recordMany('baandoi.example.com', []),
     ).resolves.toBe(0);
     expect(forSite).not.toHaveBeenCalled();
   });

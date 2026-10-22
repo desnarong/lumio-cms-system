@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { formReturnPath } from './form-return';
 
-const HOST = 'baandoi.lumio.app';
+const HOST = 'baandoi.example.com';
 
 describe('formReturnPath', () => {
   it('returns the page the visitor came from', () => {

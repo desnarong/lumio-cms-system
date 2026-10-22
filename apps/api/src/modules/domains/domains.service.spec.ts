@@ -77,7 +77,7 @@ describe('DomainsService', () => {
   it('lists domains with the free address to point at', async () => {
     const result = await service(stubs()).list(SITE_ID);
 
-    expect(result.cnameTarget).toBe('baandoi.lumio.app');
+    expect(result.cnameTarget).toBe('baandoi.example.com');
     expect(result.items[0]).toMatchObject({ hostname: 'baandoi.com', sslStatus: 'pending' });
   });
 
@@ -92,7 +92,7 @@ describe('DomainsService', () => {
 
   it('refuses the site’s own free address', async () => {
     await expect(
-      service(stubs()).add(SITE_ID, { hostname: 'baandoi.lumio.app', isPrimary: false }, USER_ID),
+      service(stubs()).add(SITE_ID, { hostname: 'baandoi.example.com', isPrimary: false }, USER_ID),
     ).rejects.toMatchObject({ code: 'validation_error' });
   });
 

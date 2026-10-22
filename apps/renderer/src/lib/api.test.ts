@@ -46,10 +46,10 @@ describe('createPublicApi', () => {
     const fetchImpl = vi.fn().mockResolvedValue(respond({ data: page })) as unknown as FetchLike;
     const api = createPublicApi({ baseUrl: 'http://api:49100/', fetchImpl });
 
-    const result = await api.getPage('baandoi.lumio.app', 'home');
+    const result = await api.getPage('baandoi.example.com', 'home');
 
     expect(fetchImpl).toHaveBeenCalledWith(
-      'http://api:49100/api/v1/public/baandoi.lumio.app/pages/home',
+      'http://api:49100/api/v1/public/baandoi.example.com/pages/home',
       expect.objectContaining({ next: { revalidate: 60 } }),
     );
     expect(result.content?.title).toBe('หน้าแรก');
@@ -71,10 +71,10 @@ describe('createPublicApi', () => {
     const fetchImpl = vi.fn().mockResolvedValue(respond({ data: page })) as unknown as FetchLike;
     const api = createPublicApi({ baseUrl: 'http://api:49100', fetchImpl });
 
-    await api.getPage('baandoi.lumio.app', 'about', 'en');
+    await api.getPage('baandoi.example.com', 'about', 'en');
 
     expect(fetchImpl).toHaveBeenCalledWith(
-      'http://api:49100/api/v1/public/baandoi.lumio.app/pages/about?locale=en',
+      'http://api:49100/api/v1/public/baandoi.example.com/pages/about?locale=en',
       expect.anything(),
     );
   });
@@ -85,7 +85,7 @@ describe('createPublicApi', () => {
       .mockResolvedValue(respond({ data: { ...page, content: { ...page.content, blocks: 'nope' } } })) as unknown as FetchLike;
     const api = createPublicApi({ baseUrl: 'http://api:49100', fetchImpl });
 
-    await expect(api.getPage('baandoi.lumio.app', 'home')).rejects.toThrowError();
+    await expect(api.getPage('baandoi.example.com', 'home')).rejects.toThrowError();
   });
 
   it('maps 404 to ContentNotFoundError', async () => {
@@ -94,7 +94,7 @@ describe('createPublicApi', () => {
       .mockResolvedValue(respond({ error: 'not_found' }, { ok: false, status: 404 })) as unknown as FetchLike;
     const api = createPublicApi({ baseUrl: 'http://api:49100', fetchImpl });
 
-    await expect(api.getPage('baandoi.lumio.app', 'nope')).rejects.toBeInstanceOf(
+    await expect(api.getPage('baandoi.example.com', 'nope')).rejects.toBeInstanceOf(
       ContentNotFoundError,
     );
   });
@@ -121,7 +121,7 @@ describe('createPublicApi', () => {
       ) as unknown as FetchLike;
     const api = createPublicApi({ baseUrl: 'http://api:49100', fetchImpl });
 
-    const sitemap = await api.getSitemap('baandoi.lumio.app');
+    const sitemap = await api.getSitemap('baandoi.example.com');
 
     expect(sitemap.urls).toHaveLength(1);
   });
@@ -130,11 +130,11 @@ describe('createPublicApi', () => {
     const fetchImpl = vi.fn().mockResolvedValue(respond({ data: { success: true } })) as unknown as FetchLike;
     const api = createPublicApi({ baseUrl: 'http://api:49100', fetchImpl });
 
-    await api.collectPageview('baandoi.lumio.app', { path: '/services', visitorId: 'v1' });
+    await api.collectPageview('baandoi.example.com', { path: '/services', visitorId: 'v1' });
 
     const [url, init] = (fetchImpl as unknown as { mock: { calls: [string, { body: string }][] } }).mock
       .calls[0]!;
-    expect(url).toBe('http://api:49100/api/v1/public/baandoi.lumio.app/collect');
+    expect(url).toBe('http://api:49100/api/v1/public/baandoi.example.com/collect');
     expect(JSON.parse(init.body)).toEqual({ path: '/services', visitorId: 'v1' });
   });
 
@@ -215,11 +215,11 @@ describe('shop endpoints', () => {
     ) as unknown as FetchLike;
     const api = createPublicApi({ baseUrl: 'http://api:49100', fetchImpl });
 
-    const shop = await api.getShop('baandoi.lumio.app');
+    const shop = await api.getShop('baandoi.example.com');
 
     expect(shop.products[0]?.slug).toBe('medium-roast');
     expect(fetchImpl).toHaveBeenCalledWith(
-      'http://api:49100/api/v1/public/baandoi.lumio.app/shop',
+      'http://api:49100/api/v1/public/baandoi.example.com/shop',
       expect.anything(),
     );
   });
@@ -243,7 +243,7 @@ describe('shop endpoints', () => {
     ) as unknown as FetchLike;
     const api = createPublicApi({ baseUrl: 'http://api:49100', fetchImpl });
 
-    const priced = await api.priceCart('baandoi.lumio.app', [
+    const priced = await api.priceCart('baandoi.example.com', [
       { productId: shopProduct.id, quantity: 2 },
     ]);
 
@@ -270,7 +270,7 @@ describe('shop endpoints', () => {
       ) as unknown as FetchLike;
     const api = createPublicApi({ baseUrl: 'http://api:49100', fetchImpl });
 
-    const created = await api.createOrder('baandoi.lumio.app', {
+    const created = await api.createOrder('baandoi.example.com', {
       items: [{ productId: shopProduct.id, quantity: 1 }],
       customer: {
         name: 'อรุณี',
@@ -287,7 +287,7 @@ describe('shop endpoints', () => {
     });
     expect(created.order.number).toBe('LM-261022-AB12');
 
-    const found = await api.getOrder('baandoi.lumio.app', 'token-1');
+    const found = await api.getOrder('baandoi.example.com', 'token-1');
     expect(found.order.status).toBe('pending');
   });
 });

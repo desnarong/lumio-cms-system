@@ -26,7 +26,7 @@ describe('createHttpAuthApi', () => {
     });
 
     const result = signedIn(
-      await api.login({ email: 'owner@lumio.app', password: 'lumio-demo-1234' }),
+      await api.login({ email: 'owner@example.com', password: 'lumio-demo-1234' }),
     );
 
     expect(result.accessToken).toBe('token-1');
@@ -60,7 +60,7 @@ describe('createHttpAuthApi', () => {
       baseUrl: 'http://api.test',
       fetchImpl: fetchImpl as unknown as typeof fetch,
     });
-    await api.login({ email: 'owner@lumio.app', password: 'lumio-demo-1234' });
+    await api.login({ email: 'owner@example.com', password: 'lumio-demo-1234' });
 
     await api.me();
 
@@ -83,7 +83,7 @@ describe('createHttpAuthApi', () => {
       fetchImpl: fetchImpl as unknown as typeof fetch,
     });
 
-    const challenge = await api.login({ email: 'owner@lumio.app', password: 'lumio-demo-1234' });
+    const challenge = await api.login({ email: 'owner@example.com', password: 'lumio-demo-1234' });
     expect(isTwoFactorChallenge(challenge)).toBe(true);
 
     const session = await api.verifyTwoFactor('challenge-1', '123456');
@@ -122,10 +122,10 @@ describe('createHttpAuthApi', () => {
 describe('createDemoAuthApi', () => {
   it('accepts the demo account', async () => {
     const api = createDemoAuthApi();
-    const result = await api.login({ email: 'owner@lumio.app', password: 'lumio-demo-1234' });
+    const result = await api.login({ email: 'owner@example.com', password: 'lumio-demo-1234' });
 
     if (isTwoFactorChallenge(result)) throw new Error('demo signs in directly');
-    expect(result.user.email).toBe('owner@lumio.app');
+    expect(result.user.email).toBe('owner@example.com');
   });
 
   it('explains the demo credentials when they are wrong', async () => {
@@ -135,7 +135,7 @@ describe('createDemoAuthApi', () => {
       ApiError,
     );
     await expect(api.login({ email: 'someone@else.com', password: 'x' })).rejects.toMatchObject({
-      message: expect.stringContaining('owner@lumio.app'),
+      message: expect.stringContaining('owner@example.com'),
     });
   });
 

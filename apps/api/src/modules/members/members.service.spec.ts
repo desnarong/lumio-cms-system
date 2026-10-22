@@ -10,7 +10,7 @@ const JOINED_AT = new Date('2026-10-20T00:00:00Z');
 
 const memberUser = {
   id: USER_ID,
-  email: 'editor@lumio.app',
+  email: 'editor@example.com',
   name: 'ปิยะดา แสงทอง',
   avatarUrl: null,
 };
@@ -32,7 +32,7 @@ describe('MembersService team quota', () => {
     await expect(
       new MembersService(db, auditStub() as unknown as AuditService, quota as never).invite(
         SITE_ID,
-        { email: 'editor@lumio.app', role: 'editor' },
+        { email: 'editor@example.com', role: 'editor' },
         USER_ID,
       ),
     ).rejects.toThrow('เต็ม');
@@ -82,7 +82,7 @@ describe('MembersService', () => {
       quotaStub(),
     ).invite(
       SITE_ID,
-      { email: 'editor@lumio.app', role: 'editor' },
+      { email: 'editor@example.com', role: 'editor' },
       USER_ID,
     );
 
@@ -98,7 +98,7 @@ describe('MembersService', () => {
     await expect(
       new MembersService(db, auditStub() as unknown as AuditService, quotaStub()).invite(
         SITE_ID,
-        { email: 'ghost@lumio.app', role: 'editor' },
+        { email: 'ghost@example.com', role: 'editor' },
         USER_ID,
       ),
     ).rejects.toMatchObject({ code: 'not_found' });
@@ -115,7 +115,7 @@ describe('MembersService', () => {
     await expect(
       new MembersService(db, auditStub() as unknown as AuditService, quotaStub()).invite(
         SITE_ID,
-        { email: 'editor@lumio.app', role: 'editor' },
+        { email: 'editor@example.com', role: 'editor' },
         USER_ID,
       ),
     ).rejects.toMatchObject({ code: 'conflict' });
@@ -127,7 +127,7 @@ describe('MembersService', () => {
     await expect(
       new MembersService(db, auditStub() as unknown as AuditService, quotaStub()).invite(
         SITE_ID,
-        { email: 'editor@lumio.app', role: 'owner' },
+        { email: 'editor@example.com', role: 'owner' },
         USER_ID,
       ),
     ).rejects.toMatchObject({ code: 'validation_error' });

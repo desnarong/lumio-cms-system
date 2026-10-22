@@ -34,7 +34,7 @@ export interface AppProps {
   clients?: AdminClients;
 }
 
-const rootDomain = (): string => import.meta.env.VITE_PUBLIC_ROOT_DOMAIN ?? 'lumio.app';
+const rootDomain = (): string => import.meta.env.VITE_PUBLIC_ROOT_DOMAIN ?? 'example.com';
 
 /** First paint while the site is resolved; it sits inside the message provider. */
 const Splash = () => {
@@ -69,7 +69,7 @@ interface ShellContext {
 const DEMO_CONTEXT: ShellContext = {
   siteName: 'กาแฟบ้านดอย',
   role: 'owner',
-  publicUrl: 'https://baandoi.lumio.app',
+  publicUrl: 'https://baandoi.example.com',
   locales: ['th', 'en'],
   features: [...FEATURE_FLAG_KEYS],
 };

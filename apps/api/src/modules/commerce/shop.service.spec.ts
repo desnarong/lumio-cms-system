@@ -145,7 +145,7 @@ const stubs = (
   const tx = {
     site: {
       findUnique: vi.fn().mockResolvedValue({
-        owner: { email: 'owner@lumio.app' },
+        owner: { email: 'owner@example.com' },
         domains: [],
       }),
     },
@@ -200,7 +200,7 @@ const orderInput = {
 describe('ShopService catalog', () => {
   it('returns active products with public image urls and categories', async () => {
     const all = stubs();
-    const home = await service(all).home('baandoi.lumio.app');
+    const home = await service(all).home('baandoi.example.com');
 
     expect(home.products[0]?.images[0]).toContain('shop/beans-640.webp');
     expect(home.categories).toEqual(['เมล็ดกาแฟ']);
@@ -209,7 +209,7 @@ describe('ShopService catalog', () => {
 
   it('finds one product and suggests related items', async () => {
     const all = stubs({ products: [] });
-    const page = await service(all).product('baandoi.lumio.app', 'medium-roast');
+    const page = await service(all).product('baandoi.example.com', 'medium-roast');
 
     expect(page.product.slug).toBe('medium-roast');
     expect(page.related).toEqual([]);
@@ -217,7 +217,7 @@ describe('ShopService catalog', () => {
 
   it('answers 404 for a product that is not on sale', async () => {
     const all = stubs({ product: null });
-    await expect(service(all).product('baandoi.lumio.app', 'gone')).rejects.toMatchObject({
+    await expect(service(all).product('baandoi.example.com', 'gone')).rejects.toMatchObject({
       code: 'not_found',
     });
   });
@@ -226,7 +226,7 @@ describe('ShopService catalog', () => {
 describe('ShopService cart', () => {
   it('prices lines from the database and applies free shipping', async () => {
     const all = stubs({ products: [productRow({ price: 30_000 })] });
-    const { cart } = await service(all).cart('baandoi.lumio.app', {
+    const { cart } = await service(all).cart('baandoi.example.com', {
       items: [{ productId: PRODUCT_ID, quantity: 2 }],
     });
 
@@ -238,7 +238,7 @@ describe('ShopService cart', () => {
 
   it('charges shipping below the threshold', async () => {
     const all = stubs({ products: [productRow({ price: 10_000 })] });
-    const { cart } = await service(all).cart('baandoi.lumio.app', {
+    const { cart } = await service(all).cart('baandoi.example.com', {
       items: [{ productId: PRODUCT_ID, quantity: 1 }],
     });
 
@@ -271,7 +271,7 @@ describe('ShopService cart', () => {
         }),
       ],
     });
-    const { cart } = await service(all).cart('baandoi.lumio.app', {
+    const { cart } = await service(all).cart('baandoi.example.com', {
       items: [{ productId: PRODUCT_ID, variantId: VARIANT_ID, quantity: 2 }],
     });
 
@@ -285,13 +285,13 @@ describe('ShopService cart', () => {
     });
 
     await expect(
-      service(all).cart('baandoi.lumio.app', { items: [{ productId: PRODUCT_ID, quantity: 1 }] }),
+      service(all).cart('baandoi.example.com', { items: [{ productId: PRODUCT_ID, quantity: 1 }] }),
     ).rejects.toMatchObject({ code: 'conflict' });
   });
   it('rejects a product that went off sale', async () => {
     const all = stubs({ products: [] });
     await expect(
-      service(all).cart('baandoi.lumio.app', { items: [{ productId: PRODUCT_ID, quantity: 1 }] }),
+      service(all).cart('baandoi.example.com', { items: [{ productId: PRODUCT_ID, quantity: 1 }] }),
     ).rejects.toMatchObject({ code: 'conflict' });
   });
 });
@@ -300,28 +300,28 @@ describe('ShopService checkout', () => {
   it('ignores a filled honeypot', async () => {
     const all = stubs();
     await expect(
-      service(all).createOrder('baandoi.lumio.app', { ...orderInput, honeypot: 'bot' }),
+      service(all).createOrder('baandoi.example.com', { ...orderInput, honeypot: 'bot' }),
     ).rejects.toMatchObject({ code: 'validation_error' });
     expect(all.orderCreate).not.toHaveBeenCalled();
   });
 
   it('refuses a payment method the shop turned off', async () => {
     const all = stubs({ chrome: chrome({ payments: { promptpay: false, cod: true } }) });
-    await expect(service(all).createOrder('baandoi.lumio.app', orderInput)).rejects.toMatchObject({
+    await expect(service(all).createOrder('baandoi.example.com', orderInput)).rejects.toMatchObject({
       code: 'validation_error',
     });
   });
 
   it('refuses PromptPay before the shop configured a number', async () => {
     const all = stubs({ chrome: chrome({ promptPayId: null }) });
-    await expect(service(all).createOrder('baandoi.lumio.app', orderInput)).rejects.toMatchObject({
+    await expect(service(all).createOrder('baandoi.example.com', orderInput)).rejects.toMatchObject({
       code: 'conflict',
     });
   });
 
   it('creates the order from server prices, takes stock and returns a QR payload', async () => {
     const all = stubs();
-    const created = await service(all).createOrder('baandoi.lumio.app', orderInput);
+    const created = await service(all).createOrder('baandoi.example.com', orderInput);
 
     expect(all.orderCreate).toHaveBeenCalledOnce();
     await vi.waitFor(() => expect(all.created).toHaveBeenCalledOnce());
@@ -346,14 +346,14 @@ describe('ShopService checkout', () => {
 
   it('refuses an order when the last item was taken meanwhile', async () => {
     const all = stubs({ stockUpdateCount: 0 });
-    await expect(service(all).createOrder('baandoi.lumio.app', orderInput)).rejects.toMatchObject({
+    await expect(service(all).createOrder('baandoi.example.com', orderInput)).rejects.toMatchObject({
       code: 'conflict',
     });
   });
 
   it('refuses a quantity above what is in stock', async () => {
     const all = stubs({ products: [productRow({ stock: 1 })] });
-    await expect(service(all).createOrder('baandoi.lumio.app', orderInput)).rejects.toMatchObject({
+    await expect(service(all).createOrder('baandoi.example.com', orderInput)).rejects.toMatchObject({
       code: 'conflict',
     });
   });
@@ -364,7 +364,7 @@ describe('ShopService order lookup', () => {
     const all = stubs({
       order: orderRow({ items: orderItems }),
     });
-    const found = await service(all).order('baandoi.lumio.app', 'token-1');
+    const found = await service(all).order('baandoi.example.com', 'token-1');
 
     expect(found.order.number).toBe('LM-261022-AB12');
     expect(found.order.customerPhone).toBe('08xxxxx567');
@@ -373,7 +373,7 @@ describe('ShopService order lookup', () => {
 
   it('answers 404 for an unknown token', async () => {
     const all = stubs({ order: null });
-    await expect(service(all).order('baandoi.lumio.app', 'nope')).rejects.toMatchObject({
+    await expect(service(all).order('baandoi.example.com', 'nope')).rejects.toMatchObject({
       code: 'not_found',
     });
   });
@@ -410,7 +410,7 @@ describe('ShopService bank gateway checkout', () => {
     const orderUpdate = vi.fn().mockResolvedValue({});
     (all.tx.order as { update: unknown }).update = orderUpdate;
 
-    const created = await service(all).createOrder('baandoi.lumio.app', {
+    const created = await service(all).createOrder('baandoi.example.com', {
       ...orderInput,
       paymentMethod: 'bbl',
     });
@@ -431,7 +431,7 @@ describe('ShopService bank gateway checkout', () => {
     });
 
     await expect(
-      service(all).createOrder('baandoi.lumio.app', { ...orderInput, paymentMethod: 'bbl' }),
+      service(all).createOrder('baandoi.example.com', { ...orderInput, paymentMethod: 'bbl' }),
     ).rejects.toMatchObject({ code: 'conflict' });
     expect(all.orderCreate).not.toHaveBeenCalled();
   });
@@ -452,7 +452,7 @@ describe('ShopService card checkout', () => {
     const orderUpdate = vi.fn().mockResolvedValue({});
     (all.tx.order as { update: unknown }).update = orderUpdate;
 
-    const created = await service(all).createOrder('baandoi.lumio.app', {
+    const created = await service(all).createOrder('baandoi.example.com', {
       ...orderInput,
       paymentMethod: 'card',
     });

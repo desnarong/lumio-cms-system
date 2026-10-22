@@ -44,7 +44,7 @@ const RULES = [
   ['API_PORT ?? 4000', 'API_PORT ?? 49100'],
   ["API_PORT ?? '4000'", "API_PORT ?? '49100'"],
   ['API_PORT=4000', 'API_PORT=49100'],
-  ['Baandoi.Lumio.App:3000', 'Baandoi.Lumio.App:49200'],
+  ['Baandoi.Example.Com:3000', 'Baandoi.Example.Com:49200'],
   ['[::1]:3000', '[::1]:49200'],
 ];
 

@@ -3,7 +3,7 @@
 > ติดตามงานย่อยตาม [`docs/design/19-roadmap.md`](design/19-roadmap.md) หัวข้อ 19.3
 > อัปเดตสถานะทุกครั้งที่จบงานหนึ่งก้อน
 
-อัปเดตล่าสุด: 2026-10-22 (ก้อนที่ 50 เสร็จ)
+อัปเดตล่าสุด: 2026-10-22 (ก้อนที่ 51 เสร็จ)
 
 ## สถานะงาน (Roadmap 19.3)
 
@@ -61,6 +61,7 @@
 
 | 49  | Community edition + ไลเซนส์/ลายเซ็น                              | ✅ เสร็จ | AGPL-3.0 + ไฟล์รีโปสาธารณะ, ไลเซนส์ Ed25519 ตรวจออฟไลน์ (`GET /v1/license`, `POST /v1/public/license/verify`), ฟีเจอร์ที่ต้องมีไลเซนส์, `verifyLumioSignature` ใน SDK และ `git init` |
 | 50  | เอกสารปฏิบัติการจริง + กุญแจผู้ขาย                            | ✅ เสร็จ | `docs/OPERATIONS.md` (checklist production), `TRADEMARK.md`, 24.6.1 การเก็บ/สำรอง/หมุนกุญแจ + fingerprint |
+| 51  | ถอดโดเมนของบุคคลอื่นออกจากค่าเริ่มต้น                         | ✅ เสร็จ | เปลี่ยน `lumio.app` → `example.com` ทั้ง repo (code/seed/docs/tests), เตือน production ให้ตั้ง `PUBLIC_ROOT_DOMAIN`/`EMAIL_FROM` เอง |
 สัญลักษณ์: ✅ เสร็จ · 🔄 กำลังทำ · ⏳ ยังไม่เริ่ม · ⚠️ ติดปัญหา
 
 ## งานที่ทำเสร็จ (ก้อนที่ 1)
@@ -1880,12 +1881,12 @@ MEDIA_STORAGE=s3 S3_BUCKET=lumio-media S3_ACCESS_KEY=lumio S3_SECRET_KEY=lumio-s
 - หน้า public ยัง render แบบ on-demand (ISR) เพราะต้องรู้ host ต่อ request — ถ้าต้องได้ static file
   จริง ๆ ให้ย้ายไป route `/[host]/...` แล้วให้ middleware rewrite (จะได้ Full Route Cache ต่อเว็บ)
 
-บัญชีทดลอง (หลัง `pnpm db:seed`): `owner@lumio.app` / `editor@lumio.app` รหัสผ่าน `lumio-demo-1234`
+บัญชีทดลอง (หลัง `pnpm db:seed`): `owner@example.com` / `editor@example.com` รหัสผ่าน `lumio-demo-1234`
 ตัวอย่างการเรียก: `POST /api/v1/auth/login` → ใช้ `accessToken` เป็น `Authorization: Bearer ...`
 แล้วส่ง `X-Site-Id` เมื่อเรียก endpoint ของเว็บ (contents ทุกตัวต้องมี header นี้ เพราะ path
 เป็น `:contentId` ไม่ใช่ site)
 
-หน้า public ไม่ต้องใช้ token เลย: `GET /api/v1/public/baandoi.lumio.app/pages/home`
+หน้า public ไม่ต้องใช้ token เลย: `GET /api/v1/public/baandoi.example.com/pages/home`
 (หรือ `PUBLIC_DEFAULT_SITE=baandoi` แล้วเรียกด้วย host `localhost:49100`)
 
 การต่อ admin เข้ากับ API จริง (ทำแล้วในก้อนที่ 9): ตั้ง `VITE_API_URL` แล้ว
@@ -2404,12 +2405,12 @@ pnpm --filter @lumio/sdk test webhook-signature
 
 ## ก้อนที่ 50 — เอกสารสำหรับบริการที่ใช้งานจริง + กุญแจผู้ขาย
 
-ตอบข้อ “lumio.app มีคนใช้งานแล้ว” ด้วยเอกสารปฏิบัติการ ไม่แตะโค้ดที่รันอยู่
+ตอบข้อ “example.com มีคนใช้งานแล้ว” ด้วยเอกสารปฏิบัติการ ไม่แตะโค้ดที่รันอยู่
 
 - **`docs/OPERATIONS.md`** — checklist ก่อน/หลัง deploy: secrets, บัญชีทดลอง, RLS/migration,
   สำรอง+restore, ไลเซนส์, โดเมน/TLS/CDN, อีเมล/Stripe/webhook, สื่อ/clamav, monitoring,
   AGPL/เครื่องหมายการค้า, ขั้นตอนอัปเดตระบบที่มีผู้ใช้
-- **`TRADEMARK.md`** — AGPL ครอบโค้ด แต่ไม่ครอบชื่อ/โลโก้/โดเมน `lumio.app`;
+- **`TRADEMARK.md`** — AGPL ครอบโค้ด แต่ไม่ครอบชื่อ/โลโก้/โดเมน `example.com`;
   fork ต้องเปลี่ยนชื่อ และพูดได้แค่ว่า “built on Lumio”
 - **`docs/design/24-community-licensing.md` 24.6.1** — ที่เก็บ/สำรอง/หมุนกุญแจผู้ขาย,
   fingerprint ของ public key ที่ใช้อยู่ และขั้นตอนเมื่อกุญแจรั่ว/หาย
@@ -2417,4 +2418,23 @@ pnpm --filter @lumio/sdk test webhook-signature
 
 ```bash
 pnpm format:check
+```
+
+## ก้อนที่ 51 — ถอดโดเมนที่ไม่ใช่ของเราออกจากค่าเริ่มต้น
+
+`lumio.app` ถูกซื้อ/ถือโดยเจ้าของอื่นแล้ว จึงห้ามให้ Community ใช้เป็นค่าเริ่มต้นหรือที่อยู่อีเมล
+
+- แทนที่ทุกอ้างอิง `lumio.app` ด้วย `example.com` (โดเมนสงวนสำหรับตัวอย่าง) 363 จุด:
+  โค้ด, seed/demo, env ตัวอย่าง, เอกสาร, test fixtures และ demo credentials
+- ค่า fallback ใน runtime (`PUBLIC_ROOT_DOMAIN`, `VITE_PUBLIC_ROOT_DOMAIN`, `EMAIL_FROM`,
+  CNAME ของ subdomain) เปลี่ยนเป็น `example.com` — **production ต้องตั้งค่าเอง**:
+  - `PUBLIC_ROOT_DOMAIN`, `VITE_PUBLIC_ROOT_DOMAIN`, `EMAIL_FROM`
+  - `API_PUBLIC_URL`, `ADMIN_ORIGIN`, `RENDERER_ORIGIN`
+- `TRADEMARK.md` ไม่กล่าวอ้างโดเมนใด ๆ อีก: โดเมนของบริการโฮสต์เป็นของผู้ให้บริการแต่ละราย
+- `.env.example` อธิบายชัดว่า `example.com` เป็น placeholder ต้องเปลี่ยนก่อนเผยแพร่
+- ผลตรวจ: lint / typecheck / test **1,931 เคส** / e2e 3 เส้นทาง ผ่านทั้งหมด
+
+```bash
+grep -ri "lumio\\.app" --exclude-dir=node_modules --exclude-dir=.git .   # ต้องไม่พบ
+pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e
 ```

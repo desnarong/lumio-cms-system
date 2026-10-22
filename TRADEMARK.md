@@ -7,7 +7,7 @@ rights to the names, logos, or domains below.
 
 - The name **Lumio** (and "Lumio CMS") as a product or service name
 - The Lumio logo, icons, and visual identity
-- The **lumio.app** domain and its subdomains
+- The domain the official hosted service runs on (set by its operator)
 - Any name that suggests an official or endorsed Lumio service
 
 ## What the community may do
@@ -22,11 +22,11 @@ rights to the names, logos, or domains below.
 
 - Present itself as the official Lumio service or use the Lumio name/logo as its
   own product name
-- Register confusingly similar domains (for example another `lumio.*` TLD)
+- Register a domain that copies or closely imitates the official service
 - Use the brand in paid marketing in a way that implies endorsement
 
 If you want to use the Lumio name or logo in a commercial offering, partnership,
 or marketplace, ask first: **desnarong.sm@gmail.com**
 
-This page is a summary, not legal advice. The hosted service at lumio.app and the
-Community repository share code but are operated separately.
+This page is a summary, not legal advice. The hosted service and this Community
+repository share code but are operated separately; the operator chooses its domain.

@@ -465,7 +465,7 @@ describe('ContentsService versions', () => {
     createdAt: new Date('2026-10-20T08:00:00Z'),
     createdBy: USER_ID,
     blocks,
-    author: { name: 'สมชาย', email: 'owner@lumio.app' },
+    author: { name: 'สมชาย', email: 'owner@example.com' },
     ...overrides,
   });
 
@@ -493,13 +493,13 @@ describe('ContentsService versions', () => {
       contentVersion: {
         findMany: vi
           .fn()
-          .mockResolvedValue([versionRow({ author: { name: null, email: 'owner@lumio.app' } })]),
+          .mockResolvedValue([versionRow({ author: { name: null, email: 'owner@example.com' } })]),
       },
     });
 
     const [version] = await contents.listVersions(SITE_ID, CONTENT_ID);
 
-    expect(version?.authorName).toBe('owner@lumio.app');
+    expect(version?.authorName).toBe('owner@example.com');
   });
 
   it('returns one version with its blocks for the preview', async () => {

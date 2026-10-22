@@ -111,7 +111,7 @@ export const publicLocalesSchema = z.object({
   locales: z.array(z.string()).min(1),
   defaultLocale: z.string(),
   /**
-   * Language carried by a subdomain such as `en.baandoi.lumio.app`, or null when
+   * Language carried by a subdomain such as `en.baandoi.example.com`, or null when
    * the host itself decided nothing.
    */
   localeFromHost: z.string().nullable().default(null),

@@ -125,7 +125,7 @@ interface ResolvedSite {
   /** Raw row: `logoUrl` still has to be resolved inside the site transaction. */
   row: Site;
   siteId: string;
-  /** Language taken from a subdomain such as `en.baandoi.lumio.app`, if any. */
+  /** Language taken from a subdomain such as `en.baandoi.example.com`, if any. */
   localeFromHost: string | null;
 }
 
@@ -585,9 +585,9 @@ export class PublicService {
 
   /**
    * Resolves the tenant from the request host (see {@link resolveSiteByHost}):
-   * a verified custom domain first, then the free `*.lumio.app` subdomain.
+   * a verified custom domain first, then the free `*.example.com` subdomain.
    *
-   * A language subdomain (`en.baandoi.lumio.app`, docs/design/17-i18n.md 17.1)
+   * A language subdomain (`en.baandoi.example.com`, docs/design/17-i18n.md 17.1)
    * is tried second: the label is only accepted when the resolved site actually
    * offers that language, so a host that merely starts with `en.` still has to
    * be a real site.

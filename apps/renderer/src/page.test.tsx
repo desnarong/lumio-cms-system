@@ -4,7 +4,7 @@ import { localePathFor, type PublicPage } from '@lumio/shared';
 import { PageView } from './components/PageView';
 import { demoContents, demoForms, demoGlobalBlocks, demoMenus, demoSite } from './lib/demo';
 
-const HOST = 'baandoi.lumio.app';
+const HOST = 'baandoi.example.com';
 
 const pageOf = (slug: string, locale = 'th'): PublicPage => {
   const content = demoContents.find((item) => item.slug === slug && item.locale === locale);

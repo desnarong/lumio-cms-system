@@ -29,7 +29,7 @@ describe('PublishService.primaryHost', () => {
       dbWith({ site: { subdomain: 'baandoi' } }),
     );
 
-    expect(await service.primaryHost(SITE_ID)).toBe('baandoi.lumio.app');
+    expect(await service.primaryHost(SITE_ID)).toBe('baandoi.example.com');
   });
 
   it('returns null when the site is gone', async () => {
@@ -41,14 +41,14 @@ describe('PublishService.primaryHost', () => {
 describe('PublishService.enqueuePage', () => {
   it('queues the page path plus the sitemap', async () => {
     const queue = new InMemoryPublishQueue();
-    const service = new PublishService(queue, dbWith({ domain: { hostname: 'baandoi.lumio.app' } }));
+    const service = new PublishService(queue, dbWith({ domain: { hostname: 'baandoi.example.com' } }));
 
     const job = await service.enqueuePage({ siteId: SITE_ID, type: 'page', slug: 'about' });
 
     expect(job).toMatchObject({
       siteId: SITE_ID,
       kind: 'page',
-      host: 'baandoi.lumio.app',
+      host: 'baandoi.example.com',
       paths: ['/about', '/sitemap.xml'],
     });
     expect(queue.size).toBe(1);

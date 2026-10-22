@@ -213,7 +213,7 @@ export const createDemoContentApi = (): ContentApi => {
     createPreviewLink: async (contentId) => {
       require(contentId);
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
-      return { url: `https://demo.lumio.app/preview/demo-${contentId}`, expiresAt };
+      return { url: `https://demo.example.com/preview/demo-${contentId}`, expiresAt };
     },
 
     listVersions: async (contentId) => versions.get(contentId) ?? [],

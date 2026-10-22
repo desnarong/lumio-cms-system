@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { StaticPublisher, type StaticFetchLike } from './static-publisher';
 
-const site = 'baandoi.lumio.app';
+const site = 'baandoi.example.com';
 const config = {
   rendererUrl: 'http://renderer.test',
   staticPublishUrl: 'https://cdn.test/upload',

@@ -203,6 +203,6 @@ export const publicSiteUrl = (site: {
 }): string => {
   const primary = site.domains?.find((domain) => domain.isPrimary && domain.sslStatus === 'active');
   if (primary) return `https://${primary.hostname}`;
-  const root = process.env.PUBLIC_ROOT_DOMAIN ?? 'lumio.app';
+  const root = process.env.PUBLIC_ROOT_DOMAIN ?? 'example.com';
   return `https://${site.subdomain}.${root}`;
 };

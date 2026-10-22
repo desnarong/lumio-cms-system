@@ -180,8 +180,8 @@ export interface LocaleHost {
 }
 
 /**
- * Language subdomains (docs/design/17-i18n.md 17.1): `en.baandoi.lumio.app`
- * serves the English version of `baandoi.lumio.app`. Only a leading label that
+ * Language subdomains (docs/design/17-i18n.md 17.1): `en.baandoi.example.com`
+ * serves the English version of `baandoi.example.com`. Only a leading label that
  * is one of the offered languages is treated as such, so a real subdomain named
  * `en` is the one exception the docs already call out.
  */

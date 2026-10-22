@@ -17,7 +17,7 @@ describe('CdnPurgeNotifier', () => {
 
     const result = await notifier(fetchImpl).purge(
       { cdnPurgeUrl: '', cdnPurgeSecret: '' },
-      'baandoi.lumio.app',
+      'baandoi.example.com',
       ['/'],
     );
 
@@ -29,7 +29,7 @@ describe('CdnPurgeNotifier', () => {
     const fetchImpl = vi.fn();
 
     await notifier(fetchImpl).purge(config, null, ['/']);
-    await notifier(fetchImpl).purge(config, 'baandoi.lumio.app', []);
+    await notifier(fetchImpl).purge(config, 'baandoi.example.com', []);
 
     expect(fetchImpl).not.toHaveBeenCalled();
   });
@@ -37,7 +37,7 @@ describe('CdnPurgeNotifier', () => {
   it('posts the host, the paths and signs the body with the site key', async () => {
     const fetchImpl = vi.fn().mockResolvedValue({ ok: true, status: 200 });
 
-    const result = await notifier(fetchImpl).purge(config, 'baandoi.lumio.app', ['/', '/menu']);
+    const result = await notifier(fetchImpl).purge(config, 'baandoi.example.com', ['/', '/menu']);
 
     expect(result).toEqual({ delivered: true, skipped: false, status: 200 });
     const [url, init] = fetchImpl.mock.calls[0] as [string, { headers: Record<string, string>; body: string }];
@@ -45,13 +45,13 @@ describe('CdnPurgeNotifier', () => {
     expect(init.headers['x-lumio-purge-signature']).toBe(
       createHmac('sha256', 'purge-secret').update(init.body).digest('hex'),
     );
-    expect(JSON.parse(init.body)).toEqual({ host: 'baandoi.lumio.app', paths: ['/', '/menu'] });
+    expect(JSON.parse(init.body)).toEqual({ host: 'baandoi.example.com', paths: ['/', '/menu'] });
   });
 
   it('reports a refusal without throwing', async () => {
     const fetchImpl = vi.fn().mockResolvedValue({ ok: false, status: 503 });
 
-    const result = await notifier(fetchImpl).purge(config, 'baandoi.lumio.app', ['/']);
+    const result = await notifier(fetchImpl).purge(config, 'baandoi.example.com', ['/']);
 
     expect(result).toEqual({ delivered: false, skipped: false, status: 503 });
   });
@@ -59,7 +59,7 @@ describe('CdnPurgeNotifier', () => {
   it('swallows a network error so the publish still succeeds', async () => {
     const fetchImpl = vi.fn().mockRejectedValue(new Error('ECONNREFUSED'));
 
-    await expect(notifier(fetchImpl).purge(config, 'baandoi.lumio.app', ['/'])).resolves.toEqual({
+    await expect(notifier(fetchImpl).purge(config, 'baandoi.example.com', ['/'])).resolves.toEqual({
       delivered: false,
       skipped: false,
       status: null,

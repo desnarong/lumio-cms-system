@@ -64,7 +64,7 @@ admin         → packages/blocks, packages/ui, packages/tokens, packages/shared
 
 - 1 แพลตฟอร์ม ดูแลหลายเว็บ: ทุกตารางมี `site_id` + Row-Level Security (RLS) ใน PostgreSQL
 - Domain mapping: `customdomain.com → site_id` ผ่านตาราง `domains` + Caddy on-demand TLS
-- Subdomain ฟรี: `mysite.lumio.app`
+- Subdomain ฟรี: `mysite.example.com`
 
 ### การ resolve site จาก request
 1. อ่าน `Host` header

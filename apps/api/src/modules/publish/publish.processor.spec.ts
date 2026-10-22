@@ -64,7 +64,7 @@ describe('PublishProcessor', () => {
     await queue.add({
       siteId: 'site-1',
       kind: 'page',
-      host: 'baandoi.lumio.app',
+      host: 'baandoi.example.com',
       paths: ['/', '/menu'],
     });
 
@@ -73,7 +73,7 @@ describe('PublishProcessor', () => {
     expect(summary).toEqual({ processed: 1, failed: 0, skipped: 0 });
     expect(cdn.purge).toHaveBeenCalledWith(
       { cdnPurgeUrl: 'https://purge.test/api', cdnPurgeSecret: 'purge-key' },
-      'baandoi.lumio.app',
+      'baandoi.example.com',
       ['/', '/menu'],
     );
   });
@@ -89,7 +89,7 @@ describe('PublishProcessor', () => {
       staticStub(),
       settings.service,
     );
-    await queue.add({ siteId: 'site-1', kind: 'page', host: 'baandoi.lumio.app', paths: ['/'] });
+    await queue.add({ siteId: 'site-1', kind: 'page', host: 'baandoi.example.com', paths: ['/'] });
 
     const summary = await processor.drain();
 
@@ -107,7 +107,7 @@ describe('PublishProcessor', () => {
       staticStub(),
       settings.service,
     );
-    await queue.add({ siteId: 'site-1', kind: 'page', host: 'baandoi.lumio.app', paths: ['/'] });
+    await queue.add({ siteId: 'site-1', kind: 'page', host: 'baandoi.example.com', paths: ['/'] });
 
     const summary = await processor.drain();
 
@@ -126,7 +126,7 @@ describe('PublishProcessor', () => {
       staticPages,
       settings.service,
     );
-    await queue.add({ siteId: 'site-1', kind: 'page', host: 'baandoi.lumio.app', paths: ['/'] });
+    await queue.add({ siteId: 'site-1', kind: 'page', host: 'baandoi.example.com', paths: ['/'] });
 
     await processor.drain();
 
@@ -136,7 +136,7 @@ describe('PublishProcessor', () => {
         staticPublishUrl: 'https://cdn.test/upload',
         staticPublishSecret: 'upload-key',
       },
-      'baandoi.lumio.app',
+      'baandoi.example.com',
       ['/'],
     );
     expect(settings.recordRun).toHaveBeenCalledWith('site-1', {
@@ -157,7 +157,7 @@ describe('PublishProcessor', () => {
       staticStub(),
       settings.service,
     );
-    await queue.add({ siteId: 'site-1', kind: 'page', host: 'baandoi.lumio.app', paths: ['/'] });
+    await queue.add({ siteId: 'site-1', kind: 'page', host: 'baandoi.example.com', paths: ['/'] });
 
     await processor.drain();
 

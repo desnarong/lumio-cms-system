@@ -12,7 +12,7 @@ describe('normalizeTrackingPath', () => {
   });
 
   it('drops the origin, query and hash', () => {
-    expect(normalizeTrackingPath('https://baandoi.lumio.app/services?utm=1#top')).toBe('/services');
+    expect(normalizeTrackingPath('https://baandoi.example.com/services?utm=1#top')).toBe('/services');
   });
 
   it('adds a leading slash and collapses repeats', () => {

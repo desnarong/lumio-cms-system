@@ -12,7 +12,7 @@ import {
 
 const KEY = 'test-encryption-key-for-webhooks';
 const SECRET = 'a-very-long-signing-secret';
-const SITE = { id: 'site-1', name: 'ร้านกาแฟบ้านดอย', url: 'https://baandoi.lumio.app' };
+const SITE = { id: 'site-1', name: 'ร้านกาแฟบ้านดอย', url: 'https://baandoi.example.com' };
 
 const order = (overrides: Partial<WebhookOrderSource> = {}): WebhookOrderSource => ({
   number: 'LM-261022-AB12',

@@ -3,11 +3,11 @@ import { resolveRequestHost, siteOrigin } from './host';
 
 describe('resolveRequestHost', () => {
   it('prefers x-forwarded-host because the CDN terminates the request', () => {
-    expect(resolveRequestHost('baandoi.lumio.app', 'renderer:49200')).toBe('baandoi.lumio.app');
+    expect(resolveRequestHost('baandoi.example.com', 'renderer:49200')).toBe('baandoi.example.com');
   });
 
   it('takes the first entry of a forwarded chain', () => {
-    expect(resolveRequestHost('baandoi.lumio.app, proxy', null)).toBe('baandoi.lumio.app');
+    expect(resolveRequestHost('baandoi.example.com, proxy', null)).toBe('baandoi.example.com');
   });
 
   it('falls back to the Host header', () => {
@@ -21,7 +21,7 @@ describe('resolveRequestHost', () => {
 
 describe('siteOrigin', () => {
   it('uses https for real domains', () => {
-    expect(siteOrigin('baandoi.lumio.app')).toBe('https://baandoi.lumio.app');
+    expect(siteOrigin('baandoi.example.com')).toBe('https://baandoi.example.com');
   });
 
   it('uses http for loopback so local preview links work', () => {

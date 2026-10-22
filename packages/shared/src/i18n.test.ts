@@ -296,8 +296,8 @@ describe('negotiateLocale', () => {
 
 describe('splitLocaleHost', () => {
   it('reads an offered language from the first label', () => {
-    expect(splitLocaleHost('en.baandoi.lumio.app', ['th', 'en'])).toEqual({
-      host: 'baandoi.lumio.app',
+    expect(splitLocaleHost('en.baandoi.example.com', ['th', 'en'])).toEqual({
+      host: 'baandoi.example.com',
       locale: 'en',
     });
   });
@@ -315,8 +315,8 @@ describe('splitLocaleHost', () => {
   });
 
   it('normalises the case of the host before deciding', () => {
-    expect(splitLocaleHost('EN.Baandoi.Lumio.App.', ['th', 'en'])).toEqual({
-      host: 'baandoi.lumio.app',
+    expect(splitLocaleHost('EN.Baandoi.Example.Com.', ['th', 'en'])).toEqual({
+      host: 'baandoi.example.com',
       locale: 'en',
     });
   });

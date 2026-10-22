@@ -124,13 +124,13 @@ describe('loadSiteLocales', () => {
       jsonResponse({ locales: ['th', 'en'], defaultLocale: 'th', localeFromHost: null }),
     );
 
-    const first = await loadSiteLocales('baandoi.lumio.app', { fetcher });
-    const second = await loadSiteLocales('baandoi.lumio.app', { fetcher });
+    const first = await loadSiteLocales('baandoi.example.com', { fetcher });
+    const second = await loadSiteLocales('baandoi.example.com', { fetcher });
 
     expect(first).toEqual({ locales: ['th', 'en'], defaultLocale: 'th', localeFromHost: null });
     expect(second).toEqual(first);
     expect(fetcher).toHaveBeenCalledTimes(1);
-    expect(String(fetcher.mock.calls[0]?.[0])).toContain('/api/v1/public/baandoi.lumio.app/locales');
+    expect(String(fetcher.mock.calls[0]?.[0])).toContain('/api/v1/public/baandoi.example.com/locales');
   });
 
   it('refreshes after the cache lifetime', async () => {
@@ -138,9 +138,9 @@ describe('loadSiteLocales', () => {
     const fetcher = vi.fn().mockResolvedValue(jsonResponse({ locales: ['th'], defaultLocale: 'th' }));
     let now = 0;
 
-    await loadSiteLocales('baandoi.lumio.app', { fetcher, now: () => now });
+    await loadSiteLocales('baandoi.example.com', { fetcher, now: () => now });
     now += 400_000;
-    await loadSiteLocales('baandoi.lumio.app', { fetcher, now: () => now });
+    await loadSiteLocales('baandoi.example.com', { fetcher, now: () => now });
 
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
@@ -162,7 +162,7 @@ describe('loadSiteLocales', () => {
       .fn()
       .mockResolvedValue(jsonResponse({ locales: ['th', 'en'], defaultLocale: 'th', localeFromHost: 'en' }));
 
-    const locales = await loadSiteLocales('en.baandoi.lumio.app', { fetcher });
+    const locales = await loadSiteLocales('en.baandoi.example.com', { fetcher });
 
     expect(locales?.localeFromHost).toBe('en');
   });

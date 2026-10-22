@@ -3,7 +3,7 @@ import { isLoopbackHost, normalizeHost, rootDomain, subdomainOf } from './host';
 
 describe('normalizeHost', () => {
   it('lowercases and drops the port', () => {
-    expect(normalizeHost('Baandoi.Lumio.App:49200')).toBe('baandoi.lumio.app');
+    expect(normalizeHost('Baandoi.Example.Com:49200')).toBe('baandoi.example.com');
   });
 
   it('keeps IPv6 hosts intact', () => {
@@ -17,16 +17,16 @@ describe('normalizeHost', () => {
 
 describe('subdomainOf', () => {
   it('reads the free subdomain', () => {
-    expect(subdomainOf('baandoi.lumio.app', 'lumio.app')).toBe('baandoi');
+    expect(subdomainOf('baandoi.example.com', 'example.com')).toBe('baandoi');
   });
 
   it('ignores custom domains and the root domain itself', () => {
-    expect(subdomainOf('baandoicoffee.com', 'lumio.app')).toBeNull();
-    expect(subdomainOf('lumio.app', 'lumio.app')).toBeNull();
+    expect(subdomainOf('baandoicoffee.com', 'example.com')).toBeNull();
+    expect(subdomainOf('example.com', 'example.com')).toBeNull();
   });
 
   it('ignores nested hosts so a lookalike cannot claim a tenant', () => {
-    expect(subdomainOf('evil.baandoi.lumio.app', 'lumio.app')).toBeNull();
+    expect(subdomainOf('evil.baandoi.example.com', 'example.com')).toBeNull();
   });
 });
 
@@ -35,15 +35,15 @@ describe('isLoopbackHost', () => {
     expect(isLoopbackHost('localhost')).toBe(true);
     expect(isLoopbackHost('127.0.0.1')).toBe(true);
     expect(isLoopbackHost('::1')).toBe(true);
-    expect(isLoopbackHost('baandoi.lumio.app')).toBe(false);
+    expect(isLoopbackHost('baandoi.example.com')).toBe(false);
   });
 });
 
 describe('rootDomain', () => {
-  it('reads PUBLIC_ROOT_DOMAIN with a lumio.app default', () => {
+  it('reads PUBLIC_ROOT_DOMAIN with a example.com default', () => {
     const previous = process.env.PUBLIC_ROOT_DOMAIN;
     delete process.env.PUBLIC_ROOT_DOMAIN;
-    expect(rootDomain()).toBe('lumio.app');
+    expect(rootDomain()).toBe('example.com');
     process.env.PUBLIC_ROOT_DOMAIN = 'Example.COM';
     expect(rootDomain()).toBe('example.com');
     if (previous === undefined) delete process.env.PUBLIC_ROOT_DOMAIN;

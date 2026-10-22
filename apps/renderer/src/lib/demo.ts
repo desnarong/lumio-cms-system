@@ -426,7 +426,7 @@ export const createDemoPublicApi = (): PublicApi => ({
     };
   },
   async getPreview(_token: string): Promise<PublicPage> {
-    const page = await this.getPage('baandoi.lumio.app', 'home', 'th');
+    const page = await this.getPage('baandoi.example.com', 'home', 'th');
     if (!page.content) throw new ContentNotFoundError('ไม่พบหน้านี้');
     return { ...page, content: { ...page.content, seo: { ...page.content.seo, noindex: true } } };
   },

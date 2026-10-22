@@ -183,8 +183,8 @@ async function seedUsersAndSites(): Promise<void> {
 
   await prisma.user.createMany({
     data: [
-      { id: ID.owner, email: 'owner@lumio.app', name: 'สมชาย ใจดี', passwordHash },
-      { id: ID.editor, email: 'editor@lumio.app', name: 'ปิยะดา แสงทอง', passwordHash },
+      { id: ID.owner, email: 'owner@example.com', name: 'สมชาย ใจดี', passwordHash },
+      { id: ID.editor, email: 'editor@example.com', name: 'ปิยะดา แสงทอง', passwordHash },
     ],
   });
 
@@ -248,7 +248,7 @@ async function seedCafe(): Promise<void> {
       data: [
         {
           siteId: ID.cafeSite,
-          hostname: 'baandoi.lumio.app',
+          hostname: 'baandoi.example.com',
           isPrimary: true,
           sslStatus: 'active',
           verifiedAt: new Date(),
@@ -461,7 +461,7 @@ async function seedCafe(): Promise<void> {
             { name: 'email', label: 'อีเมล', type: 'email', required: true },
             { name: 'message', label: 'ข้อความ', type: 'textarea', required: false },
           ],
-          notify: { email: ['owner@lumio.app'], lineToken: null },
+          notify: { email: ['owner@example.com'], lineToken: null },
           successMessage: 'ขอบคุณค่ะ เราจะติดต่อกลับภายใน 1 วันทำการ',
         },
       ],
@@ -668,7 +668,7 @@ async function seedClinic(): Promise<void> {
       data: [
         {
           siteId: ID.clinicSite,
-          hostname: 'yimsauy.lumio.app',
+          hostname: 'yimsauy.example.com',
           isPrimary: true,
           sslStatus: 'active',
           verifiedAt: new Date(),
@@ -761,7 +761,7 @@ async function seedClinic(): Promise<void> {
             { name: 'phone', label: 'เบอร์โทร', type: 'tel', required: true },
             { name: 'date', label: 'วันที่สะดวก', type: 'date', required: true },
           ],
-          notify: { email: ['owner@lumio.app'], lineToken: null },
+          notify: { email: ['owner@example.com'], lineToken: null },
           successMessage: 'รับคิวแล้ว เจ้าหน้าที่จะโทรยืนยันภายใน 2 ชั่วโมง',
         },
       ],

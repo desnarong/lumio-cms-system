@@ -35,7 +35,7 @@ const summary = (dismissed: boolean): DashboardSummary => {
       id: 'demo-site-1',
       name: 'กาแฟบ้านดอย',
       subdomain: 'baandoi',
-      url: 'https://baandoi.lumio.app',
+      url: 'https://baandoi.example.com',
       homeContentId: DEMO_CONTENT_ID,
     },
     stats: {

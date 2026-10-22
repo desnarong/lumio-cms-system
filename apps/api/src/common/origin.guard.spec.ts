@@ -13,16 +13,16 @@ const contextFor = (method: string, origin?: string): ExecutionContext =>
 describe('resolveAllowedOrigins', () => {
   it('collects the admin, renderer and API origins without duplicates', () => {
     const origins = resolveAllowedOrigins({
-      ADMIN_ORIGIN: 'https://app.lumio.app',
-      RENDERER_ORIGIN: 'https://lumio.app,https://www.lumio.app',
-      API_PUBLIC_URL: 'https://api.lumio.app',
+      ADMIN_ORIGIN: 'https://app.example.com',
+      RENDERER_ORIGIN: 'https://example.com,https://www.example.com',
+      API_PUBLIC_URL: 'https://api.example.com',
     } as NodeJS.ProcessEnv);
 
     expect(origins).toEqual([
-      'https://app.lumio.app',
-      'https://lumio.app',
-      'https://www.lumio.app',
-      'https://api.lumio.app',
+      'https://app.example.com',
+      'https://example.com',
+      'https://www.example.com',
+      'https://api.example.com',
     ]);
   });
 
@@ -39,9 +39,9 @@ describe('OriginGuard', () => {
   });
 
   it('allows a state-changing request from the configured admin origin', () => {
-    process.env.ADMIN_ORIGIN = 'https://app.lumio.app';
+    process.env.ADMIN_ORIGIN = 'https://app.example.com';
     try {
-      expect(new OriginGuard().canActivate(contextFor('POST', 'https://app.lumio.app'))).toBe(true);
+      expect(new OriginGuard().canActivate(contextFor('POST', 'https://app.example.com'))).toBe(true);
     } finally {
       delete process.env.ADMIN_ORIGIN;
     }

@@ -20,7 +20,7 @@ const request = (overrides: Partial<CheckoutRequest> = {}): CheckoutRequest => (
   mode: 'payment',
   invoiceId: 'inv-1',
   siteId: SITE_ID,
-  email: 'owner@lumio.app',
+  email: 'owner@example.com',
   ...overrides,
 });
 
@@ -44,7 +44,7 @@ describe('buildCheckoutBody', () => {
     expect(body.get('success_url')).toContain('checkout=success');
     expect(body.get('success_url')).toContain('{CHECKOUT_SESSION_ID}');
     expect(body.get('cancel_url')).toContain('checkout=cancel');
-    expect(body.get('customer_email')).toBe('owner@lumio.app');
+    expect(body.get('customer_email')).toBe('owner@example.com');
   });
 
   it('asks for a monthly subscription when the owner pays by card', () => {

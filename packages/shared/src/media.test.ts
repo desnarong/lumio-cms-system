@@ -105,8 +105,8 @@ describe('pickVariant', () => {
 
 describe('buildSrcSet', () => {
   it('links one format, de-duplicated and sorted by width', () => {
-    expect(buildSrcSet(variants, 'https://cdn.lumio.app/media')).toBe(
-      'https://cdn.lumio.app/media/site/hero-480.webp 480w, https://cdn.lumio.app/media/site/hero-1280.webp 1280w',
+    expect(buildSrcSet(variants, 'https://cdn.example.com/media')).toBe(
+      'https://cdn.example.com/media/site/hero-480.webp 480w, https://cdn.example.com/media/site/hero-1280.webp 1280w',
     );
   });
 

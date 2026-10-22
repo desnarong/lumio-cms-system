@@ -55,7 +55,7 @@ const clients = ({ demo = true, listSites, listPages }: Options = {}): AdminClie
 const signedIn = (all: AdminClients, siteId: string | null): void => {
   all.session.write({
     accessToken: 'token',
-    user: { id: 'u1', email: 'owner@lumio.app', name: 'สมชาย', avatarUrl: null },
+    user: { id: 'u1', email: 'owner@example.com', name: 'สมชาย', avatarUrl: null },
     siteId,
   });
 };

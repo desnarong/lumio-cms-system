@@ -16,7 +16,7 @@ pnpm dev
 ```
 
 - Admin: <http://localhost:49300> · API: <http://localhost:49100/api> · Renderer: <http://localhost:49200>
-- บัญชีทดลองหลัง `pnpm db:seed`: `owner@lumio.app` / `lumio-demo-1234`
+- บัญชีทดลองหลัง `pnpm db:seed`: `owner@example.com` / `lumio-demo-1234`
 
 ## กฎที่ต้องผ่านก่อนส่ง PR
 

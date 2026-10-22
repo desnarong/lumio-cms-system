@@ -22,14 +22,14 @@ describe('App shell', () => {
   });
 
   it('explains the demo credentials when no API is configured', () => {
-    expect(render()).toContain('owner@lumio.app');
+    expect(render()).toContain('owner@example.com');
   });
 
   it('waits for the session check when a session is already stored', () => {
     const clients = demoClients();
     clients.session.write({
       accessToken: 'token',
-      user: { id: 'u1', email: 'owner@lumio.app', name: 'สมชาย', avatarUrl: null },
+      user: { id: 'u1', email: 'owner@example.com', name: 'สมชาย', avatarUrl: null },
       siteId: 'demo-site-1',
     });
 

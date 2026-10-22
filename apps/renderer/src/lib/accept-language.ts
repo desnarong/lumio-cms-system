@@ -77,7 +77,7 @@ export interface LocaleRoutingInput {
   /** Languages the site offers, as the API reports them. */
   offered: readonly string[];
   defaultLocale: string;
-  /** Language taken from a subdomain such as `en.baandoi.lumio.app`. */
+  /** Language taken from a subdomain such as `en.baandoi.example.com`. */
   localeFromHost: string | null;
   /**
    * Only real navigations are negotiated: prefetches, assets and non-GET

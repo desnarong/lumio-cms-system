@@ -27,7 +27,7 @@ const domain = (overrides: Partial<DomainSummary> = {}): DomainSummary => ({
 
 const member = (overrides: Partial<MemberSummary> = {}): MemberSummary => ({
   userId: 'u1',
-  email: 'owner@lumio.app',
+  email: 'owner@example.com',
   name: 'สมชาย',
   avatarUrl: null,
   role: 'owner',
@@ -90,7 +90,7 @@ describe('GeneralView', () => {
     );
 
     expect(html).toContain('ชื่อเว็บ');
-    expect(html).toContain('baandoi.lumio.app');
+    expect(html).toContain('baandoi.example.com');
     expect(html.match(/ui-button--primary/g)).toHaveLength(1);
   });
 
@@ -113,7 +113,7 @@ describe('GeneralView', () => {
 
 describe('DomainView', () => {
   const base = {
-    cnameTarget: 'baandoi.lumio.app',
+    cnameTarget: 'baandoi.example.com',
     hostname: '',
     busy: false,
     error: null,
@@ -125,7 +125,7 @@ describe('DomainView', () => {
 
   it('explains where to point the domain when none is connected', () => {
     const html = renderToStaticMarkup(<DomainView {...base} domains={[]} />);
-    expect(html).toContain('ที่อยู่ฟรีของเว็บคุณ: baandoi.lumio.app');
+    expect(html).toContain('ที่อยู่ฟรีของเว็บคุณ: baandoi.example.com');
     expect(html).toContain('ยังไม่ได้เชื่อมโดเมนของตัวเอง');
   });
 
@@ -165,11 +165,11 @@ describe('TeamView', () => {
     const html = renderToStaticMarkup(
       <TeamView
         {...base}
-        members={[member(), member({ userId: 'u2', email: 'e@lumio.app', name: null, role: 'editor' })]}
+        members={[member(), member({ userId: 'u2', email: 'e@example.com', name: null, role: 'editor' })]}
       />,
     );
     expect(html).toContain('นำออก');
-    expect(html).toContain('e@lumio.app');
+    expect(html).toContain('e@example.com');
   });
 
   it('keeps exactly one primary button', () => {

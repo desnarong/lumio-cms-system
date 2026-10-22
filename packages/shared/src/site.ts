@@ -90,7 +90,7 @@ export type DomainSummary = z.infer<typeof domainSummarySchema>;
 /** `GET /sites/:id/domains` also says where to point the domain. */
 export const domainListSchema = z.object({
   items: z.array(domainSummarySchema),
-  /** CNAME target, e.g. `baandoi.lumio.app`. */
+  /** CNAME target, e.g. `baandoi.example.com`. */
   cnameTarget: z.string(),
 });
 export type DomainList = z.infer<typeof domainListSchema>;

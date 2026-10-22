@@ -34,8 +34,8 @@ const request = (overrides: Partial<BblPaymentRequest> = {}): BblPaymentRequest 
   amount: 40_000,
   customerEmail: 'arunee@example.com',
   description: 'คำสั่งซื้อ LM-261022-AB12',
-  publicUrl: 'https://shop.lumio.app',
-  apiUrl: 'https://api.lumio.app',
+  publicUrl: 'https://shop.example.com',
+  apiUrl: 'https://api.example.com',
   ...overrides,
 });
 
@@ -71,9 +71,9 @@ describe('Bangkok Bank payment page', () => {
     expect(body.get('reference')).toBe('LM-261022-AB12');
     expect(body.get('amount')).toBe('400.00');
     expect(body.get('currency')).toBe('THB');
-    expect(body.get('returnUrl')).toBe('https://shop.lumio.app/order/token-1?paid=1');
-    expect(body.get('cancelUrl')).toBe('https://shop.lumio.app/order/token-1?cancelled=1');
-    expect(body.get('notifyUrl')).toBe(`https://api.lumio.app${BBL_WEBHOOK_ROUTE}`);
+    expect(body.get('returnUrl')).toBe('https://shop.example.com/order/token-1?paid=1');
+    expect(body.get('cancelUrl')).toBe('https://shop.example.com/order/token-1?cancelled=1');
+    expect(body.get('notifyUrl')).toBe(`https://api.example.com${BBL_WEBHOOK_ROUTE}`);
     expect(body.get('metadata[siteId]')).toBe(request().siteId);
     expect(body.getAll('paymentMethods[]')).toEqual(['card', 'qr']);
     expect(body.get('customerEmail')).toBe('arunee@example.com');

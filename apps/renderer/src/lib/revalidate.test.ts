@@ -65,10 +65,10 @@ describe('decideRevalidate', () => {
     const decision = decideRevalidate({
       secret: SECRET,
       provided: SECRET,
-      body: { paths: ['/'], host: 'Baandoi.Lumio.App' },
+      body: { paths: ['/'], host: 'Baandoi.Example.Com' },
     });
 
-    expect(decision).toEqual({ ok: true, paths: ['/'], host: 'baandoi.lumio.app' });
+    expect(decision).toEqual({ ok: true, paths: ['/'], host: 'baandoi.example.com' });
   });
 
   it('drops a host that is not a plain hostname', () => {

@@ -26,7 +26,7 @@ const hostOf = (request: NextRequest): string => {
  * 2. Honours the visitor's `Accept-Language` for a plain path, but only towards
  *    a language the site really offers and only on a real navigation
  *    (docs/design/17-i18n.md 17.4).
- * 3. Reads a language subdomain such as `en.baandoi.lumio.app`.
+ * 3. Reads a language subdomain such as `en.baandoi.example.com`.
  * 4. Adds a per-request CSP with a nonce. Next.js reads the request's
  *    `content-security-policy` header and stamps the nonce onto its own scripts.
  */

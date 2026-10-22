@@ -15,7 +15,7 @@ const request: StripeOrderRequest = {
     { title: 'แก้วเซรามิก', price: 29_000, quantity: 1 },
   ],
   shippingFee: 5_000,
-  publicUrl: 'https://baandoi.lumio.app',
+  publicUrl: 'https://baandoi.example.com',
 };
 
 describe('buildStripeOrderBody', () => {
@@ -23,8 +23,8 @@ describe('buildStripeOrderBody', () => {
     const body = buildStripeOrderBody(request);
 
     expect(body.get('mode')).toBe('payment');
-    expect(body.get('success_url')).toBe('https://baandoi.lumio.app/order/token-1?paid=1');
-    expect(body.get('cancel_url')).toBe('https://baandoi.lumio.app/order/token-1?cancelled=1');
+    expect(body.get('success_url')).toBe('https://baandoi.example.com/order/token-1?paid=1');
+    expect(body.get('cancel_url')).toBe('https://baandoi.example.com/order/token-1?cancelled=1');
     expect(body.get('metadata[orderNumber]')).toBe('LM-261022-AB12');
     expect(body.get('metadata[siteId]')).toBe('site-1');
     expect(body.get('customer_email')).toBe('buyer@example.com');

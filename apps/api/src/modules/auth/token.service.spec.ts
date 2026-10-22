@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { ApiException } from '../../common/api-error';
 import { TokenService } from './token.service';
 
-const USER = { id: '00000000-0000-4000-8000-000000000001', email: 'owner@lumio.app' };
+const USER = { id: '00000000-0000-4000-8000-000000000001', email: 'owner@example.com' };
 
 describe('TokenService', () => {
   let tokens: TokenService;

@@ -15,7 +15,7 @@ describe('createDemoSettingsApi', () => {
     const api = createDemoSettingsApi();
 
     const list = await api.listDomains();
-    expect(list.cnameTarget).toBe('baandoi.lumio.app');
+    expect(list.cnameTarget).toBe('baandoi.example.com');
 
     const created = await api.addDomain({ hostname: 'baandoi.com', isPrimary: false });
     expect(created.sslStatus).toBe('pending');
@@ -37,7 +37,7 @@ describe('createDemoSettingsApi', () => {
     const api = createDemoSettingsApi();
     const before = (await api.listMembers()).length;
 
-    const invited = await api.inviteMember({ email: 'new@lumio.app', role: 'author' });
+    const invited = await api.inviteMember({ email: 'new@example.com', role: 'author' });
     expect((await api.listMembers()).length).toBe(before + 1);
 
     const updated = await api.updateMemberRole(invited.userId, { role: 'admin' });

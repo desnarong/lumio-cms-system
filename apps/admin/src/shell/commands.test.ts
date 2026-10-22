@@ -27,7 +27,7 @@ describe('navigationCommands', () => {
 
 describe('actionCommands', () => {
   it('adds create, view and sign-out actions', () => {
-    const ids = actionCommands({ t: th, publicUrl: 'https://baandoi.lumio.app' }).map((item) => item.id);
+    const ids = actionCommands({ t: th, publicUrl: 'https://baandoi.example.com' }).map((item) => item.id);
     expect(ids).toEqual(['action:new-page', 'action:new-post', 'action:view-site', 'action:sign-out']);
   });
 

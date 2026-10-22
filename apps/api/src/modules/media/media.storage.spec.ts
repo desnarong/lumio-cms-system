@@ -74,10 +74,10 @@ describe('sniffImageMime', () => {
 
 describe('LocalMediaStorage', () => {
   it('presigns an upload URL that carries the site it may write to', async () => {
-    const storage = new LocalMediaStorage('/tmp/lumio-test', SECRET, 'https://api.lumio.app', 60000);
+    const storage = new LocalMediaStorage('/tmp/lumio-test', SECRET, 'https://api.example.com', 60000);
     const presigned = await storage.presign(TICKET);
 
-    expect(presigned.url.startsWith('https://api.lumio.app/api/v1/media/upload/')).toBe(true);
+    expect(presigned.url.startsWith('https://api.example.com/api/v1/media/upload/')).toBe(true);
     expect(presigned.headers['content-type']).toBe('image/jpeg');
     expect(storage.verify(new URL(presigned.url).pathname.split('/').pop() ?? '')).toEqual(TICKET);
   });

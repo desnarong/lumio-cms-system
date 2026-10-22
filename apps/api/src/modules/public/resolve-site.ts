@@ -5,7 +5,7 @@ import { isLoopbackHost, normalizeHost, subdomainOf } from './host';
 
 /**
  * Resolves the tenant a request host belongs to: a verified custom domain first,
- * then the free `*.lumio.app` subdomain. Loopback hosts only resolve when
+ * then the free `*.example.com` subdomain. Loopback hosts only resolve when
  * `PUBLIC_DEFAULT_SITE` is set, which keeps local preview working without ever
  * leaking one site onto another host. Unknown hosts answer 404.
  *

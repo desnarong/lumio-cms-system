@@ -6,14 +6,14 @@ describe('reportNotFound', () => {
     const fetchImpl = vi.fn().mockResolvedValue({ ok: true });
 
     await expect(
-      reportNotFound('baandoi.lumio.app', '/promo-2025', {
+      reportNotFound('baandoi.example.com', '/promo-2025', {
         baseUrl: 'http://api.test/',
         fetchImpl: fetchImpl as unknown as typeof fetch,
       }),
     ).resolves.toBe(true);
 
     expect(fetchImpl).toHaveBeenCalledWith(
-      'http://api.test/api/v1/public/baandoi.lumio.app/not-found',
+      'http://api.test/api/v1/public/baandoi.example.com/not-found',
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify({ path: '/promo-2025' }),

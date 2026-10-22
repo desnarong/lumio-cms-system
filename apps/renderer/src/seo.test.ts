@@ -36,44 +36,44 @@ const pageOf = (slug: string, type: 'page' | 'post' = 'page', locale = 'th'): Pu
 
 describe('canonicalFor', () => {
   it('uses the site origin and the public path', () => {
-    expect(canonicalFor(pageOf('home'), 'baandoi.lumio.app')).toBe('https://baandoi.lumio.app/');
-    expect(canonicalFor(pageOf('how-to-pick-beans', 'post'), 'baandoi.lumio.app')).toBe(
-      'https://baandoi.lumio.app/posts/how-to-pick-beans',
+    expect(canonicalFor(pageOf('home'), 'baandoi.example.com')).toBe('https://baandoi.example.com/');
+    expect(canonicalFor(pageOf('how-to-pick-beans', 'post'), 'baandoi.example.com')).toBe(
+      'https://baandoi.example.com/posts/how-to-pick-beans',
     );
   });
 
   it('uses the language prefix of a translated page', () => {
-    expect(canonicalFor(pageOf('home', 'page', 'en'), 'baandoi.lumio.app')).toBe(
-      'https://baandoi.lumio.app/en',
+    expect(canonicalFor(pageOf('home', 'page', 'en'), 'baandoi.example.com')).toBe(
+      'https://baandoi.example.com/en',
     );
   });
 });
 
 describe('buildMetadata', () => {
   it('prefers the SEO title the editor saved', () => {
-    const seo = buildMetadata(pageOf('home'), 'baandoi.lumio.app');
+    const seo = buildMetadata(pageOf('home'), 'baandoi.example.com');
     expect(seo.title).toBe('กาแฟบ้านดอย — กาแฟคั่วสดใหม่เชียงใหม่');
-    expect(seo.alternates?.canonical).toBe('https://baandoi.lumio.app/');
+    expect(seo.alternates?.canonical).toBe('https://baandoi.example.com/');
     expect(seo.openGraph.type).toBe('website');
   });
 
   it('lists the other languages as hreflang alternates', () => {
-    const seo = buildMetadata(pageOf('home'), 'baandoi.lumio.app');
+    const seo = buildMetadata(pageOf('home'), 'baandoi.example.com');
     expect(seo.alternates?.languages).toEqual({
-      th: 'https://baandoi.lumio.app/',
-      en: 'https://baandoi.lumio.app/en',
-      'x-default': 'https://baandoi.lumio.app/',
+      th: 'https://baandoi.example.com/',
+      en: 'https://baandoi.example.com/en',
+      'x-default': 'https://baandoi.example.com/',
     });
   });
 
   it('composes a title and description when the editor left them empty', () => {
-    const seo = buildMetadata(pageOf('about'), 'baandoi.lumio.app');
+    const seo = buildMetadata(pageOf('about'), 'baandoi.example.com');
     expect(seo.title).toBe('เกี่ยวกับเรา — กาแฟบ้านดอย');
     expect(seo.description).toBe('เริ่มคั่วกาแฟให้เพื่อนบ้านตั้งแต่ปี 2015');
   });
 
   it('marks a post as an article', () => {
-    const seo = buildMetadata(pageOf('how-to-pick-beans', 'post'), 'baandoi.lumio.app');
+    const seo = buildMetadata(pageOf('how-to-pick-beans', 'post'), 'baandoi.example.com');
     expect(seo.openGraph.type).toBe('article');
     expect(seo.twitter.card).toBe('summary_large_image');
   });
@@ -83,7 +83,7 @@ describe('buildMetadata', () => {
       ...pageOf('about'),
       content: { ...pageOf('about').content!, seo: { noindex: true } },
     };
-    expect(buildMetadata(hidden, 'baandoi.lumio.app').robots).toEqual({
+    expect(buildMetadata(hidden, 'baandoi.example.com').robots).toEqual({
       index: false,
       follow: false,
     });
@@ -108,11 +108,11 @@ describe('buildPageSeo', () => {
 describe('buildJsonLd', () => {
   it('describes the site on every page', () => {
     const graph = buildJsonLd({
-      site: { name: 'กาแฟบ้านดอย', url: 'https://baandoi.lumio.app' },
+      site: { name: 'กาแฟบ้านดอย', url: 'https://baandoi.example.com' },
       content: {
         type: 'page',
         title: 'หน้าแรก',
-        url: 'https://baandoi.lumio.app/',
+        url: 'https://baandoi.example.com/',
       },
     });
 
@@ -122,11 +122,11 @@ describe('buildJsonLd', () => {
 
   it('adds an Article for posts with its dates', () => {
     const graph = buildJsonLd({
-      site: { name: 'กาแฟบ้านดอย', url: 'https://baandoi.lumio.app' },
+      site: { name: 'กาแฟบ้านดอย', url: 'https://baandoi.example.com' },
       content: {
         type: 'post',
         title: 'เลือกเมล็ดกาแฟ',
-        url: 'https://baandoi.lumio.app/posts/beans',
+        url: 'https://baandoi.example.com/posts/beans',
         publishedAt: '2026-10-01T02:00:00.000Z',
         updatedAt: '2026-10-02T02:00:00.000Z',
       },
@@ -139,8 +139,8 @@ describe('buildJsonLd', () => {
 
   it('turns an FAQ block into FAQPage and a contact block into LocalBusiness', () => {
     const graph = buildJsonLd({
-      site: { name: 'คลินิกยิ้มสวย', url: 'https://yimsauy.lumio.app' },
-      content: { type: 'page', title: 'ติดต่อ', url: 'https://yimsauy.lumio.app/contact' },
+      site: { name: 'คลินิกยิ้มสวย', url: 'https://yimsauy.example.com' },
+      content: { type: 'page', title: 'ติดต่อ', url: 'https://yimsauy.example.com/contact' },
       blocks: [
         {
           type: 'faq',

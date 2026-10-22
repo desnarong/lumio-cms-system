@@ -4,7 +4,7 @@ import { ApiError } from '../editor/api.js';
 import type { AuthApi } from './api.js';
 
 /** Account the demo sign-in accepts, matching the seeded owner. */
-export const DEMO_EMAIL = 'owner@lumio.app';
+export const DEMO_EMAIL = 'owner@example.com';
 export const DEMO_PASSWORD = 'lumio-demo-1234';
 
 /** The code the demo accepts when turning two-factor on. */
@@ -51,7 +51,7 @@ export const createDemoAuthApi = (): AuthApi => {
 
     startTwoFactor: async () => ({
       secret: 'JBSWY3DPEHPK3PXP',
-      otpauthUrl: 'otpauth://totp/Lumio:owner@lumio.app?secret=JBSWY3DPEHPK3PXP&issuer=Lumio',
+      otpauthUrl: 'otpauth://totp/Lumio:owner@example.com?secret=JBSWY3DPEHPK3PXP&issuer=Lumio',
     }),
 
     enableTwoFactor: async (code) => {

@@ -3,7 +3,7 @@ import { SESSION_STORAGE_KEY, createMemoryStorage, createSessionStore } from './
 
 const session = {
   accessToken: 'access-token',
-  user: { id: 'u1', email: 'owner@lumio.app', name: 'สมชาย', avatarUrl: null },
+  user: { id: 'u1', email: 'owner@example.com', name: 'สมชาย', avatarUrl: null },
   siteId: 'site-1',
 };
 

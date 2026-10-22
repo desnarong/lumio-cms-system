@@ -23,7 +23,7 @@ const DEMO_SITE_ID = 'demo-site-1';
 
 const demoMember = (index: number, role: MemberSummary['role']): MemberSummary => ({
   userId: `demo-user-${index}`,
-  email: index === 1 ? 'owner@lumio.app' : `teammate${index}@lumio.app`,
+  email: index === 1 ? 'owner@example.com' : `teammate${index}@example.com`,
   name: index === 1 ? 'สมชาย' : `ทีมงาน ${index}`,
   avatarUrl: null,
   role,
@@ -135,7 +135,7 @@ export const createDemoSettingsApi = (): SettingsApi => {
 
     listDomains: async () => ({
       items: domains,
-      cnameTarget: `${site.subdomain}.lumio.app`,
+      cnameTarget: `${site.subdomain}.example.com`,
     }),
     addDomain: async (input) => {
       if (domains.some((domain) => domain.hostname === input.hostname)) {

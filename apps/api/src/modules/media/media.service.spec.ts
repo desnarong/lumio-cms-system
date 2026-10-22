@@ -78,7 +78,7 @@ const storageStub = (
   const storage: MediaStorage = {
     driver: 'local',
     presign: vi.fn().mockResolvedValue({
-      url: 'https://api.lumio.app/api/v1/media/upload/signed',
+      url: 'https://api.example.com/api/v1/media/upload/signed',
       expiresAt: '2026-10-20T00:15:00.000Z',
       headers: { 'content-type': 'image/jpeg' },
     }),

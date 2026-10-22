@@ -71,13 +71,13 @@ describe('recovery codes', () => {
 
 describe('otpauthUrl', () => {
   it('describes the account for an authenticator app', () => {
-    const url = otpauthUrl({ secret: 'GEZDGNBV', account: 'owner@lumio.app' });
+    const url = otpauthUrl({ secret: 'GEZDGNBV', account: 'owner@example.com' });
 
     expect(url.startsWith('otpauth://totp/')).toBe(true);
     expect(url).toContain('secret=GEZDGNBV');
     expect(url).toContain('issuer=Lumio');
     expect(url).toContain('digits=6');
     expect(url).toContain('period=30');
-    expect(url).toContain(encodeURIComponent('Lumio:owner@lumio.app'));
+    expect(url).toContain(encodeURIComponent('Lumio:owner@example.com'));
   });
 });

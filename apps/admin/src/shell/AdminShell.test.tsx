@@ -16,7 +16,7 @@ const render = (
         siteName="กาแฟบ้านดอย"
         userName="สมชาย"
         role={role}
-        publicUrl="https://baandoi.lumio.app"
+        publicUrl="https://baandoi.example.com"
         locale={options.locale ?? 'th'}
         {...(options.onLocaleChange ? { onLocaleChange: options.onLocaleChange } : {})}
         onNavigate={vi.fn()}
@@ -57,7 +57,7 @@ describe('AdminShell', () => {
     const html = render();
     expect(html).toContain('สวัสดี คุณสมชาย');
     expect(html).toContain('กาแฟบ้านดอย');
-    expect(html).toContain('https://baandoi.lumio.app');
+    expect(html).toContain('https://baandoi.example.com');
     expect(html).toContain('ออกจากระบบ');
   });
 

@@ -9,10 +9,10 @@ export const normalizeHost = (host: string): string => {
   return hostname.replace(/\.$/, '');
 };
 
-/** Domain free subdomains hang off, e.g. `mysite.lumio.app`. */
-export const rootDomain = (): string => (process.env.PUBLIC_ROOT_DOMAIN ?? 'lumio.app').toLowerCase();
+/** Domain free subdomains hang off, e.g. `mysite.example.com`. */
+export const rootDomain = (): string => (process.env.PUBLIC_ROOT_DOMAIN ?? 'example.com').toLowerCase();
 
-/** `baandoi.lumio.app` → `baandoi`; custom domains and nested hosts return null. */
+/** `baandoi.example.com` → `baandoi`; custom domains and nested hosts return null. */
 export const subdomainOf = (hostname: string, root = rootDomain()): string | null => {
   if (!hostname.endsWith(`.${root}`)) return null;
   const label = hostname.slice(0, -(root.length + 1));

@@ -241,13 +241,13 @@ describe('FormsService.submitPublic', () => {
 
   it('stores a valid submission and notifies the owner', async () => {
     const all = stubs({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       form: formRow(),
     });
     notifier.notify.mockClear();
 
     const result = await service(all, notifier).submitPublic(
-      'baandoi.lumio.app',
+      'baandoi.example.com',
       FORM_ID,
       { data: { name: 'สมชาย', email: 'somchai@example.com', message: 'สนใจกาแฟ' } },
       { ip: '127.0.0.1', userAgent: 'vitest' },
@@ -268,13 +268,13 @@ describe('FormsService.submitPublic', () => {
 
   it('rejects an incomplete submission with Thai field errors', async () => {
     const all = stubs({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       form: formRow(),
     });
 
     await expect(
       service(all).submitPublic(
-        'baandoi.lumio.app',
+        'baandoi.example.com',
         FORM_ID,
         { data: {} },
         { ip: null, userAgent: null },
@@ -285,12 +285,12 @@ describe('FormsService.submitPublic', () => {
 
   it('swallows a bot that fills the honeypot', async () => {
     const all = stubs({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       form: formRow(),
     });
 
     const result = await service(all).submitPublic(
-      'baandoi.lumio.app',
+      'baandoi.example.com',
       FORM_ID,
       { data: { name: 'บอท' }, honeypot: 'http://spam.example' },
       { ip: null, userAgent: null },
@@ -302,14 +302,14 @@ describe('FormsService.submitPublic', () => {
 
   it('keeps the message even when the notification fails', async () => {
     const all = stubs({
-      domain: { hostname: 'baandoi.lumio.app', site: siteRow() },
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
       form: formRow(),
     });
     const failing = { notify: vi.fn().mockRejectedValue(new Error('LINE ล่ม')) };
 
     await expect(
       service(all, failing).submitPublic(
-        'baandoi.lumio.app',
+        'baandoi.example.com',
         FORM_ID,
         { data: { name: 'สมชาย', email: 'somchai@example.com', message: 'สวัสดี' } },
         { ip: null, userAgent: null },

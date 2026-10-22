@@ -18,7 +18,7 @@ const contactForm = (): Form => ({
   id: '00000000-0000-4000-8000-0000000000f1',
   name: 'ติดต่อเรา',
   fields: DEFAULT_CONTACT_FORM_FIELDS,
-  notify: { emails: ['owner@baandoi.lumio.app'] },
+  notify: { emails: ['owner@baandoi.example.com'] },
   successMessage: 'ได้รับข้อความแล้ว ขอบคุณที่ติดต่อเรา',
   // The demo site offers Thai and English, so the contact form starts in Thai.
   locale: 'th',

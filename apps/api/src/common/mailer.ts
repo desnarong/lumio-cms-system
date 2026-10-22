@@ -44,7 +44,7 @@ export class Mailer {
           'content-type': 'application/json',
         },
         body: JSON.stringify({
-          from: process.env.EMAIL_FROM ?? 'Lumio <no-reply@lumio.app>',
+          from: process.env.EMAIL_FROM ?? 'Lumio <no-reply@example.com>',
           to: [message.to],
           subject: message.subject,
           text: message.text,

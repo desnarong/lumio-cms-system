@@ -10,7 +10,7 @@ describe('isSafeLink', () => {
       '#pricing',
       'https://example.com/shop',
       'http://example.com',
-      'mailto:hello@lumio.app',
+      'mailto:hello@example.com',
       'tel:+66812345678',
       '//cdn.example.com/page',
     ]) {

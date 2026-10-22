@@ -102,7 +102,7 @@ describe('createHttpMediaApi', () => {
         return jsonResponse({
           data: {
             mediaId: 'media-1',
-            uploadUrl: 'https://storage.lumio.app/signed',
+            uploadUrl: 'https://storage.example.com/signed',
             method: 'PUT',
             headers: { 'content-type': 'image/jpeg' },
             expiresAt: '2026-10-20T00:15:00.000Z',
@@ -110,7 +110,7 @@ describe('createHttpMediaApi', () => {
           },
         });
       }
-      if (String(url) === 'https://storage.lumio.app/signed') return jsonResponse({}, 200);
+      if (String(url) === 'https://storage.example.com/signed') return jsonResponse({}, 200);
       return jsonResponse({ data: mediaRow() });
     });
 
@@ -157,7 +157,7 @@ describe('createHttpMediaApi', () => {
         return jsonResponse({
           data: {
             mediaId: 'media-1',
-            uploadUrl: 'https://storage.lumio.app/signed',
+            uploadUrl: 'https://storage.example.com/signed',
             method: 'PUT',
             headers: {},
             expiresAt: '2026-10-20T00:15:00.000Z',

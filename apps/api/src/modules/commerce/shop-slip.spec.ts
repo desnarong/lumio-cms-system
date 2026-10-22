@@ -138,7 +138,7 @@ describe('ShopService payment slip', () => {
   it('confirms the order automatically when the amount matches', async () => {
     const all = service();
 
-    const result = await all.shop.submitSlip('shop.lumio.app', 'token-1', slip);
+    const result = await all.shop.submitSlip('shop.example.com', 'token-1', slip);
 
     expect(result.autoVerified).toBe(true);
     expect(result.status).toBe('verified');
@@ -153,7 +153,7 @@ describe('ShopService payment slip', () => {
   it('keeps a slip for review when the amount differs', async () => {
     const all = service();
 
-    const result = await all.shop.submitSlip('shop.lumio.app', 'token-1', {
+    const result = await all.shop.submitSlip('shop.example.com', 'token-1', {
       ...slip,
       amount: 10_000,
     });
@@ -173,7 +173,7 @@ describe('ShopService payment slip', () => {
     );
     const all = service('pending', bankSettings());
 
-    const result = await all.shop.submitSlip('shop.lumio.app', 'token-1', slip);
+    const result = await all.shop.submitSlip('shop.example.com', 'token-1', slip);
 
     expect(result.autoVerified).toBe(true);
     expect(result.message).toContain('ธนาคารยืนยัน');
@@ -192,7 +192,7 @@ describe('ShopService payment slip', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
     const all = service('pending', bankSettings());
 
-    const result = await all.shop.submitSlip('shop.lumio.app', 'token-1', slip);
+    const result = await all.shop.submitSlip('shop.example.com', 'token-1', slip);
 
     expect(result.autoVerified).toBe(false);
     expect(result.status).toBe('pending_review');
@@ -211,7 +211,7 @@ describe('ShopService payment slip', () => {
     );
     const all = service('pending', bankSettings());
 
-    const result = await all.shop.submitSlip('shop.lumio.app', 'token-1', slip);
+    const result = await all.shop.submitSlip('shop.example.com', 'token-1', slip);
 
     expect(result.autoVerified).toBe(false);
     expect(all.orderUpdate).not.toHaveBeenCalled();
@@ -222,7 +222,7 @@ describe('ShopService payment slip', () => {
     vi.stubGlobal('fetch', fetchMock);
     const all = service('pending', bankSettings({ autoVerifySlips: false }));
 
-    const result = await all.shop.submitSlip('shop.lumio.app', 'token-1', slip);
+    const result = await all.shop.submitSlip('shop.example.com', 'token-1', slip);
 
     expect(result.autoVerified).toBe(true);
     expect(fetchMock).not.toHaveBeenCalled();
@@ -231,7 +231,7 @@ describe('ShopService payment slip', () => {
   it('refuses a slip for an order that is no longer pending', async () => {
     const all = service('paid');
 
-    await expect(all.shop.submitSlip('shop.lumio.app', 'token-1', slip)).rejects.toMatchObject({
+    await expect(all.shop.submitSlip('shop.example.com', 'token-1', slip)).rejects.toMatchObject({
       code: 'conflict',
     });
     expect(all.storage.put).not.toHaveBeenCalled();
@@ -241,7 +241,7 @@ describe('ShopService payment slip', () => {
     const all = service();
 
     await expect(
-      all.shop.submitSlip('shop.lumio.app', 'token-1', {
+      all.shop.submitSlip('shop.example.com', 'token-1', {
         ...slip,
         image: `data:image/png;base64,${Buffer.alloc(200, 1).toString('base64')}`,
       }),

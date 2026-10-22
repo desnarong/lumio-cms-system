@@ -53,7 +53,7 @@ pnpm dev
 ```
 
 - Admin: <http://localhost:49300> · API: <http://localhost:49100/api> · Renderer: <http://localhost:49200>
-- บัญชีทดลอง: `owner@lumio.app` / `lumio-demo-1234`
+- บัญชีทดลอง: `owner@example.com` / `lumio-demo-1234`
 - ถ้าไม่ตั้ง `VITE_API_URL` แอดมินจะรันโหมดทดลองด้วยข้อมูลในหน่วยความจำ
 
 ก่อนใช้งานจริง เปลี่ยนค่า `change-me-*` ใน `.env` และอ่าน [`SECURITY.md`](SECURITY.md)

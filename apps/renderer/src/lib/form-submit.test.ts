@@ -4,15 +4,15 @@ const { submitForm } = vi.hoisted(() => ({ submitForm: vi.fn() }));
 
 vi.mock('./content', () => ({ submitForm }));
 vi.mock('./request-host', () => ({
-  requestHost: async () => 'baandoi.lumio.app',
+  requestHost: async () => 'baandoi.example.com',
 }));
 
 import { handleFormSubmit } from './form-submit';
 
-const post = (fields: Record<string, string>, referer = 'http://baandoi.lumio.app/contact') => {
+const post = (fields: Record<string, string>, referer = 'http://baandoi.example.com/contact') => {
   const body = new FormData();
   for (const [key, value] of Object.entries(fields)) body.set(key, value);
-  return new Request('http://baandoi.lumio.app/forms/f1', {
+  return new Request('http://baandoi.example.com/forms/f1', {
     method: 'POST',
     body,
     headers: { referer },
@@ -31,8 +31,8 @@ describe('handleFormSubmit', () => {
     const response = await handleFormSubmit(post({ name: 'สมชาย', message: 'สนใจกาแฟ' }), 'f1');
 
     expect(response.status).toBe(303);
-    expect(location(response)).toBe('http://baandoi.lumio.app/contact#sent-f1');
-    expect(submitForm).toHaveBeenCalledWith('baandoi.lumio.app', 'f1', {
+    expect(location(response)).toBe('http://baandoi.example.com/contact#sent-f1');
+    expect(submitForm).toHaveBeenCalledWith('baandoi.example.com', 'f1', {
       data: { name: 'สมชาย', message: 'สนใจกาแฟ' },
       honeypot: '',
     });
@@ -41,7 +41,7 @@ describe('handleFormSubmit', () => {
   it('passes the honeypot through instead of storing it as an answer', async () => {
     await handleFormSubmit(post({ name: 'บอท', _hp: 'http://spam.example' }), 'f1');
 
-    expect(submitForm).toHaveBeenCalledWith('baandoi.lumio.app', 'f1', {
+    expect(submitForm).toHaveBeenCalledWith('baandoi.example.com', 'f1', {
       data: { name: 'บอท' },
       honeypot: 'http://spam.example',
     });
@@ -53,7 +53,7 @@ describe('handleFormSubmit', () => {
     const response = await handleFormSubmit(post({ name: 'สมชาย' }), 'f1');
 
     expect(response.status).toBe(303);
-    expect(location(response)).toBe('http://baandoi.lumio.app/contact#error-f1');
+    expect(location(response)).toBe('http://baandoi.example.com/contact#error-f1');
   });
 
   it('never redirects off-site when the referer is foreign', async () => {
@@ -62,6 +62,6 @@ describe('handleFormSubmit', () => {
       'f1',
     );
 
-    expect(location(response)).toBe('http://baandoi.lumio.app/#sent-f1');
+    expect(location(response)).toBe('http://baandoi.example.com/#sent-f1');
   });
 });

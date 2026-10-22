@@ -25,7 +25,7 @@ const dbWithMembership = (role: string | null): PrismaService =>
     ),
   }) as unknown as PrismaService;
 
-const member = { id: 'u1', email: 'owner@lumio.app' };
+const member = { id: 'u1', email: 'owner@example.com' };
 
 describe('SiteGuard', () => {
   it('resolves the site from the X-Site-Id header and attaches the role', async () => {

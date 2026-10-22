@@ -4,7 +4,7 @@ import { renderReceiptPdf } from './receipt-pdf';
 
 const receipt: ReceiptInput = {
   siteName: 'ร้านทดสอบ',
-  siteUrl: 'https://shop.lumio.app',
+  siteUrl: 'https://shop.example.com',
   orderNumber: 'LM-261022-AB12',
   orderToken: 'token-1',
   issuedAt: '2026-10-22T03:00:00.000Z',

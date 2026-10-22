@@ -51,7 +51,7 @@ describe('createHttpSettingsApi', () => {
     const api = buildApi(fetchImpl);
 
     const members = await api.listMembers();
-    await api.inviteMember({ email: 'e@lumio.app', role: 'editor' });
+    await api.inviteMember({ email: 'e@example.com', role: 'editor' });
     await api.updateMemberRole('u1', { role: 'admin' });
     await api.removeMember('u1');
 
