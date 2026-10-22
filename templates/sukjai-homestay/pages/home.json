@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "ที่พักติดทะเลระยอง เงียบสงบ",
+  "seoDescription": "สุขใจ โฮมสเตย์ ห้องพักติดทะเลระยอง 8 หลัง อาหารเช้าท้องถิ่น",
+  "blocks": [
+    {
+      "id": "blk_sukjai_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-right",
+        "image": null,
+        "heading": "นอนฟังคลื่นที่สุขใจ โฮมสเตย์",
+        "subheading": "ห้องพักเพียง 8 หลังติดหาดสุชาดา อาหารเช้าทำจากวัตถุดิบของชาวบ้าน เงียบพอให้ได้ยินเสียงทะเล",
+        "buttons": [
+          {
+            "label": "ดูห้องพัก",
+            "href": "/rooms",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "สอบถามห้องว่าง",
+            "href": "/contact",
+            "variant": "ghost",
+            "external": false
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "muted",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "fade-up"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_home_why",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ทำไมหลายคนกลับมาพักซ้ำ",
+        "subheading": "เล็ก แต่ใส่ใจทุกรายละเอียด",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🌊",
+            "title": "ติดทะเลเดิน 30 ก้าว",
+            "description": "ทุกหลังมองเห็นทะเล มีทางเดินส่วนตัวลงหาด"
+          },
+          {
+            "icon": "🍳",
+            "title": "อาหารเช้าท้องถิ่น",
+            "description": "เปลี่ยนเมนูทุกวันตามวัตถุดิบที่ชาวบ้านนำมาขาย"
+          },
+          {
+            "icon": "🌙",
+            "title": "เงียบสงบ ไม่มีปาร์ตี้",
+            "description": "ปิดเสียงหลัง 22:00 น. เหมาะกับคนที่ต้องการพักจริง ๆ"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_home_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราเริ่มจาก 4 หลังคาเรือน ปีนี้มี 8 หลัง แต่ยังต้อนรับแบบครอบครัวเหมือนเดิม",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองห้องผ่านไลน์ @sukjai",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

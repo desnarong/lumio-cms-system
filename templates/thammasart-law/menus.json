@@ -1,0 +1,46 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "บริการ",
+      "href": "/services",
+      "children": []
+    },
+    {
+      "label": "ทีมทนาย",
+      "href": "/team",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "บริการ",
+      "href": "/services",
+      "children": []
+    },
+    {
+      "label": "ทีมทนาย",
+      "href": "/team",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

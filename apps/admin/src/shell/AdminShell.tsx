@@ -1,6 +1,14 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { ContentType, FeatureFlagKey, Role } from '@lumio/shared';
-import { CommandPalette, UI_LOCALE_LABELS, useT, type UiLocale } from '@lumio/ui';
+import {
+  CommandPalette,
+  Icon,
+  IconButton,
+  UI_LOCALE_LABELS,
+  useT,
+  type IconName,
+  type UiLocale,
+} from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import { routePath, type AdminRoute } from '../route.js';
 import type { ContentCommandSource } from './commands.js';
@@ -29,9 +37,27 @@ export interface AdminShellProps {
   children: ReactNode;
 }
 
+const ROLE_KEYS = {
+  owner: 'role.owner',
+  admin: 'role.admin',
+  editor: 'role.editor',
+  author: 'role.author',
+  viewer: 'role.viewer',
+} as const;
+
+const initials = (name: string): string =>
+  name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part.charAt(0))
+    .join('')
+    .toUpperCase() || 'L';
+
 /**
  * Sidebar + top bar around every back-office screen (docs/design/05-admin-ia.md
- * 5.3). On phones the sidebar becomes a bottom bar so editing still works.
+ * 5.3). Icons instead of emoji, one clear active pill, and on phones the sidebar
+ * becomes a bottom bar so editing still works.
  */
 export const AdminShell = ({
   route,
@@ -50,6 +76,7 @@ export const AdminShell = ({
   children,
 }: AdminShellProps) => {
   const t = useT();
+  const [collapsed, setCollapsed] = useState(false);
   const menus = visibleMenus(role, features);
   const activeMenu = activeMenuId(route);
   const currentPath = routePath(route);
@@ -66,7 +93,7 @@ export const AdminShell = ({
     ...(searchContent ? { searchContent } : {}),
   });
 
-  const link = (path: string, label: string, icon: string, current: boolean, key: string) => (
+  const link = (path: string, label: string, icon: IconName, current: boolean, key: string) => (
     <a
       key={key}
       className={cn('shell-link', current && 'shell-link--active')}
@@ -78,18 +105,23 @@ export const AdminShell = ({
       }}
     >
       <span className="shell-link__icon" aria-hidden="true">
-        {icon}
+        <Icon name={icon} size={18} />
       </span>
       <span className="shell-link__label">{label}</span>
     </a>
   );
 
   return (
-    <div className="shell">
+    <div className={cn('shell', collapsed && 'shell--collapsed')}>
       <aside className="shell-sidebar" aria-label={t('shell.mainMenu')}>
         <div className="shell-sidebar__brand">
-          <span aria-hidden="true">🌿</span>
-          <span className="shell-sidebar__brand-text">Lumio</span>
+          <span className="shell-logo" aria-hidden="true">
+            <Icon name="sparkles" size={18} />
+          </span>
+          <span className="shell-sidebar__brand-text">
+            <span className="shell-sidebar__brand-name">Lumio</span>
+            <span className="shell-sidebar__brand-tagline">{t('shell.brandTagline')}</span>
+          </span>
         </div>
 
         <nav className="shell-nav">
@@ -108,13 +140,11 @@ export const AdminShell = ({
                     `${menu.id}-root`,
                   )
                 ) : (
-                  <p
-                    className={cn('shell-nav__title', isActive && 'shell-nav__title--active')}
-                  >
-                    <span className="shell-link__icon" aria-hidden="true">
-                      {menu.icon}
+                  <p className={cn('shell-nav__title', isActive && 'shell-nav__title--active')}>
+                    <span className="shell-nav__title-icon" aria-hidden="true">
+                      <Icon name={menu.icon} size={15} />
                     </span>
-                    <span className="shell-link__label">{t(menu.labelKey)}</span>
+                    <span className="shell-nav__title-text">{t(menu.labelKey)}</span>
                   </p>
                 )}
 
@@ -135,13 +165,44 @@ export const AdminShell = ({
             );
           })}
         </nav>
+
+        <div className="shell-sidebar__footer">
+          <div className="shell-user">
+            <span className="shell-user__avatar" aria-hidden="true">
+              {initials(userName)}
+            </span>
+            <span className="shell-user__body">
+              <span className="shell-user__name">{userName}</span>
+              <span className="shell-user__role">{t(ROLE_KEYS[role])}</span>
+            </span>
+          </div>
+          <button type="button" className="shell-signout" onClick={onSignOut}>
+            <Icon name="log-out" size={18} />
+            <span className="shell-link__label">{t('shell.signOut')}</span>
+          </button>
+          <IconButton
+            className="shell-collapse"
+            aria-label={t('shell.collapseMenu')}
+            aria-expanded={!collapsed}
+            onClick={() => setCollapsed((value) => !value)}
+          >
+            <Icon name="panel-left" size={18} />
+          </IconButton>
+        </div>
       </aside>
 
       <div className="shell-body">
         <header className="shell-topbar">
           <div className="shell-topbar__greeting">
             <span className="shell-topbar__hello">{t('shell.greeting', { name: userName })}</span>
-            <span className="shell-topbar__site">{siteName}</span>
+            <span className="shell-topbar__site">
+              {siteName ? (
+                <>
+                  <Icon name="globe" size={14} />
+                  {siteName}
+                </>
+              ) : null}
+            </span>
           </div>
 
           <div className="shell-topbar__actions">
@@ -151,13 +212,14 @@ export const AdminShell = ({
               aria-keyshortcuts="Control+K Meta+K"
               onClick={commands.openPalette}
             >
-              <span aria-hidden="true">🔍</span>
+              <Icon name="search" size={16} />
               <span className="shell-topbar__search-label">{t('shell.search')}</span>
               <kbd className="shell-topbar__search-kbd">⌘K</kbd>
             </button>
             {publicUrl ? (
               <a className="shell-topbar__view" href={publicUrl} target="_blank" rel="noreferrer">
-                {t('shell.viewSite')}
+                <Icon name="external-link" size={16} />
+                <span>{t('shell.viewSite')}</span>
               </a>
             ) : null}
             {onLocaleChange ? (
@@ -168,12 +230,17 @@ export const AdminShell = ({
                 title={t('shell.language')}
                 onClick={() => onLocaleChange(locale === 'th' ? 'en' : 'th')}
               >
-                {locale === 'th' ? UI_LOCALE_LABELS.en : UI_LOCALE_LABELS.th}
+                <Icon name="globe" size={16} />
+                <span>{locale === 'th' ? UI_LOCALE_LABELS.en : UI_LOCALE_LABELS.th}</span>
               </button>
             ) : null}
-            <button type="button" className="shell-topbar__signout" onClick={onSignOut}>
-              {t('shell.signOut')}
-            </button>
+            <IconButton
+              className="shell-topbar__signout"
+              aria-label={t('shell.signOut')}
+              onClick={onSignOut}
+            >
+              <Icon name="log-out" size={18} />
+            </IconButton>
           </div>
         </header>
 

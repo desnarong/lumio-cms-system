@@ -6,7 +6,7 @@ import {
   type ContentSummary,
   type ContentType,
 } from '@lumio/shared';
-import { Button, EmptyState, Modal, Select, Skeleton, TextField, useT } from '@lumio/ui';
+import { Icon, Button, EmptyState, Modal, Select, Skeleton, TextField, useT } from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import { useState } from 'react';
 import type { ContentApi } from '../editor/api.js';
@@ -178,13 +178,9 @@ export const ContentView = ({
         />
       ) : items.length === 0 ? (
         <EmptyState
-          illustration={<span aria-hidden="true">🗂️</span>}
+          illustration={<Icon name="folder" size={32} />}
           title={filtering ? t('content.noMatch') : t(EMPTY_TITLE[kind])}
-          description={
-            filtering
-              ? t('content.noMatchHint')
-              : t('content.emptyHint')
-          }
+          description={filtering ? t('content.noMatchHint') : t('content.emptyHint')}
           action={
             <Button variant="primary" onClick={() => onCreate(kind)}>
               {t(ADD_LABEL[kind])}
@@ -292,9 +288,7 @@ export const ContentListPage = ({
         size="sm"
         title={t('content.purgeTitle')}
         description={
-          pendingPurge
-            ? t('content.purgeBody', { title: pendingPurge.title })
-            : undefined
+          pendingPurge ? t('content.purgeBody', { title: pendingPurge.title }) : undefined
         }
         onClose={() => setPendingPurge(null)}
         footer={

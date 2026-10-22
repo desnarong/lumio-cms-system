@@ -1,0 +1,140 @@
+{
+  "type": "page",
+  "title": "แพ็กเกจ",
+  "slug": "packages",
+  "excerpt": "แพ็กเกจบำรุงรักษาและราคา",
+  "seoDescription": "แพ็กเกจบำรุงรักษารถยนต์ ราคา ลาดพร้าว",
+  "blocks": [
+    {
+      "id": "blk_autocare_packages_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "แพ็กเกจบำรุงรักษา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_autocare_packages_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ราคาสำหรับรถยนต์นั่งส่วนบุคคล · รถกระบะและ SUV บวกเพิ่ม 300-500 บาท",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_autocare_packages_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🟢",
+            "title": "แพ็กเกจพื้นฐาน 1,290 บาท",
+            "description": "เปลี่ยนน้ำมันเครื่อง ไส้กรอง และตรวจ 30 จุด"
+          },
+          {
+            "icon": "🟡",
+            "title": "แพ็กเกจมาตรฐาน 2,490 บาท",
+            "description": "เพิ่มตรวจเบรก แอร์ และตั้งศูนย์ล้อ"
+          },
+          {
+            "icon": "🔴",
+            "title": "แพ็กเกจใหญ่ 3,990 บาท",
+            "description": "รวมทั้งหมด 50 จุด เปลี่ยนหัวเทียน และล้างห้องเครื่อง"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_autocare_packages_outro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "จองล่วงหน้าผ่านไลน์ รับส่วนลด 200 บาทสำหรับแพ็กเกจมาตรฐานขึ้นไป",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_autocare_packages_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองแพ็กเกจ",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

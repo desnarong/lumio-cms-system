@@ -66,7 +66,9 @@ describe('formatDate', () => {
 
 describe('ContentView languages', () => {
   it('renders the list in English when the language is English', () => {
-    const html = renderInEnglish({ items: [page({ status: 'archived', archivedAt: '2026-10-18T00:00:00.000Z' })] });
+    const html = renderInEnglish({
+      items: [page({ status: 'archived', archivedAt: '2026-10-18T00:00:00.000Z' })],
+    });
 
     expect(html).toContain('Pages');
     expect(html).toContain('Search');
@@ -94,7 +96,7 @@ describe('ContentView', () => {
   it('invites the user to create the first item when the list is empty', () => {
     const html = render({ items: [] });
     expect(html).toContain('ยังไม่มีหน้าเว็บ');
-    expect(html).toContain('＋ หน้าใหม่');
+    expect(html).toContain('หน้าใหม่');
   });
 
   it('explains an empty result caused by a filter', () => {

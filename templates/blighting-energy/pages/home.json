@@ -1,0 +1,199 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "หลอดไฟ LED และโคมไฟอัจฉริยะสำหรับทุกพื้นที่",
+  "seoDescription": "บี-ไลท์ติ้ง หลอดไฟ LED ประหยัดไฟ 80% มาตรฐาน มอก. พร้อมคำปรึกษาและติดตั้ง",
+  "blocks": [
+    {
+      "id": "blk_blighting_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-left",
+        "image": null,
+        "heading": "Light That Feel · แสงสว่างที่สัมผัสได้",
+        "subheading": "หลอดไฟ LED และโคมไฟอัจฉริยะที่ออกแบบมาเพื่อทุกพื้นที่ ประหยัดไฟกว่า 80% มาตรฐาน มอก. พร้อมทีมให้คำปรึกษาหน้างาน",
+        "buttons": [
+          {
+            "label": "ดูสินค้าทั้งหมด",
+            "href": "/products",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "ขอใบเสนอราคา",
+            "href": "/contact",
+            "variant": "ghost",
+            "external": false
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "muted",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "fade-up"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_home_why",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ทำไมบ้านและธุรกิจเลือกบี-ไลท์ติ้ง",
+        "subheading": "มาตรฐานเดียวกันทุกดวง ตั้งแต่บ้านหลังแรกถึงโรงงาน",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "💡",
+            "title": "ประหยัดไฟกว่า 80%",
+            "description": "เทียบกับหลอดเดิมที่ให้ความสว่างเท่ากัน ค่าไฟลดลงตั้งแต่เดือนแรก"
+          },
+          {
+            "icon": "🏅",
+            "title": "มาตรฐาน มอก. และ ISO 9001",
+            "description": "ทุกดวงผ่านการทดสอบความสว่าง อายุการใช้งาน และความปลอดภัย"
+          },
+          {
+            "icon": "🛠️",
+            "title": "รับประกัน 3 ปี",
+            "description": "มีทีมช่างให้คำปรึกษาและเปลี่ยนสินค้าให้ถึงหน้างาน"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_home_spaces",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "Perfect Light for Every Space",
+        "level": "h2",
+        "align": "center"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_home_spaces_body",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เพราะแต่ละพื้นที่ต้องการความสว่างที่ต่างกัน เลือกนวัตกรรมหลอดไฟที่ออกแบบมาเพื่อตอบโจทย์การใช้งานในพื้นที่ของคุณโดยเฉพาะ",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_home_categories",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "หมวดสินค้ายอดนิยม",
+        "subheading": "เลือกตามพื้นที่ใช้งาน หรือให้ทีมงานช่วยออกแบบให้",
+        "columns": "4",
+        "items": [
+          {
+            "icon": "🔆",
+            "title": "โคมไฟดาวน์ไลท์",
+            "description": "แสงนุ่มสำหรับห้องนั่งเล่นและห้องนอน หลายอุณหภูมิสี"
+          },
+          {
+            "icon": "💡",
+            "title": "หลอดไฟ LED",
+            "description": "ขั้ว E27 และ GU10 ให้ความสว่างสูง กินไฟต่ำ"
+          },
+          {
+            "icon": "📏",
+            "title": "หลอดไฟทรงกระบอก",
+            "description": "T8 สำหรับสำนักงานและพื้นที่เพดานสูง"
+          },
+          {
+            "icon": "✨",
+            "title": "สปอตไลท์และรางไฟ",
+            "description": "เน้นสินค้าในร้านค้าและโชว์รูม ปรับทิศทางได้"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองคิวเข้าชมโชว์รูม",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

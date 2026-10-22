@@ -1,0 +1,102 @@
+{
+  "header": [
+    {
+      "id": "blk_fitdee-studio_header_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ทดลองฟรี 1 ครั้ง",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "right",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "id": "blk_fitdee-studio_footer_name",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ฟิตดี สตูดิโอ",
+        "level": "h4",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_fitdee-studio_footer_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เปิด 06:00-22:00 น. ทุกวัน · สุขุมวิท 71 กรุงเทพฯ",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_fitdee-studio_footer_link",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูคลาสทั้งหมด",
+        "href": "/classes",
+        "variant": "ghost",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "การเดินทาง",
+  "slug": "location",
+  "excerpt": "เส้นทางและจุดน่าสนใจรอบที่พัก",
+  "seoDescription": "การเดินทางไปสุขใจ โฮมสเตย์ หาดสุชาดา ระยอง",
+  "blocks": [
+    {
+      "id": "blk_sukjai_location_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "การเดินทาง",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_location_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "จากกรุงเทพใช้ทางหลวงหมายเลข 3 ถึงระยองประมาณ 2 ชั่วโมง 30 นาที แล้วเลี้ยวเข้าซอยหาดสุชาดา",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_location_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🚗",
+            "title": "ที่จอดรถฟรี",
+            "description": "จอดในบริเวณที่พักได้ 1 คันต่อห้อง"
+          },
+          {
+            "icon": "🌅",
+            "title": "จุดชมพระอาทิตย์ขึ้น",
+            "description": "เดิน 5 นาทีจากที่พัก วิวสวยที่สุดช่วง 6:00 น."
+          },
+          {
+            "icon": "🛒",
+            "title": "ตลาดทะเลใกล้ที่พัก",
+            "description": "ตลาดปลาสดเปิดเช้า 4:00-8:00 น. ห่าง 2 กิโลเมตร"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_location_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ขอแผนที่และเส้นทาง",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

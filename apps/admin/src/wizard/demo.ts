@@ -38,9 +38,195 @@ const tokens = (primary: string, accent: string, heading: string): ThemeTokens =
   });
 
 /**
- * The three packs that ship with Lumio, in the shape the wizard reads from the
- * API. Used when no API is configured so the whole flow can be walked through.
+ * Demo catalogue: the first packs plus the newest ones, in the shape the API
+ * returns. Used when no API is configured so the whole flow can be walked through.
  */
+
+const demoPack = (cfg: {
+  id: string;
+  name: string;
+  businessType: TemplateSummary['businessType'];
+  description: string;
+  styleId: string;
+  primary: string;
+  accent: string;
+  heading: string;
+  pages: [string, string][];
+}): TemplateSummary => ({
+  id: cfg.id,
+  name: cfg.name,
+  businessType: cfg.businessType,
+  description: cfg.description,
+  styleId: cfg.styleId as TemplateSummary['styleId'],
+  previewUrl: preview(cfg.primary, cfg.accent, cfg.name),
+  tokens: tokens(cfg.primary, cfg.accent, cfg.heading),
+  pages: cfg.pages.map(([slug, title]) => ({ slug, title, type: 'page' })),
+});
+
+const EXTRA_PACKS: TemplateSummary[] = [
+  demoPack({
+    id: 'a1b2c3d4-1111-4a2b-9c3d-4e5f60718293',
+    name: 'บี-ไลท์ติ้ง',
+    businessType: 'shop',
+    description: 'โชว์รูมหลอดไฟ LED และโคมไฟอัจฉริยะ โทนขาว-น้ำเงินเข้ม',
+    styleId: 'minimal',
+    primary: '#17469D',
+    accent: '#2E8FE0',
+    heading: 'Inter',
+    pages: [
+      ['home', 'หน้าแรก'],
+      ['products', 'สินค้าทั้งหมด'],
+      ['solutions', 'โซลูชัน'],
+      ['about', 'เกี่ยวกับเรา'],
+      ['contact', 'ติดต่อ'],
+    ],
+  }),
+  demoPack({
+    id: 'a1b2c3d4-2222-4a2b-9c3d-4e5f60718293',
+    name: 'สุขใจ โฮมสเตย์',
+    businessType: 'other',
+    description: 'โฮมสเตย์ติดทะเล 8 หลัง อาหารเช้าท้องถิ่น',
+    styleId: 'soft',
+    primary: '#0F766E',
+    accent: '#E9B384',
+    heading: 'Prompt',
+    pages: [
+      ['home', 'หน้าแรก'],
+      ['rooms', 'ห้องพัก'],
+      ['location', 'การเดินทาง'],
+      ['contact', 'ติดต่อ'],
+    ],
+  }),
+  demoPack({
+    id: 'a1b2c3d4-3333-4a2b-9c3d-4e5f60718293',
+    name: 'ฟิตดี สตูดิโอ',
+    businessType: 'other',
+    description: 'ฟิตเนสและเทรนเนอร์ส่วนตัว โทนดำ-เขียวมะนาว',
+    styleId: 'bold',
+    primary: '#111827',
+    accent: '#84CC16',
+    heading: 'Plus Jakarta Sans',
+    pages: [
+      ['home', 'หน้าแรก'],
+      ['classes', 'คลาส'],
+      ['trainers', 'เทรนเนอร์'],
+      ['contact', 'ติดต่อ'],
+    ],
+  }),
+  demoPack({
+    id: 'a1b2c3d4-4444-4a2b-9c3d-4e5f60718293',
+    name: 'ธรรมศาสตร์ ทนายความ',
+    businessType: 'other',
+    description: 'สำนักงานกฎหมาย โทนกรมท่า-ทอง เรียบหรู',
+    styleId: 'elegant',
+    primary: '#1E293B',
+    accent: '#C69C4E',
+    heading: 'Prompt',
+    pages: [
+      ['home', 'หน้าแรก'],
+      ['services', 'บริการ'],
+      ['team', 'ทีมทนาย'],
+      ['contact', 'ติดต่อ'],
+    ],
+  }),
+  demoPack({
+    id: 'a1b2c3d4-5555-4a2b-9c3d-4e5f60718293',
+    name: 'สบาย สปา',
+    businessType: 'other',
+    description: 'สปาและนวดแผนไทย โทนเขียวสมุนไพร-ทรายนวล',
+    styleId: 'soft',
+    primary: '#3F6B5B',
+    accent: '#D9B08C',
+    heading: 'Prompt',
+    pages: [
+      ['home', 'หน้าแรก'],
+      ['treatments', 'ทรีตเมนต์'],
+      ['about', 'เกี่ยวกับเรา'],
+      ['contact', 'ติดต่อ'],
+    ],
+  }),
+  demoPack({
+    id: 'a1b2c3d4-6666-4a2b-9c3d-4e5f60718293',
+    name: 'บ้านช่าง คอนสตรัคชัน',
+    businessType: 'other',
+    description: 'รับสร้างบ้านและรีโนเวท โทนคอนกรีตเทา-ส้ม',
+    styleId: 'bold',
+    primary: '#334155',
+    accent: '#F97316',
+    heading: 'Plus Jakarta Sans',
+    pages: [
+      ['home', 'หน้าแรก'],
+      ['services', 'บริการ'],
+      ['portfolio', 'ผลงาน'],
+      ['contact', 'ติดต่อ'],
+    ],
+  }),
+  demoPack({
+    id: 'a1b2c3d4-7777-4a2b-9c3d-4e5f60718293',
+    name: 'ครูเพลิน สถาบันติว',
+    businessType: 'other',
+    description: 'สถาบันติวและสอนพิเศษ โทนน้ำเงิน-เหลืองสดใส',
+    styleId: 'friendly',
+    primary: '#2563EB',
+    accent: '#FACC15',
+    heading: 'Prompt',
+    pages: [
+      ['home', 'หน้าแรก'],
+      ['courses', 'คอร์สเรียน'],
+      ['teachers', 'ครูผู้สอน'],
+      ['contact', 'ติดต่อ'],
+    ],
+  }),
+  demoPack({
+    id: 'a1b2c3d4-8888-4a2b-9c3d-4e5f60718293',
+    name: 'พลอยทราเวล',
+    businessType: 'other',
+    description: 'แพ็กเกจทัวร์ในและต่างประเทศ โทนฟ้า-คอรัล',
+    styleId: 'friendly',
+    primary: '#0EA5E9',
+    accent: '#FB7185',
+    heading: 'Prompt',
+    pages: [
+      ['home', 'หน้าแรก'],
+      ['packages', 'แพ็กเกจทัวร์'],
+      ['about', 'เกี่ยวกับเรา'],
+      ['contact', 'ติดต่อ'],
+    ],
+  }),
+  demoPack({
+    id: 'a1b2c3d4-9999-4a2b-9c3d-4e5f60718293',
+    name: 'เพ็ทฮัก คลินิกสัตว์',
+    businessType: 'clinic',
+    description: 'คลินิกสัตว์เลี้ยง โทนเขียวมิ้นต์-ส้มนุ่ม',
+    styleId: 'friendly',
+    primary: '#0D9488',
+    accent: '#F59E0B',
+    heading: 'Prompt',
+    pages: [
+      ['home', 'หน้าแรก'],
+      ['services', 'บริการ'],
+      ['vets', 'สัตวแพทย์'],
+      ['contact', 'ติดต่อ'],
+    ],
+  }),
+  demoPack({
+    id: 'a1b2c3d4-aaaa-4a2b-9c3d-4e5f60718293',
+    name: 'เมืองไทย ออโต้แคร์',
+    businessType: 'other',
+    description: 'ศูนย์บริการรถยนต์ครบวงจร โทนเทาเข้ม-แดง',
+    styleId: 'bold',
+    primary: '#1F2937',
+    accent: '#DC2626',
+    heading: 'Plus Jakarta Sans',
+    pages: [
+      ['home', 'หน้าแรก'],
+      ['services', 'บริการ'],
+      ['packages', 'แพ็กเกจ'],
+      ['contact', 'ติดต่อ'],
+    ],
+  }),
+];
+
 export const demoItems: TemplateSummary[] = [
   {
     id: '6f12c9a0-1b34-4c5d-8e6f-7a8b9c0d1e2f',
@@ -90,6 +276,7 @@ export const demoItems: TemplateSummary[] = [
       { slug: 'contact', title: 'ติดต่อ', type: 'page' },
     ],
   },
+  ...EXTRA_PACKS,
 ];
 
 /** In-memory wizard backend: the whole 3-minute flow works before the API is up. */

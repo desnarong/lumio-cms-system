@@ -1,5 +1,19 @@
-import type { ContentType, DashboardMetric, DashboardSummary, SiteHealthIssue } from '@lumio/shared';
-import { Button, Card, EmptyState, Skeleton, StatCard, useT, type Translate } from '@lumio/ui';
+import type {
+  ContentType,
+  DashboardMetric,
+  DashboardSummary,
+  SiteHealthIssue,
+} from '@lumio/shared';
+import {
+  Icon,
+  Button,
+  Card,
+  EmptyState,
+  Skeleton,
+  StatCard,
+  useT,
+  type Translate,
+} from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import type { DashboardApi } from './api.js';
 import { useDashboard } from './useDashboard.js';
@@ -194,7 +208,11 @@ export const DashboardView = ({
                     }}
                   >
                     <span className="checklist__mark" aria-hidden="true">
-                      {item.done ? '✓' : '○'}
+                      {item.done ? (
+                        <Icon name="check" size={16} />
+                      ) : (
+                        <Icon name="circle" size={16} />
+                      )}
                     </span>
                     <span>{item.label}</span>
                   </a>
@@ -209,12 +227,7 @@ export const DashboardView = ({
 };
 
 /** Loads the dashboard, then hands it to the view. */
-export const DashboardPage = ({
-  api,
-  onCreate,
-  onOpenEditor,
-  onNavigate,
-}: DashboardPageProps) => {
+export const DashboardPage = ({ api, onCreate, onOpenEditor, onNavigate }: DashboardPageProps) => {
   const t = useT();
   const dashboard = useDashboard(api);
 

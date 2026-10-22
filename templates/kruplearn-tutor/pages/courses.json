@@ -1,0 +1,145 @@
+{
+  "type": "page",
+  "title": "คอร์สเรียน",
+  "slug": "courses",
+  "excerpt": "คอร์สติวตามระดับชั้น",
+  "seoDescription": "คอร์สติว ป.1-ม.6 และ IELTS ครูเพลิน",
+  "blocks": [
+    {
+      "id": "blk_kruplearn_courses_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "คอร์สเรียน",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_kruplearn_courses_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เปิดรอบใหม่ทุกเดือน · ค่าเรียนรวมเอกสารและแบบฝึกหัดทั้งหมด",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_kruplearn_courses_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "4",
+        "items": [
+          {
+            "icon": "📚",
+            "title": "ติวประถม ป.1-ป.6",
+            "description": "ภาษาไทย คณิต วิทยาศาสตร์ เน้นความเข้าใจพื้นฐาน"
+          },
+          {
+            "icon": "📐",
+            "title": "ติวมัธยมต้น ม.1-ม.3",
+            "description": "เตรียมสอบเข้า ม.4 พร้อมเทคนิคทำโจทย์"
+          },
+          {
+            "icon": "🎓",
+            "title": "ติวมัธยมปลาย ม.4-ม.6",
+            "description": "ติวเข้ม TCAS คณิต อังกฤษ และคอร์สเฉพาะคณะ"
+          },
+          {
+            "icon": "🌍",
+            "title": "IELTS 4 ทักษะ",
+            "description": "กลุ่มเล็ก 6 คน พร้อม mock test ทุกเดือน"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_kruplearn_courses_outro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ค่าเรียน 2,800 บาท/เดือน (8 ครั้ง) · คอร์สส่วนตัวเริ่ม 1,200 บาท/ชั่วโมง",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_kruplearn_courses_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ขอตารางเรียน",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 > ติดตามงานย่อยตาม [`docs/design/19-roadmap.md`](design/19-roadmap.md) หัวข้อ 19.3
 > อัปเดตสถานะทุกครั้งที่จบงานหนึ่งก้อน
 
-อัปเดตล่าสุด: 2026-10-22 (ก้อนที่ 51 เสร็จ)
+อัปเดตล่าสุด: 2026-10-22 (ก้อนที่ 54 เสร็จ)
 
 ## สถานะงาน (Roadmap 19.3)
 
@@ -2437,4 +2437,119 @@ pnpm format:check
 ```bash
 grep -ri "lumio\\.app" --exclude-dir=node_modules --exclude-dir=.git .   # ต้องไม่พบ
 pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e
+```
+
+## ก้อนที่ 52 — รีดีไซน์ UX/UI หลังบ้าน + ใช้ไอคอนแทน emoji
+
+ปรับหน้าจอหลังบ้านทั้งชุดให้เป็นภาษาดีไซน์เดียว ใช้งานง่ายขึ้น และไม่พึ่งอีโมจิของระบบปฏิบัติการอีก
+
+- **ชุดไอคอนกลาง** — `packages/ui/src/icon.tsx`
+  - 87 ไอคอนเส้น 24px (stroke 1.75, ปลายมน) วาดด้วย `currentColor` จึงใช้ได้ทั้งโหมดสว่าง/มืด
+  - `<Icon name="home" />` ซ่อนจาก screen reader โดยอัตโนมัติ; ใส่ `label` เมื่อยืนอยู่ลำพัง
+  - ใช้แทนอีโมจิทุกจุด: เมนูด้านข้าง, ปุ่ม, empty state, สถานะ, toolbar, slash menu, แท็บภาษา, Toast/Banner
+  - ข้อความ i18n ที่เคยมีอีโมจิ (＋ ✍️ 👁 ✨ 🌐 🎉 ✓) ถูกทำให้เป็นข้อความล้วน แล้วให้ UI วาดไอคอนเอง
+- **โครงหลังบ้านใหม่ (shell)** — `apps/admin/src/shell/`
+  - โลโก้การ์ดไล่สี + ชื่อเวิร์กสเปซ, เมนูจัดกลุ่มเป็นหมวด พับเป็นรางไอคอนได้ระหว่างใช้งาน
+  - ลิงก์ที่เลือกใช้ pill + แถบสีด้านซ้าย, การ์ดผู้ใช้/บทบาท + ปุ่มออกจากระบบตรึงล่าง sidebar
+  - Topbar แบบติดหนึบ โปร่งแสง: ช่องค้นหาแบบแคปซูลพร้อม ⌘K, ดูเว็บ, สลับภาษา; มือถือใช้แถบเมนูล่าง
+- **ภาษาดีไซน์เดียวกันทุกหน้าจอ**
+  - หัวหน้าแบบเดียว (ชื่อ + คำอธิบาย + ปุ่มหลักไม่เกิน 1), การ์ดมุมโค้ง 20px เงานุ่ม, ระยะห่างตามกริด 8px
+  - แท็บเป็น segmented pill, สถานะเป็นชิปมีจุดสี, แถว hover/focus ring ชัด, รองรับ `prefers-reduced-motion`
+  - รีสไตล์ครบ: ภาพรวม, หน้าเว็บ/บทความ, เอดิเตอร์, ไฟล์สื่อ, ฟอร์ม, ดีไซน์, เติบโต, ตั้งค่า, ร้านค้า, wizard, เข้าสู่ระบบ, AI
+- **แก้บั๊ก layout ที่พบจากการตรวจภาพจริง (Playwright)**
+  - sidebar เคยตัดการ์ดผู้ใช้ทิ้ง → ทำเฉพาะรายการเมนูที่เลื่อนได้
+  - การ์ด SEO ถูกแบ่งเป็นสองคอลัมน์โดยไม่ตั้งใจ → รายการตรวจเรียงเป็นการ์ด 3 คอลัมน์
+  - แถบเครื่องมือร้านค้าถูกสไตล์เป็นแท็บ → ย้ายไป `commerce-view`
+  - แท็บเต็มความกว้าง, ฟอร์ม AI ซ้อนทับกัน, ปุ่มย้อนกลับหน้าสื่อไม่มีไอคอน → แก้แล้ว
+- **เทสต์** — เพิ่ม 4 เคสของ `Icon` (ui 74) รวม repo **1,935 เคส**
+  (shared 348, tokens 10, sdk 19, ui 74, blocks 124, api 830, admin 426, renderer 104) + e2e 3 เส้นทาง
+- ผลตรวจ: `pnpm lint` / `pnpm typecheck` / `pnpm test` / `pnpm test:e2e` ผ่านทั้งหมด และ `pnpm --filter admin build` ผ่าน
+
+```bash
+pnpm --filter @lumio/ui test icon
+pnpm --filter admin test
+pnpm --filter admin dev            # ตรวจที่ 375 / 768 / 1280px และโหมดมืด
+```
+
+## ก้อนที่ 53 — เทมเพลตครบ 20 แบบ + เทมเพลตแรงบันดาลใจจาก B-Lighting
+
+ปิดเป้า Launch ของ roadmap 19.1 (Template 20 แบบ) และเพิ่มเทมเพลตโชว์รูมไฟตามเว็บที่ลูกค้าอ้างถึง
+
+- **เทมเพลตใหม่ 10 แพ็ก** (รวมเป็น 20) — ทุกแพ็กมี 4–5 หน้าตัวอย่าง ภาษาไทยจริงตามประเภทธุรกิจ
+
+  | แพ็ก | ประเภทธุรกิจ | โทน |
+  |---|---|---|
+  | บี-ไลท์ติ้ง (`blighting-energy`) | shop | ขาว-น้ำเงินเข้ม `#17469D` / `#2E8FE0` |
+  | สุขใจ โฮมสเตย์ (`sukjai-homestay`) | other | เขียวทะเล-ทรายอุ่น |
+  | ฟิตดี สตูดิโอ (`fitdee-studio`) | other | ดำ-เขียวมะนาว |
+  | ธรรมศาสตร์ ทนายความ (`thammasart-law`) | other | กรมท่า-ทอง |
+  | สบาย สปา (`sabai-spa`) | other | เขียวสมุนไพร-ทรายนวล |
+  | บ้านช่าง คอนสตรัคชัน (`banchang-build`) | other | เทาคอนกรีต-ส้ม |
+  | ครูเพลิน สถาบันติว (`kruplearn-tutor`) | other | น้ำเงิน-เหลือง |
+  | พลอยทราเวล (`ploytravel`) | other | ฟ้า-คอรัล |
+  | เพ็ทฮัก คลินิกสัตว์ (`pethug-clinic`) | clinic | เขียวมิ้นต์-ส้มนุ่ม |
+  | เมืองไทย ออโต้แคร์ (`muangthai-autocare`) | other | เทาเข้ม-แดง |
+
+- **บี-ไลท์ติ้ง (อ้างอิงจาก blightingenergy.com)** — อ่านโครงเว็บจริงแล้วออกแบบแพ็กใหม่เอง
+  - สีหลัก `#17469D` และสีเสริม `#2E8FE0` จาก CSS ของเว็บ, พื้นขาว, ปุ่มแบบ outline, มุมโค้งเล็ก
+  - ฟอนต์ Inter (หัวเรื่อง) + Noto Sans Thai (เนื้อหา), 5 หน้า: หน้าแรก / สินค้า / โซลูชัน / เกี่ยวกับเรา / ติดต่อ
+  - เนื้อหาตามธีมแบรนด์: “Light That Feel · แสงสว่างที่สัมผัสได้”, หมวดดาวน์ไลท์-หลอดไฟ-หลอดทรงกระบอก, ประหยัดไฟ 80%, มอก./ISO 9001, เคสลดค่าไฟ
+  - **ไม่ได้คัดลอกรูป โลโก้ หรือข้อความจากเว็บต้นทาง** — เขียนข้อความไทยใหม่ทั้งหมดเพื่อใช้เป็นตัวอย่าง
+- **ทดสอบและภาพตัวอย่าง** — `node templates/generate-previews.mjs` วาด `preview.png` ของทั้ง 20 แพ็กจาก `tokens.json`
+  - `index.json` มีครบ 20 รายการ; loader ตรวจ schema ผ่านทุกแพ็ก (manifest/tokens/menus/header-footer/section styles/หน้าตัวอย่าง)
+  - ตัวเลือกธุรกิจทุกประเภทมีแพ็กของตัวเองแล้ว (restaurant, clinic, freelance, shop, blog, other)
+- **โหมดเดโมของแอดมิน** — `wizard/demo.ts` เพิ่ม 10 แพ็กใหม่ (รวมบี-ไลท์ติ้ง) ให้เลือกใช้ได้แม้ไม่มี API (ทั้งหมด 13 แพ็ก)
+  - อัปเดตเทสต์จาก “3 แพ็ก” เป็นตรวจว่ามีครบทุกประเภทธุรกิจและมีบี-ไลท์ติ้ง
+- ผลตรวจ: `pnpm lint` / `pnpm typecheck` / `pnpm test` (1,935 เคส) / `pnpm test:e2e` (3 เส้นทาง) ผ่านทั้งหมด
+  และเทสต์โหลดเทมเพลตยืนยัน “โหลดเทมเพลต 20 แบบ”
+
+```bash
+node templates/generate-previews.mjs
+pnpm --filter api test src/modules/templates
+pnpm --filter admin test src/wizard
+```
+
+## ก้อนที่ 54 — Docker ทั้งระบบ (profiles, migrate, volumes, healthchecks)
+
+ทำให้ `docker compose` รันครบทั้ง stack ได้จริง และปิดจุดที่ทำให้ image production ใช้งานไม่ได้
+
+- **แยก profile** — `docker compose up -d` เริ่มเฉพาะ infra (db, redis, minio)
+  ส่วน `docker compose --profile app up -d --build` เริ่ม api, worker, admin, renderer, caddy
+  - `docker compose config -q` ผ่านทั้งสองโหมด และผ่าน `.env.docker`
+- **migrate เป็น service แยก** — รัน `prisma migrate deploy` ครั้งเดียวแล้วจบ
+  - `api`/`worker` รอ `service_completed_successfully` จึงเริ่ม (ไม่มี race ตอนมีหลาย replica)
+- **แก้ค่าที่ชี้เข้า container ตัวเอง** — compose override `DATABASE_URL`, `REDIS_URL`,
+  `RENDERER_URL` ให้ใช้ชื่อ service (`db`, `redis`, `renderer`) แทน localhost จาก `.env`
+- **volume ที่ต้องมีจริง** — `media` (ไฟล์อัปโหลด), `lumio_data` (`secrets.key` + backup),
+  `redisdata` (appendonly) และ `pgdata`/`miniodata` เดิม
+- **ความทนทาน** — healthcheck ของ db/redis/api/admin/renderer, `restart: unless-stopped`,
+  `stop_grace_period` ของ api, และผูกพอร์ตทั้งหมดกับ `127.0.0.1` (Caddy เป็นประตูเดียว)
+- **Node 22.13** — pnpm 11.18 ใช้ `node:sqlite` จึงรันบน Node 20 ไม่ได้
+  - Dockerfile ทั้งสามเปลี่ยนเป็น `node:22-slim`, CI เปลี่ยน `node-version: 22`,
+    `engines.node` เป็น `>=22.13` และ README/CONTRIBUTING อัปเดตตาม
+  - api image ติดตั้ง `openssl` เพราะ Prisma engine ต้องใช้ (เดิม migrate ล้มใน container)
+- **admin image เคยรันโหมดเดโม** — Vite ฝัง `VITE_API_URL` ตอน build
+  - เพิ่ม build args `VITE_API_URL` / `VITE_PUBLIC_ROOT_DOMAIN` ใน Dockerfile + compose
+- **renderer 500 ใน container** — `NEXT_PUBLIC_API_URL` ถูก inline ตอน build เป็น localhost
+  - เพิ่ม `API_INTERNAL_URL` (อ่านตอน runtime) ใช้ใน `lib/site-locales.ts`, `content.ts`,
+    `shop.ts`, `not-found.ts`, หน้า order; compose ตั้งเป็น `http://api:49100`
+- **Caddy**
+  - dev: `infra/caddy/Caddyfile` เสิร์ฟ HTTP ตาม `LUMIO_DOMAIN` (ไม่มี certificate)
+  - prod: `infra/caddy/Caddyfile.prod` + ACME email + on-demand TLS ผ่าน API
+  - compose ใช้ตัวแปร `LUMIO_DOMAIN`, `LUMIO_ADMIN_HOST`, `LUMIO_ADMIN_API_URL`,
+    `LUMIO_API_URL` เพื่อไม่ให้ env `PUBLIC_ROOT_DOMAIN` ที่ค้างใน shell ชนะค่าใน `.env`
+- **เอกสาร/ตัวอย่าง env** — `.env.docker.example`, `docs/DOCKER.md` (โหมด dev/prod,
+  volume ที่ต้องสำรอง, ขั้นตอนอัปเดต, ข้อจำกัด), README และ OPERATIONS ลิงก์ไว้
+- **ผลตรวจ**
+  - build image ทั้ง 5 ตัว (api/admin/renderer/worker/migrate) สำเร็จ
+  - `docker compose --profile app up -d` ขึ้นครบ: migrate exit 0, api/admin/renderer healthy
+  - ทดสอบจริง: `GET /api/health` 200 · admin 200 · renderer 200 ·
+    Caddy `Host: baandoi.example.com` 200, `Host: admin.example.com` 200
+  - renderer: lint / typecheck / test 104 เคส ผ่าน; admin 426, api 830 (ก่อนหน้า) ไม่ได้รับผลกระทบ
+
+```bash
+docker compose up -d
+docker compose --profile app up -d --build
+docker compose --profile app config -q
+docker compose logs -f api worker renderer
 ```

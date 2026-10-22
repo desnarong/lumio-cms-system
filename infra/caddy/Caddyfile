@@ -1,30 +1,24 @@
+# Development Caddyfile: plain HTTP, no certificates.
+#
+# Hosts follow PUBLIC_ROOT_DOMAIN so a free site really is
+# <subdomain>.example.com (the same host the renderer resolves).
+# Production uses infra/caddy/Caddyfile.prod with ACME certificates instead.
+
 {
-	local_certs
 	admin off
-	on_demand_tls {
-		ask {$LUMIO_TLS_ASK_URL:http://api:49100/api/v1/public/tls/ask}
-	}
 }
 
-lumio.localhost {
+# Public API (used by the browser and by curl during development).
+http://{$PUBLIC_ROOT_DOMAIN:example.com} {
 	reverse_proxy api:49100
 }
 
-admin.lumio.localhost {
+# Back office.
+http://{$ADMIN_HOST:admin.example.com} {
 	reverse_proxy admin:80
 }
 
-# Free subdomains: one wildcard certificate covers every site.
-*.lumio.localhost {
-	reverse_proxy renderer:49200
-}
-
-# Custom domains: Caddy asks the API before issuing a certificate, so only
-# domains that finished DNS verification get one
-# (docs/design/18-deployment.md 18.5).
-https:// {
-	tls {
-		on_demand
-	}
+# Every free subdomain, e.g. http://baandoi.example.com:49700
+http://*.{$PUBLIC_ROOT_DOMAIN:example.com} {
 	reverse_proxy renderer:49200
 }

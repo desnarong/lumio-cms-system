@@ -1,5 +1,5 @@
 import { FEATURE_FLAG_KEYS, type FeatureFlagKey, type Role } from '@lumio/shared';
-import type { MessageKey } from '@lumio/ui';
+import type { IconName, MessageKey } from '@lumio/ui';
 import type { AdminRoute } from '../route.js';
 
 /**
@@ -14,7 +14,7 @@ import type { AdminRoute } from '../route.js';
 export interface NavEntry {
   id: string;
   labelKey: MessageKey;
-  icon: string;
+  icon: IconName;
   route: AdminRoute;
   /** Roles that may open it; omitted means everyone. */
   roles?: Role[];
@@ -25,7 +25,7 @@ export interface NavEntry {
 export interface NavMenu {
   id: string;
   labelKey: MessageKey;
-  icon: string;
+  icon: IconName;
   /** Roles that may see the whole menu; omitted means everyone. */
   roles?: Role[];
   entries: NavEntry[];
@@ -44,24 +44,29 @@ export const NAV_MENUS: NavMenu[] = [
   {
     id: 'dashboard',
     labelKey: 'nav.dashboard',
-    icon: '🏠',
+    icon: 'home',
     entries: [
-      { id: 'dashboard', labelKey: 'nav.dashboard', icon: '🏠', route: { name: 'dashboard' } },
+      { id: 'dashboard', labelKey: 'nav.dashboard', icon: 'home', route: { name: 'dashboard' } },
     ],
   },
   {
     id: 'content',
     labelKey: 'nav.content',
-    icon: '📄',
+    icon: 'file-text',
     entries: [
-      { id: 'pages', labelKey: 'nav.pages', icon: '📄', route: { name: 'content', kind: 'page' } },
-      { id: 'posts', labelKey: 'nav.posts', icon: '✍️', route: { name: 'content', kind: 'post' } },
-      { id: 'forms', labelKey: 'nav.forms', icon: '✉️', route: { name: 'forms' } },
-      { id: 'media', labelKey: 'nav.media', icon: '🖼️', route: { name: 'media' } },
+      {
+        id: 'pages',
+        labelKey: 'nav.pages',
+        icon: 'file-text',
+        route: { name: 'content', kind: 'page' },
+      },
+      { id: 'posts', labelKey: 'nav.posts', icon: 'pen', route: { name: 'content', kind: 'post' } },
+      { id: 'forms', labelKey: 'nav.forms', icon: 'mail', route: { name: 'forms' } },
+      { id: 'media', labelKey: 'nav.media', icon: 'image', route: { name: 'media' } },
       {
         id: 'products',
         labelKey: 'nav.products',
-        icon: '📦',
+        icon: 'package',
         roles: SHOP_ROLES,
         feature: 'commerce',
         route: { name: 'commerce', tab: 'products' },
@@ -69,7 +74,7 @@ export const NAV_MENUS: NavMenu[] = [
       {
         id: 'orders',
         labelKey: 'nav.orders',
-        icon: '🧾',
+        icon: 'receipt',
         roles: SHOP_ROLES,
         feature: 'commerce',
         route: { name: 'commerce', tab: 'orders' },
@@ -79,27 +84,37 @@ export const NAV_MENUS: NavMenu[] = [
   {
     id: 'design',
     labelKey: 'nav.design',
-    icon: '🎨',
+    icon: 'palette',
     roles: DESIGN_ROLES,
     entries: [
-      { id: 'style', labelKey: 'nav.style', icon: '🎨', route: { name: 'design', tab: 'style' } },
-      { id: 'menus', labelKey: 'nav.menus', icon: '🧭', route: { name: 'design', tab: 'menus' } },
+      {
+        id: 'style',
+        labelKey: 'nav.style',
+        icon: 'palette',
+        route: { name: 'design', tab: 'style' },
+      },
+      {
+        id: 'menus',
+        labelKey: 'nav.menus',
+        icon: 'compass',
+        route: { name: 'design', tab: 'menus' },
+      },
       {
         id: 'header-footer',
         labelKey: 'nav.headerFooter',
-        icon: '🧱',
+        icon: 'layout',
         route: { name: 'design', tab: 'header-footer' },
       },
       {
         id: 'template',
         labelKey: 'nav.template',
-        icon: '🗂️',
+        icon: 'layers',
         route: { name: 'design', tab: 'template' },
       },
       {
         id: 'sections',
         labelKey: 'nav.sections',
-        icon: '🧩',
+        icon: 'layers',
         route: { name: 'design', tab: 'sections' },
       },
     ],
@@ -107,28 +122,28 @@ export const NAV_MENUS: NavMenu[] = [
   {
     id: 'growth',
     labelKey: 'nav.growth',
-    icon: '📈',
+    icon: 'trending-up',
     roles: GROWTH_ROLES,
     entries: [
-      { id: 'seo', labelKey: 'nav.seo', icon: '🔎', route: { name: 'growth', tab: 'seo' } },
+      { id: 'seo', labelKey: 'nav.seo', icon: 'search', route: { name: 'growth', tab: 'seo' } },
       {
         id: 'analytics',
         labelKey: 'nav.analytics',
-        icon: '📊',
+        icon: 'chart-bar',
         feature: 'analytics',
         route: { name: 'growth', tab: 'analytics' },
       },
       {
         id: 'newsletter',
         labelKey: 'nav.newsletter',
-        icon: '✉️',
+        icon: 'mail',
         feature: 'newsletter',
         route: { name: 'growth', tab: 'newsletter' },
       },
       {
         id: 'apps',
         labelKey: 'nav.apps',
-        icon: '🧩',
+        icon: 'layers',
         roles: APP_ROLES,
         feature: 'apps',
         route: { name: 'growth', tab: 'apps' },
@@ -138,27 +153,32 @@ export const NAV_MENUS: NavMenu[] = [
   {
     id: 'settings',
     labelKey: 'nav.settings',
-    icon: '⚙️',
+    icon: 'settings',
     roles: SETTINGS_ROLES,
     entries: [
       {
         id: 'general',
         labelKey: 'nav.general',
-        icon: '⚙️',
+        icon: 'settings',
         route: { name: 'settings', tab: 'general' },
       },
-      { id: 'domain', labelKey: 'nav.domain', icon: '🌐', route: { name: 'settings', tab: 'domain' } },
-      { id: 'team', labelKey: 'nav.team', icon: '👥', route: { name: 'settings', tab: 'team' } },
+      {
+        id: 'domain',
+        labelKey: 'nav.domain',
+        icon: 'globe',
+        route: { name: 'settings', tab: 'domain' },
+      },
+      { id: 'team', labelKey: 'nav.team', icon: 'users', route: { name: 'settings', tab: 'team' } },
       {
         id: 'backup',
         labelKey: 'nav.backup',
-        icon: '🗄️',
+        icon: 'database',
         route: { name: 'settings', tab: 'backup' },
       },
       {
         id: 'shop-settings',
         labelKey: 'nav.shopSettings',
-        icon: '🛍️',
+        icon: 'shopping-bag',
         roles: SHOP_SETTINGS_ROLES,
         feature: 'commerce',
         route: { name: 'commerce', tab: 'settings' },
@@ -166,7 +186,7 @@ export const NAV_MENUS: NavMenu[] = [
       {
         id: 'billing',
         labelKey: 'nav.billing',
-        icon: '💳',
+        icon: 'credit-card',
         roles: BILLING_ROLES,
         route: { name: 'settings', tab: 'billing' },
       },
@@ -186,7 +206,8 @@ export const visibleMenus = (
     .map((menu) => ({
       ...menu,
       entries: menu.entries.filter(
-        (entry) => allows(entry.roles, role) && (!entry.feature || features.includes(entry.feature)),
+        (entry) =>
+          allows(entry.roles, role) && (!entry.feature || features.includes(entry.feature)),
       ),
     }))
     .filter((menu) => menu.entries.length > 0);

@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "ที่ปรึกษากฎหมายธุรกิจและคดีแพ่ง",
+  "seoDescription": "สำนักงานทนายความธรรมศาสตร์ ให้คำปรึกษากฎหมายที่ดิน ครอบครัว และธุรกิจ",
+  "blocks": [
+    {
+      "id": "blk_law_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-right",
+        "image": null,
+        "heading": "คำปรึกษาที่ชัดเจน ตั้งแต่ก่อนขึ้นศาล",
+        "subheading": "สำนักงานทนายความที่ดูแลทั้งงานที่ดิน ครอบครัว และสัญญาธุรกิจ เราเริ่มจากการฟังและอธิบายทางเลือกให้เข้าใจจริง",
+        "buttons": [
+          {
+            "label": "บริการของเรา",
+            "href": "/services",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "นัดปรึกษา",
+            "href": "/contact",
+            "variant": "ghost",
+            "external": false
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "muted",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "fade-up"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_home_area",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "งานที่เราดูแลเป็นหลัก",
+        "subheading": "ทีมทนายเฉพาะด้าน แต่ทำงานร่วมกันเป็นทีมเดียว",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "📜",
+            "title": "กฎหมายที่ดิน",
+            "description": "ซื้อขาย โอนกรรมสิทธิ์ ภาระจำยอม และข้อพิพาทแนวเขต"
+          },
+          {
+            "icon": "👪",
+            "title": "ครอบครัวและมรดก",
+            "description": "หย่า แบ่งสินทรัพย์ พินัยกรรม และการจัดการมรดก"
+          },
+          {
+            "icon": "🏢",
+            "title": "สัญญาธุรกิจ",
+            "description": "ร่างและตรวจสัญญา หุ้นส่วน และการฟ้องเรียกหนี้"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_home_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราทำงาน 14 ปีกับลูกค้าทั้งบุคคลและ SME เชื่อว่าคำแนะนำที่ดีต้องบอกความเสี่ยงตรง ๆ ไม่ใช่แค่บอกว่าจะชนะ",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "นัดปรึกษาครั้งแรก 30 นาที",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

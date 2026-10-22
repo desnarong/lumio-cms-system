@@ -8,7 +8,17 @@ import {
   type FormSubmissionStatus,
   type FormSummary,
 } from '@lumio/shared';
-import { Button, EmptyState, Modal, Select, Skeleton, useT, type MessageKey, type Translate } from '@lumio/ui';
+import {
+  Icon,
+  Button,
+  EmptyState,
+  Modal,
+  Select,
+  Skeleton,
+  useT,
+  type MessageKey,
+  type Translate,
+} from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import type { FormsApi } from './api.js';
 import { FormEditorDialog } from './FormEditorDialog.js';
@@ -30,12 +40,9 @@ const STATUS_LABEL_KEYS: Record<FormSubmissionStatus, MessageKey> = {
 
 const STATUSES: FormSubmissionStatus[] = ['new', 'read', 'archived'];
 
-const displayValue = (
-  field: FormField | undefined,
-  value: string,
-  t: Translate,
-): string => {
-  if (field?.type === 'checkbox') return value === 'true' ? t('forms.confirmed') : t('forms.notConfirmed');
+const displayValue = (field: FormField | undefined, value: string, t: Translate): string => {
+  if (field?.type === 'checkbox')
+    return value === 'true' ? t('forms.confirmed') : t('forms.notConfirmed');
   return value;
 };
 
@@ -188,7 +195,7 @@ export const FormsView = ({
         />
       ) : summaries.length === 0 ? (
         <EmptyState
-          illustration={<span aria-hidden="true">✉️</span>}
+          illustration={<Icon name="mail" size={32} />}
           title={t('forms.emptyTitle')}
           description={canManage ? t('forms.emptyManage') : t('forms.emptyRead')}
           {...(canManage
@@ -243,9 +250,7 @@ export const FormsView = ({
               <div className="forms-inbox__heading">
                 <h2 className="forms-inbox__title">{selected?.name ?? t('forms.pickForm')}</h2>
                 <p className="forms-inbox__meta">
-                  {selectedForm
-                    ? t('forms.fieldCount', { count: selectedForm.fields.length })
-                    : ''}
+                  {selectedForm ? t('forms.fieldCount', { count: selectedForm.fields.length }) : ''}
                 </p>
               </div>
 
@@ -298,10 +303,8 @@ export const FormsView = ({
               </div>
             ) : submissions.length === 0 ? (
               <EmptyState
-                illustration={<span aria-hidden="true">📭</span>}
-                title={
-                  status === 'all' ? t('forms.noMessages') : t('forms.noMessagesInStatus')
-                }
+                illustration={<Icon name="inbox" size={32} />}
+                title={status === 'all' ? t('forms.noMessages') : t('forms.noMessagesInStatus')}
                 description={t('forms.noMessagesHint')}
               />
             ) : (

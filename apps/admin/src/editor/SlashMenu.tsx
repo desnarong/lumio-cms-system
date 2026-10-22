@@ -7,17 +7,41 @@ import {
 } from 'react';
 import { filterBlockCatalog, listBlockCatalog } from '@lumio/blocks';
 import type { SectionTemplate } from '@lumio/shared';
-import { useT, useUiLocale } from '@lumio/ui';
+import { Icon, useT, useUiLocale, type IconName } from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 
 /** Glyph per block icon name; a plain square stands in for anything unmapped. */
-const ICON_GLYPHS: Record<string, string> = {
-  Heading: 'H',
-  Paragraph: '¶',
-  Image: '🖼',
-  Button: '🔗',
-  Layout: '▤',
-  Grid: '▦',
+const BLOCK_ICONS: Record<string, IconName> = {
+  Heading: 'type',
+  Paragraph: 'align-left',
+  Image: 'image',
+  Button: 'link',
+  Layout: 'layout',
+  Grid: 'grid',
+  Hero: 'layout',
+  Features: 'grid',
+  Gallery: 'image',
+  Quote: 'book',
+  CTA: 'zap',
+  Testimonials: 'star',
+  Pricing: 'tag',
+  FAQ: 'info',
+  Contact: 'mail',
+  Form: 'inbox',
+  Video: 'play',
+  Map: 'map-pin',
+  Team: 'users',
+  Stats: 'chart-bar',
+  Logos: 'layers',
+  Newsletter: 'send',
+  Product: 'package',
+  Cart: 'cart',
+  Languages: 'globe',
+  Footer: 'layout',
+  Header: 'layout',
+  Countdown: 'clock',
+  Menu: 'list',
+  Slider: 'layers',
 };
 
 export interface SlashMenuProps {
@@ -148,7 +172,7 @@ export const SlashMenu = ({ onPick, onClose, sections = [], onPickSection }: Sla
                       onMouseEnter={() => setActiveIndex(index)}
                     >
                       <span className="editor-slash__icon" aria-hidden="true">
-                        💾
+                        <Icon name="save" size={16} />
                       </span>
                       {section.name}
                     </button>
@@ -178,7 +202,7 @@ export const SlashMenu = ({ onPick, onClose, sections = [], onPickSection }: Sla
                       onMouseEnter={() => setActiveIndex(index)}
                     >
                       <span className="editor-slash__icon" aria-hidden="true">
-                        {block.icon ? (ICON_GLYPHS[block.icon] ?? '▦') : '▦'}
+                        <Icon name={BLOCK_ICONS[block.type] ?? 'grid'} size={18} />
                       </span>
                       {block.label}
                     </button>

@@ -22,10 +22,11 @@ import {
   type PublicApi,
 } from './api';
 import { createDemoPublicApi } from './demo';
+import { apiBaseUrl } from './site-locales';
 
 const api = (): PublicApi => {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-  return baseUrl && baseUrl.length > 0 ? createPublicApi({ baseUrl }) : createDemoPublicApi();
+  const baseUrl = apiBaseUrl();
+  return baseUrl.length > 0 ? createPublicApi({ baseUrl }) : createDemoPublicApi();
 };
 
 const fallbackAllowed = (): boolean => process.env.NODE_ENV !== 'production';

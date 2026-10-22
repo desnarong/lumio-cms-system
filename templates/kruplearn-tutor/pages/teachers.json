@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "ครูผู้สอน",
+  "slug": "teachers",
+  "excerpt": "ทีมครูและประสบการณ์สอน",
+  "seoDescription": "ทีมครูผู้สอน สถาบันติวครูเพลิน",
+  "blocks": [
+    {
+      "id": "blk_kruplearn_teachers_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ทีมครูผู้สอน",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_kruplearn_teachers_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราเลือกครูจากประสบการณ์สอนจริง ไม่ใช่แค่ผลการเรียนดี",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_kruplearn_teachers_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🧮",
+            "title": "ครูเพลิน (คณิต)",
+            "description": "สอนคณิต 12 ปี เขียนหนังสือแบบฝึกหัด 3 เล่ม"
+          },
+          {
+            "icon": "📖",
+            "title": "ครูแนน (ภาษาไทย)",
+            "description": "อดีตครูโรงเรียนสาธิต ดูแลคอร์สภาษาไทยทุกระดับ"
+          },
+          {
+            "icon": "🌏",
+            "title": "ครูเจมส์ (อังกฤษ)",
+            "description": "IELTS 8.0 สอน writing และ speaking โดยเฉพาะ"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_kruplearn_teachers_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "นัดปรึกษาครู",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

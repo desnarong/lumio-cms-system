@@ -1,0 +1,92 @@
+{
+  "type": "page",
+  "title": "ติดต่อ",
+  "slug": "contact",
+  "excerpt": "เบอร์โทร ไลน์ และเวลาติดต่อ",
+  "seoDescription": "ติดต่อสุขใจ โฮมสเตย์ หาดสุชาดา ระยอง",
+  "blocks": [
+    {
+      "id": "blk_sukjai_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ติดต่อเรา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_contact_info",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ที่อยู่: 55 หมู่ 3 หาดสุชาดา อำเภอแกลง ระยอง 21190 · โทร 038-000-111 · ไลน์ @sukjai · ตอบทุกวัน 08:00-20:00 น.",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_contact_channels",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ช่องทางติดต่อ",
+        "subheading": "เลือกช่องทางที่สะดวกสำหรับคุณ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "☎️",
+            "title": "โทรศัพท์",
+            "description": "038-000-111 ฝ่ายต้อนรับ"
+          },
+          {
+            "icon": "💬",
+            "title": "LINE @sukjai",
+            "description": "ส่งรูปห้องและเช็กห้องว่างได้ทันที"
+          },
+          {
+            "icon": "✉️",
+            "title": "อีเมล",
+            "description": "stay@sukjai.example สำหรับกรุ๊ปและงานอีเวนต์"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

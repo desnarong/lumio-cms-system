@@ -1,0 +1,140 @@
+{
+  "type": "page",
+  "title": "เกี่ยวกับเรา",
+  "slug": "about",
+  "excerpt": "ทีมงานและมาตรฐานของบี-ไลท์ติ้ง",
+  "seoDescription": "บี-ไลท์ติ้ง ผู้นำหลอดไฟ LED มาตรฐาน มอก. ISO 9001 พร้อมทีมวิศวกรให้คำปรึกษา",
+  "blocks": [
+    {
+      "id": "blk_blighting_about_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "เกี่ยวกับบี-ไลท์ติ้ง",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_about_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เริ่มจากร้านอะไหล่ไฟเล็ก ๆ ในปี 2555 วันนี้เรามีโชว์รูมให้ทดลองแสงจริง และทีมวิศวกรที่ดูแลโครงการตั้งแต่บ้านหลังแรกจนถึงโรงงาน",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_about_values",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "สิ่งที่เราให้ความสำคัญ",
+        "subheading": "คุณภาพต้องตรวจสอบได้ทุกดวง",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🔬",
+            "title": "ทดสอบทุกครั้งที่นำเข้า",
+            "description": "วัดความสว่างและอุณหภูมิสีทุกครั้งที่นำเข้า ไม่ปล่อยของที่ไม่ได้มาตรฐาน"
+          },
+          {
+            "icon": "🧑‍🔧",
+            "title": "ทีมช่างของเราเอง",
+            "description": "ไม่ส่งต่อให้ผู้รับเหมาที่ไม่รู้จัก เพื่อคุมคุณภาพงานติดตั้ง"
+          },
+          {
+            "icon": "🤝",
+            "title": "ดูแลหลังการขาย",
+            "description": "เคลมไวภายใน 7 วันทำการ และมีอะไหล่สำรองพร้อมเปลี่ยน"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_about_distributor",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราจำหน่ายทั้งปลีกและส่งผ่านตัวแทนจำหน่ายใน 12 จังหวัด หากสนใจร่วมเป็นตัวแทน ทีมขายพร้อมอธิบายเงื่อนไขและราคาส่ง",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_about_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ร่วมเป็นตัวแทนจำหน่าย",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

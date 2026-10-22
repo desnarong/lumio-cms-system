@@ -1,0 +1,102 @@
+{
+  "header": [
+    {
+      "id": "blk_muangthai-autocare_header_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "นัดคิวบริการ",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "right",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "id": "blk_muangthai-autocare_footer_name",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "เมืองไทย ออโต้แคร์",
+        "level": "h4",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_muangthai-autocare_footer_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เปิด จ.-ส. 08:00-18:00 น. · ลาดพร้าว กรุงเทพฯ",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_muangthai-autocare_footer_link",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูแพ็กเกจบริการ",
+        "href": "/packages",
+        "variant": "ghost",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

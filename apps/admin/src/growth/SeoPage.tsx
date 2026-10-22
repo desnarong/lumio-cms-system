@@ -6,7 +6,7 @@ import {
   type SeoGrade,
   type SeoHealth,
 } from '@lumio/shared';
-import { Button, Card, Skeleton, useT, type MessageKey } from '@lumio/ui';
+import { Icon, Button, Card, Skeleton, useT, type MessageKey } from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import { ApiError } from '../api-error.js';
 import { HealthRing } from '../dashboard/DashboardPage.js';
@@ -41,7 +41,7 @@ const CheckRow = ({
   <li className={cn('seo-check', check.done && 'seo-check--done')}>
     <div className="seo-check__head">
       <span className="seo-check__mark" aria-hidden="true">
-        {check.done ? '✓' : '○'}
+        {check.done ? <Icon name="check" size={16} /> : <Icon name="circle" size={16} />}
       </span>
       <span className="seo-check__label">{check.label}</span>
       {!check.done ? (
@@ -128,9 +128,7 @@ export const SeoView = ({
         <div className="seo-score__body">
           <p className="seo-score__grade">{t(GRADE_LABEL_KEYS[health.grade])}</p>
           <p className="seo-score__hint">
-            {failing.length === 0
-              ? t('seo.allGood')
-              : t('seo.failing', { count: failing.length })}
+            {failing.length === 0 ? t('seo.allGood') : t('seo.failing', { count: failing.length })}
           </p>
           <p className="seo-score__published">
             {t('seo.published', { count: health.publishedCount })}
@@ -159,7 +157,7 @@ export const SeoView = ({
                 <li key={entry.path} className="seo-check">
                   <div className="seo-check__head">
                     <span className="seo-check__mark" aria-hidden="true">
-                      !
+                      <Icon name="alert-circle" size={14} />
                     </span>
                     <span className="seo-check__label">{entry.path}</span>
                     <span className="seo-check__count seo-check__count--high">

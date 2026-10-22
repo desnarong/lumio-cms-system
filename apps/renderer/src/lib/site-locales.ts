@@ -19,8 +19,13 @@ export const LOCALES_CACHE_TTL_MS = 300_000;
 
 const cache = new Map<string, { at: number; value: SiteLocales }>();
 
+/**
+ * API base for server-side rendering. API_INTERNAL_URL is read at runtime (the
+ * compose network address); NEXT_PUBLIC_API_URL is inlined at build time and
+ * only remains as a fallback for local development.
+ */
 export const apiBaseUrl = (): string =>
-  (process.env.NEXT_PUBLIC_API_URL ?? '').replace(/\/+$/, '');
+  (process.env.API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? '').replace(/\/+$/, '');
 
 /** Clears the cache; used by tests and by the revalidate route. */
 export const clearSiteLocalesCache = (): void => {

@@ -1,0 +1,92 @@
+{
+  "type": "page",
+  "title": "ติดต่อ",
+  "slug": "contact",
+  "excerpt": "ที่ตั้งและช่องทางนัดปรึกษา",
+  "seoDescription": "ติดต่อสำนักงานทนายความธรรมศาสตร์ สีลม",
+  "blocks": [
+    {
+      "id": "blk_law_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ติดต่อเรา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_contact_info",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ที่อยู่: 456 อาคารสีลมทาวเวอร์ ชั้น 12 ถนนสีลม กรุงเทพฯ 10500 · โทร 02-333-4455 · จันทร์-ศุกร์ 09:00-18:00 น.",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_contact_channels",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ช่องทางติดต่อ",
+        "subheading": "เลือกช่องทางที่สะดวกสำหรับคุณ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "☎️",
+            "title": "โทรศัพท์",
+            "description": "02-333-4455 ฝ่ายต้อนรับลูกค้า"
+          },
+          {
+            "icon": "📅",
+            "title": "นัดหมายออนไลน์",
+            "description": "เลือกวันและเวลาผ่านไลน์ @thammasartlaw"
+          },
+          {
+            "icon": "✉️",
+            "title": "อีเมล",
+            "description": "contact@thammasartlaw.example"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

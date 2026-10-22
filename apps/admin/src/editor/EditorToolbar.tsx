@@ -1,13 +1,21 @@
 import { EDITOR_DEVICES, type EditorDevice } from '@lumio/blocks';
 import type { ContentStatus } from '@lumio/shared';
-import { Button, IconButton, useT, type MessageKey, type Translate } from '@lumio/ui';
+import {
+  Button,
+  Icon,
+  IconButton,
+  useT,
+  type IconName,
+  type MessageKey,
+  type Translate,
+} from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import type { EditorMode, SaveState } from './types.js';
 
-const DEVICE_GLYPHS: Record<EditorDevice, string> = {
-  mobile: '📱',
-  tablet: '▭',
-  desktop: '💻',
+const DEVICE_ICONS: Record<EditorDevice, IconName> = {
+  mobile: 'smartphone',
+  tablet: 'tablet',
+  desktop: 'monitor',
 };
 
 const DEVICE_LABEL_KEYS: Record<EditorDevice, MessageKey> = {
@@ -82,7 +90,7 @@ export const EditorToolbar = ({
       <div className="editor-toolbar__group">
         {onBack ? (
           <IconButton aria-label={t('editor.back')} title={t('editor.back')} onClick={onBack}>
-            ◀
+            <Icon name="arrow-left" size={16} />
           </IconButton>
         ) : null}
         <span className="editor-toolbar__title">{title}</span>
@@ -104,7 +112,7 @@ export const EditorToolbar = ({
             variant={device === item.id ? 'secondary' : 'ghost'}
             onClick={() => onDeviceChange(item.id)}
           >
-            {DEVICE_GLYPHS[item.id]}
+            <Icon name={DEVICE_ICONS[item.id]} size={16} />
           </IconButton>
         ))}
       </div>
@@ -120,7 +128,7 @@ export const EditorToolbar = ({
           disabled={!canUndo}
           onClick={onUndo}
         >
-          ↶
+          <Icon name="undo" size={16} />
         </IconButton>
         <IconButton
           aria-label={t('editor.toolbar.redo')}
@@ -128,11 +136,15 @@ export const EditorToolbar = ({
           disabled={!canRedo}
           onClick={onRedo}
         >
-          ↷
+          <Icon name="redo" size={16} />
         </IconButton>
       </div>
 
-      <div className="editor-toolbar__group" role="group" aria-label={t('editor.toolbar.modeGroup')}>
+      <div
+        className="editor-toolbar__group"
+        role="group"
+        aria-label={t('editor.toolbar.modeGroup')}
+      >
         <Button
           size="sm"
           variant={mode === 'edit' ? 'secondary' : 'ghost'}

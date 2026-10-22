@@ -1,0 +1,145 @@
+{
+  "type": "page",
+  "title": "บริการ",
+  "slug": "services",
+  "excerpt": "ขอบเขตงานและขั้นตอน",
+  "seoDescription": "บริการกฎหมาย ที่ดิน ครอบครัว สัญญาธุรกิจ สำนักงานทนายความ",
+  "blocks": [
+    {
+      "id": "blk_law_services_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "บริการของเรา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_services_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ค่าปรึกษาครั้งแรก 1,500 บาท หักจากค่าดำเนินการหากตกลงใช้บริการต่อ",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_services_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "4",
+        "items": [
+          {
+            "icon": "🏞️",
+            "title": "กฎหมายที่ดิน",
+            "description": "ตรวจโฉนด ตรวจพันธะ สัญญาซื้อขาย และ Representation ในศาล"
+          },
+          {
+            "icon": "💍",
+            "title": "ครอบครัวและมรดก",
+            "description": "หย่าโดยความยินยอมและมีข้อพิพาท แบ่งมรดก และพินัยกรรม"
+          },
+          {
+            "icon": "📝",
+            "title": "สัญญาธุรกิจ",
+            "description": "ร่างสัญญาจ้าง สัญญาร่วมทุน และเงื่อนไขการชำระเงิน"
+          },
+          {
+            "icon": "⚖️",
+            "title": "ต่อสู้คดี",
+            "description": "คดีแพ่งและอาญาที่เกี่ยวกับทรัพย์สินและสัญญา"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_services_outro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ขั้นตอน: นัดปรึกษา → ตรวจเอกสาร → เสนอแนวทางและค่าดำเนินการเป็นลายลักษณ์อักษร",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_services_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ส่งเอกสารเพื่อประเมินเบื้องต้น",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

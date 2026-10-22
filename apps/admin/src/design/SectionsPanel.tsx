@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { SectionTemplate } from '@lumio/shared';
-import { Button, Card, EmptyState, Skeleton, TextField, useT, useToast } from '@lumio/ui';
+import { Icon, Button, Card, EmptyState, Skeleton, TextField, useT, useToast } from '@lumio/ui';
 import type { DesignApi } from './api.js';
 import { useSections } from './hooks.js';
 
@@ -95,7 +95,7 @@ export const SectionsPanel = ({ api }: { api: DesignApi }) => {
 
       {sections.sections.length === 0 ? (
         <EmptyState
-          illustration={<span aria-hidden="true">🧩</span>}
+          illustration={<Icon name="layers" size={32} />}
           title={t('sections.empty')}
           description={t('sections.emptyHint')}
         />

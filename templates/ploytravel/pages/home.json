@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "แพ็กเกจทัวร์ในและต่างประเทศ",
+  "seoDescription": "พลอยทราเวล แพ็กเกจทัวร์เชียงใหม่ กระบี่ ญี่ปุ่น พร้อมไกด์และประกัน",
+  "blocks": [
+    {
+      "id": "blk_ploy_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-right",
+        "image": null,
+        "heading": "เที่ยวให้สบาย เรื่องยุ่งยากให้เราจัดการ",
+        "subheading": "แพ็กเกจในและต่างประเทศที่รวมตั๋ว ที่พัก และไกด์ท้องถิ่น ไม่มีทัวร์บังคับช้อป",
+        "buttons": [
+          {
+            "label": "ดูแพ็กเกจ",
+            "href": "/packages",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "ขอโปรแกรมเฉพาะ",
+            "href": "/contact",
+            "variant": "ghost",
+            "external": false
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "muted",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "fade-up"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_ploy_home_why",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ทำไมลูกค้าไว้ใจพลอยทราเวล",
+        "subheading": "ทำงานตรง ไม่มีค่าใช้จ่ายแอบแฝง",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🧾",
+            "title": "ราคาชัดตั้งแต่แรก",
+            "description": "ระบุสิ่งที่รวมและไม่รวมในทุกแพ็กเกจ"
+          },
+          {
+            "icon": "🧑‍✈️",
+            "title": "ไกด์ท้องถิ่นของเรา",
+            "description": "ทีมไกด์ที่ผ่านการอบรมและดูแลตลอดทริป"
+          },
+          {
+            "icon": "🛡️",
+            "title": "ประกันการเดินทางทุกทริป",
+            "description": "วงเงินคุ้มครอง 1,000,000 บาทต่อคน"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_ploy_home_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราออกแบบทริปเองทุกเส้นทาง เคยพาครอบครัวเดินทางไปแล้วกว่า 6,000 คนนับตั้งแต่ปี 2559",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_ploy_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ขอใบเสนอราคาทริป",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

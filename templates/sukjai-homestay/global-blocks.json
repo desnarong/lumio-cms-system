@@ -1,0 +1,102 @@
+{
+  "header": [
+    {
+      "id": "blk_sukjai-homestay_header_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "เช็กห้องว่าง",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "right",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "id": "blk_sukjai-homestay_footer_name",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "สุขใจ โฮมสเตย์",
+        "level": "h4",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai-homestay_footer_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เปิดทุกวัน · หาดสุชาดา ระยอง · โทร 038-000-111",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai-homestay_footer_link",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูห้องพัก",
+        "href": "/rooms",
+        "variant": "ghost",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

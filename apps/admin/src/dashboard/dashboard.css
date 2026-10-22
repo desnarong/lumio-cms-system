@@ -1,3 +1,5 @@
+/* Overview screen: shortcuts, four numbers, then health + checklist. */
+
 .dashboard {
   display: flex;
   flex-direction: column;
@@ -14,34 +16,54 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-2xl);
+  font-weight: 700;
 }
 
 .dashboard__subtitle {
   margin: 0;
+  max-width: 68ch;
   color: var(--color-text-muted);
   font-size: var(--text-sm);
 }
 
 .dashboard__inline-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
   margin: 0;
-  color: var(--color-danger);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-soft);
+  color: color-mix(in srgb, var(--color-danger) 70%, var(--color-text));
   font-size: var(--text-sm);
 }
 
 .dashboard__shortcuts {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-md);
   align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard__shortcuts .ui-button {
+  border-radius: 10px;
 }
 
 .dashboard__view-site {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
   padding: var(--space-sm) var(--space-lg);
+  border-radius: 10px;
   color: var(--color-text);
-  text-decoration: none;
   font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
   transition: background var(--motion-duration-fast) var(--motion-ease);
 }
 
@@ -50,19 +72,19 @@
 }
 
 .dashboard__view-site:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 .dashboard__stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: var(--space-lg);
 }
 
 .dashboard__columns {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   gap: var(--space-lg);
   align-items: start;
 }
@@ -71,18 +93,20 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  border-radius: var(--radius-lg);
 }
 
 .dashboard__card-title {
   margin: 0;
   font-size: var(--text-lg);
+  font-weight: 600;
 }
 
 /* Health score */
 .health {
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-xl);
   flex-wrap: wrap;
 }
 
@@ -90,42 +114,44 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: 104px;
-  height: 104px;
+  width: 116px;
+  height: 116px;
 }
 
 .health-ring__track,
 .health-ring__value {
   fill: none;
-  stroke-width: 10;
+  stroke-width: 9;
+  stroke-linecap: round;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
 }
 
 .health-ring__track {
-  stroke: var(--color-border);
+  stroke: color-mix(in srgb, var(--color-border) 80%, transparent);
 }
 
 .health-ring__value {
   stroke: var(--color-primary);
-  stroke-linecap: round;
+  transition: stroke-dashoffset var(--motion-duration-slow) var(--motion-ease);
 }
 
 .health-ring__score {
   position: absolute;
+  font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: 700;
 }
 
 .health-issues {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
+  min-width: 220px;
   margin: 0;
   padding: 0;
   list-style: none;
-  flex: 1;
-  min-width: 200px;
 }
 
 .health-issues__link {
@@ -133,11 +159,10 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   color: var(--color-text);
-  text-decoration: none;
   font-size: var(--text-sm);
+  text-decoration: none;
   transition: background var(--motion-duration-fast) var(--motion-ease);
 }
 
@@ -146,15 +171,16 @@
 }
 
 .health-issues__link:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 .health-issues__dot {
+  flex: none;
   width: 8px;
   height: 8px;
   border-radius: var(--radius-full);
-  flex: none;
+  background: var(--color-text-muted);
 }
 
 .health-issues__link--high .health-issues__dot {
@@ -170,14 +196,20 @@
 }
 
 .health-issues__go {
-  margin-left: auto;
+  display: inline-flex;
+  margin-inline-start: auto;
   color: var(--color-text-muted);
 }
 
 .health__ok {
-  margin: 0;
-  color: var(--color-text-muted);
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 220px;
+  color: color-mix(in srgb, var(--color-success) 70%, var(--color-text));
   font-size: var(--text-sm);
+  font-weight: 600;
 }
 
 /* Onboarding checklist */
@@ -185,23 +217,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-md);
-}
-
-.checklist__dismiss {
-  border: none;
-  background: transparent;
-  color: var(--color-text-muted);
-  font: inherit;
-  font-size: var(--text-sm);
-  cursor: pointer;
-  text-decoration: underline;
+  gap: var(--space-sm);
 }
 
 .checklist {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 2px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -210,12 +232,13 @@
 .checklist__link {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
   color: var(--color-text);
-  text-decoration: none;
   font-size: var(--text-sm);
+  text-decoration: none;
+  transition: background var(--motion-duration-fast) var(--motion-ease);
 }
 
 .checklist__link:hover {
@@ -223,21 +246,46 @@
 }
 
 .checklist__link:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 .checklist__mark {
   display: inline-flex;
-  width: 20px;
+  align-items: center;
   justify-content: center;
-  color: var(--color-primary);
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
 }
 
 .checklist__link--done .checklist__mark {
-  color: var(--color-success);
+  border-color: transparent;
+  background: var(--color-success-soft);
+  color: color-mix(in srgb, var(--color-success) 80%, var(--color-text));
 }
 
 .checklist__link--done {
   color: var(--color-text-muted);
+}
+
+.checklist__dismiss {
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.checklist__dismiss:hover {
+  color: var(--color-text);
+}
+
+@media (max-width: 1023px) {
+  .dashboard__columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

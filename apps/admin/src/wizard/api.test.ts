@@ -90,15 +90,14 @@ describe('locale status', () => {
 });
 
 describe('createDemoWizardApi', () => {
-  it('ships the three template packs', async () => {
+  it('ships the template packs the wizard offers', async () => {
     const templates = await createDemoWizardApi().listTemplates();
 
-    expect(templates).toHaveLength(3);
-    expect(templates.map((template) => template.businessType)).toEqual([
-      'restaurant',
-      'clinic',
-      'freelance',
-    ]);
+    expect(templates.length).toBeGreaterThanOrEqual(3);
+    for (const type of ['restaurant', 'clinic', 'freelance', 'shop']) {
+      expect(templates.map((template) => template.businessType)).toContain(type);
+    }
+    expect(templates.map((template) => template.name)).toContain('บี-ไลท์ติ้ง');
     for (const template of templates) {
       expect(template.pages.length).toBeGreaterThanOrEqual(4);
     }

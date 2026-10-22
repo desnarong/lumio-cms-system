@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "ผลงาน",
+  "slug": "portfolio",
+  "excerpt": "ตัวอย่างโครงการที่ส่งมอบแล้ว",
+  "seoDescription": "ผลงานสร้างบ้าน ต่อเติม รีโนเวท นนทบุรี",
+  "blocks": [
+    {
+      "id": "blk_banchang_portfolio_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ผลงานที่ผ่านมา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang_portfolio_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ทุกโครงการมีเจ้าของบ้านยินดีให้เข้าชมหน้างานได้หลังนัดหมาย",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang_portfolio_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🏡",
+            "title": "บ้านเดี่ยว 180 ตร.ม.",
+            "description": "บ้านสองชั้น 3 ห้องนอน นนทบุรี ส่งมอบใน 8 เดือน"
+          },
+          {
+            "icon": "🏘️",
+            "title": "ทาวน์โฮมรีโนเวท 4 ยูนิต",
+            "description": "เปลี่ยนระบบไฟและห้องน้ำทั้งยูนิต ใช้เวลา 10 สัปดาห์"
+          },
+          {
+            "icon": "☕",
+            "title": "คาเฟ่ 120 ตร.ม.",
+            "description": "ต่อเติมหน้าร้านและงานระบบไฟใหม่ เปิดใช้งานได้ตามกำหนด"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang_portfolio_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ขอนัดชมผลงาน",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

@@ -22,8 +22,18 @@ const summary = (overrides: Partial<DashboardSummary> = {}): DashboardSummary =>
   health: {
     score: 86,
     issues: [
-      { id: 'seo_description', message: 'หน้า "บริการ" ยังไม่มีคำอธิบายหน้า', impact: 'medium', href: '/content/page' },
-      { id: 'no_domain', message: 'ยังไม่ได้เชื่อมโดเมนของตัวเอง', impact: 'low', href: '/settings/domain' },
+      {
+        id: 'seo_description',
+        message: 'หน้า "บริการ" ยังไม่มีคำอธิบายหน้า',
+        impact: 'medium',
+        href: '/content/page',
+      },
+      {
+        id: 'no_domain',
+        message: 'ยังไม่ได้เชื่อมโดเมนของตัวเอง',
+        impact: 'low',
+        href: '/settings/domain',
+      },
     ],
   },
   checklist: {
@@ -68,7 +78,7 @@ describe('DashboardView languages', () => {
     expect(html).toContain('Overview of กาแฟบ้านดอย');
     expect(html).toContain('Visitors today');
     expect(html).toContain('Site health');
-    expect(html).toContain('＋ New page');
+    expect(html).toContain('New page');
     // Nothing may stay in Thai on a translated screen.
     expect(html).not.toContain('ผู้เข้าชมวันนี้');
     expect(html).not.toContain('สุขภาพเว็บ');

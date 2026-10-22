@@ -14,6 +14,7 @@ import {
 } from '@lumio/blocks';
 import type { BlockEditorMode, BlockNode, BlockTree, GlobalBlockKind } from '@lumio/shared';
 import {
+  Icon,
   Button,
   EmptyState,
   Select,
@@ -104,7 +105,7 @@ const BlocksEditor = ({ blocks, onChange }: BlocksEditorProps) => {
                     aria-label={t('headerFooter.moveUp', { name: labelOf(block, locale) })}
                     onClick={() => move(block.id, -1)}
                   >
-                    ↑
+                    <Icon name="arrow-up" size={16} />
                   </button>
                   <button
                     type="button"
@@ -112,7 +113,7 @@ const BlocksEditor = ({ blocks, onChange }: BlocksEditorProps) => {
                     aria-label={t('headerFooter.moveDown', { name: labelOf(block, locale) })}
                     onClick={() => move(block.id, 1)}
                   >
-                    ↓
+                    <Icon name="arrow-down" size={16} />
                   </button>
                   <button
                     type="button"
@@ -123,7 +124,7 @@ const BlocksEditor = ({ blocks, onChange }: BlocksEditorProps) => {
                       if (block.id === selectedId) setSelectedId(null);
                     }}
                   >
-                    ×
+                    <Icon name="trash" size={16} />
                   </button>
                 </div>
               </li>

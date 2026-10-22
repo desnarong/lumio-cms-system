@@ -2,6 +2,8 @@
 
 ใช้ก่อนเปิดบริการจริงหรือก่อนอัปเดตระบบที่มีผู้ใช้อยู่ — โดยเฉพาะเมื่อบริการที่โฮสต์มีลูกค้าใช้งานแล้ว
 
+> รันทั้งระบบด้วย Docker: ดู [`docs/DOCKER.md`](DOCKER.md) (compose profiles, volume ที่ต้องสำรอง, migrate service)
+
 ## 1. Secrets และบัญชีเริ่มต้น
 
 - [ ] เปลี่ยน `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `PREVIEW_SECRET`,

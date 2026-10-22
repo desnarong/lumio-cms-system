@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "เทรนเนอร์",
+  "slug": "trainers",
+  "excerpt": "ทีมเทรนเนอร์และประสบการณ์",
+  "seoDescription": "เทรนเนอร์ส่วนตัว ฟิตดี สตูดิโอ",
+  "blocks": [
+    {
+      "id": "blk_fitdee_trainers_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ทีมเทรนเนอร์",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_fitdee_trainers_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ทุกคนมีใบรับรองจากสมาคมกีฬาและผ่านการอบรมการปฐมพยาบาล",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_fitdee_trainers_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🏅",
+            "title": "โค้ชโอ๊ต",
+            "description": "เทรนเนอร์ส่วนตัว 8 ปี เชี่ยวชาญการลดน้ำหนักและแก้บาดเจ็บ"
+          },
+          {
+            "icon": "🥇",
+            "title": "โค้ชเมย์",
+            "description": "อดีตนักกีฬายกเวท ดูแลโปรแกรมเวทหญิงโดยเฉพาะ"
+          },
+          {
+            "icon": "🩺",
+            "title": "โค้ชปอนด์",
+            "description": "ผู้ช่วยนักกายภาพบำบัด ดูแลผู้ที่กลับมาเคลื่อนไหวหลังบาดเจ็บ"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_fitdee_trainers_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "นัดปรึกษาเทรนเนอร์",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

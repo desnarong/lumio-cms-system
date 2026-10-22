@@ -1,0 +1,145 @@
+{
+  "type": "page",
+  "title": "แพ็กเกจทัวร์",
+  "slug": "packages",
+  "excerpt": "แพ็กเกจยอดนิยมพร้อมราคา",
+  "seoDescription": "แพ็กเกจทัวร์ เชียงใหม่ กระบี่ ญี่ปุ่น ราคา พลอยทราเวล",
+  "blocks": [
+    {
+      "id": "blk_ploy_packages_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "แพ็กเกจทัวร์",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_ploy_packages_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ราคาต่อคน พักคู่ · จองล่วงหน้า 30 วันลด 1,000 บาท",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_ploy_packages_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "4",
+        "items": [
+          {
+            "icon": "⛰️",
+            "title": "เชียงใหม่ 3 วัน 2 คืน 6,900 บาท",
+            "description": "รวมตั๋วเครื่องบิน ที่พัก 4 ดาว รถรับส่ง และไกด์"
+          },
+          {
+            "icon": "🏝️",
+            "title": "กระบี่ 4 วัน 3 คืน 9,500 บาท",
+            "description": "รวมทัวร์เกาะพีพีและเรือส่วนตัว พร้อมอาหาร 6 มื้อ"
+          },
+          {
+            "icon": "🗾",
+            "title": "ญี่ปุ่น 6 วัน 39,900 บาท",
+            "description": "โตเกียว-ฟูจิ รวมตั๋วเครื่องบิน โรงแรม และ JR Pass"
+          },
+          {
+            "icon": "👨‍👩‍👧",
+            "title": "ทัวร์ส่วนตัว",
+            "description": "ออกแบบโปรแกรมตามงบและจำนวนวันของครอบครัวคุณ"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_ploy_packages_outro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ทุกแพ็กเกจมีประกันการเดินทาง · ยกเลิกก่อน 15 วันคืนเงิน 80%",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_ploy_packages_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองหรือสอบถามแพ็กเกจ",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

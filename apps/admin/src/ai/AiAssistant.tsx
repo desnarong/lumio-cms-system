@@ -8,7 +8,7 @@ import {
   type AiStatus,
   type AiUsage,
 } from '@lumio/shared';
-import { Button, Select, Skeleton, TextField, useT, type MessageKey } from '@lumio/ui';
+import { Button, Icon, Select, Skeleton, TextField, useT, type MessageKey } from '@lumio/ui';
 import { aiProviderLabel, type AiApi } from './api.js';
 import { AiDiffDialog, type AiDiffProposal } from './AiDiffDialog.js';
 
@@ -178,7 +178,10 @@ export const AiAssistant = ({
     } else if (pending === 'block') {
       onApplyText(
         proposal.changes
-          .map((change) => ({ path: 'path' in change ? (change.path ?? '') : '', after: change.after }))
+          .map((change) => ({
+            path: 'path' in change ? (change.path ?? '') : '',
+            after: change.after,
+          }))
           .filter((change) => change.path.length > 0),
       );
     } else if (pending === 'seo') {
@@ -201,7 +204,10 @@ export const AiAssistant = ({
   if (loadingStatus && !status) {
     return (
       <section className="ai-panel" aria-label={t('ai.panel.title')} aria-busy="true">
-        <p className="ai-panel__title">{t('ai.panel.title')}</p>
+        <p className="ai-panel__title">
+          <Icon name="sparkles" size={16} />
+          {t('ai.panel.title')}
+        </p>
         <Skeleton shape="text" lines={2} />
       </section>
     );
@@ -217,7 +223,10 @@ export const AiAssistant = ({
 
   return (
     <section className="ai-panel" aria-label={t('ai.panel.title')}>
-      <p className="ai-panel__title">{t('ai.panel.title')}</p>
+      <p className="ai-panel__title">
+        <Icon name="sparkles" size={16} />
+        {t('ai.panel.title')}
+      </p>
       <p className="ai-panel__hint">
         {status
           ? `${quotaLabel(status.usage)} · ${aiProviderLabel(status.provider)}`

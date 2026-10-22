@@ -1,0 +1,46 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "คลาส",
+      "href": "/classes",
+      "children": []
+    },
+    {
+      "label": "เทรนเนอร์",
+      "href": "/trainers",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "คลาส",
+      "href": "/classes",
+      "children": []
+    },
+    {
+      "label": "เทรนเนอร์",
+      "href": "/trainers",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

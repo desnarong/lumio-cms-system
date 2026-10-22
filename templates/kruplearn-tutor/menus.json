@@ -1,0 +1,46 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "คอร์สเรียน",
+      "href": "/courses",
+      "children": []
+    },
+    {
+      "label": "ครูผู้สอน",
+      "href": "/teachers",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "คอร์สเรียน",
+      "href": "/courses",
+      "children": []
+    },
+    {
+      "label": "ครูผู้สอน",
+      "href": "/teachers",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

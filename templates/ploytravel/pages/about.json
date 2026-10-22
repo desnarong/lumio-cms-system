@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "เกี่ยวกับเรา",
+  "slug": "about",
+  "excerpt": "ทีมงานและประสบการณ์",
+  "seoDescription": "เกี่ยวกับพลอยทราเวล ตัวแทนทัวร์ ประสบการณ์ 8 ปี",
+  "blocks": [
+    {
+      "id": "blk_ploy_about_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "เกี่ยวกับพลอยทราเวล",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_ploy_about_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราเป็นตัวแทนทัวร์ที่ได้รับใบอนุญาตถูกต้อง มีทีมดูแลลูกค้าตลอด 24 ชั่วโมงระหว่างทริป",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_ploy_about_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🏅",
+            "title": "ใบอนุญาตนำเที่ยว",
+            "description": "เลขที่ 11/00000 ต่ออายุทุกปีตามกฎหมาย"
+          },
+          {
+            "icon": "🤝",
+            "title": "พันธมิตรท้องถิ่น",
+            "description": "ร่วมงานกับโรงแรมและไกด์ท้องถิ่นมากกว่า 40 ราย"
+          },
+          {
+            "icon": "📞",
+            "title": "ดูแล 24 ชั่วโมง",
+            "description": "มีเบอร์ฉุกเฉินให้ลูกค้าทุกทริป"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_ploy_about_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "คุยกับทีมวางแผนทริป",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

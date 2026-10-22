@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "ทีมทนาย",
+  "slug": "team",
+  "excerpt": "ทีมทนายและประสบการณ์",
+  "seoDescription": "ทีมทนายความ ประสบการณ์กฎหมายที่ดินและครอบครัว",
+  "blocks": [
+    {
+      "id": "blk_law_team_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ทีมทนายของเรา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_team_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ทุกคดีมีทนายหลักดูแลตั้งแต่ต้นจนจบ และมีทีมตรวจเอกสารก่อนยื่นศาลทุกครั้ง",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_team_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🎓",
+            "title": "ทนายอรุณ",
+            "description": "ทนายอาวุโส 18 ปี ด้านที่ดินและข้อพิพาทแนวเขต"
+          },
+          {
+            "icon": "📚",
+            "title": "ทนายพิมพ์",
+            "description": "เชี่ยวชาญกฎหมายครอบครัวและมรดก 12 ปี"
+          },
+          {
+            "icon": "💼",
+            "title": "ทนายกันต์",
+            "description": "ดูแลสัญญาธุรกิจและงานร่วมทุนของ SME"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_law_team_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ขอนัดหมายกับทีมทนาย",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

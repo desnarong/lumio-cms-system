@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Icon } from './icon.js';
 import { Sidebar } from './sidebar.js';
 
 const meta = {
@@ -14,11 +15,33 @@ const meta = {
   ],
   args: {
     items: [
-      { id: 'dashboard', label: 'ภาพรวม', icon: '▤', href: '/dashboard' },
-      { id: 'pages', label: 'หน้าเว็บ', icon: '❐', href: '/pages', active: true },
-      { id: 'media', label: 'รูปภาพ', icon: '🖼', href: '/media' },
-      { id: 'forms', label: 'ข้อความ', icon: '✉', href: '/inbox', badge: '3' },
-      { id: 'settings', label: 'ตั้งค่า', icon: '⚙', href: '/settings' },
+      {
+        id: 'dashboard',
+        label: 'ภาพรวม',
+        icon: <Icon name="home" size={18} />,
+        href: '/dashboard',
+      },
+      {
+        id: 'pages',
+        label: 'หน้าเว็บ',
+        icon: <Icon name="file-text" size={18} />,
+        href: '/pages',
+        active: true,
+      },
+      { id: 'media', label: 'รูปภาพ', icon: <Icon name="image" size={18} />, href: '/media' },
+      {
+        id: 'forms',
+        label: 'ข้อความ',
+        icon: <Icon name="mail" size={18} />,
+        href: '/inbox',
+        badge: '3',
+      },
+      {
+        id: 'settings',
+        label: 'ตั้งค่า',
+        icon: <Icon name="settings" size={18} />,
+        href: '/settings',
+      },
     ],
   },
 } satisfies Meta<typeof Sidebar>;

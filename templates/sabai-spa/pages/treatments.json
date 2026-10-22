@@ -1,0 +1,145 @@
+{
+  "type": "page",
+  "title": "ทรีตเมนต์",
+  "slug": "treatments",
+  "excerpt": "เมนูและราคาทรีตเมนต์",
+  "seoDescription": "เมนูสปา นวดไทย นวดน้ำมัน สครับ ราคา ทองหล่อ",
+  "blocks": [
+    {
+      "id": "blk_sabai_treatments_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ทรีตเมนต์",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sabai_treatments_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ราคารวมชาและของว่างหลังทรีตเมนต์ · จองล่วงหน้าอย่างน้อย 1 วัน",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sabai_treatments_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "4",
+        "items": [
+          {
+            "icon": "🙌",
+            "title": "นวดไทย 60 นาที 650 บาท",
+            "description": "ยืดเส้นและกดจุดแบบดั้งเดิม บรรเทาอาการเมื่อยคอและบ่า"
+          },
+          {
+            "icon": "🌿",
+            "title": "นวดน้ำมัน 90 นาที 890 บาท",
+            "description": "เลือกน้ำมันลาเวนเดอร์หรือตะไคร้ตามความชอบ"
+          },
+          {
+            "icon": "🧂",
+            "title": "สครับผิว 60 นาที 790 บาท",
+            "description": "เกลือทะเลและน้ำผึ้ง ผิวลื่นขึ้นทันที"
+          },
+          {
+            "icon": "🔥",
+            "title": "ประคบสมุนไพร 550 บาท",
+            "description": "เพิ่มต่อจากนวดหรือทำเดี่ยว บรรเทาอาการปวดเรื้อรัง"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sabai_treatments_outro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "คอร์ส 5 ครั้งลด 10% · ลูกค้าที่ตั้งครรภ์และผู้มีโรคประจำตัวโปรดแจ้งล่วงหน้า",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sabai_treatments_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองทรีตเมนต์",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "เกี่ยวกับเรา",
+  "slug": "about",
+  "excerpt": "เรื่องราวและทีม นวด",
+  "seoDescription": "เกี่ยวกับสบาย สปา ทองหล่อ สมุนไพรและทีม นวด",
+  "blocks": [
+    {
+      "id": "blk_sabai_about_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "เกี่ยวกับสบาย สปา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sabai_about_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราเชื่อว่าการนวดที่ดีเริ่มจากการฟังร่างกายลูกค้า จึงถามอาการและปรับแรงกดทุกครั้ง",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sabai_about_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🏡",
+            "title": "สวนสมุนไพรราชบุรี",
+            "description": "พื้นที่ 3 ไร่ที่ปลูกตะไคร้ ขิง และไพลส่งตรงมาที่สปา"
+          },
+          {
+            "icon": "🧑‍🏫",
+            "title": "ครู นวดรุ่นแรก",
+            "description": "ยังทำงานอยู่และเป็นคนฝึกทีมใหม่ทุกคน"
+          },
+          {
+            "icon": "♻️",
+            "title": "ลดขยะจากสปา",
+            "description": "ผ้าและน้ำมันใช้ซ้ำอย่างถูกสุขลักษณะ ขวดแก้วรีไซเคิล"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sabai_about_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองคิวหรือสอบถาม",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

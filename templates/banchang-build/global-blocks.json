@@ -1,0 +1,102 @@
+{
+  "header": [
+    {
+      "id": "blk_banchang-build_header_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ขอใบประเมินราคา",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "right",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "id": "blk_banchang-build_footer_name",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "บ้านช่าง คอนสตรัคชัน",
+        "level": "h4",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang-build_footer_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "รับงานสร้างใหม่ ต่อเติม และรีโนเวท · นนทบุรี-กรุงเทพฯ",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang-build_footer_link",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ผลงานที่ผ่านมา",
+        "href": "/portfolio",
+        "variant": "ghost",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

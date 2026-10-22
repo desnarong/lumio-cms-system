@@ -11,7 +11,7 @@ import {
   type TemplateSummary,
   type WizardSiteResult,
 } from '@lumio/shared';
-import { Banner, Button, Card, Skeleton, TextField, useT, type MessageKey } from '@lumio/ui';
+import { Banner, Button, Card, Icon, Skeleton, TextField, useT, type MessageKey } from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import type { AiApi } from '../ai/api.js';
 import {
@@ -256,9 +256,7 @@ export const WizardPage = ({
       );
       setPaletteUndo(previous);
     } catch (failure) {
-      setPaletteError(
-        failure instanceof Error ? failure.message : t('wizard.logoPaletteError'),
-      );
+      setPaletteError(failure instanceof Error ? failure.message : t('wizard.logoPaletteError'));
       setPaletteNote(null);
     } finally {
       setPaletteBusy(false);
@@ -343,7 +341,7 @@ export const WizardPage = ({
               aria-current={index === currentIndex ? 'step' : undefined}
             >
               <span className="wizard-steps__number" aria-hidden="true">
-                {index < currentIndex ? '✓' : index + 1}
+                {index < currentIndex ? <Icon name="check" size={14} /> : index + 1}
               </span>
               <span className="wizard-steps__title">{t(item.titleKey)}</span>
             </li>
@@ -432,7 +430,8 @@ export const WizardPage = ({
                     update({
                       name: event.target.value,
                       subdomain:
-                        draft.subdomain.length === 0 || draft.subdomain === subdomainFromName(draft.name)
+                        draft.subdomain.length === 0 ||
+                        draft.subdomain === subdomainFromName(draft.name)
                           ? subdomainFromName(event.target.value)
                           : draft.subdomain,
                     })
@@ -489,7 +488,11 @@ export const WizardPage = ({
                   <button
                     key={preset.id}
                     type="button"
-                    className={cn('wizard-option', 'wizard-option--style', draft.styleId === preset.id && 'is-selected')}
+                    className={cn(
+                      'wizard-option',
+                      'wizard-option--style',
+                      draft.styleId === preset.id && 'is-selected',
+                    )}
                     aria-pressed={draft.styleId === preset.id}
                     onClick={() => update({ styleId: preset.id })}
                   >
@@ -586,7 +589,9 @@ export const WizardPage = ({
                     value={draft.primaryColor}
                     onChange={(event) => update({ primaryColor: event.target.value.toUpperCase() })}
                   />
-                  <p className="wizard-subtitle">{t('wizard.pickedColor', { color: draft.primaryColor })}</p>
+                  <p className="wizard-subtitle">
+                    {t('wizard.pickedColor', { color: draft.primaryColor })}
+                  </p>
                 </div>
 
                 <Banner
@@ -658,9 +663,10 @@ export const WizardPage = ({
                   <li>
                     {t('wizard.summary.languages')}{' '}
                     <strong>
-                      {[localeLabel('th'), ...draft.extraLocales.map((locale) => localeLabel(locale))].join(
-                        ' · ',
-                      )}
+                      {[
+                        localeLabel('th'),
+                        ...draft.extraLocales.map((locale) => localeLabel(locale)),
+                      ].join(' · ')}
                     </strong>
                   </li>
                   <li>
@@ -673,7 +679,10 @@ export const WizardPage = ({
                   </li>
                 </ul>
                 <div className="wizard-preview" style={{ background: preview.colors.primary }}>
-                  <span className="wizard-preview__button" style={{ color: readableInk(preview.colors.primary) }}>
+                  <span
+                    className="wizard-preview__button"
+                    style={{ color: readableInk(preview.colors.primary) }}
+                  >
                     {t('wizard.previewButton')}
                   </span>
                 </div>

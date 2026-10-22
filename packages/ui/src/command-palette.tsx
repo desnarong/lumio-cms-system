@@ -2,6 +2,7 @@ import { useT } from './i18n.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from './cn.js';
+import { Icon } from './icon.js';
 
 export interface CommandPaletteEntry {
   id: string;
@@ -101,7 +102,7 @@ export const CommandPalette = ({
       >
         <div className="ui-command__search">
           <span className="ui-command__icon" aria-hidden="true">
-            🔍
+            <Icon name="search" size={16} />
           </span>
           <input
             ref={inputRef}
@@ -139,7 +140,9 @@ export const CommandPalette = ({
                       onClick={() => onSelect(item)}
                     >
                       <span className="ui-command__item-label">{item.label}</span>
-                      {item.hint ? <span className="ui-command__item-hint">{item.hint}</span> : null}
+                      {item.hint ? (
+                        <span className="ui-command__item-hint">{item.hint}</span>
+                      ) : null}
                     </button>
                   );
                 })}

@@ -4,7 +4,7 @@
 
 ## ก่อนเริ่ม
 
-- Node.js ≥ 20 และ pnpm 11 (`corepack enable`)
+- Node.js ≥ 22.13 และ pnpm 11 (`corepack enable`)
 - Docker (สำหรับ PostgreSQL 16, Redis, MinIO) — ถ้าไม่ใช้ Docker ต้องเตรียมฐานข้อมูลเอง
 - อ่าน [`AGENTS.md`](AGENTS.md) (กติกากลาง) และ [`docs/design/`](docs/design/README.md) ก่อนแก้โค้ด
 

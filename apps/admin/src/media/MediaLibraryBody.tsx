@@ -144,9 +144,7 @@ export const MediaLibraryBody = ({
     try {
       const result = await ai.altText({
         mediaId: item.id,
-        ...(item.folder
-          ? { context: t('media.aiFolderContext', { folder: item.folder }) }
-          : {}),
+        ...(item.folder ? { context: t('media.aiFolderContext', { folder: item.folder }) } : {}),
       });
       setProposal(result.proposal);
     } catch (cause) {
@@ -374,9 +372,7 @@ export const MediaLibraryBody = ({
             </p>
             <p className="media-library__inspector-meta">
               {[
-                selected.width && selected.height
-                  ? `${selected.width} × ${selected.height}`
-                  : null,
+                selected.width && selected.height ? `${selected.width} × ${selected.height}` : null,
                 formatFileSize(selected.sizeBytes),
                 selected.folder ?? t('media.noFolder'),
               ]
@@ -626,9 +622,11 @@ export const MediaLibraryBody = ({
           placeholder={folders[0] ?? ''}
           onChange={(event) => setBulkFolder(event.target.value)}
         />
-        <p className="media-library__hint">{t('media.bulkFolderExisting', {
-          folders: folders.length > 0 ? folders.join(' · ') : t('media.noFolder'),
-        })}</p>
+        <p className="media-library__hint">
+          {t('media.bulkFolderExisting', {
+            folders: folders.length > 0 ? folders.join(' · ') : t('media.noFolder'),
+          })}
+        </p>
       </Modal>
 
       <AiDiffDialog

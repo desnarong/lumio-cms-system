@@ -4,6 +4,8 @@
  * broken analytics path must never delay or fail the visitor's error page.
  */
 
+import { apiBaseUrl } from './site-locales';
+
 export interface NotFoundReportDeps {
   baseUrl?: string;
   fetchImpl?: typeof fetch;
@@ -15,7 +17,7 @@ export const reportNotFound = async (
   path: string,
   deps: NotFoundReportDeps = {},
 ): Promise<boolean> => {
-  const baseUrl = deps.baseUrl ?? process.env.NEXT_PUBLIC_API_URL ?? '';
+  const baseUrl = deps.baseUrl ?? apiBaseUrl();
   if (baseUrl.length === 0) return false;
 
   try {

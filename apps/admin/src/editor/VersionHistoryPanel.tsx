@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BlockTreeRenderer } from '@lumio/blocks';
 import type { ContentVersionDetail, ContentVersionSummary } from '@lumio/shared';
 import {
+  Icon,
   Button,
   Drawer,
   EmptyState,
@@ -157,7 +158,7 @@ export const VersionHistoryPanel = ({
         />
       ) : versions.length === 0 ? (
         <EmptyState
-          illustration={<span aria-hidden="true">🕘</span>}
+          illustration={<Icon name="clock" size={32} />}
           title={t('editor.history.empty')}
           description={t('editor.history.emptyHint')}
         />

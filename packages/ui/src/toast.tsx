@@ -9,14 +9,15 @@ import {
 } from 'react';
 import type { ReactNode } from 'react';
 import { cn } from './cn.js';
+import { Icon, type IconName } from './icon.js';
 
 export type ToastTone = 'info' | 'success' | 'warning' | 'danger';
 
-const TONE_ICON: Record<ToastTone, string> = {
-  info: 'ℹ',
-  success: '✓',
-  warning: '⚠',
-  danger: '!',
+const TONE_ICON: Record<ToastTone, IconName> = {
+  info: 'info',
+  success: 'check',
+  warning: 'alert-triangle',
+  danger: 'alert-circle',
 };
 
 export interface ToastAction {
@@ -46,7 +47,7 @@ export const Toast = ({
 }: ToastProps) => (
   <div className={cn('ui-toast', `ui-toast--${tone}`, className)} role="status">
     <span className="ui-toast__icon" aria-hidden="true">
-      {TONE_ICON[tone]}
+      <Icon name={TONE_ICON[tone]} size={18} />
     </span>
     <div className="ui-toast__body">
       <p className="ui-toast__title">{title}</p>
@@ -64,7 +65,7 @@ export const Toast = ({
         aria-label={dismissLabel}
         onClick={onDismiss}
       >
-        <span aria-hidden="true">×</span>
+        <Icon name="close" size={16} />
       </button>
     ) : null}
   </div>

@@ -9,6 +9,7 @@ import {
   type Plan,
 } from '@lumio/shared';
 import {
+  Icon,
   Banner,
   Button,
   Card,
@@ -107,7 +108,9 @@ export const BillingView = ({
               </p>
             ) : null}
           </div>
-          {summary.subscription && !summary.subscription.cancelAtPeriodEnd && onCancelSubscription ? (
+          {summary.subscription &&
+          !summary.subscription.cancelAtPeriodEnd &&
+          onCancelSubscription ? (
             <Button variant="ghost" size="sm" disabled={busy} onClick={onCancelSubscription}>
               {t('billing.cancelRenewal')}
             </Button>
@@ -179,7 +182,7 @@ export const BillingView = ({
         <h2 className="settings-card__title">{t('billing.history')}</h2>
         {summary.invoices.length === 0 ? (
           <EmptyState
-            illustration={<span aria-hidden="true">💳</span>}
+            illustration={<Icon name="credit-card" size={32} />}
             title={t('billing.noInvoices')}
             description={t('billing.noInvoicesHint')}
           />
@@ -194,7 +197,9 @@ export const BillingView = ({
                   </span>
                   <span className="settings-row__meta">
                     {invoice.periodStart.slice(0, 10)} – {invoice.periodEnd.slice(0, 10)}
-                    {invoice.method ? ` · ${paymentMethodLabel(invoice.method, uiLocaleNow())}` : ''}
+                    {invoice.method
+                      ? ` · ${paymentMethodLabel(invoice.method, uiLocaleNow())}`
+                      : ''}
                     {invoice.credit > 0
                       ? ` · ${t('billing.invoiceCredit', {
                           amount: invoice.credit.toLocaleString('th-TH'),

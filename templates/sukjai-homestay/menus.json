@@ -1,0 +1,46 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "ห้องพัก",
+      "href": "/rooms",
+      "children": []
+    },
+    {
+      "label": "การเดินทาง",
+      "href": "/location",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "ห้องพัก",
+      "href": "/rooms",
+      "children": []
+    },
+    {
+      "label": "การเดินทาง",
+      "href": "/location",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

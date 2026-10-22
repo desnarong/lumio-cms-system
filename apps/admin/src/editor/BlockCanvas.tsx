@@ -18,7 +18,7 @@ import {
   type EditorDevice,
 } from '@lumio/blocks';
 import type { BlockNode, BlockTree, PublicForm, SectionTemplate } from '@lumio/shared';
-import { IconButton, useT } from '@lumio/ui';
+import { Icon, IconButton, useT } from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import { labelForPath } from './fields.js';
 import { SlashMenu } from './SlashMenu.js';
@@ -144,15 +144,13 @@ const BlockRegion = ({
         <IconButton
           size="sm"
           aria-label={
-            hidden
-              ? t('editor.showBlock', { name: label })
-              : t('editor.hideBlock', { name: label })
+            hidden ? t('editor.showBlock', { name: label }) : t('editor.hideBlock', { name: label })
           }
           title={hidden ? t('editor.showOnPage') : t('editor.hideOnPage')}
           aria-pressed={hidden}
           onClick={onToggleVisibility}
         >
-          {hidden ? '🙈' : '👁'}
+          {hidden ? <Icon name="eye-off" size={16} /> : <Icon name="eye" size={16} />}
         </IconButton>
         {onSaveAsTemplate ? (
           <IconButton
@@ -161,7 +159,7 @@ const BlockRegion = ({
             title={t('editor.saveAsTemplate')}
             onClick={onSaveAsTemplate}
           >
-            💾
+            <Icon name="save" size={16} />
           </IconButton>
         ) : null}
         <IconButton
@@ -171,7 +169,7 @@ const BlockRegion = ({
           title={t('common.delete')}
           onClick={onRemove}
         >
-          🗑
+          <Icon name="trash" size={16} />
         </IconButton>
       </div>
 
@@ -340,9 +338,7 @@ export const BlockCanvas = ({
                 onDuplicate={() => onDuplicate(block.id)}
                 onRemove={() => onRemove(block.id)}
                 onToggleVisibility={() => onToggleVisibility(block.id)}
-                onSaveAsTemplate={
-                  onSaveAsTemplate ? () => onSaveAsTemplate(block.id) : undefined
-                }
+                onSaveAsTemplate={onSaveAsTemplate ? () => onSaveAsTemplate(block.id) : undefined}
                 {...(forms ? { forms } : {})}
                 onDragStart={() => {
                   dragFromRef.current = index;

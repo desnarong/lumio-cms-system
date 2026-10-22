@@ -1,0 +1,92 @@
+{
+  "type": "page",
+  "title": "ติดต่อ",
+  "slug": "contact",
+  "excerpt": "ที่ตั้งและช่องทางทดลองเรียน",
+  "seoDescription": "ติดต่อสถาบันติวครูเพลิน พระราม 9",
+  "blocks": [
+    {
+      "id": "blk_kruplearn_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ติดต่อเรา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_kruplearn_contact_info",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ที่อยู่: 888 อาคารพระราม 9 ชั้น 5 กรุงเทพฯ 10310 · โทร 02-666-7788 · เปิด จ.-ศ. 15:00-20:00 น. · ส.-อา. 09:00-17:00 น.",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_kruplearn_contact_channels",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ช่องทางติดต่อ",
+        "subheading": "เลือกช่องทางที่สะดวกสำหรับคุณ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "💬",
+            "title": "LINE @kruplearn",
+            "description": "สอบถามตารางเรียนและจองทดลองเรียน"
+          },
+          {
+            "icon": "☎️",
+            "title": "โทรศัพท์",
+            "description": "02-666-7788 ฝ่ายวิชาการ"
+          },
+          {
+            "icon": "✉️",
+            "title": "อีเมล",
+            "description": "learn@kruplearn.example"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

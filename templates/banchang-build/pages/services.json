@@ -1,0 +1,145 @@
+{
+  "type": "page",
+  "title": "บริการ",
+  "slug": "services",
+  "excerpt": "งานสร้าง ต่อเติม และรีโนเวท",
+  "seoDescription": "รับสร้างบ้าน ต่อเติม รีโนเวท นนทบุรี กรุงเทพฯ",
+  "blocks": [
+    {
+      "id": "blk_banchang_services_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "บริการของเรา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang_services_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ประเมินราคาเบื้องต้นฟรีหลังเข้าหน้างาน · เซ็นสัญญาเป็นลายลักษณ์อักษรทุกโครงการ",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang_services_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "4",
+        "items": [
+          {
+            "icon": "🏠",
+            "title": "สร้างบ้านใหม่",
+            "description": "แบบบ้านมาตรฐานหรือแบบที่ลูกค้าออกแบบเอง เริ่ม 15,000 บาท/ตร.ม."
+          },
+          {
+            "icon": "🧱",
+            "title": "ต่อเติมและขยายพื้นที่",
+            "description": "ต่อห้องนอน ห้องครัว หรือชั้นสอง พร้อมคำนวณโครงสร้าง"
+          },
+          {
+            "icon": "🔨",
+            "title": "รีโนเวทบ้านเก่า",
+            "description": "เปลี่ยนระบบไฟ ประปา และผิวพื้นโดยไม่ต้องรื้อทั้งหลัง"
+          },
+          {
+            "icon": "🔍",
+            "title": "ตรวจบ้านก่อนส่งมอบ",
+            "description": "ตรวจรอยร้าว ระบบไฟ และการรั่วซึมกับทีมวิศวกร"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang_services_outro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ระยะเวลางานโดยประมาณ: ต่อเติม 4-8 สัปดาห์ · สร้างใหม่ 6-10 เดือน",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang_services_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "นัดเข้าหน้างาน",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

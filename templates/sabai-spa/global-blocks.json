@@ -1,0 +1,102 @@
+{
+  "header": [
+    {
+      "id": "blk_sabai-spa_header_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองคิว",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "right",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "id": "blk_sabai-spa_footer_name",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "สบาย สปา",
+        "level": "h4",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sabai-spa_footer_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เปิดทุกวัน 10:00-21:00 น. · ทองหล่อ กรุงเทพฯ",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sabai-spa_footer_link",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูเมนูทรีตเมนต์",
+        "href": "/treatments",
+        "variant": "ghost",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

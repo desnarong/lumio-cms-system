@@ -1,0 +1,140 @@
+{
+  "type": "page",
+  "title": "ห้องพัก",
+  "slug": "rooms",
+  "excerpt": "ห้องพักสามแบบพร้อมราคา",
+  "seoDescription": "ห้องพักสุขใจ โฮมสเตย์ ราคาเริ่มต้น 1,200 บาท ติดทะเลระยอง",
+  "blocks": [
+    {
+      "id": "blk_sukjai_rooms_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ห้องพัก",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_rooms_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ราคาต่อคืนรวมอาหารเช้าและภาษีแล้ว · วันหยุดยาวบวกเพิ่ม 500 บาท",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_rooms_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🛏️",
+            "title": "ห้องดีลักซ์ 1,800 บาท",
+            "description": "เตียงใหญ่ วิวทะเล ระเบียงส่วนตัว ห้องน้ำในตัว"
+          },
+          {
+            "icon": "👨‍👩‍👧",
+            "title": "ห้องครอบครัว 2,600 บาท",
+            "description": "สองเตียงใหญ่ พักได้ 4 คน มีโซฟาและตู้เย็น"
+          },
+          {
+            "icon": "🌿",
+            "title": "ห้องเดียว 1,200 บาท",
+            "description": "เตียงเดี่ยว วิวสวน เหมาะกับผู้เดินทางคนเดียว"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_rooms_outro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เช็กอิน 14:00 น. เช็กเอาต์ 11:00 น. · แจ้งความต้องการพิเศษล่วงหน้าได้",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sukjai_rooms_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "สอบถามห้องว่าง",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

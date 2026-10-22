@@ -1,0 +1,102 @@
+{
+  "header": [
+    {
+      "id": "blk_kruplearn-tutor_header_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ทดลองเรียนฟรี",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "right",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "id": "blk_kruplearn-tutor_footer_name",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ครูเพลิน สถาบันติว",
+        "level": "h4",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_kruplearn-tutor_footer_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เปิดสอน ป.1-ม.6 และ IELTS · พระราม 9 กรุงเทพฯ",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_kruplearn-tutor_footer_link",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูคอร์สเรียน",
+        "href": "/courses",
+        "variant": "ghost",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

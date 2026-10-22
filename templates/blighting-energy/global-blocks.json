@@ -1,0 +1,102 @@
+{
+  "header": [
+    {
+      "id": "blk_blighting-energy_header_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ขอใบเสนอราคา",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "right",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "id": "blk_blighting-energy_footer_name",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "บี-ไลท์ติ้ง",
+        "level": "h4",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting-energy_footer_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "โชว์รูมเปิด จันทร์-เสาร์ 09:00-18:00 น. · หลอดไฟ LED ประหยัดไฟกว่า 80%",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting-energy_footer_link",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูสินค้าทั้งหมด",
+        "href": "/products",
+        "variant": "ghost",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

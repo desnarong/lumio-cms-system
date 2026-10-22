@@ -11,7 +11,7 @@ Lumio คือ CMS แบบ multi-tenant (pnpm workspaces + Turborepo) ที�
 ## มีอะไรใน Community
 
 - Visual editor แก้บนหน้าเว็บจริง, undo/redo, version history, autosave
-- 10 template ภาษาไทย + design panel + section templates
+- 20 template ภาษาไทย + design panel + section templates
 - หน้าเว็บ/บทความ/หมวดหมู่/เมนู, คลังสื่อ (crop, WebP/AVIF, srcset), ฟอร์ม + อีเมล/LINE
 - SEO (meta, sitemap, JSON-LD, OG image), i18n `/en/...`, analytics ในตัว
 - ร้านค้า (สินค้า/ตัวเลือก/ตะกร้า/พร้อมเพย์/บัตร Stripe/ใบเสร็จ), ฟีเจอร์ AI (local หรือ OpenAI-compatible)
@@ -41,12 +41,12 @@ templates/    Template packs (tokens + header/footer + หน้าตัวอ�
 
 ## เริ่มใช้งาน
 
-ต้องมี Node.js ≥ 20, pnpm 11 (`corepack enable`) และ Docker
+ต้องมี Node.js ≥ 22.13, pnpm 11 (`corepack enable`) และ Docker
 
 ```bash
 cp .env.example .env
 pnpm i
-docker compose up -d db redis minio
+docker compose up -d
 pnpm --filter api exec prisma migrate deploy
 pnpm --filter api exec prisma db seed
 pnpm dev
@@ -55,6 +55,7 @@ pnpm dev
 - Admin: <http://localhost:49300> · API: <http://localhost:49100/api> · Renderer: <http://localhost:49200>
 - บัญชีทดลอง: `owner@example.com` / `lumio-demo-1234`
 - ถ้าไม่ตั้ง `VITE_API_URL` แอดมินจะรันโหมดทดลองด้วยข้อมูลในหน่วยความจำ
+- อยากได้ทั้งระบบใน Docker (production-like): `docker compose --profile app up -d --build` ดู [`docs/DOCKER.md`](docs/DOCKER.md)
 
 ก่อนใช้งานจริง เปลี่ยนค่า `change-me-*` ใน `.env` และอ่าน [`SECURITY.md`](SECURITY.md)
 
@@ -63,6 +64,7 @@ pnpm dev
 | งาน | คำสั่ง |
 |---|---|
 | รันทั้งหมด | `docker compose up -d && pnpm dev` |
+| ทั้งระบบใน Docker | `docker compose --profile app up -d --build` |
 | Lint / Typecheck / Test | `pnpm lint` · `pnpm typecheck` · `pnpm test` |
 | E2E (ครั้งแรกติดตั้งเบราว์เซอร์) | `pnpm test:e2e:install && pnpm test:e2e` |
 | Build | `pnpm build` |

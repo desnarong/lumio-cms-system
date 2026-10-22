@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "สัตวแพทย์",
+  "slug": "vets",
+  "excerpt": "ทีมสัตวแพทย์และความเชี่ยวชาญ",
+  "seoDescription": "ทีมสัตวแพทย์ เพ็ทฮัก คลินิกสัตว์",
+  "blocks": [
+    {
+      "id": "blk_pethug_vets_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ทีมสัตวแพทย์",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_pethug_vets_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ทุกคนมีใบประกอบวิชาชีพสัตวแพทยสภาและผ่านการอบรมการจัดการความเครียดของสัตว์",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_pethug_vets_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "👩‍⚕️",
+            "title": "หมอมิ้นท์",
+            "description": "อายุรกรรมสุนัขและแมว 9 ปี เชี่ยวชาญโรคไตและผิวหนัง"
+          },
+          {
+            "icon": "🧑‍⚕️",
+            "title": "หมอโต้ง",
+            "description": "ศัลยกรรมและทันตกรรมสัตว์ ดูแลผ่าตัดทำหมัน"
+          },
+          {
+            "icon": "🐾",
+            "title": "หมอฟ้า",
+            "description": "โภชนาการและพฤติกรรมสัตว์ ให้คำปรึกษาเรื่องอาหาร"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_pethug_vets_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "นัดหมายสัตวแพทย์",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

@@ -1,22 +1,50 @@
-/* Sign-in screen. Tokens only, no hard-coded colours or sizes. */
+/* Sign-in screen: a soft split background and one quiet card. */
+
 .auth-shell {
   display: grid;
   place-items: center;
   min-height: 100vh;
-  padding: var(--space-xl);
-  background: var(--color-bg);
+  padding: var(--space-xl) var(--space-lg);
+  background:
+    radial-gradient(
+      700px 420px at 15% 0%,
+      color-mix(in srgb, var(--color-primary) 16%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      700px 420px at 90% 100%,
+      color-mix(in srgb, var(--color-accent) 12%, transparent),
+      transparent 60%
+    ),
+    var(--color-bg);
 }
 
 .auth-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
   width: 100%;
   max-width: 420px;
-  padding: var(--space-2xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: linear-gradient(
+    140deg,
+    var(--color-primary) 0%,
+    color-mix(in srgb, var(--color-accent) 70%, var(--color-primary)) 100%
+  );
+  color: var(--color-on-primary);
 }
 
 .auth-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
   margin: 0;
   color: var(--color-primary);
   font-family: var(--font-display);
@@ -27,15 +55,14 @@
 }
 
 .auth-title {
-  margin: 0;
-  color: var(--color-text);
+  margin: var(--space-xs) 0 0;
   font-family: var(--font-display);
   font-size: var(--text-2xl);
-  line-height: var(--text-2xl-line-height);
+  font-weight: 700;
 }
 
 .auth-subtitle {
-  margin: 0;
+  margin: var(--space-xs) 0 0;
   color: var(--color-text-muted);
   font-size: var(--text-sm);
 }
@@ -44,13 +71,18 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+.auth-form .ui-button--primary {
+  border-radius: 10px;
 }
 
 .auth-hint {
-  margin: 0;
-  padding: var(--space-md);
-  background: var(--color-surface-hover);
+  margin: var(--space-sm) 0 0;
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
+  background: var(--color-info-soft);
+  color: color-mix(in srgb, var(--color-info) 60%, var(--color-text));
+  font-size: var(--text-xs);
 }

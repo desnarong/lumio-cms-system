@@ -1,0 +1,41 @@
+# Production Caddyfile.
+#
+# Run with:
+#   CADDYFILE=./infra/caddy/Caddyfile.prod \
+#   docker compose --env-file .env.docker --profile app up -d --build
+#
+# Required environment (see .env.docker.example):
+#   PUBLIC_ROOT_DOMAIN, ADMIN_HOST, ACME_EMAIL, LUMIO_TLS_ASK_URL
+
+{
+	admin off
+	email {$ACME_EMAIL}
+	on_demand_tls {
+		ask {$LUMIO_TLS_ASK_URL}
+	}
+}
+
+# Back office.
+{$ADMIN_HOST} {
+	encode zstd gzip
+	reverse_proxy admin:80
+}
+
+# Public root domain plus every free subdomain. Certificates are requested on
+# demand, and Caddy asks the API first, so only verified domains get one.
+{$PUBLIC_ROOT_DOMAIN}, *.{$PUBLIC_ROOT_DOMAIN} {
+	encode zstd gzip
+	tls {
+		on_demand
+	}
+	reverse_proxy renderer:49200
+}
+
+# Custom domains added by customers.
+https:// {
+	encode zstd gzip
+	tls {
+		on_demand
+	}
+	reverse_proxy renderer:49200
+}

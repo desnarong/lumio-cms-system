@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { isTwoFactorChallenge, loginInputSchema, type TwoFactorChallenge } from '@lumio/shared';
-import { Banner, Button, Card, TextField, useT } from '@lumio/ui';
+import { Banner, Button, Card, Icon, TextField, useT } from '@lumio/ui';
 import type { AuthApi, SignInResult } from './api.js';
 
 export interface LoginPageProps {
@@ -33,7 +33,12 @@ export const TwoFactorForm = ({
   return (
     <div className="auth-shell">
       <Card className="auth-card">
-        <p className="auth-eyebrow">Lumio</p>
+        <p className="auth-eyebrow">
+          <span className="auth-logo" aria-hidden="true">
+            <Icon name="sparkles" size={16} />
+          </span>
+          Lumio
+        </p>
         <h1 className="auth-title">{t('auth.twoFactorTitle')}</h1>
         <p className="auth-subtitle">{t('auth.twoFactorSubtitle')}</p>
 
@@ -143,7 +148,12 @@ export const LoginPage = ({ api, onSignedIn, hint }: LoginPageProps) => {
   return (
     <div className="auth-shell">
       <Card className="auth-card">
-        <p className="auth-eyebrow">Lumio</p>
+        <p className="auth-eyebrow">
+          <span className="auth-logo" aria-hidden="true">
+            <Icon name="sparkles" size={16} />
+          </span>
+          Lumio
+        </p>
         <h1 className="auth-title">{t('auth.title')}</h1>
         <p className="auth-subtitle">{t('auth.subtitle')}</p>
 

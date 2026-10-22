@@ -1,0 +1,145 @@
+{
+  "type": "page",
+  "title": "โซลูชัน",
+  "slug": "solutions",
+  "excerpt": "ออกแบบแสงให้แต่ละพื้นที่",
+  "seoDescription": "โซลูชันแสงสว่างสำหรับบ้าน ออฟฟิศ ร้านค้า และโรงงาน พร้อมสำรวจหน้างานฟรี",
+  "blocks": [
+    {
+      "id": "blk_blighting_solutions_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "โซลูชันแสงสว่างตามพื้นที่",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_solutions_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราวัดความต้องการแสงของแต่ละพื้นที่จริง ไม่ได้ขายตามจำนวนดวง เพื่อให้ได้ทั้งความสว่างที่พอดีและค่าไฟที่ต่ำที่สุด",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_solutions_list",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "พื้นที่ที่เราดูแล",
+        "subheading": "มีเคสอ้างอิงให้ดูทุกประเภท",
+        "columns": "4",
+        "items": [
+          {
+            "icon": "🏠",
+            "title": "บ้านและคอนโด",
+            "description": "แสงอุ่นสบายตา แยกโซนอ่านหนังสือและโซนพักผ่อน"
+          },
+          {
+            "icon": "🏢",
+            "title": "ออฟฟิศและสำนักงาน",
+            "description": "แสงขาวกลางที่ลดการเมื่อยล้าของสายตา ตามมาตรฐานการทำงาน"
+          },
+          {
+            "icon": "🛍️",
+            "title": "ร้านค้าและโชว์รูม",
+            "description": "เน้นสีสินค้าให้ตรงจริงด้วยค่า CRI สูง"
+          },
+          {
+            "icon": "🏭",
+            "title": "โรงงานและคลังสินค้า",
+            "description": "โคมไฟเพดานสูง ประหยัดไฟและบำรุงรักษาง่าย"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_solutions_case",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ตัวอย่างโครงการ: เปลี่ยนหลอดในสำนักงาน 1,200 ตร.ม. จากหลอดฟลูออเรสเซนต์เป็น LED ลดค่าไฟเดือนละประมาณ 18,000 บาท คืนทุนภายใน 14 เดือน",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_solutions_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "นัดสำรวจหน้างานฟรี",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

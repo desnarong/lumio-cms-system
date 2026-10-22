@@ -1,3 +1,10 @@
+/* Icons inherit the text colour and never shrink inside flex rows. */
+.ui-icon {
+  display: inline-block;
+  flex: none;
+  vertical-align: middle;
+}
+
 /* Lumio UI kit. Every value comes from @lumio/tokens - no hard-coded colors or sizes. */
 
 .ui-button {
@@ -1003,24 +1010,33 @@
 }
 
 .ui-tabs__list {
-  display: flex;
-  gap: var(--space-xs);
-  border-block-end: 1px solid var(--color-border);
+  display: inline-flex;
+  align-self: flex-start;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
 }
 
 .ui-tabs__tab {
   display: inline-flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-lg);
+  padding: var(--space-xs) var(--space-lg);
   border: 0;
-  border-block-end: 2px solid transparent;
+  border-radius: var(--radius-full);
   background: transparent;
   color: var(--color-text-muted);
   font-family: var(--font-ui);
   font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
+  transition:
+    background var(--motion-duration-fast) var(--motion-ease),
+    color var(--motion-duration-fast) var(--motion-ease);
 }
 
 .ui-tabs__tab:hover:not(:disabled) {
@@ -1028,7 +1044,7 @@
 }
 
 .ui-tabs__tab--active {
-  border-block-end-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
   color: var(--color-primary);
 }
 
@@ -1469,4 +1485,3 @@
   color: var(--color-text-muted);
   text-align: center;
 }
-

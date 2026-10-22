@@ -6,6 +6,7 @@ import { ShopShell } from '../../../components/ShopShell';
 import { requestHost } from '../../../lib/request-host';
 import { requestLocale } from '../../../lib/request-locale';
 import { loadOrderOrNull } from '../../../lib/shop';
+import { apiBaseUrl } from '../../../lib/site-locales';
 
 export const metadata: Metadata = {
   title: 'คำสั่งซื้อของคุณ',
@@ -49,7 +50,7 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
   if (!found) notFound();
 
   const { order, payment } = found;
-  const apiBase = (process.env.NEXT_PUBLIC_API_URL ?? '').replace(/\/+$/, '');
+  const apiBase = apiBaseUrl();
   const receiptBase = apiBase
     ? `${apiBase}/api/v1/public/${encodeURIComponent(host)}/shop/orders/${encodeURIComponent(order.token)}`
     : null;

@@ -1,118 +1,238 @@
+# Lumio in Docker.
+#
+# Two ways to run it:
+#
+#   docker compose up -d                       # infra only (db, redis, minio)
+#   pnpm dev                                   # apps on the host with HMR
+#
+#   docker compose --profile app up -d --build # whole stack, production-like
+#
+# The app services are behind the `app` profile so day-to-day development never
+# has to rebuild images. Anything a container needs to reach another container
+# (Postgres, Redis, MinIO, renderer) is set explicitly below, because the values
+# in `.env` point at localhost for host-based development.
+
+
 services:
+  # ── Infrastructure ─────────────────────────────────────────────────────
   db:
     image: postgres:16
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: lumio
-      POSTGRES_PASSWORD: lumio
-      POSTGRES_DB: lumio
+      POSTGRES_USER: ${POSTGRES_USER:-lumio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lumio}
+      POSTGRES_DB: ${POSTGRES_DB:-lumio}
     ports:
-      - '49432:5432'
+      - '127.0.0.1:${DB_PORT:-49432}:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U lumio -d lumio']
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-lumio} -d ${POSTGRES_DB:-lumio}']
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes']
     ports:
-      - '49537:6379'
+      - '127.0.0.1:${REDIS_PORT:-49537}:6379'
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   minio:
     image: pgsty/silo
+    restart: unless-stopped
     command: server /data --console-address ":49601"
     environment:
-      MINIO_ROOT_USER: lumio
-      MINIO_ROOT_PASSWORD: lumio-secret
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-lumio}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-lumio-secret}
     ports:
-      - '49600:9000'
-      - '49601:9001'
+      - '127.0.0.1:${S3_PORT:-49600}:9000'
+      - '127.0.0.1:${S3_CONSOLE_PORT:-49601}:9001'
     volumes:
       - miniodata:/data
 
   # Optional malware scanner. Start it with `docker compose --profile scan up -d`
-  # and set MEDIA_SCANNER=clamav plus CLAMAV_PORT=49800 for the API.
+  # and set MEDIA_SCANNER=clamav plus CLAMAV_PORT=3310 for the API.
   clamav:
     image: clamav/clamav:stable
     profiles: ['scan']
+    restart: unless-stopped
     ports:
-      - '49800:3310'
+      - '127.0.0.1:${CLAMAV_PUBLISH_PORT:-49800}:3310'
     volumes:
       - clamdb:/var/lib/clamav
 
-  api:
+  # ── Applications (profile: app) ────────────────────────────────────────
+  # Migrations run once, before the API and worker start, so two replicas can
+  # never race on the same schema change.
+  migrate:
+    profiles: ['app']
     build:
       context: .
       dockerfile: apps/api/Dockerfile
-    env_file: .env
+    env_file: ${LUMIO_ENV_FILE:-.env}
     environment:
-      # Inside the compose network the renderer is not on localhost.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-lumio}:${POSTGRES_PASSWORD:-lumio}@db:5432/${POSTGRES_DB:-lumio}?schema=public
+    command:
+      - sh
+      - -c
+      - apps/api/node_modules/.bin/prisma migrate deploy --schema apps/api/prisma/schema.prisma
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: 'no'
+
+  api:
+    profiles: ['app']
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file: ${LUMIO_ENV_FILE:-.env}
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-lumio}:${POSTGRES_PASSWORD:-lumio}@db:5432/${POSTGRES_DB:-lumio}?schema=public
+      REDIS_URL: redis://redis:6379
       RENDERER_URL: http://renderer:49200
-    command: >
-      sh -c "apps/api/node_modules/.bin/prisma migrate deploy
-      --schema apps/api/prisma/schema.prisma && node apps/api/dist/main.js"
+      MEDIA_LOCAL_DIR: /repo/apps/api/.media
+      LUMIO_DATA_DIR: /repo/.lumio-data
+      TEMPLATES_DIR: /repo/templates
+      API_PUBLIC_URL: ${API_PUBLIC_URL:-http://localhost:49100}
     depends_on:
       db:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     ports:
-      - '49100:49100'
+      - '127.0.0.1:${API_PORT:-49100}:49100'
+    volumes:
+      - media:/repo/apps/api/.media
+      - lumio_data:/repo/.lumio-data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - node -e "fetch('http://127.0.0.1:49100/api/health').then(r => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    stop_grace_period: 20s
 
   worker:
+    profiles: ['app']
     build:
       context: .
       dockerfile: apps/api/Dockerfile
-    command: node apps/api/dist/worker.js
-    env_file: .env
+    env_file: ${LUMIO_ENV_FILE:-.env}
     environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-lumio}:${POSTGRES_PASSWORD:-lumio}@db:5432/${POSTGRES_DB:-lumio}?schema=public
+      REDIS_URL: redis://redis:6379
       RENDERER_URL: http://renderer:49200
+      MEDIA_LOCAL_DIR: /repo/apps/api/.media
+      LUMIO_DATA_DIR: /repo/.lumio-data
+      TEMPLATES_DIR: /repo/templates
+      API_PUBLIC_URL: ${API_PUBLIC_URL:-http://localhost:49100}
+    command: node apps/api/dist/worker.js
     depends_on:
       db:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    volumes:
+      - media:/repo/apps/api/.media
+      - lumio_data:/repo/.lumio-data
+    restart: unless-stopped
 
   admin:
+    profiles: ['app']
     build:
       context: .
       dockerfile: apps/admin/Dockerfile
+      args:
+        # The browser calls this URL, so it must be the public API address.
+        VITE_API_URL: ${LUMIO_ADMIN_API_URL:-http://localhost:49100}
+        VITE_PUBLIC_ROOT_DOMAIN: ${LUMIO_DOMAIN:-example.com}
     ports:
-      - '49300:80'
+      - '127.0.0.1:${ADMIN_PORT:-49300}:80'
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q -O /dev/null http://127.0.0.1/ || exit 1']
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
   renderer:
+    profiles: ['app']
     build:
       context: .
       dockerfile: apps/renderer/Dockerfile
-    env_file: .env
+      args:
+        NEXT_PUBLIC_API_URL: ${LUMIO_API_URL:-http://localhost:49100}
+    env_file: ${LUMIO_ENV_FILE:-.env}
     environment:
-      # The renderer resolves the tenant from the request host and reads content
-      # from the API over the compose network.
+      # Server-side rendering talks to the API over the compose network. The
+      # runtime-only name avoids Next inlining the build-time value.
+      API_INTERNAL_URL: http://api:49100
       NEXT_PUBLIC_API_URL: http://api:49100
+    depends_on:
+      api:
+        condition: service_healthy
     ports:
-      - '49200:49200'
+      - '127.0.0.1:${RENDERER_PORT:-49200}:49200'
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - node -e "require('net').connect(49200, '127.0.0.1').on('connect', () => process.exit(0)).on('error', () => process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   caddy:
+    profiles: ['app']
     image: caddy:2
+    restart: unless-stopped
     ports:
-      - '49700:80'
-      - '49701:443'
+      - '${CADDY_HTTP_PORT:-80}:80'
+      - '${CADDY_HTTPS_PORT:-443}:443'
     environment:
+      PUBLIC_ROOT_DOMAIN: ${LUMIO_DOMAIN:-example.com}
+      ADMIN_HOST: ${LUMIO_ADMIN_HOST:-admin.example.com}
+      ACME_EMAIL: ${ACME_EMAIL:-}
       LUMIO_TLS_ASK_URL: ${LUMIO_TLS_ASK_URL:-http://api:49100/api/v1/public/tls/ask}
     volumes:
-      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile
+      # Point CADDYFILE at infra/caddy/Caddyfile.prod on a real domain.
+      - ${CADDYFILE:-./infra/caddy/Caddyfile}:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - api
-      - admin
-      - renderer
+      api:
+        condition: service_healthy
+      admin:
+        condition: service_healthy
+      renderer:
+        condition: service_healthy
 
 volumes:
   pgdata: {}
+  redisdata: {}
   miniodata: {}
   clamdb: {}
   caddy_data: {}
   caddy_config: {}
+  # Uploaded files (MEDIA_LOCAL_DIR) and the generated secrets key plus local
+  # backups (LUMIO_DATA_DIR) must survive a container rebuild.
+  media: {}
+  lumio_data: {}

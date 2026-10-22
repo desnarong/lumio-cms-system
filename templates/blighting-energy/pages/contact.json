@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "ติดต่อ",
+  "slug": "contact",
+  "excerpt": "โชว์รูม เบอร์โทร และช่องทางขอใบเสนอราคา",
+  "seoDescription": "ติดต่อบี-ไลท์ติ้ง โทร 02-123-4567 ขอใบเสนอราคาและนัดสำรวจหน้างาน",
+  "blocks": [
+    {
+      "id": "blk_blighting_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ติดต่อเรา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_contact_info",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "โชว์รูม: 88 ถนนพระราม 2 เขตบางขุนเทียน กรุงเทพฯ 10150 · โทร 02-123-4567 · เปิดจันทร์-เสาร์ 09:00-18:00 น.",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_contact_channels",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ช่องทางติดต่อ",
+        "subheading": "เลือกช่องทางที่สะดวกสำหรับคุณ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "☎️",
+            "title": "โทรศัพท์",
+            "description": "02-123-4567 ต่อ 1 ฝ่ายขาย ต่อ 2 ฝ่ายบริการติดตั้ง"
+          },
+          {
+            "icon": "💬",
+            "title": "LINE @blighting",
+            "description": "ส่งแบบแปลนหรือรูปหน้างานมาขอใบเสนอราคาได้เลย"
+          },
+          {
+            "icon": "✉️",
+            "title": "อีเมล",
+            "description": "sale@blighting.example สำหรับโครงการและงานส่ง"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_contact_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "โทรนัดสำรวจหน้างาน",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

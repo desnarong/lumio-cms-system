@@ -1,4 +1,5 @@
 export * from './cn.js';
+export * from './icon.js';
 export * from './i18n.js';
 export * from './button.js';
 export * from './icon-button.js';

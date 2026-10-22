@@ -1,0 +1,152 @@
+{
+  "type": "page",
+  "title": "สินค้าทั้งหมด",
+  "slug": "products",
+  "excerpt": "โคมไฟและหลอดไฟ LED พร้อมราคา",
+  "seoDescription": "สินค้าหลอดไฟ LED ดาวน์ไลท์ หลอดทรงกระบอก ราคาชัดเจน พร้อมติดตั้ง",
+  "blocks": [
+    {
+      "id": "blk_blighting_products_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "สินค้าทั้งหมด",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_products_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ราคาปลีกมาตรฐานสำหรับหน้าร้าน ลูกค้าโครงการและตัวแทนจำหน่ายสอบถามราคาพิเศษได้ที่ทีมขาย",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_products_list",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "สินค้าขายดี",
+        "subheading": "ทุกดวงรับประกัน 3 ปี",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🔆",
+            "title": "ดาวน์ไลท์ LED 9W",
+            "description": "เริ่มต้น 189 บาท · แสงขาวนวล 3000K เจาะฝ้า 3 นิ้ว"
+          },
+          {
+            "icon": "💡",
+            "title": "หลอดไฟ LED 12W",
+            "description": "เริ่มต้น 99 บาท · ขั้ว E27 ให้ความสว่าง 1,200 ลูเมน"
+          },
+          {
+            "icon": "📏",
+            "title": "หลอดทรงกระบอก T8 18W",
+            "description": "เริ่มต้น 249 บาท · เหมาะกับสำนักงานและโรงจอดรถ"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_products_service",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "บริการที่มาพร้อมสินค้า",
+        "subheading": "ไม่ต้องหาช่างเพิ่ม",
+        "columns": "2",
+        "items": [
+          {
+            "icon": "🧰",
+            "title": "ออกแบบแสงและติดตั้ง",
+            "description": "สำรวจหน้างาน คำนวณความสว่าง และติดตั้งโดยช่างของเรา"
+          },
+          {
+            "icon": "📦",
+            "title": "ส่งไวทั่วประเทศ",
+            "description": "สั่งก่อน 14:00 น. จัดส่งภายในวันทำการถัดไป"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blighting_products_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ขอแคตตาล็อกและใบเสนอราคา",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

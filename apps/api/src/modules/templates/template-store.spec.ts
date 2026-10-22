@@ -132,8 +132,10 @@ describe('template packs on disk', () => {
     const packs = loadTemplatePacks(resolveTemplatesDirectory());
 
     expect(packForBusinessType(packs, 'clinic').manifest.businessType).toBe('clinic');
+    // Every known type has a pack of its own once the catalogue is complete.
+    expect(packForBusinessType(packs, 'other').manifest.businessType).toBe('other');
     // Unknown types fall back to the first pack instead of failing the wizard.
-    expect(packForBusinessType(packs, 'other').key).toBe(packs[0]?.key);
+    expect(packForBusinessType(packs, 'spaceship' as never).key).toBe(packs[0]?.key);
   });
 });
 

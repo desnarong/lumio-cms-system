@@ -1,0 +1,92 @@
+{
+  "type": "page",
+  "title": "ติดต่อ",
+  "slug": "contact",
+  "excerpt": "ที่ตั้งและช่องทางจองคิว",
+  "seoDescription": "ติดต่อสบาย สปา ทองหล่อ จองคิว",
+  "blocks": [
+    {
+      "id": "blk_sabai_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ติดต่อเรา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sabai_contact_info",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ที่อยู่: 99 ซอยทองหล่อ 10 กรุงเทพฯ 10110 · โทร 02-444-5566 · ไลน์ @sabaispa · เปิดทุกวัน 10:00-21:00 น.",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_sabai_contact_channels",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ช่องทางติดต่อ",
+        "subheading": "เลือกช่องทางที่สะดวกสำหรับคุณ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "💬",
+            "title": "LINE @sabaispa",
+            "description": "จองคิวและดูช่วงเวลาว่างแบบเรียลไทม์"
+          },
+          {
+            "icon": "☎️",
+            "title": "โทรศัพท์",
+            "description": "02-444-5566 ฝ่ายจองคิว"
+          },
+          {
+            "icon": "✉️",
+            "title": "อีเมล",
+            "description": "book@sabaispa.example สำหรับกรุ๊ป"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

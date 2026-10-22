@@ -138,7 +138,7 @@ describe('admin screens in English', () => {
 
     expect(html).toContain('New form');
     expect(html).toContain('Form name');
-    expect(html).toContain('＋ Add a field');
+    expect(html).toContain('Add a field');
   });
 
   it('reads the message inbox in English', () => {
@@ -209,7 +209,13 @@ describe('admin screens in English', () => {
     };
 
     const html = english(
-      <SeoView health={health} loading={false} error={null} onRetry={vi.fn()} onNavigate={vi.fn()} />,
+      <SeoView
+        health={health}
+        loading={false}
+        error={null}
+        onRetry={vi.fn()}
+        onNavigate={vi.fn()}
+      />,
     );
 
     expect(html).toContain('Checks');
@@ -343,9 +349,7 @@ describe('admin screens in English', () => {
   });
 
   it('runs the wizard in English', () => {
-    const html = english(
-      <WizardPage api={createDemoWizardApi()} onCreated={vi.fn()} />,
-    );
+    const html = english(<WizardPage api={createDemoWizardApi()} onCreated={vi.fn()} />);
 
     expect(html).toContain('What kind of business is this?');
     expect(html).toContain('Step 1 of 5');

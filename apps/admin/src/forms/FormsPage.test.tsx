@@ -1,6 +1,11 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { DEFAULT_CONTACT_FORM_FIELDS, type Form, type FormSubmission, type FormSummary } from '@lumio/shared';
+import {
+  DEFAULT_CONTACT_FORM_FIELDS,
+  type Form,
+  type FormSubmission,
+  type FormSummary,
+} from '@lumio/shared';
 import { FormsView, formatDateTime, type FormsViewProps } from './FormsPage.js';
 import type { FormsController } from './useForms.js';
 
@@ -114,7 +119,7 @@ describe('FormsView', () => {
 
   it('hides every write action from a read-only role', () => {
     const html = render({ canManage: false });
-    expect(html).not.toContain('＋ สร้างฟอร์ม');
+    expect(html).not.toContain('สร้างฟอร์ม');
     expect(html).not.toContain('ลบฟอร์ม');
     expect(html).not.toContain('อ่านแล้ว</button>');
     expect(html).toContain('ติดต่อเรา');
@@ -130,7 +135,7 @@ describe('FormsView', () => {
       controller: controller({ summaries: [], selectedId: null, selected: null, submissions: [] }),
     });
     expect(html).toContain('ยังไม่มีฟอร์มในเว็บนี้');
-    expect(html).toContain('＋ สร้างฟอร์ม');
+    expect(html).toContain('สร้างฟอร์ม');
   });
 
   it('shows skeletons while loading and a retry when it fails', () => {

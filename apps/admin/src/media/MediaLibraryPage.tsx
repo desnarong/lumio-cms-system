@@ -1,4 +1,4 @@
-import { useT } from '@lumio/ui';
+import { Icon, useT } from '@lumio/ui';
 import { MediaLibraryBody } from './MediaLibraryBody.js';
 import type { AiApi } from '../ai/api.js';
 import type { MediaApi } from './api.js';
@@ -32,6 +32,7 @@ export const MediaLibraryPage = ({ api, ai, onBack }: MediaLibraryPageProps) => 
         </div>
         {onBack ? (
           <button type="button" className="media-page__back" onClick={onBack}>
+            <Icon name="arrow-left" size={16} />
             {t('media.backToEditor')}
           </button>
         ) : null}

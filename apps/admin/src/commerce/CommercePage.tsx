@@ -20,6 +20,7 @@ import {
   type ReviewSlipInput,
 } from '@lumio/shared';
 import {
+  Icon,
   Banner,
   Button,
   Card,
@@ -533,7 +534,7 @@ export const ProductsTab = ({ api, media, canManage }: ProductsTabProps) => {
   };
 
   return (
-    <div className="commerce-tab">
+    <div className="commerce-view">
       <div className="commerce-toolbar">
         <TextField
           label={t('commerce.search')}
@@ -579,7 +580,7 @@ export const ProductsTab = ({ api, media, canManage }: ProductsTabProps) => {
                 />
               ) : (
                 <span className="commerce-row__image commerce-row__image--empty" aria-hidden="true">
-                  🛍
+                  <Icon name="shopping-bag" size={22} />
                 </span>
               )}
               <div className="commerce-row__body">
@@ -769,7 +770,7 @@ export const OrdersTab = ({ api, canManage }: OrdersTabProps) => {
   }, [selected, canManage, t]);
 
   return (
-    <div className="commerce-tab">
+    <div className="commerce-view">
       <div className="commerce-toolbar">
         <Select
           label={t('commerce.orderStatus')}
@@ -778,9 +779,7 @@ export const OrdersTab = ({ api, canManage }: OrdersTabProps) => {
             { value: 'all', label: t('commerce.statusAll') },
             ...(
               ['pending', 'paid', 'shipped', 'completed', 'cancelled', 'refunded'] as OrderStatus[]
-            ).map(
-              (value) => ({ value, label: t(ORDER_STATUS_KEYS[value]) }),
-            ),
+            ).map((value) => ({ value, label: t(ORDER_STATUS_KEYS[value]) })),
           ]}
           onChange={(event) => state.setStatus(event.target.value as OrderStatus | 'all')}
         />

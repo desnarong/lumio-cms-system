@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "รับสร้างบ้านและรีโนเวท",
+  "seoDescription": "บ้านช่าง คอนสตรัคชัน รับสร้างบ้าน ต่อเติม รีโนเวท พร้อมราคาโปร่งใส",
+  "blocks": [
+    {
+      "id": "blk_banchang_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-right",
+        "image": null,
+        "heading": "สร้างบ้านที่อยู่ได้จริง ภายในงบที่ตกลงไว้",
+        "subheading": "ทีมช่างประจำและผู้ควบคุมงานของเราเอง ใบเสนอราคาแยกรายการชัดเจน ไม่มีค่าใช้จ่ายแอบแฝง",
+        "buttons": [
+          {
+            "label": "ดูบริการ",
+            "href": "/services",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "ดูผลงาน",
+            "href": "/portfolio",
+            "variant": "ghost",
+            "external": false
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "muted",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "fade-up"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang_home_why",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ทำไมงานของเราคุมงบได้",
+        "subheading": "วางแผนวัสดุก่อนเริ่มงานทุกครั้ง",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "📋",
+            "title": "ใบเสนอราคาแยกรายการ",
+            "description": "เห็นค่าวัสดุและค่าแรงทุกบรรทัด ไม่มีบวกทีหลัง"
+          },
+          {
+            "icon": "👷",
+            "title": "ช่างประจำ ไม่รับเหมาช่วง",
+            "description": "ทีมเดิมทำงานด้วยกันมา 6 ปี ควบคุมคุณภาพได้"
+          },
+          {
+            "icon": "📷",
+            "title": "รายงานความคืบหน้าทุกสัปดาห์",
+            "description": "ส่งรูปและตารางงานให้เจ้าของบ้านทางไลน์"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang_home_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เรารับงานไม่เกิน 3 โครงการพร้อมกัน เพื่อให้ผู้ควบคุมงานไปหน้างานได้จริงทุกวัน",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_banchang_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ขอใบประเมินราคาฟรี",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

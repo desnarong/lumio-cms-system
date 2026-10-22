@@ -1,0 +1,145 @@
+{
+  "type": "page",
+  "title": "บริการ",
+  "slug": "services",
+  "excerpt": "บริการตรวจรักษาและราคา",
+  "seoDescription": "บริการคลินิกสัตว์ ตรวจสุขภาพ วัคซีน ทำหมัน ราคา",
+  "blocks": [
+    {
+      "id": "blk_pethug_services_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "บริการของเรา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_pethug_services_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ราคาเป็นราคาเริ่มต้น · สอบถามราคาแน่นอนได้ก่อนรับบริการทุกครั้ง",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_pethug_services_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "4",
+        "items": [
+          {
+            "icon": "🩺",
+            "title": "ตรวจสุขภาพทั่วไป 350 บาท",
+            "description": "ชั่งน้ำหนัก ฟังหัวใจ ตรวจผิวหนังและฟัน"
+          },
+          {
+            "icon": "💉",
+            "title": "วัคซีนรวม เริ่ม 500 บาท",
+            "description": "ตามโปรแกรมอายุสัตว์ พร้อมบันทึกในสมุดวัคซีน"
+          },
+          {
+            "icon": "🏥",
+            "title": "ทำหมัน เริ่ม 2,500 บาท",
+            "description": "ผ่าตัดโดยสัตวแพทย์ผู้เชี่ยวชาญ มีห้องพักฟื้นแยก"
+          },
+          {
+            "icon": "🚑",
+            "title": "รักษาฉุกเฉิน 24 ชม.",
+            "description": "อุบัติเหตุ กินสิ่งแปลกปลอม และอาการหายใจลำบาก"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_pethug_services_outro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "โปรแกรมสุขภาพประจำปีสำหรับสุนัขและแมว เริ่ม 1,990 บาท/ปี",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_pethug_services_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองคิวรับบริการ",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

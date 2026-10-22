@@ -1,0 +1,145 @@
+{
+  "type": "page",
+  "title": "คลาส",
+  "slug": "classes",
+  "excerpt": "คลาสกลุ่มเล็กและตารางเวลา",
+  "seoDescription": "คลาสฟิตเนส ฟิตดี สตูดิโอ สุขุมวิท 71",
+  "blocks": [
+    {
+      "id": "blk_fitdee_classes_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "คลาสทั้งหมด",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_fitdee_classes_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ทุกคลาสจำกัด 4 คน ใช้เวลา 45-60 นาที จองล่วงหน้าผ่านไลน์",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_fitdee_classes_items",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียด",
+        "subheading": "",
+        "columns": "4",
+        "items": [
+          {
+            "icon": "🔥",
+            "title": "HIIT 45 นาที",
+            "description": "คาร์ดิโอเข้มข้น เผาผลาญต่อเนื่อง ไม่ต้องมีพื้นฐาน"
+          },
+          {
+            "icon": "🏋️",
+            "title": "ยกเวทส่วนตัว",
+            "description": "โปรแกรมตามเป้าหมาย เรียนตัวต่อตัวกับเทรนเนอร์"
+          },
+          {
+            "icon": "🧘",
+            "title": "โยคะและยืดเหยียด",
+            "description": "คลายตึงสำหรับคนนั่งทำงานหน้าจอทั้งวัน"
+          },
+          {
+            "icon": "🥊",
+            "title": "บ็อกซิ่งพื้นฐาน",
+            "description": "เรียนการชกที่ถูกท่า พร้อมการ์ดและนวมให้ยืม"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_fitdee_classes_outro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ตารางเวลา: จันทร์-ศุกร์ 06:30 / 12:00 / 18:00 น. · เสาร์-อาทิตย์ 09:00 / 16:00 น.",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_fitdee_classes_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองคลาสทดลอง",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

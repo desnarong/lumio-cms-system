@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from './cn.js';
+import { Icon } from './icon.js';
 
 export interface EmptyStateProps {
   illustration?: ReactNode;
@@ -22,7 +23,7 @@ export const EmptyState = ({
 }: EmptyStateProps) => (
   <div className={cn('ui-empty-state', `ui-empty-state--${tone}`, className)}>
     <div className="ui-empty-state__illustration" aria-hidden="true">
-      {illustration ?? (tone === 'error' ? '⚠' : '✦')}
+      {illustration ?? <Icon name={tone === 'error' ? 'alert-triangle' : 'sparkles'} size={28} />}
     </div>
     <p className="ui-empty-state__title">{title}</p>
     {description ? <p className="ui-empty-state__description">{description}</p> : null}

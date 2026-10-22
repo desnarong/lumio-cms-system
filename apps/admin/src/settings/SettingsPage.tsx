@@ -18,6 +18,7 @@ import {
   type SiteSummary,
 } from '@lumio/shared';
 import {
+  Icon,
   Banner,
   Button,
   Card,
@@ -234,7 +235,7 @@ export interface LanguageViewProps {
 /**
  * Languages the site offers (docs/design/17-i18n.md 17.3). Adding a language
  * here makes the language switcher appear in the editor; the pages themselves
- * are translated one by one from the editor's 🌐 button.
+ * are translated one by one from the language button in the editor.
  */
 export const LanguageView = ({
   site,
@@ -420,7 +421,6 @@ export const DomainView = ({
       </Banner>
       <p className="settings-hint">{t('settings.domain.autoHint')}</p>
 
-
       {error ? (
         <p className="settings-error" role="alert">
           {error}
@@ -444,7 +444,7 @@ export const DomainView = ({
 
       {domains.length === 0 ? (
         <EmptyState
-          illustration={<span aria-hidden="true">🌐</span>}
+          illustration={<Icon name="globe" size={32} />}
           title={t('settings.domain.emptyTitle')}
           description={t('settings.domain.emptyHint')}
         />
@@ -889,7 +889,7 @@ export const BackupScheduleView = ({
 
       {overview.items.length === 0 ? (
         <EmptyState
-          illustration={<span aria-hidden="true">🗓️</span>}
+          illustration={<Icon name="calendar" size={32} />}
           title={t('settings.backup.autoEmptyTitle')}
           description={t('settings.backup.autoEmptyHint')}
         />
@@ -1003,7 +1003,7 @@ export const BackupView = ({
           />
         ) : items.length === 0 ? (
           <EmptyState
-            illustration={<span aria-hidden="true">🗄️</span>}
+            illustration={<Icon name="database" size={32} />}
             title={t('settings.backup.trashEmpty')}
             description={t('settings.backup.trashEmptyHint')}
           />
@@ -1158,7 +1158,6 @@ const BackupTab = ({ api }: { api: SettingsApi }) => {
       setBusy(false);
     }
   };
-
 
   const saveSchedule = async (): Promise<void> => {
     setSavingSchedule(true);

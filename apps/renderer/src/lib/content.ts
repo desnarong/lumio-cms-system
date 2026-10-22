@@ -12,16 +12,17 @@ import {
   type PublicApi,
 } from './api';
 import { createDemoPublicApi } from './demo';
+import { apiBaseUrl } from './site-locales';
 import { unstable_cache } from 'next/cache';
 
 /**
- * Which API the renderer talks to. With `NEXT_PUBLIC_API_URL` set it uses the
- * real `/public` endpoints; otherwise it serves the built-in demo site, so the
+ * Which API the renderer talks to. With an API URL configured it uses the real
+ * `/public` endpoints; otherwise it serves the built-in demo site, so the
  * renderer runs on its own during development.
  */
 export const getPublicApi = (): PublicApi => {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-  return baseUrl && baseUrl.length > 0 ? createPublicApi({ baseUrl }) : createDemoPublicApi();
+  const baseUrl = apiBaseUrl();
+  return baseUrl.length > 0 ? createPublicApi({ baseUrl }) : createDemoPublicApi();
 };
 
 /** Serving demo content in production would be worse than a 500. */
