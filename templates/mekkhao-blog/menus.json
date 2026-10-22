@@ -1,0 +1,46 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "บทความ",
+      "href": "/posts",
+      "children": []
+    },
+    {
+      "label": "หัวข้อ",
+      "href": "/topics",
+      "children": []
+    },
+    {
+      "label": "เกี่ยวกับ",
+      "href": "/about",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "บทความทั้งหมด",
+      "href": "/posts",
+      "children": []
+    },
+    {
+      "label": "หัวข้อที่เขียน",
+      "href": "/topics",
+      "children": []
+    },
+    {
+      "label": "ติดต่อกองบรรณาธิการ",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

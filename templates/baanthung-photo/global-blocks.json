@@ -1,0 +1,102 @@
+{
+  "header": [
+    {
+      "id": "blk_baanthung-photo_header_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองคิวถ่าย",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "sm",
+        "external": false,
+        "align": "right",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "id": "blk_baanthung-photo_footer_name",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ภาพบ้านทุ่ง",
+        "level": "h4",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_baanthung-photo_footer_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "รับงานถ่ายภาพทั่วประเทศ · นัดล่วงหน้า 2 สัปดาห์",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_baanthung-photo_footer_link",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูผลงาน",
+        "href": "/portfolio",
+        "variant": "ghost",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

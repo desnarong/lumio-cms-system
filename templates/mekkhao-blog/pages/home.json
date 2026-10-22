@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "บันทึกเรื่องเมือง ผู้คน และการใช้ชีวิตอย่างช้า ๆ",
+  "seoDescription": "เมฆขาว บล็อกเล่าเรื่องเมือง ผู้คน วัฒนธรรม และการใช้ชีวิตอย่างมีสติ",
+  "blocks": [
+    {
+      "id": "blk_blog_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "centered",
+        "heading": "เล่าเรื่องเมืองอย่างช้า ๆ",
+        "subheading": "บทความเกี่ยวกับผู้คน วัฒนธรรม และการใช้ชีวิตในเมืองที่เราเดินผ่านทุกวัน",
+        "buttons": [
+          {
+            "label": "อ่านบทความ",
+            "href": "/posts",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "เกี่ยวกับเรา",
+            "href": "/about",
+            "variant": "ghost",
+            "external": false
+          }
+        ],
+        "image": null
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blog_home_topics",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "หัวข้อที่เราเขียน",
+        "subheading": "อัปเดตทุกสัปดาห์",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🏙",
+            "title": "เมืองและผู้คน",
+            "description": "เรื่องราวของชุมชน ย่านเก่า และคนทำงานเบื้องหลังเมือง"
+          },
+          {
+            "icon": "🍜",
+            "title": "อาหารและวัฒนธรรม",
+            "description": "มื้ออาหารที่เล่าเรื่องประวัติศาสตร์และความทรงจำได้"
+          },
+          {
+            "icon": "🌱",
+            "title": "ชีวิตที่ช้าลง",
+            "description": "ไอเดียเล็ก ๆ ในการใช้ชีวิตอย่างมีสติมากขึ้น"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blog_home_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราอยากให้ทุกบทความพาคุณมองเมืองที่คุ้นเคยอีกครั้ง ด้วยสายตาที่ช้าลง",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blog_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "อ่านบทความทั้งหมด",
+        "href": "/posts",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

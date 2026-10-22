@@ -1,0 +1,140 @@
+{
+  "type": "page",
+  "title": "จองโต๊ะ",
+  "slug": "reservation",
+  "excerpt": "จองโต๊ะล่วงหน้าได้ใน 3 ขั้นตอน",
+  "seoDescription": "วิธีจองโต๊ะที่กาแฟบ้านดอย สำหรับลูกค้าตั้งแต่ 2 คนขึ้นไป",
+  "blocks": [
+    {
+      "id": "blk_cafe_rsv_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "จองโต๊ะ",
+        "level": "h2",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_rsv_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "โทรล่วงหน้าอย่างน้อย 2 ชั่วโมง หรือจองผ่าน LINE ของร้าน เราจะเก็บโต๊ะไว้ให้ 15 นาทีหลังเวลาที่จองไว้",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_rsv_steps",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "จองโต๊ะใน 3 ขั้นตอน",
+        "subheading": "สำหรับลูกค้าตั้งแต่ 2 คนขึ้นไป",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "1",
+            "title": "เลือกวันและเวลา",
+            "description": "บอกวัน เวลา และจำนวนที่นั่งที่ต้องการ"
+          },
+          {
+            "icon": "2",
+            "title": "ยืนยันกับทีมร้าน",
+            "description": "ทีมงานโทรกลับภายใน 30 นาทีเพื่อยืนยันการจอง"
+          },
+          {
+            "icon": "3",
+            "title": "รับโต๊ะตามเวลา",
+            "description": "มาถึงแล้วแจ้งชื่อที่จองไว้กับพนักงานได้เลย"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_rsv_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "วันเสาร์และวันอาทิตย์แนะนำให้จองล่วงหน้า 1 วัน เพราะโต๊ะริมหน้าต่างเต็มเร็ว",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_rsv_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ติดต่อร้าน",
+        "href": "/contact",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

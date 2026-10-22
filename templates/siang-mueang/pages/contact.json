@@ -1,0 +1,79 @@
+{
+  "type": "page",
+  "title": "ติดต่อ",
+  "slug": "contact",
+  "excerpt": "ส่งเรื่องเล่าหรือข้อเสนอแนะ",
+  "seoDescription": "ติดต่อกองบรรณาธิการเสียงเมือง ส่งเรื่องเล่าหรือร่วมงาน",
+  "blocks": [
+    {
+      "id": "blk_siang_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ส่งเรื่องเล่ามาให้เรา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_siang_contact_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "อีเมล hello@siangmueang.blog · เราอ่านทุกฉบับและตอบกลับภายใน 5 วันทำการ",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_siang_contact_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ส่งอีเมล",
+        "href": "mailto:hello@siangmueang.blog",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

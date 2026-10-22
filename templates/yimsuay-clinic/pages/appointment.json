@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "นัดหมาย",
+  "slug": "appointment",
+  "excerpt": "นัดหมายกับทันตแพทย์ได้ในไม่กี่นาที",
+  "seoDescription": "จองคิวนัดหมายคลินิกยิ้มสวย เลือกวันและเวลาที่สะดวก พร้อมรับข้อความยืนยัน",
+  "blocks": [
+    {
+      "id": "blk_clinic_appt_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "นัดหมาย",
+        "level": "h2",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_appt_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "แจ้งวันและเวลาที่สะดวก ทีมงานจะยืนยันคิวกลับภายใน 1 ชั่วโมงในเวลาทำการ และส่งข้อความเตือนก่อนถึงวันนัด",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_appt_steps",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ขั้นตอนการนัดหมาย",
+        "subheading": "ใช้เวลาไม่ถึง 5 นาที",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "📅",
+            "title": "เลือกวันและเวลา",
+            "description": "ดูช่วงเวลาที่ว่างของทันตแพทย์แต่ละท่าน"
+          },
+          {
+            "icon": "📝",
+            "title": "เล่าอาการเบื้องต้น",
+            "description": "ไม่บังคับ แต่ช่วยให้ทีมเตรียมเครื่องมือได้ตรงกับอาการ"
+          },
+          {
+            "icon": "🔔",
+            "title": "รับข้อความยืนยัน",
+            "description": "เราส่งข้อความยืนยันนัดและแจ้งเตือนล่วงหน้า 1 วัน"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_appt_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ติดต่อคลินิก",
+        "href": "/contact",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "type": "page",
+  "title": "ติดต่อ",
+  "slug": "contact",
+  "excerpt": "ที่ตั้งและช่องทางติดต่อ",
+  "seoDescription": "ติดต่อครัวริมน้ำ โทร แผนที่ และเวลาทำการ",
+  "blocks": [
+    {
+      "id": "blk_rim_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "มาหาเราที่ริมคลอง",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_rim_contact_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "128 ซอยบางหลวง 2 เขตบางกอกน้อย กรุงเทพฯ 10700 · โทร 02-123-4567 · เปิดทุกวัน 10:00-21:00 น.",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_rim_contact_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "โทรตอนนี้",
+        "href": "tel:021234567",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

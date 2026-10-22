@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "ตรวจรักษาใกล้บ้าน ด้วยทีมแพทย์ที่ดูแลต่อเนื่อง",
+  "seoDescription": "คลินิกเวชกรรมใกล้บ้าน ตรวจทั่วไป ฉีดวัคซีน และดูแลโรคเรื้อรัง",
+  "blocks": [
+    {
+      "id": "blk_clinic_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-right",
+        "heading": "ตรวจรักษาใกล้บ้าน ใช้เวลาน้อย ได้คำตอบชัด",
+        "subheading": "นัดล่วงหน้าออนไลน์ รอคิวนานไม่เกิน 20 นาที ทีมแพทย์และพยาบาลดูแลต่อเนื่อง",
+        "buttons": [
+          {
+            "label": "จองคิวตรวจ",
+            "href": "/contact",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "ดูบริการ",
+            "href": "/services",
+            "variant": "ghost",
+            "external": false
+          }
+        ],
+        "image": null
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "muted",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "fade-up"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_home_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "การดูแลที่คุณไว้วางใจ",
+        "subheading": "มาตรฐานคลินิกชุมชนที่อยู่ใกล้บ้าน",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🩺",
+            "title": "ตรวจโดยแพทย์ทุกครั้ง",
+            "description": "ไม่มีการจ่ายยาผ่านเคาน์เตอร์โดยไม่ตรวจ"
+          },
+          {
+            "icon": "💉",
+            "title": "วัคซีนครบตามวัย",
+            "description": "วัคซีนเด็กและผู้ใหญ่ พร้อมบันทึกประวัติ"
+          },
+          {
+            "icon": "📋",
+            "title": "ติดตามผลต่อเนื่อง",
+            "description": "นัดติดตามโรคเรื้อรังทุก 3 เดือน"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_home_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "คลินิกใจดีเปิดให้บริการมากว่า 12 ปี ดูแลคนในชุมชนกว่า 8,000 ครอบครัว ด้วยทีมแพทย์ประจำ 3 ท่าน",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองคิวตรวจ",
+        "href": "/contact",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "hero": {
+    "paddingY": "xl"
+  },
+  "features": {
+    "paddingY": "lg"
+  },
+  "heading": {
+    "paddingY": "sm"
+  },
+  "paragraph": {
+    "paddingY": "sm"
+  },
+  "button": {
+    "paddingY": "sm"
+  }
+}

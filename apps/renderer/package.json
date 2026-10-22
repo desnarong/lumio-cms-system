@@ -1,0 +1,33 @@
+{
+  "name": "renderer",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 49200",
+    "build": "next build",
+    "start": "next start -p 49200",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "clean": "rimraf .next dist .turbo"
+  },
+  "dependencies": {
+    "@lumio/blocks": "workspace:*",
+    "@lumio/shared": "workspace:*",
+    "@lumio/tokens": "workspace:*",
+    "@lumio/ui": "workspace:*",
+    "next": "^15.5.28",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3",
+    "vitest": "^4.1.12"
+  }
+}

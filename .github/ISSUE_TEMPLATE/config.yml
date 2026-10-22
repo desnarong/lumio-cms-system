@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: แจ้งช่องโหว่ความปลอดภัย
+    url: https://github.com/OWNER/lumio-cms-system/security/policy
+    about: ห้ามเปิด issue สาธารณะสำหรับช่องโหว่ — อ่าน SECURITY.md

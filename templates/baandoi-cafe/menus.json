@@ -1,0 +1,46 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "เมนูร้าน",
+      "href": "/menu",
+      "children": []
+    },
+    {
+      "label": "จองโต๊ะ",
+      "href": "/reservation",
+      "children": []
+    },
+    {
+      "label": "ที่ตั้งร้าน",
+      "href": "/location",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "เมนูร้าน",
+      "href": "/menu",
+      "children": []
+    },
+    {
+      "label": "จองโต๊ะ",
+      "href": "/reservation",
+      "children": []
+    },
+    {
+      "label": "ติดต่อเรา",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

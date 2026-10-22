@@ -1,0 +1,107 @@
+import type { ComponentType } from 'react';
+import type { BlockData, BlockEditorMode, BlockNode, BlockStyle, PublicForm } from '@lumio/shared';
+import type { z } from 'zod';
+
+export const BLOCK_CATEGORIES = [
+  'structure',
+  'text',
+  'media',
+  'landing',
+  'interactive',
+  'dynamic',
+  'advanced',
+] as const;
+
+export type BlockCategory = (typeof BLOCK_CATEGORIES)[number];
+
+/** One language a page can be read in, as the language-switcher block renders it. */
+export interface LanguageLink {
+  locale: string;
+  /** Label shown to visitors, e.g. "ไทย" or "English". */
+  label: string;
+  /** Path of this page in that language. */
+  href: string;
+  /** True for the language the page is currently shown in. */
+  active: boolean;
+  /** False when the site offers the language but this page has no version yet. */
+  available: boolean;
+}
+
+/** Props handed to a block renderer. `style` is already parsed by the shared schema. */
+export interface BlockRenderProps<P> {
+  props: P;
+  style: BlockStyle;
+  block: BlockNode;
+  /**
+   * Definitions of the contact forms the page renders, threaded down from the
+   * page payload (docs/design/12-api.md 12.7). Only the form block reads it.
+   */
+  forms?: readonly PublicForm[];
+  /**
+   * Languages this page can be read in, threaded down from the page payload
+   * (docs/design/17-i18n.md 17.3). Only the language-switcher block reads it.
+   */
+  languages?: readonly LanguageLink[];
+}
+
+/**
+ * A dot path into a block node, e.g. `props.heading` or `props.buttons.0.label`.
+ * Panels only ever emit paths, so the editor stays agnostic of each block's shape.
+ */
+export type BlockPath = string;
+
+export interface BlockPanelProps<P> {
+  props: P;
+  style: BlockStyle;
+  /** `simple` hides advanced options; `pro` shows everything. */
+  mode: BlockEditorMode;
+  onChange: (path: BlockPath, value: unknown) => void;
+}
+
+/** Upgrades props from version `N` to `N + 1`. */
+export type BlockMigration = (props: Record<string, unknown>) => Record<string, unknown>;
+
+export interface BlockDefinition<P> {
+  type: string;
+  /** Name in Thai, the source language. */
+  label: string;
+  /** Name in English for a screen whose language is English. */
+  labelEn?: string;
+  category: BlockCategory;
+  version: number;
+  icon?: string;
+  /** Validates `{ version, props, style }` and applies every default. */
+  schema: z.ZodType<BlockData<P>, z.ZodTypeDef, unknown>;
+  defaults: BlockData<P>;
+  Block: ComponentType<BlockRenderProps<P>>;
+  /**
+   * Editor-only controls. It stays optional so a server-render entry can ship
+   * blocks without pulling the UI kit and the panels into the public bundle
+   * (see `@lumio/blocks/render`).
+   */
+  Panel?: ComponentType<BlockPanelProps<P>>;
+  migrations?: Record<number, BlockMigration>;
+}
+
+/** A block a public page can render: everything except the editor panel. */
+export type RenderBlockDefinition<P = Record<string, unknown>> = Omit<BlockDefinition<P>, 'Panel'>;
+
+export type AnyBlockDefinition = BlockDefinition<Record<string, unknown>>;
+
+/** Data sources a dynamic block may read from. Server-side only, always site scoped. */
+export interface BlockDataSource {
+  posts: {
+    latest: (input: { siteId: string; limit: number }) => Promise<unknown[]>;
+  };
+}
+
+export interface BlockLoaderContext {
+  siteId: string;
+  locale: string;
+  db: BlockDataSource;
+}
+
+export type BlockLoader<P = Record<string, unknown>, R = unknown> = (
+  ctx: BlockLoaderContext,
+  params: P,
+) => Promise<R>;

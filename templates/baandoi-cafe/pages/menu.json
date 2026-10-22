@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "เมนูร้าน",
+  "slug": "menu",
+  "excerpt": "กาแฟและเครื่องดื่ม ชงสดทุกแก้ว",
+  "seoDescription": "เมนูกาแฟสด เครื่องดื่ม และขนมของกาแฟบ้านดอย พร้อมราคาชัดเจน",
+  "blocks": [
+    {
+      "id": "blk_cafe_menu_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "เมนูร้านเรา",
+        "level": "h2",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_menu_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "กาแฟและเครื่องดื่ม",
+        "subheading": "ราคารวมภาษีแล้ว ทุกแก้วชงสดเมื่อสั่ง",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🫘",
+            "title": "เอสเพรสโซ่คั่วกลาง · 65 บาท",
+            "description": "เมล็ดอาราบิก้าดอยสะเก็ด รสช็อกโกแลตอ่อน ๆ ปลายลิ้นมีกลิ่นส้ม"
+          },
+          {
+            "icon": "🥛",
+            "title": "ลาเต้ร้อน · 75 บาท",
+            "description": "นมสดจากฟาร์มในเชียงใหม่ ฟองนมแน่น หอมมัน ดื่มแล้วไม่หนักท้อง"
+          },
+          {
+            "icon": "🧊",
+            "title": "ดริปโคลด์บรูว์ · 90 บาท",
+            "description": "ชงเย็น 12 ชั่วโมง ดื่มง่าย ไม่เปรี้ยว ไม่ขม เหมาะกับสายหวานน้อย"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_menu_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ถ้าชอบหวานน้อย บอกบาริสต้าได้เลย เราปรับความหวานให้ทุกแก้ว และมีนมพืชให้เลือกทั้งนมถั่วเหลืองและนมอัลมอนด์",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_menu_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองโต๊ะล่วงหน้า",
+        "href": "/reservation",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

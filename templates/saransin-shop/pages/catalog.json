@@ -1,0 +1,105 @@
+{
+  "type": "page",
+  "title": "สินค้าทั้งหมด",
+  "slug": "catalog",
+  "excerpt": "กระเป๋า เสื่อ และของขวัญงานแฮนด์เมด",
+  "seoDescription": "รวมสินค้าแฮนด์เมดจากสานศิลป์ เลือกซื้อออนไลน์ พร้อมส่งทั่วประเทศ",
+  "blocks": [
+    {
+      "id": "blk_shop_catalog_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "centered",
+        "heading": "สินค้าทั้งหมด",
+        "subheading": "เลือกดูสินค้าแฮนด์เมดทุกหมวด แล้วกดเพิ่มลงตะกร้าได้เลย",
+        "buttons": [
+          {
+            "label": "เปิดร้านค้า",
+            "href": "/shop",
+            "variant": "primary",
+            "external": false
+          }
+        ],
+        "image": null
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_catalog_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "หมวดสินค้า",
+        "subheading": "ทุกชิ้นทำมือและมีจำนวนจำกัด",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "👜",
+            "title": "กระเป๋าและถุงผ้า",
+            "description": "กระเป๋าสะพาย ถุงผ้า และกระเป๋าถือจากเส้นใยธรรมชาติ"
+          },
+          {
+            "icon": "🪡",
+            "title": "เสื่อและผ้าทอ",
+            "description": "เสื่อปูพื้น ผ้าคลุมเตียง และผ้าทอลายดั้งเดิม"
+          },
+          {
+            "icon": "🎁",
+            "title": "ของขวัญและของที่ระลึก",
+            "description": "ชุดของขวัญพร้อมการ์ดสำหรับวันเกิดและเทศกาล"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_catalog_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูราคาและสั่งซื้อ",
+        "href": "/shop",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

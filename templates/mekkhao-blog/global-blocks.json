@@ -1,0 +1,76 @@
+{
+  "header": [
+    {
+      "id": "blk_blog_header_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "อ่านบทความ",
+        "href": "/posts",
+        "variant": "ghost",
+        "size": "md",
+        "external": false,
+        "align": "right",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "id": "blk_blog_footer_name",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "เมฆขาว",
+        "level": "h4",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blog_footer_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "บันทึกเรื่องเมือง ผู้คน และการใช้ชีวิตอย่างช้า ๆ",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

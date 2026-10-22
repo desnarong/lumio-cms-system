@@ -1,0 +1,114 @@
+{
+  "type": "page",
+  "title": "เกี่ยวกับ",
+  "slug": "about",
+  "excerpt": "รู้จักสตูดิโอแสนดี",
+  "seoDescription": "สตูดิโอแสนดี ทีม 4 คน ดูแลงานออกแบบ เว็บ และการวัดผลให้ครบในที่เดียว",
+  "blocks": [
+    {
+      "id": "blk_studio_about_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "เกี่ยวกับสตูดิโอ",
+        "level": "h2",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_about_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "สตูดิโอแสนดีเริ่มจากฟรีแลนซ์หนึ่งคนที่อยากคุยกับเจ้าของธุรกิจตรง ๆ ปัจจุบันมีทีม 4 คน ดูแลงานออกแบบ เว็บ และการวัดผลให้ครบในที่เดียว",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_about_focus",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เรารับงานไม่เกิน 3 โครงการพร้อมกัน เพื่อให้ทุกงานได้เวลาที่ควรได้ และคุณคุยกับคนที่ลงมือทำงานจริงเสมอ",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_about_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ทำงานกับเราอย่างไร",
+        "subheading": "สิ่งที่ลูกค้าบอกเสมอว่าช่วยให้งานราบรื่น",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "👋",
+            "title": "คุยกับคนที่ทำงานจริง",
+            "description": "ไม่ผ่านฝ่ายขาย คุณคุยกับทีมที่ลงมือออกแบบโดยตรง"
+          },
+          {
+            "icon": "🗂",
+            "title": "เอกสารครบทุกขั้น",
+            "description": "ข้อเสนอ ขอบเขตงาน และไทม์ไลน์ชัดเจนตั้งแต่วันแรก"
+          },
+          {
+            "icon": "🤝",
+            "title": "ส่งมอบพร้อมสอนใช้",
+            "description": "อัดวิดีโอสอนแก้เนื้อหาไว้ให้หลังส่งงาน ทบทวนได้ทุกเมื่อ"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "ผลงาน",
+  "slug": "work",
+  "excerpt": "ตัวอย่างงานที่ผ่านมา",
+  "seoDescription": "ตัวอย่างผลงานออกแบบเว็บไซต์สำหรับร้านกาแฟ คลินิก และงานคราฟต์",
+  "blocks": [
+    {
+      "id": "blk_studio_work_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ผลงานที่ผ่านมา",
+        "level": "h2",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_work_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ตัวอย่างงานล่าสุด",
+        "subheading": "แต่ละงานเริ่มจากโจทย์ของเจ้าของธุรกิจ ไม่ใช่เทมเพลตสำเร็จรูป",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "☕",
+            "title": "ร้านกาแฟบ้านดอย",
+            "description": "เว็บไซต์ร้านกาแฟพร้อมหน้ารวมเมนูและระบบจองโต๊ะ ยอดสั่งออนไลน์เพิ่ม 40%"
+          },
+          {
+            "icon": "🏥",
+            "title": "คลินิกทันตกรรมยิ้มสวย",
+            "description": "เว็บคลินิกหลายสาขา มีระบบนัดหมายและหน้าให้ความรู้ผู้ป่วย"
+          },
+          {
+            "icon": "🧺",
+            "title": "งานคราฟต์เชียงใหม่",
+            "description": "เว็บแสดงผลงานและโปรไฟล์ช่างฝีมือ 20 คน เจ้าของปรับเนื้อหาเองได้"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_work_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "อยากเห็นเคสที่ใกล้เคียงกับธุรกิจของคุณ บอกประเภทธุรกิจมาได้เลย เราส่งตัวอย่างเพิ่มเติมให้ดูได้",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_work_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ขอตัวอย่างงานที่ใกล้เคียง",
+        "href": "/contact",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

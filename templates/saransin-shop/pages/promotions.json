@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "โปรโมชัน",
+  "slug": "promotions",
+  "excerpt": "ส่วนลดและของขวัญประจำเดือนจากสานศิลป์",
+  "seoDescription": "โปรโมชันส่งฟรีและส่วนลดของขวัญจากสานศิลป์ อัปเดตทุกเดือน",
+  "blocks": [
+    {
+      "id": "blk_shop_promo_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "โปรโมชันเดือนนี้",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_promo_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ส่งฟรีเมื่อซื้อครบ 500 บาท และรับการ์ดของขวัญฟรีทุกออเดอร์ ตลอดเดือนนี้",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_promo_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายละเอียดโปรโมชัน",
+        "subheading": "ใช้ได้จนถึงสิ้นเดือน",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🚚",
+            "title": "ส่งฟรีเมื่อซื้อครบ 500 บาท",
+            "description": "ใช้ได้กับทุกออเดอร์ที่จัดส่งในประเทศไทย"
+          },
+          {
+            "icon": "🎁",
+            "title": "การ์ดของขวัญฟรี",
+            "description": "ให้เราจดข้อความให้ได้ ไม่มีค่าใช้จ่ายเพิ่ม"
+          },
+          {
+            "icon": "👥",
+            "title": "ส่วนลดลูกค้าประจำ",
+            "description": "ซื้อครั้งที่ 3 ขึ้นไปรับส่วนลด 10% อัตโนมัติ"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_promo_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "เลือกซื้อสินค้า",
+        "href": "/shop",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

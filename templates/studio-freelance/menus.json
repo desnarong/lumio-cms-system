@@ -1,0 +1,46 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "ผลงาน",
+      "href": "/work",
+      "children": []
+    },
+    {
+      "label": "บริการ",
+      "href": "/services",
+      "children": []
+    },
+    {
+      "label": "เกี่ยวกับ",
+      "href": "/about",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "ผลงาน",
+      "href": "/work",
+      "children": []
+    },
+    {
+      "label": "บริการ",
+      "href": "/services",
+      "children": []
+    },
+    {
+      "label": "ติดต่อเรา",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

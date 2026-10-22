@@ -1,0 +1,53 @@
+{
+  "type": "page",
+  "title": "เกี่ยวกับเรา",
+  "slug": "about",
+  "excerpt": "เรื่องราวของช่างภาพ",
+  "seoDescription": "รู้จักภาพบ้านทุ่งและวิธีทำงาน",
+  "blocks": [
+    {
+      "id": "blk_photo_about_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ถ่ายภาพเพราะชอบฟังเรื่องราว",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_photo_about_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ผมชื่อต้น ถ่ายภาพมาตั้งแต่ปี 2559 เชื่อว่าภาพที่ดีไม่ต้องมีท่าทางเยอะ แต่ต้องทำให้เจ้าของภาพจำวันนั้นได้",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

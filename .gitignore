@@ -1,0 +1,48 @@
+node_modules/
+dist/
+.next/
+out/
+build/
+coverage/
+.turbo/
+storybook-static/
+
+# env
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# editor / os
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+Thumbs.db
+
+# prisma
+apps/api/prisma/migrations/dev.db*
+
+# media library (local storage driver)
+apps/api/.media/
+
+# auto-generated installation key (secret-box encryption)
+.lumio-data/
+
+# playwright
+test-results/
+playwright-report/
+blob-report/
+
+# Crush local state (chat cache, DB, backups) — skills ship, state does not
+.crush/*
+!.crush/skills/
+!.crush/skills/**
+
+# vendor licence signing key — never commit
+lumio-license-private.pem
+*.license.key

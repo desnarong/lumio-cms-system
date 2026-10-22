@@ -1,0 +1,625 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [citext]
+}
+
+model User {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email             String    @unique @db.Citext
+  passwordHash      String?   @map("password_hash")
+  name              String?
+  avatarUrl         String?   @map("avatar_url")
+  totpSecret        String?   @map("totp_secret")
+  /// Set once the owner confirmed a TOTP code; null while setup is pending.
+  totpEnabledAt     DateTime? @map("totp_enabled_at") @db.Timestamptz(6)
+  /// SHA-256 hashes of one-time recovery codes, so a database leak is not a login.
+  totpRecoveryCodes String[]  @default([]) @map("totp_recovery_codes")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  ownedSites       Site[]            @relation("SiteOwner")
+  memberships      SiteMember[]
+  authoredContents Content[]         @relation("ContentAuthor")
+  contentVersions  ContentVersion[]  @relation("ContentVersionAuthor")
+  sectionTemplates SectionTemplate[] @relation("SectionTemplateAuthor")
+
+  @@map("users")
+}
+
+model Site {
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ownerId              String?  @map("owner_id") @db.Uuid
+  name                 String
+  subdomain            String   @unique
+  localeDefault        String   @default("th") @map("locale_default")
+  locales              String[] @default(["th"])
+  templateId           String?  @map("template_id") @db.Uuid
+  themeTokens          Json     @default("{}") @map("theme_tokens") @db.JsonB
+  settings             Json     @default("{}") @db.JsonB
+  plan                 String   @default("free")
+  /// Stripe ids behind the paid subscription (cards renew automatically).
+  stripeCustomerId     String?  @map("stripe_customer_id")
+  stripeSubscriptionId String?  @map("stripe_subscription_id")
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  owner            User?             @relation("SiteOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  members          SiteMember[]
+  domains          Domain[]
+  contents         Content[]
+  taxonomies       Taxonomy[]
+  media            Media[]
+  menus            Menu[]
+  globalBlocks     GlobalBlock[]
+  sectionTemplates SectionTemplate[]
+  forms            Form[]
+  subscribers      Subscriber[]
+  redirects        Redirect[]
+  siteApps         SiteApp[]
+  auditLogs        AuditLog[]
+  invoices         Invoice[]
+  aiUsage          AiUsage[]
+  products         Product[]
+  productVariants  ProductVariant[]
+  orders           Order[]
+  paymentSlips     PaymentSlip[]
+  backups          SiteBackup[]
+  notFound         NotFound[]
+
+  @@index([stripeSubscriptionId])
+  @@map("sites")
+}
+
+model SiteMember {
+  siteId    String   @map("site_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  role      String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([siteId, userId])
+  @@index([userId])
+  @@map("site_members")
+}
+
+model Domain {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId     String    @map("site_id") @db.Uuid
+  hostname   String    @unique
+  isPrimary  Boolean   @default(false) @map("is_primary")
+  sslStatus  String    @default("pending") @map("ssl_status")
+  verifiedAt DateTime? @map("verified_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+  @@map("domains")
+}
+
+model Media {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId     String    @map("site_id") @db.Uuid
+  storageKey String    @map("storage_key")
+  filename   String?
+  mime       String?
+  sizeBytes  BigInt?   @map("size_bytes")
+  width      Int?
+  height     Int?
+  alt        String?
+  focalPoint Json?     @map("focal_point") @db.JsonB
+  /// Crop window (fractions of the original) the rendered ladder was cut from.
+  crop       Json?     @db.JsonB
+  variants   Json      @default("[]") @db.JsonB
+  folder     String?
+  status     String    @default("pending")
+  archivedAt DateTime? @map("archived_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site     Site      @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  contents Content[] @relation("ContentCover")
+
+  @@index([siteId, folder])
+  @@index([siteId, status, createdAt(sort: Desc)])
+  @@index([siteId, status, archivedAt])
+  @@map("media")
+}
+
+model Content {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId             String    @map("site_id") @db.Uuid
+  type               String
+  title              String
+  slug               String
+  locale             String    @default("th")
+  status             String    @default("draft")
+  blocksDraft        Json      @default("[]") @map("blocks_draft") @db.JsonB
+  blocksPublished    Json?     @map("blocks_published") @db.JsonB
+  excerpt            String?
+  coverMediaId       String?   @map("cover_media_id") @db.Uuid
+  authorId           String?   @map("author_id") @db.Uuid
+  seo                Json      @default("{}") @db.JsonB
+  /// Every language of this page shares one group id (docs/design/17-i18n.md 17.2).
+  translationGroupId String?   @map("translation_group_id") @db.Uuid
+  revision           Int       @default(1)
+  publishedAt        DateTime? @map("published_at") @db.Timestamptz(6)
+  scheduledAt        DateTime? @map("scheduled_at") @db.Timestamptz(6)
+  /// When the page moved to the trash; the purge job deletes it once it ages out.
+  archivedAt         DateTime? @map("archived_at") @db.Timestamptz(6)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site       Site              @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  coverMedia Media?            @relation("ContentCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  author     User?             @relation("ContentAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  versions   ContentVersion[]
+  taxonomies ContentTaxonomy[]
+
+  @@unique([siteId, locale, type, slug])
+  @@index([siteId, type, status, publishedAt(sort: Desc)])
+  @@index([siteId, status, archivedAt])
+  @@index([translationGroupId, locale])
+  @@map("contents")
+}
+
+model ContentVersion {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  contentId String   @map("content_id") @db.Uuid
+  siteId    String   @map("site_id") @db.Uuid
+  blocks    Json     @db.JsonB
+  createdBy String?  @map("created_by") @db.Uuid
+  note      String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  author  User?   @relation("ContentVersionAuthor", fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@index([contentId, createdAt(sort: Desc)])
+  @@index([siteId])
+  @@map("content_versions")
+}
+
+model Taxonomy {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId    String   @map("site_id") @db.Uuid
+  kind      String
+  name      String?
+  slug      String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site     Site              @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  contents ContentTaxonomy[]
+
+  @@unique([siteId, kind, slug])
+  @@map("taxonomies")
+}
+
+model ContentTaxonomy {
+  contentId  String @map("content_id") @db.Uuid
+  taxonomyId String @map("taxonomy_id") @db.Uuid
+  siteId     String @map("site_id") @db.Uuid
+
+  content  Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  taxonomy Taxonomy @relation(fields: [taxonomyId], references: [id], onDelete: Cascade)
+
+  @@id([contentId, taxonomyId])
+  @@index([siteId])
+  @@map("content_taxonomies")
+}
+
+model Menu {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId    String   @map("site_id") @db.Uuid
+  location  String
+  /// Language of this menu, or NULL when one menu serves every language
+  /// (docs/design/17-i18n.md 17.5). Menus created before multi-language sites
+  /// keep NULL, so they stay shared until a language is added on purpose.
+  locale    String?
+  items     Json     @default("[]") @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@unique([siteId, location, locale])
+  @@map("menus")
+}
+
+model GlobalBlock {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId    String   @map("site_id") @db.Uuid
+  name      String?
+  kind      String?
+  blocks    Json     @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, kind])
+  @@map("global_blocks")
+}
+
+/// A section the user saved from the editor to reuse on other pages
+/// (docs/design/07-blocks.md 7.2).
+model SectionTemplate {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId    String   @map("site_id") @db.Uuid
+  name      String
+  blocks    Json     @default("[]") @db.JsonB
+  createdBy String?  @map("created_by") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  site   Site  @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  author User? @relation("SectionTemplateAuthor", fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@index([siteId, createdAt(sort: Desc)])
+  @@map("section_templates")
+}
+
+model Form {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId             String   @map("site_id") @db.Uuid
+  name               String?
+  fields             Json     @db.JsonB
+  notify             Json     @default("{}") @db.JsonB
+  successMessage     String?  @map("success_message")
+  /// Language of the field labels, or NULL when the form serves every language
+  /// (docs/design/17-i18n.md 17.5).
+  locale             String?
+  /// Groups the languages of one form so the public site can serve the right one.
+  translationGroupId String?  @map("translation_group_id") @db.Uuid
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site        Site             @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  submissions FormSubmission[]
+
+  @@unique([siteId, translationGroupId, locale])
+  @@index([siteId])
+  @@map("forms")
+}
+
+model FormSubmission {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  formId    String   @map("form_id") @db.Uuid
+  siteId    String   @map("site_id") @db.Uuid
+  data      Json     @db.JsonB
+  ip        String?  @db.Inet
+  userAgent String?  @map("user_agent")
+  status    String   @default("new")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@index([formId, createdAt(sort: Desc)])
+  @@index([siteId])
+  @@map("form_submissions")
+}
+
+model Subscriber {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId    String   @map("site_id") @db.Uuid
+  email     String   @db.Citext
+  status    String   @default("active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@unique([siteId, email])
+  @@map("subscribers")
+}
+
+model Redirect {
+  siteId    String   @map("site_id") @db.Uuid
+  fromPath  String   @map("from_path")
+  toPath    String   @map("to_path")
+  code      Int      @default(301)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@id([siteId, fromPath])
+  @@map("redirects")
+}
+
+model SiteApp {
+  siteId      String   @map("site_id") @db.Uuid
+  appKey      String   @map("app_key")
+  /// catalog | external: where the App came from (16-apps.md).
+  source      String   @default("catalog")
+  /// Origin of an externally hosted manifest, for review and re-install.
+  manifestUrl String?  @map("manifest_url")
+  /// The validated manifest an external App was installed from.
+  manifest    Json?    @db.JsonB
+  config      Json?    @db.JsonB
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@id([siteId, appKey])
+  @@map("site_apps")
+}
+
+model PageView {
+  siteId      String   @map("site_id") @db.Uuid
+  path        String
+  referrer    String?
+  country     String?
+  device      String?
+  sessionHash String?  @map("session_hash")
+  ts          DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([siteId, ts(sort: Desc)])
+  @@index([ts], type: Brin)
+  @@map("pageviews")
+  @@ignore
+}
+
+/// A monthly charge for a plan (docs/design/18-deployment.md 18.6-18.7,
+/// 05-admin-ia.md "ตั้งค่า › แพ็กเกจ & การชำระเงิน"). The gateway integration is
+/// phase 3, so an invoice starts as `pending` until payment is confirmed.
+model Invoice {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId      String    @map("site_id") @db.Uuid
+  plan        String
+  amount      Int
+  /// Unused time on the previous plan taken off this charge (18.6).
+  credit      Int       @default(0)
+  currency    String    @default("THB")
+  status      String    @default("pending")
+  periodStart DateTime  @map("period_start") @db.Timestamptz(6)
+  periodEnd   DateTime  @map("period_end") @db.Timestamptz(6)
+  issuedAt    DateTime  @default(now()) @map("issued_at") @db.Timestamptz(6)
+  paidAt      DateTime? @map("paid_at") @db.Timestamptz(6)
+  /// Payment gateway that owns this invoice ('stripe') and its session id.
+  provider    String?
+  providerRef String?   @map("provider_ref")
+  /// card | promptpay; null for rows created before the gateway existed.
+  method      String?
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, issuedAt(sort: Desc)])
+  @@index([providerRef])
+  @@map("invoices")
+}
+
+/// One AI assistant action for a site (docs/design/09-ai-assistant.md 9.6).
+/// Counting this month's rows is how the plan's AI quota is enforced, and the row
+/// records which engine answered so usage can be reviewed or billed later.
+model AiUsage {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId    String   @map("site_id") @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  action    String
+  provider  String
+  model     String   @default("")
+  /// How many texts the action rewrote, so heavier calls are visible.
+  items     Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, createdAt(sort: Desc)])
+  @@map("ai_usage")
+}
+
+/// One item for sale on a site's shop (docs/design/03-scope.md 3.3).
+/// `images` holds media ids in display order, and prices are satang.
+model Product {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId         String   @map("site_id") @db.Uuid
+  title          String
+  slug           String
+  description    String   @default("")
+  price          Int
+  compareAtPrice Int?     @map("compare_at_price")
+  currency       String   @default("THB")
+  images         Json     @default("[]") @db.JsonB
+  /// NULL means unlimited stock; a number is what is left on the shelf.
+  stock          Int?
+  /// Delivery weight in grams, used by weight-based shipping rules.
+  weightGrams    Int      @default(0) @map("weight_grams")
+  /// Size/colour definitions: [{ name, values: [] }].
+  options        Json     @default("[]") @db.JsonB
+  category       String?
+  status         String   @default("draft")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site     Site             @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  items    OrderItem[]
+  variants ProductVariant[]
+
+  @@unique([siteId, slug])
+  @@index([siteId, status, createdAt(sort: Desc)])
+  @@index([siteId, category])
+  @@map("products")
+}
+
+/// A paid or pending purchase. Prices are copied onto the rows so a later price
+/// change never rewrites an old receipt, and `token` is the unguessable key the
+/// buyer uses to look the order up without an account.
+model Order {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId           String    @map("site_id") @db.Uuid
+  number           String
+  token            String    @unique
+  status           String    @default("pending")
+  paymentMethod    String    @map("payment_method")
+  customer         Json      @db.JsonB
+  note             String    @default("")
+  subtotal         Int
+  shippingFee      Int       @map("shipping_fee")
+  total            Int
+  currency         String    @default("THB")
+  trackingNumber   String?   @map("tracking_number")
+  /// Payment gateway that owns the charge ('stripe') plus its session id.
+  provider         String?
+  providerRef      String?   @map("provider_ref")
+  paymentUrl       String?   @map("payment_url")
+  paidAt           DateTime? @map("paid_at") @db.Timestamptz(6)
+  /// Money returned to the buyer, in satang; 0 when nothing was refunded.
+  refundedAmount   Int       @default(0) @map("refunded_amount")
+  refundedAt       DateTime? @map("refunded_at") @db.Timestamptz(6)
+  refundReason     String    @default("") @map("refund_reason")
+  /// Provider refund id from Stripe when the money went back through it.
+  refundRef        String?   @map("refund_ref")
+  /// Stripe Connect transfer that moved the seller share after payment.
+  sellerTransferId String?   @map("seller_transfer_id")
+  sellerTransferAt DateTime? @map("seller_transfer_at") @db.Timestamptz(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site  Site          @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  items OrderItem[]
+  slips PaymentSlip[]
+
+  @@unique([siteId, number])
+  @@index([siteId, status, createdAt(sort: Desc)])
+  @@index([providerRef])
+  @@map("orders")
+}
+
+model OrderItem {
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId      String  @map("order_id") @db.Uuid
+  siteId       String  @map("site_id") @db.Uuid
+  /// Null after the product is deleted; the snapshot below keeps the receipt.
+  productId    String? @map("product_id") @db.Uuid
+  /// Variant chosen at checkout; nullable after the variant is replaced.
+  variantId    String? @map("variant_id") @db.Uuid
+  /// Snapshot of the chosen options, e.g. "M · ดำ".
+  variantLabel String? @map("variant_label")
+  title        String
+  price        Int
+  quantity     Int
+  image        String?
+
+  order   Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([siteId])
+  @@index([variantId])
+  @@map("order_items")
+}
+
+/// One size/colour combination of a product. Stock lives here when a product
+/// has options, so the last "M / ดำ" can be sold without blocking "L / ขาว".
+model ProductVariant {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId         String   @map("site_id") @db.Uuid
+  productId      String   @map("product_id") @db.Uuid
+  /// Stable key built from option names and values, unique per product.
+  signature      String
+  options        Json     @db.JsonB
+  label          String   @default("")
+  sku            String?
+  /// NULL inherits the product price.
+  price          Int?
+  compareAtPrice Int?     @map("compare_at_price")
+  stock          Int?
+  position       Int      @default(0)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site    Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  product Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  items   OrderItem[]
+
+  @@unique([productId, signature])
+  @@index([siteId, productId])
+  @@map("product_variants")
+}
+
+/// Slip a buyer uploads for a PromptPay order. A slip whose amount matches the
+/// order and whose bank reference is unused is verified automatically.
+model PaymentSlip {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId     String    @map("site_id") @db.Uuid
+  orderId    String    @map("order_id") @db.Uuid
+  status     String    @default("pending_review")
+  amount     Int
+  reference  String
+  imageUrl   String    @map("image_url")
+  note       String    @default("")
+  reviewedBy String?   @map("reviewed_by") @db.Uuid
+  reviewedAt DateTime? @map("reviewed_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site  Site  @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@unique([siteId, reference])
+  @@index([siteId, orderId, createdAt(sort: Desc)])
+  @@map("payment_slips")
+}
+
+model NotFound {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId      String   @map("site_id") @db.Uuid
+  path        String
+  hits        Int      @default(1)
+  firstSeenAt DateTime @default(now()) @map("first_seen_at") @db.Timestamptz(6)
+  lastSeenAt  DateTime @default(now()) @map("last_seen_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@unique([siteId, path])
+  @@index([siteId, lastSeenAt(sort: Desc)])
+  @@map("not_found")
+}
+
+model SiteBackup {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId    String   @map("site_id") @db.Uuid
+  filename  String
+  sizeBytes Int      @map("size_bytes")
+  /// The exported JSON, so a scheduled backup can be downloaded later.
+  payload   Json     @db.JsonB
+  /// auto = daily job, manual = "back up now".
+  kind      String   @default("auto")
+  createdBy String?  @map("created_by") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, createdAt(sort: Desc)])
+  @@map("site_backups")
+}
+
+model AuditLog {
+  id        BigInt   @id @default(autoincrement())
+  siteId    String?  @map("site_id") @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  action    String?
+  target    String?
+  meta      Json?    @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  site Site? @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, createdAt(sort: Desc)])
+  @@map("audit_logs")
+}

@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "ช่อดอกไม้ที่ตั้งใจจัดให้ทุกโอกาส",
+  "seoDescription": "ร้านดอกไม้สด จัดช่อ bouquet และจัดส่งวันเดียวกันในกรุงเทพฯ",
+  "blocks": [
+    {
+      "id": "blk_flowers_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-right",
+        "heading": "ช่อดอกไม้ที่ตั้งใจจัดให้ทุกโอกาส",
+        "subheading": "ดอกไม้สดคัดเกรดทุกวัน จัดช่อด้วยมือ ส่งถึงมือผู้รับในกรุงเทพฯ ภายในวันเดียว",
+        "buttons": [
+          {
+            "label": "เลือกช่อดอกไม้",
+            "href": "/shop",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "สอบถามการจัดส่ง",
+            "href": "/contact",
+            "variant": "ghost",
+            "external": false
+          }
+        ],
+        "image": null
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "muted",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "fade-up"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_flowers_home_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ทำไมลูกค้าเลือกเรา",
+        "subheading": "รายละเอียดเล็ก ๆ ที่เราตั้งใจ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "💐",
+            "title": "จัดช่อสดทุกวัน",
+            "description": "รับดอกไม้จากสวนทุกเช้า ไม่มีดอกค้างคืน"
+          },
+          {
+            "icon": "🚚",
+            "title": "ส่งวันเดียวกัน",
+            "description": "สั่งก่อน 14:00 น. จัดส่งภายในกรุงเทพฯ วันเดียวกัน"
+          },
+          {
+            "icon": "💌",
+            "title": "แนบการ์ดฟรี",
+            "description": "พิมพ์ข้อความให้เราจัดทำให้ได้ทุกช่อ"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_flowers_home_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ดอกไม้บ้านสวนเริ่มจากแผงเล็ก ๆ หน้าบ้าน ตอนนี้จัดส่งดอกไม้มากกว่า 6,000 ช่อให้ลูกค้าในกรุงเทพฯ และปริมณฑล",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_flowers_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ไปที่ร้านค้า",
+        "href": "/shop",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

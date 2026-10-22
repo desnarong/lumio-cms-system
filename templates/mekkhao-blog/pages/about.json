@@ -1,0 +1,92 @@
+{
+  "type": "page",
+  "title": "เกี่ยวกับเรา",
+  "slug": "about",
+  "excerpt": "ทีมเขียนและเหตุผลที่เราเริ่มบล็อกนี้",
+  "seoDescription": "รู้จักกองบรรณาธิการเมฆขาว และหลักการเขียนที่เราใช้",
+  "blocks": [
+    {
+      "id": "blk_blog_about_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "เราเขียนอะไร และทำไม",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blog_about_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เมฆขาวเริ่มจากจดหมายข่าวเล็ก ๆ ที่ส่งให้เพื่อน 12 คน ปัจจุบันมีผู้อ่านกว่าสองหมื่นคนต่อเดือน เรายังคงเขียนเองทุกบทความ ตรวจข้อเท็จจริงทุกครั้ง และไม่รับโฆษณาที่เปลี่ยนเนื้อหา",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blog_about_values",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "หลักการของเรา",
+        "subheading": "สิ่งที่ผู้อ่านคาดหวังได้เสมอ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🔗",
+            "title": "อ้างอิงชัดเจน",
+            "description": "ทุกข้อมูลมีแหล่งที่มาให้ตรวจสอบ"
+          },
+          {
+            "icon": "🕰",
+            "title": "อ่านสบาย",
+            "description": "เนื้อหาสั้นกระชับและจัดวางให้อ่านง่ายบนมือถือ"
+          },
+          {
+            "icon": "🚫",
+            "title": "ไม่มีโฆษณาแอบแฝง",
+            "description": "บอกชัดเจนเมื่อบทความได้รับการสนับสนุน"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

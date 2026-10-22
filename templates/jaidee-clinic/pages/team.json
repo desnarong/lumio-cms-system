@@ -1,0 +1,92 @@
+{
+  "type": "page",
+  "title": "ทีมแพทย์",
+  "slug": "team",
+  "excerpt": "ทีมแพทย์และพยาบาลประจำคลินิก",
+  "seoDescription": "รู้จักทีมแพทย์ประจำคลินิกใจดี",
+  "blocks": [
+    {
+      "id": "blk_clinic_team_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ทีมที่ดูแลคุณ",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_team_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "แพทย์ประจำ",
+        "subheading": "ทุกท่านพร้อมตอบคำถามของคุณ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "👩‍⚕️",
+            "title": "พญ. ใจดี รักษ์สุข",
+            "description": "เวชศาสตร์ครอบครัว ประสบการณ์ 15 ปี"
+          },
+          {
+            "icon": "👨‍⚕️",
+            "title": "นพ. ปรีชา หายไว",
+            "description": "อายุรกรรมทั่วไป และโรคเรื้อรัง"
+          },
+          {
+            "icon": "👩‍⚕️",
+            "title": "พญ. มานี สุขใจ",
+            "description": "กุมารเวชและวัคซีนเด็ก"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_team_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "พยาบาลและเจ้าหน้าที่ทุกคนผ่านการอบรมการดูแลผู้ป่วยเบื้องต้นและพร้อมช่วยเหลือคุณ",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

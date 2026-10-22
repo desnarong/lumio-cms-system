@@ -1,0 +1,53 @@
+{
+  "type": "page",
+  "title": "เกี่ยวกับเรา",
+  "slug": "about",
+  "excerpt": "เรื่องราวร้านดอกไม้เล็ก ๆ",
+  "seoDescription": "รู้จักดอกไม้บ้านสวนและทีมจัดช่อ",
+  "blocks": [
+    {
+      "id": "blk_flowers_about_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "จากแผงหน้าบ้านสู่ร้านดอกไม้ชุมชน",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_flowers_about_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราทำงานกับเกษตรกรผู้ปลูกดอกไม้ในจังหวัดนครปฐมและราชบุรี ซื้อตรงในราคาที่เป็นธรรม และใช้กระดาษรีไซเคิลห่อทุกช่อ",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

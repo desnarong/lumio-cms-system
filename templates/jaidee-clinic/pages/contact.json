@@ -1,0 +1,79 @@
+{
+  "type": "page",
+  "title": "ติดต่อ",
+  "slug": "contact",
+  "excerpt": "ที่ตั้ง เวลาเปิด และการจองคิว",
+  "seoDescription": "ติดต่อคลินิกใจดี จองคิวตรวจ หรือสอบถามเส้นทาง",
+  "blocks": [
+    {
+      "id": "blk_clinic_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "นัดคิวหรือสอบถาม",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_contact_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "45/2 ถนนสุขุมวิท 77 เขตสวนหลวง กรุงเทพฯ 10250 · โทร 02-987-6543 · เปิด จ.-ส. 08:00-20:00 น.",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_contact_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "โทรจองคิว",
+        "href": "tel:029876543",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

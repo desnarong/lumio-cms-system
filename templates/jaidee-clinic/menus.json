@@ -1,0 +1,41 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "บริการ",
+      "href": "/services",
+      "children": []
+    },
+    {
+      "label": "ทีมแพทย์",
+      "href": "/team",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "บริการ",
+      "href": "/services",
+      "children": []
+    },
+    {
+      "label": "ทีมแพทย์",
+      "href": "/team",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

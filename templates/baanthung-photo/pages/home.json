@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "เก็บช่วงเวลาธรรมชาติให้อยู่กับคุณนาน ๆ",
+  "seoDescription": "ช่างภาพธรรมชาติและงานแต่ง รับงานทั่วประเทศ สไตล์เรียบจริงใจ",
+  "blocks": [
+    {
+      "id": "blk_photo_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-right",
+        "heading": "เก็บช่วงเวลาธรรมชาติให้อยู่กับคุณนาน ๆ",
+        "subheading": "ถ่ายภาพงานแต่ง ครอบครัว และธรรมชาติ ด้วยแสงจริง สไตล์เรียบง่ายแต่จริงใจ",
+        "buttons": [
+          {
+            "label": "ดูผลงาน",
+            "href": "/portfolio",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "สอบถามคิวว่าง",
+            "href": "/contact",
+            "variant": "ghost",
+            "external": false
+          }
+        ],
+        "image": null
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "muted",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "fade-up"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_photo_home_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "สิ่งที่คุณจะได้รับ",
+        "subheading": "ทำงานคนเดียวตั้งแต่ต้นจนจบ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "📷",
+            "title": "ถ่ายเองทุกงาน",
+            "description": "ไม่ส่งต่อให้ทีมอื่น คุณคุยกับช่างภาพโดยตรง"
+          },
+          {
+            "icon": "🌤️",
+            "title": "ใช้แสงธรรมชาติ",
+            "description": "ภาพดูเป็นธรรมชาติ ไม่แต่งจนเกินจริง"
+          },
+          {
+            "icon": "🗂️",
+            "title": "ส่งไฟล์ครบใน 14 วัน",
+            "description": "ไฟล์ความละเอียดสูงพร้อมใช้พิมพ์"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_photo_home_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ภาพบ้านทุ่งเริ่มจากกล้องตัวเดียวกับทุ่งนาแถวบ้าน ตอนนี้รับงานมากกว่า 120 งานต่อปี ทั้งงานแต่ง ครอบครัว และภาพธรรมชาติ",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_photo_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูผลงานทั้งหมด",
+        "href": "/portfolio",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

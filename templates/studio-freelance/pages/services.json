@@ -1,0 +1,123 @@
+{
+  "type": "page",
+  "title": "บริการและขั้นตอน",
+  "slug": "services",
+  "excerpt": "บริการออกแบบเว็บ แบรนด์ และดูแลรายเดือน",
+  "seoDescription": "บริการออกแบบและสร้างเว็บไซต์ เริ่ม 45,000 บาท พร้อมขั้นตอนการทำงานที่ชัดเจน",
+  "blocks": [
+    {
+      "id": "blk_studio_svc_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "บริการและขั้นตอน",
+        "level": "h2",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_svc_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "สิ่งที่เรารับทำ",
+        "subheading": "ราคาเป็นราคาเริ่มต้น ขึ้นอยู่กับจำนวนหน้าและความซับซ้อน",
+        "columns": "2",
+        "items": [
+          {
+            "icon": "🧩",
+            "title": "ออกแบบและสร้างเว็บไซต์",
+            "description": "เริ่ม 45,000 บาท รวมออกแบบ 6 หน้า และสอนแก้เนื้อหาให้เจ้าของทำเองได้"
+          },
+          {
+            "icon": "🪪",
+            "title": "ออกแบบแบรนด์พื้นฐาน",
+            "description": "โลโก้ ชุดสี ฟอนต์ และคู่มือใช้งาน เริ่ม 25,000 บาท"
+          },
+          {
+            "icon": "🔍",
+            "title": "ปรับเว็บให้หาเจอบน Google",
+            "description": "ตรวจโครงสร้างหน้า ปรับความเร็ว และตั้งค่าการวัดผลให้ครบ"
+          },
+          {
+            "icon": "🛠",
+            "title": "ดูแลเว็บรายเดือน",
+            "description": "อัปเดตเนื้อหา ปรับแก้เล็กน้อย และสำรองข้อมูลให้ทุกเดือน 4,500 บาท"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_svc_steps",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ขั้นตอนทำงาน: คุยโจทย์ 1 ครั้ง → เสนอโครงหน้าและราคา → มัดจำ 40% → ออกแบบและพัฒนา → ส่งมอบพร้อมสอนใช้งาน 1 ชั่วโมง",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_svc_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "สอบถามคิวงาน",
+        "href": "/contact",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

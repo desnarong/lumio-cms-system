@@ -1,0 +1,102 @@
+{
+  "header": [
+    {
+      "id": "blk_clinic_header_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "จองคิว",
+        "href": "/appointment",
+        "variant": "primary",
+        "size": "sm",
+        "external": false,
+        "align": "right",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "id": "blk_clinic_footer_name",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "คลินิกทันตกรรมยิ้มสวย",
+        "level": "h4",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_footer_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "อาคารสุขใจ ชั้น 3 ถนนพญาไท กรุงเทพฯ · เปิดจันทร์-เสาร์ 09:00-19:00 น.",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_footer_link",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูบริการทั้งหมด",
+        "href": "/services",
+        "variant": "ghost",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

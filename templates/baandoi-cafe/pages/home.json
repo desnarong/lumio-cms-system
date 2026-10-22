@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "กาแฟคั่วสดจากดอย ส่งตรงถึงบ้านคุณ",
+  "seoDescription": "กาแฟคั่วสดใหม่ทุกสัปดาห์จากสวนทางภาคเหนือ พร้อมส่งทั่วประเทศไทย",
+  "blocks": [
+    {
+      "id": "blk_cafe_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-right",
+        "heading": "กาแฟคั่วสดจากดอย ส่งตรงถึงบ้านคุณ",
+        "subheading": "เลือกเมล็ดกาแฟจากสวนทางภาคเหนือ คั่วใหม่ทุกสัปดาห์ พร้อมส่งทั่วประเทศไทย",
+        "buttons": [
+          {
+            "label": "สั่งซื้อเลย",
+            "href": "/menu",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "เรื่องราวของร้าน",
+            "href": "/location",
+            "variant": "ghost",
+            "external": false
+          }
+        ],
+        "image": null
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_home_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ทำไมลูกค้าถึงเลือกเรา",
+        "subheading": "สามสิ่งที่เราตั้งใจทำทุกวัน",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "☕",
+            "title": "คั่วสดทุกสัปดาห์",
+            "description": "คั่วเมล็ดใหม่ทุกสัปดาห์ ส่งถึงมือคุณภายใน 3 วันหลังคั่ว"
+          },
+          {
+            "icon": "🌱",
+            "title": "ซื้อตรงจากเกษตรกร",
+            "description": "รับซื้อเมล็ดจากสวนในเชียงใหม่ แม่ฮ่องสอน และน่าน ในราคาที่เป็นธรรม"
+          },
+          {
+            "icon": "💬",
+            "title": "ปรึกษาการชงได้ทุกวัน",
+            "description": "ทีมบาริสต้าตอบคำถามเรื่องการชงผ่านแชททุกวัน 09:00-20:00 น."
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_home_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เปิดร้านมาตั้งแต่ปี 2558 จากโรงคั่วเล็ก ๆ หลังบ้าน ตอนนี้เราคั่วให้ลูกค้ากว่าสองพันคนทั่วประเทศ และยังชงแก้วแรกของทุกวันด้วยมือของเราเอง",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูเมนูทั้งหมด",
+        "href": "/menu",
+        "variant": "secondary",
+        "size": "lg",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

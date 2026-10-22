@@ -1,0 +1,118 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: lumio
+      POSTGRES_PASSWORD: lumio
+      POSTGRES_DB: lumio
+    ports:
+      - '49432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U lumio -d lumio']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    ports:
+      - '49537:6379'
+
+  minio:
+    image: pgsty/silo
+    command: server /data --console-address ":49601"
+    environment:
+      MINIO_ROOT_USER: lumio
+      MINIO_ROOT_PASSWORD: lumio-secret
+    ports:
+      - '49600:9000'
+      - '49601:9001'
+    volumes:
+      - miniodata:/data
+
+  # Optional malware scanner. Start it with `docker compose --profile scan up -d`
+  # and set MEDIA_SCANNER=clamav plus CLAMAV_PORT=49800 for the API.
+  clamav:
+    image: clamav/clamav:stable
+    profiles: ['scan']
+    ports:
+      - '49800:3310'
+    volumes:
+      - clamdb:/var/lib/clamav
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file: .env
+    environment:
+      # Inside the compose network the renderer is not on localhost.
+      RENDERER_URL: http://renderer:49200
+    command: >
+      sh -c "apps/api/node_modules/.bin/prisma migrate deploy
+      --schema apps/api/prisma/schema.prisma && node apps/api/dist/main.js"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - '49100:49100'
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    command: node apps/api/dist/worker.js
+    env_file: .env
+    environment:
+      RENDERER_URL: http://renderer:49200
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    ports:
+      - '49300:80'
+
+  renderer:
+    build:
+      context: .
+      dockerfile: apps/renderer/Dockerfile
+    env_file: .env
+    environment:
+      # The renderer resolves the tenant from the request host and reads content
+      # from the API over the compose network.
+      NEXT_PUBLIC_API_URL: http://api:49100
+    ports:
+      - '49200:49200'
+
+  caddy:
+    image: caddy:2
+    ports:
+      - '49700:80'
+      - '49701:443'
+    environment:
+      LUMIO_TLS_ASK_URL: ${LUMIO_TLS_ASK_URL:-http://api:49100/api/v1/public/tls/ask}
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+      - admin
+      - renderer
+
+volumes:
+  pgdata: {}
+  miniodata: {}
+  clamdb: {}
+  caddy_data: {}
+  caddy_config: {}

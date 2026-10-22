@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "เกี่ยวกับเรา",
+  "slug": "about",
+  "excerpt": "เรื่องราวของกลุ่มช่างฝีมือและวิธีทำงานของสานศิลป์",
+  "seoDescription": "รู้จักสานศิลป์ กลุ่มช่างฝีมืองานถักจากเชียงใหม่ และวิธีที่เราเลือกวัตถุดิบ",
+  "blocks": [
+    {
+      "id": "blk_shop_about_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "เรื่องราวของสานศิลป์",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_about_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราเริ่มจากโต๊ะทำงานหลังบ้านในปี 2562 ด้วยช่างฝีมือ 12 คน วันนี้มีสมาชิกในกลุ่ม 38 คน กระจายอยู่ใน 4 หมู่บ้านของเชียงใหม่ ทุกคนได้ค่าตอบแทนตามชิ้นงานจริง",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_about_values",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "สิ่งที่เราให้ความสำคัญ",
+        "subheading": "คุณภาพและความยุติธรรมไปด้วยกัน",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🌿",
+            "title": "วัตถุดิบธรรมชาติ",
+            "description": "ฝ้ายและกกจากสวนในท้องถิ่น ย้อมด้วยสีธรรมชาติ"
+          },
+          {
+            "icon": "🤝",
+            "title": "จ่ายค่าตอบแทนเป็นธรรม",
+            "description": "ตกลงราคาชิ้นงานกับช่างฝีมือโดยตรงทุกครั้ง"
+          },
+          {
+            "icon": "📦",
+            "title": "ตรวจทุกชิ้นก่อนส่ง",
+            "description": "ทีมงานตรวจความเรียบร้อยและแพ็กอย่างดีก่อนถึงมือคุณ"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_about_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ไปดูสินค้า",
+        "href": "/shop",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

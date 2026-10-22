@@ -1,0 +1,92 @@
+{
+  "type": "page",
+  "title": "ติดต่อคลินิก",
+  "slug": "contact",
+  "excerpt": "ที่ตั้ง เวลาเปิด และช่องทางติดต่อ",
+  "seoDescription": "ติดต่อคลินิกยิ้มสวย โทร LINE หรือเดินทางด้วยรถไฟฟ้าสถานีพญาไท",
+  "blocks": [
+    {
+      "id": "blk_clinic_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ติดต่อคลินิก",
+        "level": "h2",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_contact_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "อาคารสุขใจ ชั้น 3 ถนนพญาไท เขตราชเทวี กรุงเทพฯ 10400 · เปิดวันจันทร์ถึงเสาร์ 09:00-19:00 น.",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_contact_channels",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ช่องทางติดต่อ",
+        "subheading": "เลือกช่องทางที่สะดวกสำหรับคุณ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "☎️",
+            "title": "โทรศัพท์",
+            "description": "02-000-0000 กด 1 สำหรับนัดหมาย กด 2 สำหรับถามราคา"
+          },
+          {
+            "icon": "💬",
+            "title": "LINE @yimsuay",
+            "description": "ส่งภาพฟันมาให้ประเมินเบื้องต้นและสอบถามราคาได้"
+          },
+          {
+            "icon": "📍",
+            "title": "การเดินทาง",
+            "description": "ออกจากรถไฟฟ้าสถานีพญาไท เดิน 5 นาที มีลิฟต์ขึ้นชั้น 3"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

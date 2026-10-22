@@ -1,0 +1,92 @@
+{
+  "type": "page",
+  "title": "ติดต่อเรา",
+  "slug": "contact",
+  "excerpt": "ช่องทางติดต่อกาแฟบ้านดอย",
+  "seoDescription": "ติดต่อกาแฟบ้านดอย โทร LINE หรืออีเมลสำหรับสั่งจำนวนมาก",
+  "blocks": [
+    {
+      "id": "blk_cafe_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ติดต่อเรา",
+        "level": "h2",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_contact_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "มีคำถามเรื่องเมล็ดกาแฟ การจองโต๊ะ หรืออยากสั่งจำนวนมาก ทักเรามาได้ทุกช่องทาง ทีมงานตอบทุกวัน 09:00-20:00 น.",
+        "align": "left",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_contact_channels",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ช่องทางติดต่อ",
+        "subheading": "เลือกช่องทางที่สะดวกสำหรับคุณ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "☎️",
+            "title": "โทรศัพท์",
+            "description": "053-000-000 ต่อ 1 สำหรับร้าน ต่อ 2 สำหรับสั่งส่ง"
+          },
+          {
+            "icon": "💬",
+            "title": "LINE @baandoi",
+            "description": "จองโต๊ะ สั่งล่วงหน้า และติดตามโปรโมชันของร้าน"
+          },
+          {
+            "icon": "✉️",
+            "title": "อีเมล",
+            "description": "hello@baandoi.example สำหรับสั่งจำนวนมากและงานอีเวนต์"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

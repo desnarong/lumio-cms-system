@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "ติดต่อร้าน",
+  "slug": "contact",
+  "excerpt": "ช่องทางติดต่อและรอบส่งสินค้า",
+  "seoDescription": "ติดต่อสานศิลป์ โทร LINE หรือสอบถามรอบส่งสินค้าได้ทุกวัน",
+  "blocks": [
+    {
+      "id": "blk_shop_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ติดต่อสานศิลป์",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_contact_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ตอบแชททุกวัน 09:00-19:00 น. · ส่งสินค้าทุกวันจันทร์ถึงเสาร์",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_contact_channels",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ช่องทางติดต่อ",
+        "subheading": "เลือกช่องทางที่สะดวก",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "☎️",
+            "title": "โทร 053-000-000",
+            "description": "สอบถามขนาดและรอบส่งสินค้าได้ทุกวันทำการ"
+          },
+          {
+            "icon": "💬",
+            "title": "LINE @saransin",
+            "description": "ส่งรูปสินค้าที่ต้องการให้ทีมงานช่วยเลือกได้"
+          },
+          {
+            "icon": "📍",
+            "title": "หมู่บ้านหัตถกรรม",
+            "description": "ตำบลหนองหอย อำเภอเมือง จังหวัดเชียงใหม่"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_contact_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ไปที่ร้านค้า",
+        "href": "/shop",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

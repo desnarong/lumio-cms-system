@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "เรื่องเล่าจากเมืองที่เราอยู่ร่วมกัน",
+  "seoDescription": "บล็อกเล่าเรื่องเมือง ผู้คน และพื้นที่สาธารณะในกรุงเทพฯ",
+  "blocks": [
+    {
+      "id": "blk_siang_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-right",
+        "heading": "เรื่องเล่าจากเมืองที่เราอยู่ร่วมกัน",
+        "subheading": "บทความสั้น ๆ เกี่ยวกับผู้คน พื้นที่ และชีวิตประจำวันในเมือง ที่เราอยากเล่าให้ฟัง",
+        "buttons": [
+          {
+            "label": "อ่านบทความ",
+            "href": "/topics",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "รู้จักเรา",
+            "href": "/about",
+            "variant": "ghost",
+            "external": false
+          }
+        ],
+        "image": null
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "muted",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "fade-up"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_siang_home_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "สิ่งที่เราสนใจ",
+        "subheading": "สามหัวข้อที่เราเล่าซ้ำ ๆ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🏙️",
+            "title": "พื้นที่สาธารณะ",
+            "description": "สวน ตลาด และทางเดินที่ทุกคนใช้ร่วมกัน"
+          },
+          {
+            "icon": "🚌",
+            "title": "การเดินทาง",
+            "description": "รถเมล์ รถไฟ และทางจักรยานในเมือง"
+          },
+          {
+            "icon": "🫂",
+            "title": "ผู้คน",
+            "description": "เรื่องราวของคนที่ทำให้เมืองนี้ทำงาน"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_siang_home_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เสียงเมืองเขียนโดยทีมเล็ก ๆ ที่ชอบเดินสำรวจเมืองและคุยกับคนแปลกหน้า เราจะลงบทความใหม่อย่างน้อยสัปดาห์ละครั้ง",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_siang_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "อ่านบทความทั้งหมด",
+        "href": "/topics",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

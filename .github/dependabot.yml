@@ -1,0 +1,27 @@
+# Keeps dependencies patched between releases (docs/design/15-security.md 15.2).
+# Runtime dependencies of the public site and the API are the priority; the
+# grouped dev updates keep the noise down.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      web-runtime:
+        patterns:
+          - next
+          - react
+          - react-dom
+      build-tools:
+        patterns:
+          - vite
+          - vitest
+          - typescript
+          - eslint
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

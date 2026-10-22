@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "เมนูอาหาร",
+  "slug": "menu",
+  "excerpt": "เมนูประจำวันและของขึ้นชื่อ",
+  "seoDescription": "เมนูอาหารไทย ปลาเผา แกงส้ม และของหวานพื้นบ้าน พร้อมราคา",
+  "blocks": [
+    {
+      "id": "blk_rim_menu_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "เมนูแนะนำวันนี้",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_rim_menu_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ของขึ้นชื่อของร้าน",
+        "subheading": "ทุกจานเสิร์ฟร้อนจากเตา",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🔥",
+            "title": "ปลาเผาเกลือ",
+            "description": "ปลากะพงสดเผาเกลือ เสิร์ฟกับน้ำจิ้มสามรส"
+          },
+          {
+            "icon": "🥘",
+            "title": "แกงส้มชะอมกุ้ง",
+            "description": "รสเปรี้ยวกลมกล่อมจากมะขามสด"
+          },
+          {
+            "icon": "🍧",
+            "title": "ขนมครกโบราณ",
+            "description": "ทำใหม่ทุกวัน หมดแล้วหมดเลย"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_rim_menu_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เมนูเปลี่ยนตามวัตถุดิบในแต่ละวัน สอบถามเมนูพิเศษได้ที่พนักงาน",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_rim_menu_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "โทรสอบถามเมนูวันนี้",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

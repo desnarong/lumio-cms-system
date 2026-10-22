@@ -1,0 +1,102 @@
+{
+  "header": [
+    {
+      "id": "blk_baansuan-flowers_header_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "สั่งดอกไม้",
+        "href": "/shop",
+        "variant": "secondary",
+        "size": "sm",
+        "external": false,
+        "align": "right",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "id": "blk_baansuan-flowers_footer_name",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ดอกไม้บ้านสวน",
+        "level": "h4",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_baansuan-flowers_footer_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "จัดส่งในกรุงเทพฯ วันเดียวกัน · สั่งก่อน 14:00 น.",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_baansuan-flowers_footer_link",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "เลือกช่อดอกไม้",
+        "href": "/shop",
+        "variant": "ghost",
+        "size": "md",
+        "external": false,
+        "align": "left",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

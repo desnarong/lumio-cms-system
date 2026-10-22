@@ -1,0 +1,75 @@
+{
+  "type": "post",
+  "title": "ยินดีต้อนรับสู่เมฆขาว",
+  "slug": "welcome",
+  "excerpt": "บทความแรกที่เล่าว่าเรามีบล็อกนี้ทำไม",
+  "seoDescription": "บทความเปิดตัวของเมฆขาว เรื่องเล่าเล็ก ๆ จากเมืองที่เราเดินผ่านทุกวัน",
+  "blocks": [
+    {
+      "id": "blk_blog_welcome_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ยินดีต้อนรับสู่เมฆขาว",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blog_welcome_p1",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราจดบันทึกเรื่องเล็ก ๆ ตั้งแต่เสียงรถเข็นตอนเช้า ไปจนถึงร้านกาแฟที่เปลี่ยนเจ้าของแล้วสามครั้ง บทความแรกนี้คือการชวนคุณเดินช้าลงอีกนิด",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_blog_welcome_p2",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ทุกสัปดาห์เราจะเล่าเรื่องหนึ่งเรื่องจากเมืองที่เราอยู่ ถ้าคุณมีเรื่องอยากให้เราไปฟัง ส่งมาที่หน้า “ติดต่อ” ได้เลย",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

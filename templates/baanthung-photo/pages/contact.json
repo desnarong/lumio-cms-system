@@ -1,0 +1,79 @@
+{
+  "type": "page",
+  "title": "ติดต่อ",
+  "slug": "contact",
+  "excerpt": "สอบถามคิวและราคา",
+  "seoDescription": "ติดต่อภาพบ้านทุ่งเพื่อสอบถามคิวว่างและราคา",
+  "blocks": [
+    {
+      "id": "blk_photo_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "คุยเรื่องงานถ่ายภาพ",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_photo_contact_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "โทร 089-456-7890 หรืออีเมล hello@baanthung.photo · รับงานทั่วประเทศ นัดล่วงหน้าอย่างน้อย 2 สัปดาห์",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_photo_contact_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ส่งอีเมล",
+        "href": "mailto:hello@baanthung.photo",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

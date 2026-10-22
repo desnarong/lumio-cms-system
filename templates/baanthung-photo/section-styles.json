@@ -1,0 +1,22 @@
+{
+  "hero": {
+    "paddingY": "xl",
+    "background": "muted",
+    "animation": "none"
+  },
+  "features": {
+    "paddingY": "xl"
+  },
+  "heading": {
+    "paddingY": "sm"
+  },
+  "paragraph": {
+    "paddingY": "sm"
+  },
+  "button": {
+    "paddingY": "sm"
+  },
+  "image": {
+    "paddingY": "md"
+  }
+}

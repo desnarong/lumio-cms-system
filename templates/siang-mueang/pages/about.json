@@ -1,0 +1,53 @@
+{
+  "type": "page",
+  "title": "เกี่ยวกับเรา",
+  "slug": "about",
+  "excerpt": "เราคือใครและเขียนเรื่องอะไร",
+  "seoDescription": "รู้จักทีมเสียงเมืองและหลักในการเขียน",
+  "blocks": [
+    {
+      "id": "blk_siang_about_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "เราเล่าเรื่องเมืองแบบไม่เร่งรีบ",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_siang_about_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราเชื่อว่าการเปลี่ยนแปลงที่ดีเริ่มจากการสังเกตชีวิตประจำวัน จึงเขียนเรื่องเล็ก ๆ ที่คนเมืองเจอทุกวัน โดยไม่ใช้ภาษาเกินจริง",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

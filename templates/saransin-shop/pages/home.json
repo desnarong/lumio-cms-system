@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "ของใช้แฮนด์เมดที่ถักทอด้วยมือจากเชียงใหม่",
+  "seoDescription": "กระเป๋า เสื่อ และของขวัญงานแฮนด์เมดจากช่างฝีมือเชียงใหม่ สั่งออนไลน์ส่งทั่วประเทศ",
+  "blocks": [
+    {
+      "id": "blk_shop_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-right",
+        "heading": "ของใช้แฮนด์เมดที่ถักทอด้วยมือจากเชียงใหม่",
+        "subheading": "กระเป๋า เสื่อ และของขวัญจากช่างฝีมือในหมู่บ้านหัตถกรรม เลือกซื้อออนไลน์ ส่งถึงบ้านทั่วประเทศ",
+        "buttons": [
+          {
+            "label": "เลือกซื้อสินค้า",
+            "href": "/shop",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "เรื่องราวช่างฝีมือ",
+            "href": "/about",
+            "variant": "ghost",
+            "external": false
+          }
+        ],
+        "image": null
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_home_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ทำไมลูกค้าเลือกสานศิลป์",
+        "subheading": "ทุกชิ้นตั้งใจทำและตรวจก่อนส่ง",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🧶",
+            "title": "ทำมือทุกชิ้น",
+            "description": "ทอและเย็บด้วยช่างฝีมือในหมู่บ้าน ไม่ใช่งานโรงงาน"
+          },
+          {
+            "icon": "🚚",
+            "title": "ส่งฟรีเมื่อซื้อครบ 500 บาท",
+            "description": "จัดส่งด้วย Kerry และไปรษณีย์ไทย พร้อมเลขพัสดุ"
+          },
+          {
+            "icon": "🔁",
+            "title": "เปลี่ยนขนาดฟรี 7 วัน",
+            "description": "หากขนาดไม่พอดี ส่งกลับมาเปลี่ยนได้ภายใน 7 วัน"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_home_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "สานศิลป์เริ่มจากกลุ่มแม่บ้าน 12 คนที่อยากให้งานถักของหมู่บ้านอยู่ต่อ วันนี้เราส่งสินค้าให้ลูกค้ากว่าสามพันคนทั่วประเทศ และจ่ายค่าตอบแทนให้ช่างฝีมือเต็มจำนวนทุกชิ้น",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_shop_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ไปที่ร้านค้า",
+        "href": "/shop",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

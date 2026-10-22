@@ -1,0 +1,79 @@
+{
+  "type": "page",
+  "title": "จองโต๊ะ",
+  "slug": "reservation",
+  "excerpt": "จองโต๊ะริมน้ำล่วงหน้า",
+  "seoDescription": "จองโต๊ะร้านครัวริมน้ำ เลือกวันเวลาและจำนวนคนได้",
+  "blocks": [
+    {
+      "id": "blk_rim_reserve_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "จองโต๊ะล่วงหน้า",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_rim_reserve_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "โทร 02-123-4567 หรือส่งข้อความผ่านหน้าติดต่อ เพื่อจองโต๊ะริมน้ำ ภายใน 24 ชั่วโมงเราจะยืนยันกลับ",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_rim_reserve_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ส่งข้อความจองโต๊ะ",
+        "href": "/contact",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

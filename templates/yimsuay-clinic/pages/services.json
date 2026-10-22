@@ -1,0 +1,123 @@
+{
+  "type": "page",
+  "title": "บริการและราคา",
+  "slug": "services",
+  "excerpt": "รายการบริการที่พบบ่อยพร้อมราคาเริ่มต้น",
+  "seoDescription": "บริการทันตกรรม ราคาเริ่มต้นชัดเจน ขูดหินปูน อุดฟัน จัดฟันใส และรากเทียม",
+  "blocks": [
+    {
+      "id": "blk_clinic_svc_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "บริการและราคา",
+        "level": "h2",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_svc_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "รายการบริการที่พบบ่อย",
+        "subheading": "ราคาเป็นราคาเริ่มต้น ทันตแพทย์จะแจ้งราคาจริงก่อนเริ่มรักษาเสมอ",
+        "columns": "2",
+        "items": [
+          {
+            "icon": "🧼",
+            "title": "ขูดหินปูน · 1,200 บาท",
+            "description": "รวมขัดฟันและคำแนะนำการดูแลฟันที่บ้าน"
+          },
+          {
+            "icon": "🪥",
+            "title": "อุดฟันสีเหมือนฟัน · 1,500 บาทขึ้นไป",
+            "description": "เลือกวัสดุอุดให้เหมาะกับตำแหน่งของฟัน"
+          },
+          {
+            "icon": "📐",
+            "title": "จัดฟันใส · เริ่ม 89,000 บาท",
+            "description": "ผ่อนได้สูงสุด 12 งวด รวมรีเทนเนอร์ชุดแรก"
+          },
+          {
+            "icon": "🔩",
+            "title": "รากเทียม · เริ่ม 45,000 บาท",
+            "description": "รวมการวางแผนด้วยภาพ 3 มิติ และติดตามผล 1 ปี"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_svc_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราไม่มีค่าใช้จ่ายที่ไม่ได้แจ้งล่วงหน้า ถ้ามีการรักษาเพิ่มเติมนอกแผน ทันตแพทย์จะอธิบายและขอความยินยอมก่อนทุกครั้ง",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_svc_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ส่งคำถามถึงทันตแพทย์",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

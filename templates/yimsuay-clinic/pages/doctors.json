@@ -1,0 +1,92 @@
+{
+  "type": "page",
+  "title": "ทีมทันตแพทย์",
+  "slug": "doctors",
+  "excerpt": "ทีมทันตแพทย์ประจำคลินิก",
+  "seoDescription": "รู้จักทันตแพทย์ประจำคลินิกยิ้มสวย ทั้งด้านทันตกรรมทั่วไป จัดฟัน รากเทียม และทันตกรรมเด็ก",
+  "blocks": [
+    {
+      "id": "blk_clinic_doc_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ทีมทันตแพทย์",
+        "level": "h2",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_doc_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ทันตแพทย์ประจำคลินิก",
+        "subheading": "ทุกท่านผ่านการอบรมเฉพาะทางและต่อใบอนุญาตตามกำหนด",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "👩‍⚕️",
+            "title": "ทพญ. ปวีณา ศรีสุข",
+            "description": "ทันตกรรมทั่วไปและจัดฟัน ประสบการณ์ 12 ปี"
+          },
+          {
+            "icon": "👨‍⚕️",
+            "title": "ทพ. ณัฐพล ใจดี",
+            "description": "รากเทียมและศัลยกรรมช่องปาก ประสบการณ์ 15 ปี"
+          },
+          {
+            "icon": "👩‍⚕️",
+            "title": "ทพญ. มินตรา วรรณศิลป์",
+            "description": "ทันตกรรมเด็ก ดูแลผู้ป่วยอายุ 3-15 ปี"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_doc_note",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ถ้าต้องการพบทันตแพทย์ท่านใดเป็นพิเศษ แจ้งได้ตอนจองคิว เราจะจัดตารางให้ตรงกับท่านนั้น",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

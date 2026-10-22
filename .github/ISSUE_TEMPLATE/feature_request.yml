@@ -1,0 +1,22 @@
+name: Feature request
+description: เสนอสิ่งที่ควรมี
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: ปัญหาที่อยากแก้
+      description: ใครเจอปัญหา อะไรทำให้ลำบาก
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: แนวทางที่คิดไว้
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: อยู่ในขอบเขต Community ไหม
+      options:
+        - label: เป็นฟีเจอร์ที่ทุกคนควรได้ใช้ฟรี
+        - label: เป็นฟีเจอร์ที่ควรขายแยก (Membership/Marketplace)

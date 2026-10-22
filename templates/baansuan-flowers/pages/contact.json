@@ -1,0 +1,79 @@
+{
+  "type": "page",
+  "title": "ติดต่อ",
+  "slug": "contact",
+  "excerpt": "ที่ตั้งและเวลาจัดส่ง",
+  "seoDescription": "ติดต่อร้านดอกไม้บ้านสวน สอบถามการจัดส่งและงานจัดดอกไม้",
+  "blocks": [
+    {
+      "id": "blk_flowers_contact_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "คุยกับเราเรื่องดอกไม้",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_flowers_contact_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "88/9 ซอยลาดพร้าว 71 เขตวัฒนา กรุงเทพฯ 10110 · โทร 02-555-1212 · เปิดทุกวัน 08:00-19:00 น.",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_flowers_contact_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "โทรสั่งดอกไม้",
+        "href": "tel:025551212",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

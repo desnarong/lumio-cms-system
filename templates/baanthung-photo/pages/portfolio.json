@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "ผลงาน",
+  "slug": "portfolio",
+  "excerpt": "ตัวอย่างงานถ่ายภาพ",
+  "seoDescription": "ตัวอย่างผลงานถ่ายภาพแต่งงาน ครอบครัว และธรรมชาติ",
+  "blocks": [
+    {
+      "id": "blk_photo_portfolio_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ผลงานที่ผ่านมา",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_photo_portfolio_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "หมวดงาน",
+        "subheading": "เลือกดูตามประเภทงานที่สนใจ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "💍",
+            "title": "งานแต่ง",
+            "description": "พิธีเช้า งานเลี้ยง และพรีเวดดิ้ง"
+          },
+          {
+            "icon": "👨‍👩‍👧",
+            "title": "ครอบครัว",
+            "description": "ภาพครอบครัวที่บ้านหรือกลางแจ้ง"
+          },
+          {
+            "icon": "🌾",
+            "title": "ธรรมชาติ",
+            "description": "ทุ่งนา ภูเขา และแสงเช้า"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_photo_portfolio_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ส่งข้อความมาบอกวันและสถานที่ที่ต้องการ เราจะส่งตัวอย่างงานที่ใกล้เคียงให้ดูก่อนตัดสินใจ",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_photo_portfolio_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ขอตัวอย่างผลงาน",
+        "href": "/contact",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

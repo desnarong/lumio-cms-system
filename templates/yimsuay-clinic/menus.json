@@ -1,0 +1,46 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "บริการ",
+      "href": "/services",
+      "children": []
+    },
+    {
+      "label": "ทีมทันตแพทย์",
+      "href": "/doctors",
+      "children": []
+    },
+    {
+      "label": "นัดหมาย",
+      "href": "/appointment",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "บริการ",
+      "href": "/services",
+      "children": []
+    },
+    {
+      "label": "นัดหมาย",
+      "href": "/appointment",
+      "children": []
+    },
+    {
+      "label": "ติดต่อเรา",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

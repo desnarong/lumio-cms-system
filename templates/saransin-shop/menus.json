@@ -1,0 +1,46 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "สินค้าทั้งหมด",
+      "href": "/shop",
+      "children": []
+    },
+    {
+      "label": "โปรโมชัน",
+      "href": "/promotions",
+      "children": []
+    },
+    {
+      "label": "เกี่ยวกับเรา",
+      "href": "/about",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "สินค้าทั้งหมด",
+      "href": "/shop",
+      "children": []
+    },
+    {
+      "label": "โปรโมชัน",
+      "href": "/promotions",
+      "children": []
+    },
+    {
+      "label": "ติดต่อร้าน",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

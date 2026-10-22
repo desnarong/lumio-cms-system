@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "อาหารไทยรสบ้าน ๆ ริมคลองบางหลวง",
+  "seoDescription": "ร้านอาหารไทยริมน้ำ วัตถุดิบจากตลาดเช้า รับจองโต๊ะทุกวัน",
+  "blocks": [
+    {
+      "id": "blk_rim_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "split-right",
+        "heading": "อาหารไทยรสบ้าน ๆ ริมคลองบางหลวง",
+        "subheading": "วัตถุดิบสดจากตลาดเช้า ครัวเปิดให้ดูทุกจาน นั่งริมน้ำได้ทั้งวัน",
+        "buttons": [
+          {
+            "label": "ดูเมนูวันนี้",
+            "href": "/menu",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "จองโต๊ะ",
+            "href": "/reservation",
+            "variant": "ghost",
+            "external": false
+          }
+        ],
+        "image": null
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "muted",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "fade-up"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_rim_home_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "ทำไมลูกค้าประจำกลับมาทุกสัปดาห์",
+        "subheading": "เราตั้งใจในสามเรื่องนี้",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🐟",
+            "title": "ปลาสดจากตลาดเช้า",
+            "description": "เลือกซื้อเองทุกเช้า ไม่ใช้ปลาแช่แข็ง"
+          },
+          {
+            "icon": "🌿",
+            "title": "ผักจากสวนข้างบ้าน",
+            "description": "ผักสวนครัวปลอดสารจากเกษตรกรในชุมชน"
+          },
+          {
+            "icon": "🍲",
+            "title": "สูตรครอบครัว 3 รุ่น",
+            "description": "น้ำพริกและแกงสูตรเดิมจากรุ่นยาย"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_rim_home_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ครัวริมน้ำเปิดมาตั้งแต่ปี 2548 จากโต๊ะ 4 ตัวริมคลอง วันนี้ขยายเป็น 24 โต๊ะ แต่ยังทำอาหารทีละจานด้วยมือเหมือนเดิม",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_rim_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูเมนูและราคา",
+        "href": "/menu",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

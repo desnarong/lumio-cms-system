@@ -1,0 +1,41 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "เมนูอาหาร",
+      "href": "/menu",
+      "children": []
+    },
+    {
+      "label": "จองโต๊ะ",
+      "href": "/reservation",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "เมนูอาหาร",
+      "href": "/menu",
+      "children": []
+    },
+    {
+      "label": "จองโต๊ะ",
+      "href": "/reservation",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

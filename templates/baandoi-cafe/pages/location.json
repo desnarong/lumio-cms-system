@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "ที่ตั้งร้าน",
+  "slug": "location",
+  "excerpt": "ที่ตั้ง เวลาเปิด และการเดินทางมาร้าน",
+  "seoDescription": "ที่ตั้งกาแฟบ้านดอย ถนนนิมมานเหมินท์ เชียงใหม่ พร้อมที่จอดรถและเส้นทาง",
+  "blocks": [
+    {
+      "id": "blk_cafe_loc_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ที่ตั้งร้าน",
+        "level": "h2",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_loc_address",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "128 ถนนนิมมานเหมินท์ ตำบลสุเทพ อำเภอเมือง จังหวัดเชียงใหม่ 50200 เปิดทุกวัน 07:00-18:00 น. มีที่จอดรถหน้าร้าน 6 คัน",
+        "align": "left",
+        "size": "base"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_loc_travel",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "เดินทางมาร้าน",
+        "subheading": "มาถึงง่ายทั้งรถยนต์และรถประจำทาง",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🚗",
+            "title": "รถยนต์",
+            "description": "จอดหน้าร้านได้ 6 คัน หรือใช้ลานจอดของอาคารข้างร้านฟรี 2 ชั่วโมง"
+          },
+          {
+            "icon": "🚌",
+            "title": "รถประจำทาง",
+            "description": "ขึ้นสาย 2 หรือ 10 ลงปากซอยนิมมานฯ แล้วเดินต่อ 200 เมตร"
+          },
+          {
+            "icon": "🕗",
+            "title": "ช่วงที่คนน้อย",
+            "description": "08:00-10:00 น. ของวันธรรมดา เหมาะกับการนั่งทำงาน"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_cafe_loc_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "สอบถามเส้นทาง",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

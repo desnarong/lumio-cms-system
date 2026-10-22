@@ -1,0 +1,133 @@
+{
+  "type": "page",
+  "title": "หน้าแรก",
+  "slug": "home",
+  "excerpt": "ออกแบบเว็บไซต์ที่เล่าเรื่องธุรกิจคุณได้",
+  "seoDescription": "สตูดิโอแสนดี รับออกแบบเว็บไซต์และแบรนด์สำหรับธุรกิจขนาดเล็กและกลาง",
+  "blocks": [
+    {
+      "id": "blk_studio_home_hero",
+      "type": "hero",
+      "version": 1,
+      "props": {
+        "layout": "centered",
+        "heading": "ออกแบบเว็บไซต์ที่เล่าเรื่องธุรกิจคุณได้",
+        "subheading": "สตูดิโอเล็กที่ทำงานกับเจ้าของธุรกิจโดยตรง คุยกันเองตั้งแต่ร่างแรกจนเว็บขึ้นจริง",
+        "buttons": [
+          {
+            "label": "ดูผลงานที่ผ่านมา",
+            "href": "/work",
+            "variant": "primary",
+            "external": false
+          },
+          {
+            "label": "คุยเรื่องงาน",
+            "href": "/contact",
+            "variant": "ghost",
+            "external": false
+          }
+        ],
+        "image": null
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_home_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "สิ่งที่ลูกค้าได้จากเรา",
+        "subheading": "ทำงานเป็นขั้นตอน ชัดเจนเรื่องราคาและเวลา",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🧭",
+            "title": "วางโครงเรื่องก่อนออกแบบ",
+            "description": "เริ่มจากคำถามว่าลูกค้าควรเข้าใจอะไร แล้วค่อยจัดหน้าตาเว็บให้ตรงเป้า"
+          },
+          {
+            "icon": "🎨",
+            "title": "ส่งงานเป็นรอบสั้น",
+            "description": "เห็นความคืบหน้าทุกสัปดาห์ แก้ไขได้ก่อนถึงกำหนดส่งจริง"
+          },
+          {
+            "icon": "📈",
+            "title": "วัดผลหลังเปิดใช้",
+            "description": "ติดตั้งการวัดผลและส่งรายงานให้อ่านง่ายหลังเว็บใช้งาน 30 วัน"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_home_intro",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "เราทำงานกับธุรกิจขนาดเล็กถึงกลางเป็นหลัก งานหนึ่งชิ้นใช้เวลา 3-6 สัปดาห์ ขึ้นอยู่กับความพร้อมของเนื้อหาและจำนวนหน้า",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_studio_home_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "ดูขั้นตอนการทำงาน",
+        "href": "/services",
+        "variant": "secondary",
+        "size": "lg",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "md",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

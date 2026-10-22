@@ -1,0 +1,118 @@
+{
+  "type": "page",
+  "title": "บริการ",
+  "slug": "services",
+  "excerpt": "บริการตรวจรักษาและส่งเสริมสุขภาพ",
+  "seoDescription": "บริการตรวจทั่วไป ฉีดวัคซีน ตรวจสุขภาพประจำปี และดูแลโรคเรื้อรัง",
+  "blocks": [
+    {
+      "id": "blk_clinic_services_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "บริการของคลินิก",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_services_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "บริการหลัก",
+        "subheading": "ตรวจรักษาโดยทีมแพทย์ทุกครั้ง",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🌡️",
+            "title": "ตรวจโรคทั่วไป",
+            "description": "ไข้ ไอ ท้องเสีย และอาการฉุกเฉินเล็กน้อย"
+          },
+          {
+            "icon": "🩸",
+            "title": "ตรวจสุขภาพประจำปี",
+            "description": "เจาะเลือด วัดความดัน และคัดกรองความเสี่ยง"
+          },
+          {
+            "icon": "💊",
+            "title": "ดูแลโรคเรื้อรัง",
+            "description": "เบาหวาน ความดัน และไขมันในเลือด พร้อมติดตามผล"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_services_story",
+      "type": "paragraph",
+      "version": 1,
+      "props": {
+        "text": "ผู้ป่วยสิทธิประกันสังคมและสิทธิข้าราชการสามารถใช้บริการได้ สอบถามเงื่อนไขที่เคาน์เตอร์",
+        "align": "center",
+        "size": "lg"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_clinic_services_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "สอบถามเงื่อนไข",
+        "href": "/contact",
+        "variant": "secondary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "header": [
+    {
+      "label": "หน้าแรก",
+      "href": "/",
+      "children": []
+    },
+    {
+      "label": "บทความ",
+      "href": "/topics",
+      "children": []
+    },
+    {
+      "label": "เกี่ยวกับเรา",
+      "href": "/about",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ],
+  "footer": [
+    {
+      "label": "บทความ",
+      "href": "/topics",
+      "children": []
+    },
+    {
+      "label": "เกี่ยวกับเรา",
+      "href": "/about",
+      "children": []
+    },
+    {
+      "label": "ติดต่อ",
+      "href": "/contact",
+      "children": []
+    }
+  ]
+}

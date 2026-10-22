@@ -1,0 +1,96 @@
+{
+  "type": "page",
+  "title": "สินค้า",
+  "slug": "catalog",
+  "excerpt": "ช่อดอกไม้และของขวัญ",
+  "seoDescription": "เลือกช่อดอกไม้สำหรับวันเกิด ครบรอบ และขอบคุณ",
+  "blocks": [
+    {
+      "id": "blk_flowers_catalog_heading",
+      "type": "heading",
+      "version": 1,
+      "props": {
+        "text": "ช่อดอกไม้ยอดนิยม",
+        "level": "h1",
+        "align": "left"
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_flowers_catalog_features",
+      "type": "features",
+      "version": 1,
+      "props": {
+        "heading": "เลือกตามโอกาส",
+        "subheading": "มีให้เลือกหลายขนาด หลายงบ",
+        "columns": "3",
+        "items": [
+          {
+            "icon": "🌹",
+            "title": "ช่อกุหลาบครบรอบ",
+            "description": "กุหลาบแดงหรือชมพู เริ่มต้น 890 บาท"
+          },
+          {
+            "icon": "🌷",
+            "title": "ช่อสดใสวันเกิด",
+            "description": "ดอกไม้รวมสีสัน เริ่มต้น 690 บาท"
+          },
+          {
+            "icon": "🌻",
+            "title": "ช่อขอบคุณ",
+            "description": "ทานตะวันและดอกไม้ตามฤดู เริ่มต้น 590 บาท"
+          }
+        ]
+      },
+      "style": {
+        "paddingY": "xl",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    },
+    {
+      "id": "blk_flowers_catalog_cta",
+      "type": "button",
+      "version": 1,
+      "props": {
+        "label": "สั่งช่อดอกไม้",
+        "href": "/shop",
+        "variant": "primary",
+        "size": "md",
+        "external": false,
+        "align": "center",
+        "fullWidth": false
+      },
+      "style": {
+        "paddingY": "sm",
+        "paddingX": "md",
+        "background": "none",
+        "visibility": {
+          "mobile": true,
+          "tablet": true,
+          "desktop": true
+        },
+        "animation": "none"
+      },
+      "children": []
+    }
+  ]
+}
