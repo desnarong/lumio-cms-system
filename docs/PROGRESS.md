@@ -3,7 +3,7 @@
 > ติดตามงานย่อยตาม [`docs/design/19-roadmap.md`](design/19-roadmap.md) หัวข้อ 19.3
 > อัปเดตสถานะทุกครั้งที่จบงานหนึ่งก้อน
 
-อัปเดตล่าสุด: 2026-10-22 (ก้อนที่ 49 เสร็จ)
+อัปเดตล่าสุด: 2026-10-22 (ก้อนที่ 50 เสร็จ)
 
 ## สถานะงาน (Roadmap 19.3)
 
@@ -60,6 +60,7 @@
 | 48  | E2E (Playwright) + CI                                        | ✅ เสร็จ | 3 เส้นทางหลักบนแอดมินโหมดเดโม (เข้าสู่ระบบ, ปิดส่วนเสริม, คืนเงิน), `pnpm test:e2e`, job `e2e` ใน CI พร้อมเก็บ trace เมื่อล้ม                                                                                                                                                 |
 
 | 49  | Community edition + ไลเซนส์/ลายเซ็น                              | ✅ เสร็จ | AGPL-3.0 + ไฟล์รีโปสาธารณะ, ไลเซนส์ Ed25519 ตรวจออฟไลน์ (`GET /v1/license`, `POST /v1/public/license/verify`), ฟีเจอร์ที่ต้องมีไลเซนส์, `verifyLumioSignature` ใน SDK และ `git init` |
+| 50  | เอกสารปฏิบัติการจริง + กุญแจผู้ขาย                            | ✅ เสร็จ | `docs/OPERATIONS.md` (checklist production), `TRADEMARK.md`, 24.6.1 การเก็บ/สำรอง/หมุนกุญแจ + fingerprint |
 สัญลักษณ์: ✅ เสร็จ · 🔄 กำลังทำ · ⏳ ยังไม่เริ่ม · ⚠️ ติดปัญหา
 
 ## งานที่ทำเสร็จ (ก้อนที่ 1)
@@ -2399,4 +2400,21 @@ node scripts/license-issue.mjs --key ./lumio-license-private.pem --sub "ลู�
 pnpm --filter api test src/modules/license
 pnpm --filter @lumio/shared test license flags
 pnpm --filter @lumio/sdk test webhook-signature
+```
+
+## ก้อนที่ 50 — เอกสารสำหรับบริการที่ใช้งานจริง + กุญแจผู้ขาย
+
+ตอบข้อ “lumio.app มีคนใช้งานแล้ว” ด้วยเอกสารปฏิบัติการ ไม่แตะโค้ดที่รันอยู่
+
+- **`docs/OPERATIONS.md`** — checklist ก่อน/หลัง deploy: secrets, บัญชีทดลอง, RLS/migration,
+  สำรอง+restore, ไลเซนส์, โดเมน/TLS/CDN, อีเมล/Stripe/webhook, สื่อ/clamav, monitoring,
+  AGPL/เครื่องหมายการค้า, ขั้นตอนอัปเดตระบบที่มีผู้ใช้
+- **`TRADEMARK.md`** — AGPL ครอบโค้ด แต่ไม่ครอบชื่อ/โลโก้/โดเมน `lumio.app`;
+  fork ต้องเปลี่ยนชื่อ และพูดได้แค่ว่า “built on Lumio”
+- **`docs/design/24-community-licensing.md` 24.6.1** — ที่เก็บ/สำรอง/หมุนกุญแจผู้ขาย,
+  fingerprint ของ public key ที่ใช้อยู่ และขั้นตอนเมื่อกุญแจรั่ว/หาย
+- README ลิงก์ TRADEMARK + OPERATIONS แล้ว
+
+```bash
+pnpm format:check
 ```

@@ -121,6 +121,26 @@ const signature = sign(null, Buffer.from(signingInput), createPrivateKey(private
 const token = `${signingInput}.${signature.toString('base64url')}`;
 ```
 
+### 24.6.1 การเก็บ สำรอง และหมุนกุญแจ
+
+- **กุญแจที่ใช้อยู่ (public)** — fingerprint SHA-256:
+  `dc64d4ca:fa8cb895:1ec5dbc9:cd93f180:6051d45f:03445c60:5882670a:d383e052`
+  (fingerprint ของ SPKI DER; ใช้ตรวจว่าบิลด์ที่ deploy ใช้กุญแจเดียวกัน)
+- **กุญแจส่วนตัว** ไม่ได้อยู่ในรีโปนี้ เก็บไว้ที่เครื่องผู้ขาย เช่น
+  `./lumio-license-private.pem` พร้อมสิทธิ์ 0600 และ **ห้าม commit**
+  (`.gitignore` กันไว้แล้ว)
+- **สำรอง** อย่างน้อย 2 ที่ แบบออฟไลน์/เข้ารหัส (password manager + external drive)
+  — กุญแจหาย = ออกไลเซนส์ใหม่ให้ลูกค้าไม่ได้
+- **ห้ามสร้างหรือเก็บกุญแจส่วนตัวบนเครื่อง production/CI**; CI ควรมีแค่ public key
+  ที่ฝังในโค้ด
+- **การหมุนกุญแจ**: ปัจจุบันบิลด์ตรวจด้วยกุญแจเดียว
+  1. สร้างคู่ใหม่ด้วย `license-keygen.mjs`
+  2. ฝังกุญแจสาธารณะใหม่ลง `license.keys.ts` แล้วปล่อย release
+  3. ออกไลเซนส์ให้ลูกค้าด้วยกุญแจใหม่ (ไลเซนส์เก่าจะใช้ไม่ได้เมื่อกุญแจเก่าถูกแทนที่)
+  - ถ้าต้องการเปลี่ยนแบบไม่ตัดลูกค้า ให้เพิ่มรายการ public key เก่าในโค้ดชั่วคราวก่อนลบ
+    (ยังไม่ได้ทำเป็น config หลายคีย์)
+- **ถ้ากุญแจรั่ว**: หมุนทันที → แจ้งลูกค้า → ออกไลเซนส์ใหม่ → ตรวจ log การใช้ endpoint ตรวจไลเซนส์
+
 ## 24.7 ตรวจลายเซ็นของ webhook (for integrators)
 
 Webhook ของร้านค้า (`order.created` / `order.paid` / `order.status` / `order.refunded`) ส่ง

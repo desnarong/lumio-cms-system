@@ -92,4 +92,6 @@ const ok = await verifyLumioSignature({
 - เอกสารออกแบบ: [`docs/design/`](docs/design/README.md) · ความคืบหน้า: [`docs/PROGRESS.md`](docs/PROGRESS.md)
 - แนวทางส่ง PR: [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - แจ้งช่องโหว่: [`SECURITY.md`](SECURITY.md) (ห้ามเปิด issue สาธารณะ)
+- ชื่อ/โลโก้/โดเมน: [`TRADEMARK.md`](TRADEMARK.md)
+- Checklist ใช้งานจริง: [`docs/OPERATIONS.md`](docs/OPERATIONS.md)
 - จรรยาบรรณ: [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)
