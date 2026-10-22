@@ -31,8 +31,7 @@ Examples of unacceptable behavior:
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to **conduct@lumio.app** (change this to the team's real address before
-publishing). All complaints will be reviewed and investigated promptly and fairly.
+reported to **desnarong.sm@gmail.com**. All complaints will be reviewed and investigated promptly and fairly.
 
 ## Attribution
 

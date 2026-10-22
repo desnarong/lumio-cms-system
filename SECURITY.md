@@ -8,7 +8,8 @@
 
 **อย่าเปิด issue สาธารณะ** สำหรับช่องโหว่ที่ยังแก้ไม่เสร็จ
 
-ส่งอีเมลถึง **security@lumio.app** (เปลี่ยนเป็นที่อยู่จริงของทีมก่อนเผยแพร่) พร้อม:
+เปิด [GitHub Security Advisory](https://github.com/desnarong/lumio-cms-system/security/advisories/new)
+หรืออีเมล **desnarong.sm@gmail.com** พร้อม:
 
 - รุ่น/commit ที่พบ
 - ขั้นตอนทำให้เกิดซ้ำ

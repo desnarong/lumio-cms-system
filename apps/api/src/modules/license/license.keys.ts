@@ -9,4 +9,5 @@
  * The private key never enters this repository: see
  * docs/design/24-community-licensing.md.
  */
-export const LICENSE_PUBLIC_KEY = '';
+export const LICENSE_PUBLIC_KEY =
+  'MCowBQYDK2VwAyEAVyu9OblDoaF9FyjMVRvwIcYBHcqRgpBUfKeFzcVUqMY=';

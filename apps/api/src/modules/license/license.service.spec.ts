@@ -3,6 +3,9 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { LicensePayload } from '@lumio/shared';
 import { LicenseService } from './license.service';
 
+// The repository may bake a vendor key; tests stay independent of it.
+vi.mock('./license.keys', () => ({ LICENSE_PUBLIC_KEY: '' }));
+
 const encode = (value: unknown): string =>
   Buffer.from(JSON.stringify(value), 'utf8').toString('base64url');
 
