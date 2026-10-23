@@ -130,11 +130,23 @@
 
 .forms-inbox__header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   flex-wrap: wrap;
   gap: var(--space-sm);
   padding-bottom: var(--space-md);
   border-bottom: 1px solid var(--color-border);
+}
+
+.forms-inbox__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+  margin-inline-end: auto;
+}
+
+.forms-inbox__filter {
+  flex: 0 1 200px;
 }
 
 .forms-inbox__title {
@@ -144,15 +156,27 @@
 }
 
 .forms-inbox__meta {
+  margin: 0;
   color: var(--color-text-muted);
   font-size: var(--text-sm);
 }
 
 .forms-inbox__actions {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: var(--space-sm);
   margin-inline-start: auto;
+}
+
+.forms-inbox__delete {
+  color: var(--color-danger);
+}
+
+.forms-inbox__delete:hover:not(:disabled) {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
 }
 
 .forms-messages {

@@ -257,6 +257,12 @@ describe('NewsletterView', () => {
 });
 
 describe('AppsView', () => {
+  it('splits the store into installed and available sections', () => {
+    const html = renderApps(true);
+    expect(html).toContain('ติดตั้งแล้ว');
+    expect(html).toContain('พร้อมติดตั้ง');
+  });
+
   it('shows each app with the permissions it asks for', () => {
     const html = renderApps(true);
     expect(html).toContain('ตัวช่วย SEO');

@@ -44,6 +44,10 @@ docker compose --profile app up -d --build
 > renderer คุยกับ API ผ่าน `API_INTERNAL_URL=http://api:49100` (อ่านตอน runtime)
 > ส่วน `NEXT_PUBLIC_API_URL` ถูกฝังตอน build และเป็นแค่ fallback สำหรับรันบนเครื่อง
 >
+> `RENDERER_URL` เป็นที่อยู่ภายใน (`http://renderer:49200`) สำหรับให้ worker สั่ง rebuild
+> แต่ปุ่ม “ดูตัวอย่าง” ใน editor เปิดในเบราว์เซอร์ผู้ใช้ จึงใช้ `RENDERER_PUBLIC_URL`
+> (production ตั้งเป็น `https://example.com`) — ถ้าไม่ตั้งจะ fallback ไปที่โดเมนของเว็บนั้น
+>
 > compose อ่านโดเมนของ stack จาก `LUMIO_DOMAIN`, `LUMIO_ADMIN_HOST`,
 > `LUMIO_ADMIN_API_URL` และ `LUMIO_API_URL` — ใช้ชื่อแยกเพราะตัวแปร `PUBLIC_ROOT_DOMAIN`
 > ที่ export ไว้ใน shell จะชนะค่าใน `.env` เสมอ

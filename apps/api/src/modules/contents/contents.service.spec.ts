@@ -458,6 +458,70 @@ describe('ContentsService.remove', () => {
   });
 });
 
+describe('ContentsService.createPreviewLink', () => {
+  const siteRow = {
+    subdomain: 'baandoi',
+    settings: {},
+    domains: [{ hostname: 'baandoi.example.com', isPrimary: true, sslStatus: 'active' }],
+  };
+
+  const previewTx = () => ({
+    content: { findUnique: vi.fn().mockResolvedValue({ id: CONTENT_ID }) },
+    site: { findUnique: vi.fn().mockResolvedValue(siteRow) },
+  });
+
+  const withPreviewSecret = async (run: () => Promise<void>): Promise<void> => {
+    const before = process.env.PREVIEW_SECRET;
+    process.env.PREVIEW_SECRET = 'preview-secret-for-tests';
+    try {
+      await run();
+    } finally {
+      if (before === undefined) delete process.env.PREVIEW_SECRET;
+      else process.env.PREVIEW_SECRET = before;
+    }
+  };
+
+  it('opens the link on the browser-facing renderer when one is configured', async () => {
+    await withPreviewSecret(async () => {
+      process.env.RENDERER_PUBLIC_URL = 'https://preview.example.com/';
+      try {
+        const link = await service(previewTx()).createPreviewLink(SITE_ID, CONTENT_ID, USER_ID);
+        expect(link.url).toMatch(
+          /^https:\/\/preview\.example\.com\/preview\/[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/,
+        );
+        expect(link.expiresAt).toBeTruthy();
+      } finally {
+        delete process.env.RENDERER_PUBLIC_URL;
+      }
+    });
+  });
+
+  it('falls back to the published site address when no public renderer is configured', async () => {
+    await withPreviewSecret(async () => {
+      delete process.env.RENDERER_PUBLIC_URL;
+      const link = await service(previewTx()).createPreviewLink(SITE_ID, CONTENT_ID, USER_ID);
+      expect(link.url).toMatch(
+        /^https:\/\/baandoi\.example\.com\/preview\/[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/,
+      );
+    });
+  });
+
+  it('refuses to mint a link when the preview secret is missing', async () => {
+    const preview = process.env.PREVIEW_SECRET;
+    const access = process.env.JWT_ACCESS_SECRET;
+    delete process.env.PREVIEW_SECRET;
+    delete process.env.JWT_ACCESS_SECRET;
+    try {
+      await expect(
+        service(previewTx()).createPreviewLink(SITE_ID, CONTENT_ID, USER_ID),
+      ).rejects.toMatchObject({ code: 'conflict' });
+    } finally {
+      if (preview !== undefined) process.env.PREVIEW_SECRET = preview;
+      if (access !== undefined) process.env.JWT_ACCESS_SECRET = access;
+    }
+  });
+});
+
 describe('ContentsService versions', () => {
   const versionRow = (overrides: Record<string, unknown> = {}) => ({
     id: VERSION_ID,

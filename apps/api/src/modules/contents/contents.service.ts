@@ -219,7 +219,10 @@ export class ContentsService {
       );
     }
 
-    const base = (process.env.RENDERER_URL ?? publicSiteUrl(site)).replace(/\/+$/, '');
+    // The link is opened in the editor's browser, so it needs the public renderer
+    // address. RENDERER_URL is a container-internal hostname in Docker.
+    const publicBase = process.env.RENDERER_PUBLIC_URL?.trim();
+    const base = (publicBase || publicSiteUrl(site)).replace(/\/+$/, '');
     await this.audit.log({
       siteId,
       userId: actorId,

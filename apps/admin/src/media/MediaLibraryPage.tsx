@@ -33,7 +33,7 @@ export const MediaLibraryPage = ({ api, ai, onBack }: MediaLibraryPageProps) => 
         {onBack ? (
           <button type="button" className="media-page__back" onClick={onBack}>
             <Icon name="arrow-left" size={16} />
-            {t('media.backToEditor')}
+            {t('media.backToDashboard')}
           </button>
         ) : null}
       </header>

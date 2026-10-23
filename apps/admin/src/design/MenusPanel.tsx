@@ -1,6 +1,17 @@
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { localeLabel, type MenuItem, type MenuLocation } from '@lumio/shared';
-import { Button, EmptyState, Skeleton, Tabs, TextField, useT, type MessageKey } from '@lumio/ui';
+import {
+  Button,
+  EmptyState,
+  Icon,
+  IconButton,
+  Skeleton,
+  Tabs,
+  TextField,
+  Tooltip,
+  useT,
+  type MessageKey,
+} from '@lumio/ui';
 import type { DesignApi } from './api.js';
 import { useMenu } from './hooks.js';
 
@@ -26,11 +37,21 @@ interface MenuNodeProps {
   children?: ReactNode;
 }
 
+const FieldHelp = ({ text, id }: { text: string; id: string }) => (
+  <Tooltip content={<span id={id}>{text}</span>}>
+    <span className="menu-node__help" role="img" aria-label={text} tabIndex={0}>
+      <Icon name="info" size={14} />
+    </span>
+  </Tooltip>
+);
+
 const MenuNode = ({ item, depth, onChange, onRemove, onAddChild, children }: MenuNodeProps) => {
   const t = useT();
+  const itemName = item.label.trim() || t('menus.itemPlaceholder');
+  const hrefHintId = `${useId()}-href-hint`;
 
   return (
-    <li className="menu-node" style={{ marginLeft: depth > 0 ? 'var(--space-xl)' : 0 }}>
+    <li className="menu-node">
       <div className="menu-node__row">
         <TextField
           label={depth === 0 ? t('menus.itemLabel') : t('menus.childLabel')}
@@ -39,21 +60,34 @@ const MenuNode = ({ item, depth, onChange, onRemove, onAddChild, children }: Men
           onChange={(event) => onChange({ ...item, label: event.target.value })}
         />
         <TextField
-          label={t('menus.hrefLabel')}
+          label={
+            <span className="menu-node__label">
+              {t('menus.hrefLabel')}
+              <FieldHelp id={hrefHintId} text={t('menus.hrefHint')} />
+            </span>
+          }
+          aria-describedby={hrefHintId}
           value={item.href ?? ''}
           placeholder="/services"
-          hint={t('menus.hrefHint')}
           onChange={(event) => onChange({ ...item, href: event.target.value })}
         />
         <div className="menu-node__actions">
           {onAddChild ? (
-            <Button variant="ghost" size="sm" onClick={onAddChild}>
-              {t('menus.addChild')}
-            </Button>
+            <Tooltip content={t('menus.addChild')} className="ui-tooltip--end">
+              <IconButton size="sm" aria-label={t('menus.addChild')} onClick={onAddChild}>
+                <Icon name="plus" size={16} />
+              </IconButton>
+            </Tooltip>
           ) : null}
-          <Button variant="ghost" size="sm" onClick={onRemove}>
-            {t('common.delete')}
-          </Button>
+          <Tooltip content={`${t('common.delete')} ${itemName}`} className="ui-tooltip--end">
+            <IconButton
+              size="sm"
+              aria-label={`${t('common.delete')} ${itemName}`}
+              onClick={onRemove}
+            >
+              <Icon name="trash" size={16} />
+            </IconButton>
+          </Tooltip>
         </div>
       </div>
       {children ? <ul className="menu-node__children">{children}</ul> : null}
@@ -73,12 +107,20 @@ const MenuEditor = ({
   return (
     <div className="menu-editor">
       {items.length === 0 ? (
-        <p className="menu-editor__empty">{t('menus.empty')}</p>
+        <EmptyState
+          title={t('menus.emptyTitle')}
+          description={t('menus.emptyDescription')}
+          action={
+            <Button variant="secondary" onClick={() => onChange([emptyItem()])}>
+              {t('menus.add')}
+            </Button>
+          }
+        />
       ) : (
         <ul className="menu-editor__list">
           {items.map((item, index) => (
             <MenuNode
-              key={`${item.label}-${index}`}
+              key={index}
               item={item}
               depth={0}
               onChange={(next) => onChange(replaceAt(items, index, next))}
@@ -91,7 +133,7 @@ const MenuEditor = ({
             >
               {item.children.map((child, childIndex) => (
                 <MenuNode
-                  key={`${child.label}-${childIndex}`}
+                  key={childIndex}
                   item={child}
                   depth={1}
                   onChange={(next) =>
@@ -117,9 +159,11 @@ const MenuEditor = ({
         </ul>
       )}
 
-      <Button variant="secondary" onClick={() => onChange([...items, emptyItem()])}>
-        {t('menus.add')}
-      </Button>
+      {items.length === 0 ? null : (
+        <Button variant="secondary" onClick={() => onChange([...items, emptyItem()])}>
+          {t('menus.add')}
+        </Button>
+      )}
     </div>
   );
 };

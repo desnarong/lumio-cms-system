@@ -100,6 +100,8 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-lumio}:${POSTGRES_PASSWORD:-lumio}@db:5432/${POSTGRES_DB:-lumio}?schema=public
       REDIS_URL: redis://redis:6379
       RENDERER_URL: http://renderer:49200
+      # Browser-facing renderer, used for draft preview links.
+      RENDERER_PUBLIC_URL: ${RENDERER_PUBLIC_URL:-http://localhost:49200}
       MEDIA_LOCAL_DIR: /repo/apps/api/.media
       LUMIO_DATA_DIR: /repo/.lumio-data
       TEMPLATES_DIR: /repo/templates

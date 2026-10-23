@@ -277,3 +277,9 @@ a {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* A row that mixes a labelled field with buttons lines the buttons up with
+   the bottom edge of the control instead of the middle of the field. */
+:where(div, form, section, li, article):has(> .ui-field) > :is(.ui-button, .ui-tooltip, .ui-split-button) {
+  align-self: end;
+}

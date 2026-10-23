@@ -28,6 +28,7 @@ export const Switch = ({
 }: SwitchProps) => {
   const generatedId = useId();
   const controlId = id ?? generatedId;
+  const descriptionId = description ? `${controlId}-description` : undefined;
   const isControlled = checked !== undefined;
   const [internal, setInternal] = useState(defaultChecked);
   const isOn = isControlled ? checked : internal;
@@ -47,20 +48,22 @@ export const Switch = ({
         id={controlId}
         role="switch"
         aria-checked={isOn}
-        aria-describedby={id && description ? `${id}-description` : undefined}
+        aria-describedby={descriptionId}
         disabled={disabled}
         className="ui-switch__control"
         onClick={toggle}
       >
         <span className="ui-switch__thumb" aria-hidden="true" />
       </button>
-      {label ? (
+      {label || description ? (
         <span className="ui-switch__text">
-          <label className="ui-switch__label" htmlFor={controlId}>
-            {label}
-          </label>
+          {label ? (
+            <label className="ui-switch__label" htmlFor={controlId}>
+              {label}
+            </label>
+          ) : null}
           {description ? (
-            <span className="ui-switch__description" id={id ? `${id}-description` : undefined}>
+            <span className="ui-switch__description" id={descriptionId}>
               {description}
             </span>
           ) : null}

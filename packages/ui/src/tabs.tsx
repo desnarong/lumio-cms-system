@@ -46,7 +46,7 @@ export const Tabs = ({ items, value, defaultValue, onChange, className }: TabsPr
               id={`${baseId}-tab-${item.id}`}
               className={cn('ui-tabs__tab', isActive && 'ui-tabs__tab--active')}
               aria-selected={isActive}
-              aria-controls={`${baseId}-panel-${item.id}`}
+              aria-controls={item.content ? `${baseId}-panel-${item.id}` : undefined}
               tabIndex={isActive ? 0 : -1}
               disabled={item.disabled}
               onClick={() => select(item.id)}
@@ -57,7 +57,7 @@ export const Tabs = ({ items, value, defaultValue, onChange, className }: TabsPr
           );
         })}
       </div>
-      {activeItem ? (
+      {activeItem?.content ? (
         <div
           className="ui-tabs__panel"
           role="tabpanel"

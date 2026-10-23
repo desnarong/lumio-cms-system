@@ -347,7 +347,7 @@
 
 .newsletter__toolbar {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   flex-wrap: wrap;
   gap: var(--space-sm);
 }
@@ -392,6 +392,19 @@
 }
 
 /* ── Apps ─────────────────────────────────────────────────────────────── */
+.apps-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.apps-section__title {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
 .apps-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -415,8 +428,27 @@
 
 .apps-card__head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-md);
+}
+
+.apps-card__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-3xl);
+  height: var(--space-3xl);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  color: var(--color-primary);
+}
+
+.apps-card__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
 }
 
 .apps-card__name {
@@ -426,10 +458,13 @@
 }
 
 .apps-card__category {
+  align-self: flex-start;
+  padding: 1px var(--space-sm);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-hover);
   color: var(--color-text-muted);
   font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 600;
 }
 
 .apps-card__description {
@@ -474,11 +509,33 @@
 
 .apps-card__actions {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-sm);
   margin-top: auto;
+  padding-block-start: var(--space-md);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.apps-card__toggle {
+  margin-inline-end: auto;
+}
+
+.apps-card__install {
+  flex: 1 1 100%;
+}
+
+.apps-card__uninstall {
+  color: var(--color-danger);
+}
+
+.apps-card__uninstall:hover:not(:disabled) {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
 }
 
 .apps-card__readonly {
+  margin: 0 0 0 auto;
   color: var(--color-text-muted);
   font-size: var(--text-xs);
 }

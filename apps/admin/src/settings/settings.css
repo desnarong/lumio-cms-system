@@ -52,9 +52,23 @@
 
 .settings-inline {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   flex-wrap: wrap;
   gap: var(--space-sm);
+}
+
+.settings-inline__field {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.settings-inline__role {
+  flex: 0 1 160px;
+  min-width: 0;
+}
+
+.settings-inline > .ui-button {
+  flex: none;
 }
 
 .settings-actions {
@@ -117,6 +131,11 @@
 .settings-row__owner {
   color: var(--color-text-muted);
   font-size: var(--text-xs);
+}
+
+.settings-row__role {
+  flex: 0 1 160px;
+  min-width: 0;
 }
 
 .settings-row__actions {

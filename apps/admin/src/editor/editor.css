@@ -289,8 +289,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 26px;
-  opacity: 0;
+  min-height: var(--space-xl);
+  opacity: 0.6;
   transition: opacity var(--motion-duration-fast) var(--motion-ease);
 }
 
@@ -303,13 +303,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  padding: 0;
+  gap: var(--space-xs);
+  min-width: var(--space-xl);
+  height: var(--space-xl);
+  padding: 0 var(--space-sm);
   border: 1px dashed color-mix(in srgb, var(--color-primary) 55%, var(--color-border));
   border-radius: var(--radius-full);
   background: var(--color-surface);
   color: var(--color-primary);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
   transition:
     background var(--motion-duration-fast) var(--motion-ease),

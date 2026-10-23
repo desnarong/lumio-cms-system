@@ -21,6 +21,21 @@ describe('Tabs', () => {
     expect(html).not.toContain('ตั้งค่า SEO');
   });
 
+  it('renders no empty panel for navigation-only tab strips', () => {
+    const html = renderToStaticMarkup(
+      <Tabs
+        value="menus"
+        items={[
+          { id: 'style', label: 'สไตล์' },
+          { id: 'menus', label: 'เมนูนำทาง' },
+        ]}
+      />,
+    );
+    expect(html).toContain('aria-selected="true"');
+    expect(html).not.toContain('role="tabpanel"');
+    expect(html).not.toContain('aria-controls');
+  });
+
   it('honours a controlled value', () => {
     const html = renderToStaticMarkup(
       <Tabs

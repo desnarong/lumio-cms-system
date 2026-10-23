@@ -5,11 +5,13 @@ import {
   Button,
   Card,
   EmptyState,
+  Icon,
   Skeleton,
   Switch,
   TextField,
   useT,
   useToast,
+  type IconName,
   type MessageKey,
 } from '@lumio/ui';
 import { ApiError } from '../api-error.js';
@@ -22,6 +24,17 @@ const CATEGORY_LABEL_KEYS: Record<AppCategory, MessageKey> = {
   analytics: 'appCategory.analytics',
   content: 'appCategory.content',
 };
+
+/** Each first-party App gets a recognisable glyph in the store. */
+const APP_ICONS: Record<string, IconName> = {
+  'seo-booster': 'search',
+  'google-analytics': 'chart-bar',
+  'line-notify': 'bell',
+  'newsletter-sender': 'mail',
+  booking: 'calendar',
+};
+
+const iconFor = (key: string): IconName => APP_ICONS[key] ?? 'layers';
 
 const PERMISSION_LABEL_KEYS: Record<AppPermission, MessageKey> = {
   'contents:read': 'appPermission.contentsRead',
@@ -98,8 +111,15 @@ const ExternalAppCard = ({
 
   return (
     <Card className="apps-card apps-card--external">
-      <h2 className="apps-card__name">{t('apps.externalTitle')}</h2>
-      <p className="apps-card__description">{t('apps.externalHint')}</p>
+      <div className="apps-card__head">
+        <span className="apps-card__icon" aria-hidden="true">
+          <Icon name="globe" size={20} />
+        </span>
+        <div className="apps-card__heading">
+          <h2 className="apps-card__name">{t('apps.externalTitle')}</h2>
+          <p className="apps-card__description">{t('apps.externalHint')}</p>
+        </div>
+      </div>
       <TextField
         id="external-app-url"
         label={t('apps.externalUrl')}
@@ -156,8 +176,13 @@ const AppCard = ({
   return (
     <Card className="apps-card">
       <div className="apps-card__head">
-        <h2 className="apps-card__name">{entry.name}</h2>
-        <span className="apps-card__category">{t(CATEGORY_LABEL_KEYS[entry.category])}</span>
+        <span className="apps-card__icon" aria-hidden="true">
+          <Icon name={iconFor(entry.key)} size={20} />
+        </span>
+        <div className="apps-card__heading">
+          <h2 className="apps-card__name">{entry.name}</h2>
+          <span className="apps-card__category">{t(CATEGORY_LABEL_KEYS[entry.category])}</span>
+        </div>
       </div>
       <p className="apps-card__description">{entry.description}</p>
 
@@ -182,17 +207,29 @@ const AppCard = ({
         {canManage ? (
           entry.installed ? (
             <>
-              <Switch
-                label={entry.enabled ? t('apps.enabled') : t('apps.disabled')}
-                checked={entry.enabled}
-                onChange={(checked) => onToggle(entry.key, checked)}
-              />
-              <Button variant="ghost" size="sm" onClick={() => onUninstall(entry.key)}>
+              <span className="apps-card__toggle">
+                <Switch
+                  label={entry.enabled ? t('apps.enabled') : t('apps.disabled')}
+                  checked={entry.enabled}
+                  onChange={(checked) => onToggle(entry.key, checked)}
+                />
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="apps-card__uninstall"
+                onClick={() => onUninstall(entry.key)}
+              >
                 {t('apps.uninstall')}
               </Button>
             </>
           ) : (
-            <Button variant="secondary" size="sm" onClick={() => onInstall(entry.key)}>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="apps-card__install"
+              onClick={() => onInstall(entry.key)}
+            >
               {t('apps.install')}
             </Button>
           )
@@ -259,26 +296,42 @@ export const AppsView = ({
     );
   }
 
+  const card = (entry: AppStoreEntry) => (
+    <AppCard
+      key={entry.key}
+      entry={entry}
+      canManage={canManage}
+      onInstall={onInstall}
+      onToggle={onToggle}
+      onUninstall={onUninstall}
+      onOpenSandbox={onOpenSandbox}
+    />
+  );
+  const installed = entries.filter((entry) => entry.installed);
+  const available = entries.filter((entry) => !entry.installed);
+
   return (
     <div className="growth">
       {header}
       {error ? <Banner tone="warning">{error}</Banner> : null}
+
+      {installed.length > 0 ? (
+        <section className="apps-section">
+          <h2 className="apps-section__title">{t('apps.installedSection')}</h2>
+          <div className="apps-grid">{installed.map(card)}</div>
+        </section>
+      ) : null}
+
+      {available.length > 0 ? (
+        <section className="apps-section">
+          <h2 className="apps-section__title">{t('apps.availableSection')}</h2>
+          <div className="apps-grid">{available.map(card)}</div>
+        </section>
+      ) : null}
+
       {canManage && onPreviewExternal && onInstallExternal ? (
         <ExternalAppCard onPreview={onPreviewExternal} onInstall={onInstallExternal} />
       ) : null}
-      <div className="apps-grid">
-        {entries.map((entry) => (
-          <AppCard
-            key={entry.key}
-            entry={entry}
-            canManage={canManage}
-            onInstall={onInstall}
-            onToggle={onToggle}
-            onUninstall={onUninstall}
-            onOpenSandbox={onOpenSandbox}
-          />
-        ))}
-      </div>
     </div>
   );
 };

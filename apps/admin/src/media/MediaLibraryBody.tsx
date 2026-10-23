@@ -254,47 +254,46 @@ export const MediaLibraryBody = ({
       <div className="media-library__toolbar">
         <TextField
           label={t('media.searchLabel')}
+          fieldClassName="media-library__search"
           value={query}
           placeholder={t('media.searchPlaceholder')}
           onChange={(event) => onQueryChange(event.target.value)}
         />
         <Select
           label={t('media.folderLabel')}
+          fieldClassName="media-library__folder"
           value={folder ?? ALL_FOLDERS}
           options={options}
           onChange={(event) =>
             onFolderChange(event.target.value === ALL_FOLDERS ? null : event.target.value)
           }
         />
-        <div className="media-library__upload">
-          <label className="media-library__upload-label">
-            <span className="ui-button ui-button--secondary ui-button--sm">
-              {uploading ? t('media.uploading') : t('media.upload')}
-            </span>
-            <input
-              type="file"
-              accept={ACCEPTED_UPLOAD_TYPES}
-              multiple
-              disabled={uploading}
-              aria-label={t('media.upload')}
-              className="media-library__file"
-              onChange={handleFiles}
-            />
-          </label>
-          <p className="media-library__hint">
-            {t('media.uploadHint', { limit: UPLOAD_SIZE_LABEL })}
-          </p>
-          {ai ? (
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={aiBusy || loading || items.length === 0}
-              onClick={() => void describeMissing()}
-            >
-              {aiBusy ? t('media.aiThinking') : t('media.aiDescribeMissing')}
-            </Button>
-          ) : null}
-        </div>
+        <label className="media-library__upload-label">
+          <span className="ui-button ui-button--secondary ui-button--md">
+            {uploading ? t('media.uploading') : t('media.upload')}
+          </span>
+          <input
+            type="file"
+            accept={ACCEPTED_UPLOAD_TYPES}
+            multiple
+            disabled={uploading}
+            aria-label={t('media.upload')}
+            className="media-library__file"
+            onChange={handleFiles}
+          />
+        </label>
+        {ai ? (
+          <Button
+            variant="secondary"
+            disabled={aiBusy || loading || items.length === 0}
+            onClick={() => void describeMissing()}
+          >
+            {aiBusy ? t('media.aiThinking') : t('media.aiDescribeMissing')}
+          </Button>
+        ) : null}
+        <p className="media-library__hint">
+          {t('media.uploadHint', { limit: UPLOAD_SIZE_LABEL })}
+        </p>
       </div>
 
       {onBulkUpdate && checkedIds.length > 0 ? (

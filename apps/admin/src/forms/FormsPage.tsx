@@ -256,7 +256,8 @@ export const FormsView = ({
 
               <div className="forms-inbox__actions">
                 <Select
-                  label={t('forms.showLabel')}
+                  aria-label={t('forms.showLabel')}
+                  fieldClassName="forms-inbox__filter"
                   value={status}
                   options={statusOptions}
                   onChange={(event) =>
@@ -267,7 +268,6 @@ export const FormsView = ({
                   <>
                     <Button
                       variant="secondary"
-                      size="sm"
                       disabled={!selected}
                       onClick={() => selected && onEdit(selected)}
                     >
@@ -276,7 +276,6 @@ export const FormsView = ({
                     {locales.length > 1 && onAddLanguage ? (
                       <Button
                         variant="secondary"
-                        size="sm"
                         disabled={!selected}
                         onClick={() => setAddingLanguage(true)}
                       >
@@ -285,7 +284,7 @@ export const FormsView = ({
                     ) : null}
                     <Button
                       variant="ghost"
-                      size="sm"
+                      className="forms-inbox__delete"
                       disabled={!selected}
                       onClick={() => selected && onRemove(selected)}
                     >

@@ -129,13 +129,13 @@ describe('MediaLibraryPage', () => {
     expect(html).toContain('ค้นหารูป');
   });
 
-  it('offers a way back to the editor when the shell provides one', () => {
+  it('offers a way back to the overview when the shell provides one', () => {
     const html = renderToStaticMarkup(
       <ToastProvider>
         <MediaLibraryPage api={createApi()} onBack={() => undefined} />
       </ToastProvider>,
     );
 
-    expect(html).toContain('กลับไปแก้ไขหน้าเว็บ');
+    expect(html).toContain('กลับไปภาพรวม');
   });
 });

@@ -17,6 +17,7 @@ Monorepo (pnpm + turbo):
 - ทดสอบ: `pnpm test` · E2E: `pnpm test:e2e` · Lint: `pnpm lint` · Typecheck: `pnpm typecheck`
 - DB: `pnpm --filter api prisma migrate dev`
 - รันทั้งหมด: `docker compose up -d && pnpm dev`
+- หลังแก้โค้ดเสร็จทุกครั้ง: `docker compose --profile app up -d --build` แล้วตรวจ `docker compose ps`
 
 ## กฎเหล็ก
 

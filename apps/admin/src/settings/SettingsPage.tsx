@@ -637,6 +637,7 @@ export const TeamView = ({
         <div className="settings-inline">
           <TextField
             label={t('settings.team.email')}
+            fieldClassName="settings-inline__field"
             type="email"
             placeholder="teammate@example.com"
             value={email}
@@ -644,6 +645,7 @@ export const TeamView = ({
           />
           <Select
             label={t('settings.team.role')}
+            fieldClassName="settings-inline__role"
             options={roleOptions}
             value={role}
             onChange={(event) => onRoleChange(event.target.value as Role)}
@@ -665,7 +667,8 @@ export const TeamView = ({
               <span className="settings-row__owner">{t('settings.team.owner')}</span>
             ) : (
               <Select
-                label={t('settings.team.role')}
+                aria-label={t('settings.team.role')}
+                fieldClassName="settings-row__role"
                 options={roleOptions}
                 value={member.role}
                 onChange={(event) => onMemberRoleChange(member, event.target.value as Role)}

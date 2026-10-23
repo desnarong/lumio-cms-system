@@ -3,7 +3,7 @@
 > ติดตามงานย่อยตาม [`docs/design/19-roadmap.md`](design/19-roadmap.md) หัวข้อ 19.3
 > อัปเดตสถานะทุกครั้งที่จบงานหนึ่งก้อน
 
-อัปเดตล่าสุด: 2026-10-22 (ก้อนที่ 54 เสร็จ)
+อัปเดตล่าสุด: 2026-10-23 (ก้อนที่ 55 เสร็จ)
 
 ## สถานะงาน (Roadmap 19.3)
 
@@ -62,6 +62,10 @@
 | 49  | Community edition + ไลเซนส์/ลายเซ็น                              | ✅ เสร็จ | AGPL-3.0 + ไฟล์รีโปสาธารณะ, ไลเซนส์ Ed25519 ตรวจออฟไลน์ (`GET /v1/license`, `POST /v1/public/license/verify`), ฟีเจอร์ที่ต้องมีไลเซนส์, `verifyLumioSignature` ใน SDK และ `git init` |
 | 50  | เอกสารปฏิบัติการจริง + กุญแจผู้ขาย                            | ✅ เสร็จ | `docs/OPERATIONS.md` (checklist production), `TRADEMARK.md`, 24.6.1 การเก็บ/สำรอง/หมุนกุญแจ + fingerprint |
 | 51  | ถอดโดเมนของบุคคลอื่นออกจากค่าเริ่มต้น                         | ✅ เสร็จ | เปลี่ยน `lumio.app` → `example.com` ทั้ง repo (code/seed/docs/tests), เตือน production ให้ตั้ง `PUBLIC_ROOT_DOMAIN`/`EMAIL_FROM` เอง |
+| 52  | รีดีไซน์ UX/UI หลังบ้าน + ใช้ไอคอนแทน emoji                    | ✅ เสร็จ | ปรับ shell/หน้าเนื้อหา/editor/ดีไซน์/ตั้งค่าให้ใช้ design tokens และไอคอนร่วมกัน, เพิ่มสถานะว่าง/คำอธิบาย และทดสอบ a11y |
+| 53  | เทมเพลตครบ 20 แบบ + เทมเพลตแรงบันดาลใจจาก B-Lighting           | ✅ เสร็จ | เพิ่มเทมเพลตเป็น 20 แพ็กพร้อม tokens/เมนู/หน้าไทยจริง/preview และโหมดเดโมของ wizard 13 แพ็ก |
+| 54  | Docker ทั้งระบบ (profiles, migrate, volumes, healthchecks)     | ✅ เสร็จ | แยก profile infra/app, migrate service, volume ที่ต้องสำรอง, healthcheck/restart, Node 22.13, `API_INTERNAL_URL` ของ renderer และ Caddy dev/prod |
+| 55  | UX/UI polish รอบสอง + ลิงก์ตัวอย่างใน Docker                   | ✅ เสร็จ | หน้าจอร้านค้า/แอป/เมนู/สื่อ/ตั้งค่าเป็น section ที่อ่านง่าย, แอปแยก “ติดตั้งแล้ว/พร้อมติดตั้ง”, ฟอร์มและตารางกระชับขึ้น, ปุ่มดูตัวอย่างใช้ `RENDERER_PUBLIC_URL`, `ADMIN_ORIGIN` รับหลาย origin, เทสต์กันความล้มเหลวจาก timeout |
 สัญลักษณ์: ✅ เสร็จ · 🔄 กำลังทำ · ⏳ ยังไม่เริ่ม · ⚠️ ติดปัญหา
 
 ## งานที่ทำเสร็จ (ก้อนที่ 1)
@@ -2553,3 +2557,37 @@ docker compose --profile app up -d --build
 docker compose --profile app config -q
 docker compose logs -f api worker renderer
 ```
+
+## ก้อนที่ 55 — UX/UI polish รอบสอง + ลิงก์ตัวอย่างที่เปิดได้จริงใน Docker
+
+เก็บงานต่อจากก้อนที่ 52–54: ปรับหน้าจอที่ยังแน่นเกินไป และปิดจุดที่ทำให้ลิงก์ตัวอย่าง
+กับ origin ของแอดมินใช้ไม่ได้เมื่อรันทั้ง stack ใน Docker
+
+- **หน้าจอร้านค้า** — ตั้งค่าแบ่งเป็น section (การรับเงิน/การเชื่อมบัญชี/Webhook) พร้อมป้ายสถานะธนาคาร,
+  สวิตช์วิธีจ่ายเป็นกริด และฟอร์มธนาคาร/พร้อมเพย์อ่านง่ายขึ้น
+- **คลัง Apps** — แยก “ติดตั้งแล้ว” กับ “พร้อมติดตั้ง”, เพิ่มไอคอนประจำแอป และปุ่มติดตั้ง/ถอนติดตั้งที่ชัดขึ้น
+- **เมนูนำทาง** — ปุ่มเพิ่ม/ลบเป็นไอคอนพร้อม tooltip, คำใบ้ `href` เป็น tooltip ที่ผูก `aria-describedby`,
+  และมี EmptyState พร้อมปุ่มเริ่มเพิ่มรายการ
+- **หน้าจออื่น** — ฟอร์ม/กล่องข้อความ/คลังสื่อ/ตั้งค่า/editor ปรับความหนาแน่นของปุ่ม ตาราง และการ์ด
+  ให้ตรง design tokens, `Switch` แสดงคำอธิบายได้แม้ไม่ส่ง `id`, `Tabs` ไม่ใส่ `aria-controls`
+  เมื่อแท็บไม่มี panel
+- **ลิงก์ตัวอย่าง** — `createPreviewLink` ใช้ `RENDERER_PUBLIC_URL` (ที่อยู่ฝั่งเบราว์เซอร์)
+  แทน `RENDERER_URL` ที่เป็น hostname ภายใน container และ fallback ไปที่โดเมนของเว็บ
+  - เพิ่ม env ใน `.env.example`, `.env.docker.example`, compose และเอกสาร `DOCKER.md`/`OPERATIONS.md`
+- **Origin ของแอดมิน** — `.env.example` ระบุว่ารับได้หลายค่า (คั่นด้วย comma) สำหรับ
+  localhost / 127.0.0.1 / host ของ Caddy โดยใช้ตัวตรวจเดิมที่รองรับอยู่แล้ว
+- **เทสต์**
+  - เพิ่มเทสต์ `createPreviewLink` 3 เคส (ใช้ `RENDERER_PUBLIC_URL`, fallback โดเมนเว็บ, ไม่มี secret = conflict)
+  - เพิ่มเทสต์ว่า Apps แยกส่วนติดตั้งแล้ว/พร้อมติดตั้ง และเมนูยังเข้าถึงได้ด้วยคีย์บอร์ด
+  - vitest ของ API ปัก `PUBLIC_ROOT_DOMAIN=example.com` กัน env ของเครื่องทำให้เทสต์พัง
+    และเพิ่ม `testTimeout`/`hookTimeout` 30 วิ เพราะสเปกที่ใช้ DB จริงเคย timeout 5 วิเมื่อรันขนาน
+- **ผลตรวจ** — lint / typecheck ผ่าน; `pnpm test` ผ่านทุกแพ็กเกจ (1,940 เคส · API 833) และ
+  `docker compose --profile app up -d --build` ขึ้นครบ healthcheck
+
+```bash
+pnpm --filter api test src/modules/contents/contents.service.spec.ts
+pnpm lint && pnpm typecheck && pnpm test
+docker compose --profile app up -d --build
+docker compose ps
+```
+

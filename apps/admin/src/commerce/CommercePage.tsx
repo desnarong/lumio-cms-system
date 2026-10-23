@@ -1246,67 +1246,115 @@ export const ShopSettingsTab = ({ api, canManage }: ShopSettingsTabProps) => {
 
   if (!settings) return <Skeleton shape="block" height={240} />;
 
+  const badge = !bank?.connected
+    ? { tone: '', label: t('commerce.bankStatusOff') }
+    : bank.sandbox
+      ? { tone: 'commerce-badge--warning', label: t('commerce.bankStatusSandbox') }
+      : { tone: 'commerce-badge--success', label: t('commerce.bankStatusOn') };
+
   return (
-    <Card className="commerce-settings">
-      <h2 className="commerce-settings__title">{t('commerce.settingsTitle')}</h2>
-      <p className="commerce-settings__hint">{t('commerce.settingsHint')}</p>
+    <div className="commerce-settings-page">
       {error ? <Banner tone="danger" title={error} /> : null}
-      <TextField
-        label={t('commerce.promptPayId')}
-        value={promptPayId}
-        disabled={!canManage}
-        placeholder="0812345678"
-        hint={t('commerce.promptPayHint')}
-        onChange={(event) => setPromptPayId(event.target.value)}
-      />
-      <div className="commerce-form__row">
-        <TextField
-          label={t('commerce.shippingFee')}
-          value={shippingFee}
-          disabled={!canManage}
-          inputMode="decimal"
-          onChange={(event) => setShippingFee(event.target.value)}
-        />
-        <TextField
-          label={t('commerce.freeThreshold')}
-          value={threshold}
-          disabled={!canManage}
-          inputMode="decimal"
-          hint={t('commerce.freeThresholdHint')}
-          onChange={(event) => setThreshold(event.target.value)}
-        />
-      </div>
-      <TextField
-        label={t('commerce.shippingPerKg')}
-        value={perKg}
-        disabled={!canManage}
-        inputMode="decimal"
-        hint={t('commerce.shippingPerKgHint')}
-        onChange={(event) => setPerKg(event.target.value)}
-      />
-      <Textarea
-        label={t('commerce.shippingZones')}
-        value={zonesText}
-        rows={3}
-        disabled={!canManage}
-        onChange={(event) => setZonesText(event.target.value)}
-      />
-      <p className="commerce-settings__hint">{t('commerce.shippingZonesHint')}</p>
-      <div className="commerce-connect">
-        <h3 className="commerce-settings__title">{t('commerce.connectTitle')}</h3>
-        <p className="commerce-settings__hint">
-          {connect?.accountId
-            ? connect.chargesEnabled && connect.payoutsEnabled
-              ? t('commerce.connectReady')
-              : t('commerce.connectPending')
-            : t('commerce.connectNone')}
-        </p>
-        <p className="commerce-settings__hint">
-          {t('commerce.connectFee', { percent: settings.platformFeePercent })}
-        </p>
+
+      <Card className="commerce-section">
+        <header className="commerce-section__header">
+          <h2 className="commerce-section__title">{t('commerce.settingsTitle')}</h2>
+          <p className="commerce-section__hint">{t('commerce.settingsHint')}</p>
+        </header>
+
+        <div className="commerce-section__fields">
+          <TextField
+            label={t('commerce.promptPayId')}
+            value={promptPayId}
+            disabled={!canManage}
+            placeholder="0812345678"
+            hint={t('commerce.promptPayHint')}
+            onChange={(event) => setPromptPayId(event.target.value)}
+          />
+          <div className="commerce-form__row">
+            <TextField
+              label={t('commerce.shippingFee')}
+              value={shippingFee}
+              disabled={!canManage}
+              inputMode="decimal"
+              onChange={(event) => setShippingFee(event.target.value)}
+            />
+            <TextField
+              label={t('commerce.freeThreshold')}
+              value={threshold}
+              disabled={!canManage}
+              inputMode="decimal"
+              hint={t('commerce.freeThresholdHint')}
+              onChange={(event) => setThreshold(event.target.value)}
+            />
+          </div>
+          <TextField
+            label={t('commerce.shippingPerKg')}
+            value={perKg}
+            disabled={!canManage}
+            inputMode="decimal"
+            hint={t('commerce.shippingPerKgHint')}
+            onChange={(event) => setPerKg(event.target.value)}
+          />
+          <Textarea
+            label={t('commerce.shippingZones')}
+            value={zonesText}
+            rows={3}
+            disabled={!canManage}
+            onChange={(event) => setZonesText(event.target.value)}
+          />
+          <p className="commerce-section__hint">{t('commerce.shippingZonesHint')}</p>
+        </div>
+
+        <div className="commerce-switch-grid">
+          <Switch
+            label={t('commerce.promptpay')}
+            description={t('commerce.promptpayDesc')}
+            checked={settings.payments.promptpay}
+            disabled={!canManage}
+            onChange={(checked) => void toggle('promptpay', checked)}
+          />
+          <Switch
+            label={t('commerce.bblPayment')}
+            description={t('commerce.bblPaymentDesc')}
+            checked={settings.payments.bbl}
+            disabled={!canManage}
+            onChange={(checked) => void toggle('bbl', checked)}
+          />
+          <Switch
+            label={t('commerce.card')}
+            description={t('commerce.cardDesc')}
+            checked={settings.payments.card}
+            disabled={!canManage}
+            onChange={(checked) => void toggle('card', checked)}
+          />
+          <Switch
+            label={t('commerce.cod')}
+            description={t('commerce.codDesc')}
+            checked={settings.payments.cod}
+            disabled={!canManage}
+            onChange={(checked) => void toggle('cod', checked)}
+          />
+        </div>
+      </Card>
+
+      <Card className="commerce-section">
+        <header className="commerce-section__header">
+          <h2 className="commerce-section__title">{t('commerce.connectTitle')}</h2>
+          <p className="commerce-section__hint">
+            {connect?.accountId
+              ? connect.chargesEnabled && connect.payoutsEnabled
+                ? t('commerce.connectReady')
+                : t('commerce.connectPending')
+              : t('commerce.connectNone')}
+          </p>
+          <p className="commerce-section__hint">
+            {t('commerce.connectFee', { percent: settings.platformFeePercent })}
+          </p>
+        </header>
         {canManage ? (
-          <div className="commerce-settings__actions">
-            <Button variant="primary" onClick={() => void startConnect()}>
+          <div className="commerce-section__actions">
+            <Button variant="secondary" onClick={() => void startConnect()}>
               {connect?.accountId ? t('commerce.connectAgain') : t('commerce.connectButton')}
             </Button>
             {connect?.accountId ? (
@@ -1316,79 +1364,203 @@ export const ShopSettingsTab = ({ api, canManage }: ShopSettingsTabProps) => {
             ) : null}
           </div>
         ) : null}
-      </div>
-      <Switch
-        label={t('commerce.promptpay')}
-        description={t('commerce.promptpayDesc')}
-        checked={settings.payments.promptpay}
-        disabled={!canManage}
-        onChange={(checked) => void toggle('promptpay', checked)}
-      />
-      <Switch
-        label={t('commerce.bblPayment')}
-        description={t('commerce.bblPaymentDesc')}
-        checked={settings.payments.bbl}
-        disabled={!canManage}
-        onChange={(checked) => void toggle('bbl', checked)}
-      />
-      <Switch
-        label={t('commerce.card')}
-        description={t('commerce.cardDesc')}
-        checked={settings.payments.card}
-        disabled={!canManage}
-        onChange={(checked) => void toggle('card', checked)}
-      />
-      <Switch
-        label={t('commerce.cod')}
-        description={t('commerce.codDesc')}
-        checked={settings.payments.cod}
-        disabled={!canManage}
-        onChange={(checked) => void toggle('cod', checked)}
-      />
-      <div className="commerce-connect">
-        <h3 className="commerce-settings__title">{t('commerce.webhookTitle')}</h3>
-        <p className="commerce-settings__hint">{t('commerce.webhookHint')}</p>
-        <TextField
-          label={t('commerce.webhookUrl')}
-          value={webhookUrl}
-          disabled={!canManage}
-          placeholder="https://example.com/lumio/orders"
-          hint={t('commerce.webhookUrlHint')}
-          onChange={(event) => setWebhookUrl(event.target.value)}
-        />
-        <TextField
-          label={t('commerce.webhookSecret')}
-          type="password"
-          autoComplete="new-password"
-          value={webhookSecret}
-          disabled={!canManage}
-          placeholder={webhook?.secretSet ? t('commerce.bankSecretKept') : ''}
-          hint={t('commerce.webhookSecretHint')}
-          onChange={(event) => setWebhookSecret(event.target.value)}
-        />
-        <Switch
-          label={t('commerce.webhookOrderCreated')}
-          description={t('commerce.webhookOrderCreatedDesc')}
-          checked={webhookEvents.includes('order.created')}
-          disabled={!canManage}
-          onChange={(checked) => toggleWebhookEvent('order.created', checked)}
-        />
-        <Switch
-          label={t('commerce.webhookOrderPaid')}
-          description={t('commerce.webhookOrderPaidDesc')}
-          checked={webhookEvents.includes('order.paid')}
-          disabled={!canManage}
-          onChange={(checked) => toggleWebhookEvent('order.paid', checked)}
-        />
-        <Switch
-          label={t('commerce.webhookOrderStatus')}
-          description={t('commerce.webhookOrderStatusDesc')}
-          checked={webhookEvents.includes('order.status')}
-          disabled={!canManage}
-          onChange={(checked) => toggleWebhookEvent('order.status', checked)}
-        />
+      </Card>
+
+      <Card className="commerce-section">
+        <header className="commerce-section__header commerce-section__header--split">
+          <div className="commerce-section__heading">
+            <h2 className="commerce-section__title">{t('commerce.bankTitle')}</h2>
+            <p className="commerce-section__hint">{t('commerce.bankHint')}</p>
+          </div>
+          <span className={`commerce-badge ${badge.tone}`.trim()}>{badge.label}</span>
+        </header>
+
+        {bank?.accountNumber || bank?.lastCheckedAt ? (
+          <p className="commerce-bank__meta">
+            {bank.accountNumber ? (
+              <span>
+                {t('commerce.bankAccountCurrent')} <strong>{bank.accountNumber}</strong>
+              </span>
+            ) : null}
+            {bank.lastCheckedAt ? <span>· {formatDate(bank.lastCheckedAt)}</span> : null}
+          </p>
+        ) : null}
+
+        <div className="commerce-bank__group">
+          <h3 className="commerce-bank__group-title">{t('commerce.bankGroupCredentials')}</h3>
+          <div className="commerce-form__row">
+            <TextField
+              label={t('commerce.bankClientId')}
+              value={bankClientId}
+              disabled={!canManage}
+              onChange={(event) => setBankClientId(event.target.value)}
+            />
+            <TextField
+              label={t('commerce.bankClientSecret')}
+              type="password"
+              autoComplete="new-password"
+              value={bankSecret}
+              disabled={!canManage}
+              placeholder={bank?.hasClientSecret ? t('commerce.bankSecretKept') : ''}
+              hint={t('commerce.bankSecretHint')}
+              onChange={(event) => setBankSecret(event.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="commerce-bank__group">
+          <h3 className="commerce-bank__group-title">{t('commerce.bankGroupAccount')}</h3>
+          <div className="commerce-form__row">
+            <TextField
+              label={t('commerce.bankAccount')}
+              value={bankAccount}
+              inputMode="numeric"
+              disabled={!canManage}
+              hint={
+                bank?.accountNumber
+                  ? `${t('commerce.bankAccountCurrent')} ${bank.accountNumber}`
+                  : undefined
+              }
+              onChange={(event) => setBankAccount(event.target.value)}
+            />
+            <TextField
+              label={t('commerce.bankAccountName')}
+              value={bankAccountName}
+              disabled={!canManage}
+              onChange={(event) => setBankAccountName(event.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="commerce-bank__group">
+          <h3 className="commerce-bank__group-title">{t('commerce.bankGroupSecurity')}</h3>
+          <div className="commerce-form__row">
+            <TextField
+              label={t('commerce.bankWebhookSecret')}
+              type="password"
+              autoComplete="new-password"
+              value={bankWebhookSecret}
+              disabled={!canManage}
+              placeholder={bank?.hasWebhookSecret ? t('commerce.bankSecretKept') : ''}
+              hint={t('commerce.bankWebhookHint')}
+              onChange={(event) => setBankWebhookSecret(event.target.value)}
+            />
+            <TextField
+              label={t('commerce.bankApiKey')}
+              type="password"
+              autoComplete="new-password"
+              value={bankApiKey}
+              disabled={!canManage}
+              placeholder={bank?.apiKeySet ? t('commerce.bankSecretKept') : ''}
+              onChange={(event) => setBankApiKey(event.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="commerce-bank__group">
+          <h3 className="commerce-bank__group-title">{t('commerce.bankGroupAdvanced')}</h3>
+          <TextField
+            label={t('commerce.bankBaseUrl')}
+            value={bankBaseUrl}
+            placeholder="https://api.bangkokbank.com"
+            disabled={!canManage}
+            onChange={(event) => setBankBaseUrl(event.target.value)}
+          />
+          <div className="commerce-switch-grid">
+            <Switch
+              label={t('commerce.bankSandbox')}
+              description={t('commerce.bankSandboxDesc')}
+              checked={bankSandbox}
+              disabled={!canManage}
+              onChange={setBankSandbox}
+            />
+            <Switch
+              label={t('commerce.bankAutoVerify')}
+              description={t('commerce.bankAutoVerifyDesc')}
+              checked={bankAutoVerify}
+              disabled={!canManage}
+              onChange={setBankAutoVerify}
+            />
+          </div>
+        </div>
+
         {canManage ? (
-          <div className="commerce-settings__actions">
+          <div className="commerce-section__actions">
+            <Button
+              variant="secondary"
+              disabled={bankWorking !== null}
+              onClick={() => void saveBank()}
+            >
+              {bankWorking === 'save' ? t('common.loading') : t('commerce.bankSave')}
+            </Button>
+            {bank?.hasClientSecret ? (
+              <Button
+                variant="ghost"
+                disabled={bankWorking !== null}
+                onClick={() => void testBank()}
+              >
+                {bankWorking === 'test' ? t('common.loading') : t('commerce.bankTest')}
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
+      </Card>
+
+      <Card className="commerce-section">
+        <header className="commerce-section__header">
+          <h2 className="commerce-section__title">{t('commerce.webhookTitle')}</h2>
+          <p className="commerce-section__hint">{t('commerce.webhookHint')}</p>
+        </header>
+
+        <div className="commerce-section__fields">
+          <TextField
+            label={t('commerce.webhookUrl')}
+            value={webhookUrl}
+            disabled={!canManage}
+            placeholder="https://example.com/lumio/orders"
+            hint={t('commerce.webhookUrlHint')}
+            onChange={(event) => setWebhookUrl(event.target.value)}
+          />
+          <TextField
+            label={t('commerce.webhookSecret')}
+            type="password"
+            autoComplete="new-password"
+            value={webhookSecret}
+            disabled={!canManage}
+            placeholder={webhook?.secretSet ? t('commerce.bankSecretKept') : ''}
+            hint={t('commerce.webhookSecretHint')}
+            onChange={(event) => setWebhookSecret(event.target.value)}
+          />
+        </div>
+
+        <div className="commerce-switch-grid">
+          <Switch
+            label={t('commerce.webhookOrderCreated')}
+            description={t('commerce.webhookOrderCreatedDesc')}
+            checked={webhookEvents.includes('order.created')}
+            disabled={!canManage}
+            onChange={(checked) => toggleWebhookEvent('order.created', checked)}
+          />
+          <Switch
+            label={t('commerce.webhookOrderPaid')}
+            description={t('commerce.webhookOrderPaidDesc')}
+            checked={webhookEvents.includes('order.paid')}
+            disabled={!canManage}
+            onChange={(checked) => toggleWebhookEvent('order.paid', checked)}
+          />
+          <Switch
+            label={t('commerce.webhookOrderStatus')}
+            description={t('commerce.webhookOrderStatusDesc')}
+            checked={webhookEvents.includes('order.status')}
+            disabled={!canManage}
+            onChange={(checked) => toggleWebhookEvent('order.status', checked)}
+          />
+        </div>
+
+        <p className="commerce-section__hint">{t('commerce.webhookSignatureHint')}</p>
+
+        {canManage ? (
+          <div className="commerce-section__actions">
             <Button
               variant="secondary"
               disabled={webhookWorking !== null}
@@ -1405,131 +1577,19 @@ export const ShopSettingsTab = ({ api, canManage }: ShopSettingsTabProps) => {
             </Button>
           </div>
         ) : null}
-        <p className="commerce-settings__hint">{t('commerce.webhookSignatureHint')}</p>
-      </div>
-      <div className="commerce-connect">
-        <h3 className="commerce-settings__title">{t('commerce.bankTitle')}</h3>
-        <p className="commerce-settings__hint">{t('commerce.bankHint')}</p>
-        {bank ? (
-          <p className="commerce-settings__hint">
-            {bank.connected ? t('commerce.bankConnected') : t('commerce.bankDisconnected')}
-            {bank.accountNumber ? ` · ${bank.accountNumber}` : ''}
-            {bank.lastCheckedAt ? ` · ${formatDate(bank.lastCheckedAt)}` : ''}
-          </p>
-        ) : null}
-        <div className="commerce-form__row">
-          <TextField
-            label={t('commerce.bankClientId')}
-            value={bankClientId}
-            disabled={!canManage}
-            onChange={(event) => setBankClientId(event.target.value)}
-          />
-          <TextField
-            label={t('commerce.bankClientSecret')}
-            type="password"
-            autoComplete="new-password"
-            value={bankSecret}
-            disabled={!canManage}
-            placeholder={bank?.hasClientSecret ? t('commerce.bankSecretKept') : ''}
-            hint={t('commerce.bankSecretHint')}
-            onChange={(event) => setBankSecret(event.target.value)}
-          />
-        </div>
-        <div className="commerce-form__row">
-          <TextField
-            label={t('commerce.bankAccount')}
-            value={bankAccount}
-            inputMode="numeric"
-            disabled={!canManage}
-            hint={
-              bank?.accountNumber
-                ? `${t('commerce.bankAccountCurrent')} ${bank.accountNumber}`
-                : undefined
-            }
-            onChange={(event) => setBankAccount(event.target.value)}
-          />
-          <TextField
-            label={t('commerce.bankAccountName')}
-            value={bankAccountName}
-            disabled={!canManage}
-            onChange={(event) => setBankAccountName(event.target.value)}
-          />
-        </div>
-        <div className="commerce-form__row">
-          <TextField
-            label={t('commerce.bankWebhookSecret')}
-            type="password"
-            autoComplete="new-password"
-            value={bankWebhookSecret}
-            disabled={!canManage}
-            placeholder={bank?.hasWebhookSecret ? t('commerce.bankSecretKept') : ''}
-            hint={t('commerce.bankWebhookHint')}
-            onChange={(event) => setBankWebhookSecret(event.target.value)}
-          />
-          <TextField
-            label={t('commerce.bankApiKey')}
-            type="password"
-            autoComplete="new-password"
-            value={bankApiKey}
-            disabled={!canManage}
-            placeholder={bank?.apiKeySet ? t('commerce.bankSecretKept') : ''}
-            onChange={(event) => setBankApiKey(event.target.value)}
-          />
-        </div>
-        <TextField
-          label={t('commerce.bankBaseUrl')}
-          value={bankBaseUrl}
-          placeholder="https://api.bangkokbank.com"
-          disabled={!canManage}
-          onChange={(event) => setBankBaseUrl(event.target.value)}
-        />
-        <Switch
-          label={t('commerce.bankSandbox')}
-          description={t('commerce.bankSandboxDesc')}
-          checked={bankSandbox}
-          disabled={!canManage}
-          onChange={setBankSandbox}
-        />
-        <Switch
-          label={t('commerce.bankAutoVerify')}
-          description={t('commerce.bankAutoVerifyDesc')}
-          checked={bankAutoVerify}
-          disabled={!canManage}
-          onChange={setBankAutoVerify}
-        />
-        {canManage ? (
-          <div className="commerce-settings__actions">
-            <Button
-              variant="primary"
-              disabled={bankWorking !== null}
-              onClick={() => void saveBank()}
-            >
-              {bankWorking === 'save' ? t('common.loading') : t('commerce.bankSave')}
-            </Button>
-            {bank?.hasClientSecret ? (
-              <Button
-                variant="ghost"
-                disabled={bankWorking !== null}
-                onClick={() => void testBank()}
-              >
-                {t('commerce.bankTest')}
-              </Button>
-            ) : null}
-          </div>
-        ) : null}
-      </div>
+      </Card>
+
       {canManage ? (
-        <div className="commerce-settings__actions">
+        <div className="commerce-settings-footer">
           <Button variant="primary" disabled={saving} onClick={() => void save()}>
             {saving ? t('common.loading') : t('common.save')}
           </Button>
         </div>
       ) : null}
-    </Card>
+    </div>
   );
 };
 
-/* -------------------------------------------------------------------- page */
 
 export interface CommercePageProps {
   api: CommerceApi;
