@@ -2,6 +2,7 @@ import { translateNow } from '@lumio/ui';
 import type { AuthApi } from './auth/api.js';
 import { createHttpAuthApi } from './auth/api.js';
 import { createDemoAuthApi, DEMO_EMAIL, DEMO_PASSWORD } from './auth/demo.js';
+import { createSessionFetch } from './auth/session-fetch.js';
 import { createSessionStore, type KeyValueStorage, type SessionStore } from './auth/session.js';
 import type { AiApi } from './ai/api.js';
 import { createHttpAiApi } from './ai/api.js';
@@ -84,6 +85,8 @@ export interface AdminClientOptions {
   /** API origin from `VITE_API_URL`; empty string means demo mode. */
   apiUrl: string;
   storage?: KeyValueStorage;
+  /** Called after a 401 that the refresh token could not recover. */
+  onSessionExpired?: () => void;
 }
 
 /**
@@ -91,7 +94,11 @@ export interface AdminClientOptions {
  * in memory (demo sign-in, demo templates, demo library), so the whole flow can
  * be walked through before a backend exists.
  */
-export const createAdminClients = ({ apiUrl, storage }: AdminClientOptions): AdminClients => {
+export const createAdminClients = ({
+  apiUrl,
+  storage,
+  onSessionExpired,
+}: AdminClientOptions): AdminClients => {
   const baseUrl = apiUrl.replace(/\/+$/, '');
   const session = createSessionStore(storage);
   const getAccessToken = (): string | null => session.read()?.accessToken ?? null;
@@ -130,29 +137,35 @@ export const createAdminClients = ({ apiUrl, storage }: AdminClientOptions): Adm
     };
   }
 
-  const media = createHttpMediaApi({ baseUrl, getAccessToken, getSiteId });
-  const ai = createHttpAiApi({ baseUrl, getAccessToken, getSiteId });
-  const content = createHttpContentApi({ baseUrl, getAccessToken, getSiteId });
+  const fetchImpl = createSessionFetch({
+    baseUrl,
+    session,
+    ...(onSessionExpired ? { onExpired: onSessionExpired } : {}),
+  });
+
+  const media = createHttpMediaApi({ baseUrl, getAccessToken, getSiteId, fetchImpl });
+  const ai = createHttpAiApi({ baseUrl, getAccessToken, getSiteId, fetchImpl });
+  const content = createHttpContentApi({ baseUrl, getAccessToken, getSiteId, fetchImpl });
 
   return {
     demo: false,
     session,
-    auth: createHttpAuthApi({ baseUrl, getAccessToken }),
+    auth: createHttpAuthApi({ baseUrl, getAccessToken, fetchImpl }),
     ai,
-    wizard: createHttpWizardApi({ baseUrl, getAccessToken }),
+    wizard: createHttpWizardApi({ baseUrl, getAccessToken, fetchImpl }),
     content,
-    sections: createHttpSectionTemplateApi({ baseUrl, getAccessToken, getSiteId }),
-    forms: createHttpFormsApi({ baseUrl, getAccessToken, getSiteId }),
+    sections: createHttpSectionTemplateApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    forms: createHttpFormsApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     media,
-    dashboard: createHttpDashboardApi({ baseUrl, getAccessToken, getSiteId }),
-    commerce: createHttpCommerceApi({ baseUrl, getAccessToken, getSiteId }),
-    design: createHttpDesignApi({ baseUrl, getAccessToken, getSiteId }),
-    settings: createHttpSettingsApi({ baseUrl, getAccessToken, getSiteId }),
-    billing: createHttpBillingApi({ baseUrl, getAccessToken, getSiteId }),
-    seo: createHttpSeoApi({ baseUrl, getAccessToken, getSiteId, ai, content }),
-    analytics: createHttpAnalyticsApi({ baseUrl, getAccessToken, getSiteId }),
-    newsletter: createHttpNewsletterApi({ baseUrl, getAccessToken, getSiteId }),
-    apps: createHttpAppsApi({ baseUrl, getAccessToken, getSiteId }),
+    dashboard: createHttpDashboardApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    commerce: createHttpCommerceApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    design: createHttpDesignApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    settings: createHttpSettingsApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    billing: createHttpBillingApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    seo: createHttpSeoApi({ baseUrl, getAccessToken, getSiteId, ai, content, fetchImpl }),
+    analytics: createHttpAnalyticsApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    newsletter: createHttpNewsletterApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    apps: createHttpAppsApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     uploadLogo: async (file) => {
       const item = await media.upload(file, { folder: 'brand' });
       return { mediaId: item.id, url: item.url ?? '' };

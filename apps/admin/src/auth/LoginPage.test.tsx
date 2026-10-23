@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { TwoFactorForm } from './LoginPage.js';
+import type { AuthApi } from './api.js';
+import { LoginPage, TwoFactorForm } from './LoginPage.js';
 
 const render = (code = '', busy = false): string =>
   renderToStaticMarkup(
@@ -44,5 +45,19 @@ describe('TwoFactorForm', () => {
 
     expect(html).toContain('รหัสไม่ถูกต้อง ลองอีกครั้ง');
     expect(html).toContain('กำลังเข้าสู่ระบบ…');
+  });
+});
+
+describe('LoginPage', () => {
+  it('says why the user was sent back to sign in', () => {
+    const html = renderToStaticMarkup(
+      <LoginPage
+        api={{} as AuthApi}
+        onSignedIn={vi.fn()}
+        notice="เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่"
+      />,
+    );
+
+    expect(html).toContain('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่');
   });
 });

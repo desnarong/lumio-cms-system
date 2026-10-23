@@ -111,19 +111,41 @@ const loadShellContext = async (clients: AdminClients): Promise<ShellContext> =>
  * before a backend is configured.
  */
 export const App = ({ clients }: AppProps) => {
+  const [sessionExpired, setSessionExpired] = useState(false);
   const resolved = useMemo(
-    () => clients ?? createAdminClients({ apiUrl: import.meta.env.VITE_API_URL ?? '' }),
+    () =>
+      clients ??
+      createAdminClients({
+        apiUrl: import.meta.env.VITE_API_URL ?? '',
+        onSessionExpired: () => setSessionExpired(true),
+      }),
     [clients],
   );
 
   return (
     <ToastProvider>
-      <AdminApp clients={resolved} />
+      <AdminApp
+        clients={resolved}
+        sessionExpired={sessionExpired}
+        onSignedIn={() => setSessionExpired(false)}
+      />
     </ToastProvider>
   );
 };
 
-export const AdminApp = ({ clients }: { clients: AdminClients }) => {
+export interface AdminAppProps {
+  clients: AdminClients;
+  /** True after the API rejected both the access and the refresh token. */
+  sessionExpired?: boolean;
+  /** Called after a successful sign-in so the expired notice can be cleared. */
+  onSignedIn?: () => void;
+}
+
+export const AdminApp = ({
+  clients,
+  sessionExpired = false,
+  onSignedIn,
+}: AdminAppProps) => {
   const router = useAppRouter();
   const navigate = router.navigate;
   // No session means we already know the first screen: no spinner needed.
@@ -153,6 +175,12 @@ export const AdminApp = ({ clients }: { clients: AdminClients }) => {
       active = false;
     };
   }, [clients, navigate]);
+
+  // After the refresh token is gone too, show the login screen at once and say
+  // why, instead of leaving the user on a screen whose requests all fail.
+  useEffect(() => {
+    if (sessionExpired) navigate('/login');
+  }, [sessionExpired, navigate]);
 
   useEffect(() => {
     let active = true;
@@ -185,12 +213,14 @@ export const AdminApp = ({ clients }: { clients: AdminClients }) => {
       <LoginPage
         api={clients.auth}
         {...(clients.demoHint ? { hint: clients.demoHint } : {})}
+        {...(sessionExpired ? { notice: translateNow('auth.sessionExpired') } : {})}
         onSignedIn={(session) => {
           clients.session.write({
             accessToken: session.accessToken,
             user: session.user,
             siteId: null,
           });
+          onSignedIn?.();
           void resolveRoute(clients).then((next) => go(routePath(next)));
         }}
       />

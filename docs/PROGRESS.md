@@ -3,7 +3,7 @@
 > ติดตามงานย่อยตาม [`docs/design/19-roadmap.md`](design/19-roadmap.md) หัวข้อ 19.3
 > อัปเดตสถานะทุกครั้งที่จบงานหนึ่งก้อน
 
-อัปเดตล่าสุด: 2026-10-23 (ก้อนที่ 55 เสร็จ)
+อัปเดตล่าสุด: 2026-10-23 (ก้อนที่ 56 เสร็จ)
 
 ## สถานะงาน (Roadmap 19.3)
 
@@ -66,6 +66,7 @@
 | 53  | เทมเพลตครบ 20 แบบ + เทมเพลตแรงบันดาลใจจาก B-Lighting           | ✅ เสร็จ | เพิ่มเทมเพลตเป็น 20 แพ็กพร้อม tokens/เมนู/หน้าไทยจริง/preview และโหมดเดโมของ wizard 13 แพ็ก |
 | 54  | Docker ทั้งระบบ (profiles, migrate, volumes, healthchecks)     | ✅ เสร็จ | แยก profile infra/app, migrate service, volume ที่ต้องสำรอง, healthcheck/restart, Node 22.13, `API_INTERNAL_URL` ของ renderer และ Caddy dev/prod |
 | 55  | UX/UI polish รอบสอง + ลิงก์ตัวอย่างใน Docker                   | ✅ เสร็จ | หน้าจอร้านค้า/แอป/เมนู/สื่อ/ตั้งค่าเป็น section ที่อ่านง่าย, แอปแยก “ติดตั้งแล้ว/พร้อมติดตั้ง”, ฟอร์มและตารางกระชับขึ้น, ปุ่มดูตัวอย่างใช้ `RENDERER_PUBLIC_URL`, `ADMIN_ORIGIN` รับหลาย origin, เทสต์กันความล้มเหลวจาก timeout |
+| 56  | ต่ออายุเซสชันอัตโนมัติ + กลับหน้าเข้าสู่ระบบเมื่อหมดอายุจริง      | ✅ เสร็จ | admin เรียก `/auth/refresh` ครั้งเดียวแบบ single-flight เมื่อเจอ 401 แล้วยิงคำขอเดิมซ้ำ, ถ้า refresh ไม่ผ่านหรือยังถูกปฏิเสธจะล้างเซสชันและพากลับหน้า login พร้อมบอกเหตุผล; ไม่แตะ 401 ของการเข้าสู่ระบบหรือลิงก์อัปโหลด |
 สัญลักษณ์: ✅ เสร็จ · 🔄 กำลังทำ · ⏳ ยังไม่เริ่ม · ⚠️ ติดปัญหา
 
 ## งานที่ทำเสร็จ (ก้อนที่ 1)
@@ -2590,4 +2591,31 @@ pnpm lint && pnpm typecheck && pnpm test
 docker compose --profile app up -d --build
 docker compose ps
 ```
+
+## ก้อนที่ 56 — ต่ออายุเซสชันอัตโนมัติ ไม่เด้งผู้ใช้กลับ login โดยไม่จำเป็น
+
+อาการเดิม: access token อายุ 15 นาที แต่ admin ไม่เคยเรียก `/auth/refresh` เลย
+พอหมดอายุทุกคำขอจะได้ 401 พร้อมข้อความ “เซสชันหมดอายุ” ทั้งที่ refresh cookie
+ยังใช้ได้ ผู้ใช้จึงต้องเข้าสู่ระบบใหม่ทั้งที่ยังไม่จำเป็น
+
+- **ตัว fetch กลางของ admin** — `apps/admin/src/auth/session-fetch.ts`
+  - เจอ 401 จาก `/api/v1/*` → เรียก `/auth/refresh` (credentials include) **ครั้งเดียว**
+    แม้มีหลายคำขอที่ล้มพร้อมกัน (single-flight) แล้วเขียน access token ใหม่ลง session
+  - ยิงคำขอเดิมซ้ำด้วย token ใหม่โดยอัตโนมัติ
+  - ถ้า refresh ไม่ผ่าน หรือคำขอที่ยิงซ้ำยังได้ 401 → ล้างเซสชัน เรียก `onSessionExpired`
+  - ไม่แตะ 401 ของ `/auth/login`, `/auth/2fa/verify` (กันการตีความรหัสผ่านผิด)
+    และไม่แตะ URL ของ storage ที่ไม่ได้อยู่ใน `/api/v1/`
+- **การกลับหน้า login** — `AdminClientOptions.onSessionExpired` ต่อเข้า `App`
+  แล้ว `AdminApp` พาไป `/login` ทันที พร้อมข้อความ `auth.sessionExpired`
+  (ไทย/อังกฤษ) ผ่าน prop `notice` ของ `LoginPage`; clears notice เมื่อเข้าสู่ระบบสำเร็จ
+- **ผลตรวจ** — lint / typecheck ผ่าน · `pnpm test` ผ่าน 1,946 เคส
+  (admin 433, API 833) · เพิ่มเทสต์ 6 เคส (single-flight, retry, refresh ล่ม,
+  token ใหม่ยังถูกปฏิเสธ, login 401 ไม่ถูกนับ, ข้อความบนหน้า login)
+
+```bash
+pnpm --filter admin test src/auth/session-fetch.test.ts
+pnpm lint && pnpm typecheck && pnpm test
+docker compose --profile app up -d --build
+```
+
 

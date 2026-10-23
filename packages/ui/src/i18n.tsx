@@ -704,6 +704,7 @@ export const TH_MESSAGES = {
   'auth.submit': 'เข้าสู่ระบบ',
   'auth.invalid': 'กรอกอีเมลและรหัสผ่านก่อนนะ',
   'auth.failed': 'เข้าสู่ระบบไม่สำเร็จ ลองอีกครั้ง',
+  'auth.sessionExpired': 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่',
   'auth.demoHint': 'บัญชีทดลองใช้ {email} รหัสผ่าน {password}',
   'auth.twoFactorTitle': 'ยืนยันตัวตนขั้นที่สอง',
   'auth.twoFactorSubtitle': 'กรอกรหัส 6 หลักจากแอปยืนยันตัวตน หรือรหัสสำรองที่บันทึกไว้',
@@ -1975,6 +1976,7 @@ export const EN_MESSAGES: Partial<Record<MessageKey, string>> = {
   'auth.submit': 'Sign in',
   'auth.invalid': 'Fill in your email and password first',
   'auth.failed': "Couldn't sign in, try again",
+  'auth.sessionExpired': 'Your session expired. Please sign in again.',
   'auth.demoHint': 'Demo account: {email} with the password {password}',
   'auth.twoFactorTitle': 'Second step',
   'auth.twoFactorSubtitle':

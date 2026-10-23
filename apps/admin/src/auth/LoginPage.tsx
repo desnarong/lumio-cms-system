@@ -8,6 +8,8 @@ export interface LoginPageProps {
   onSignedIn: (session: SignInResult) => void;
   /** Shown under the form in demo mode, where no API is configured. */
   hint?: string;
+  /** Why the user is back on this screen, e.g. an expired session. */
+  notice?: string;
 }
 
 /** The second step of sign-in, kept separate so it renders (and tests) plainly. */
@@ -80,7 +82,7 @@ export const TwoFactorForm = ({
  * (docs/design/04-ux.md 4.5). Accounts with two-factor sign-in continue on a
  * second step before a session exists.
  */
-export const LoginPage = ({ api, onSignedIn, hint }: LoginPageProps) => {
+export const LoginPage = ({ api, onSignedIn, hint, notice }: LoginPageProps) => {
   const t = useT();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -157,6 +159,7 @@ export const LoginPage = ({ api, onSignedIn, hint }: LoginPageProps) => {
         <h1 className="auth-title">{t('auth.title')}</h1>
         <p className="auth-subtitle">{t('auth.subtitle')}</p>
 
+        {notice ? <Banner tone="warning" title={notice} /> : null}
         {error ? <Banner tone="danger" title={error} /> : null}
 
         <form className="auth-form" onSubmit={(event) => void submit(event)}>
