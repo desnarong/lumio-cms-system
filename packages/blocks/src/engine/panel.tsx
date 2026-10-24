@@ -1,7 +1,16 @@
 'use client';
 
-import type { ReactNode } from 'react';
-import { Button, ColorPicker, Select, Switch, TextField } from '@lumio/ui';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
+import { Button, ColorPicker, Icon, Select, Switch, TextField } from '@lumio/ui';
+import { cn } from '@lumio/ui/cn';
 import {
   ANIMATIONS,
   BACKGROUNDS,
@@ -14,18 +23,99 @@ import {
 } from '@lumio/shared';
 import { alignmentOptions } from '../blocks/common.js';
 
-export interface PanelSectionProps {
-  title: ReactNode;
+interface PanelAccordionCommand {
+  open: boolean;
+  id: number;
+}
+
+interface PanelAccordionContextValue {
+  command: PanelAccordionCommand | null;
+  register: () => number;
+}
+
+const PanelAccordionContext = createContext<PanelAccordionContextValue | null>(null);
+
+export interface PanelAccordionProps {
   children: ReactNode;
 }
 
-/** Groups panel controls under a heading so the sidebar stays scannable. */
-export const PanelSection = ({ title, children }: PanelSectionProps) => (
-  <section className="lumio-panel-section">
-    <h3 className="lumio-panel-section__title">{title}</h3>
-    <div className="lumio-panel-section__body">{children}</div>
-  </section>
-);
+/**
+ * Keeps a long block panel usable: every group collapses, the first group stays
+ * open, and one bar expands or folds the whole panel at once.
+ */
+export const PanelAccordion = ({ children }: PanelAccordionProps) => {
+  const [command, setCommand] = useState<PanelAccordionCommand | null>(null);
+  const counter = useRef(0);
+
+  const register = (): number => {
+    const index = counter.current;
+    counter.current += 1;
+    return index;
+  };
+
+  return (
+    <PanelAccordionContext.Provider value={{ command, register }}>
+      <div className="lumio-panel-accordion">
+        <div className="lumio-panel-accordion__bar">
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={() => setCommand({ open: true, id: Date.now() })}
+          >
+            ขยายทั้งหมด
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={() => setCommand({ open: false, id: Date.now() })}
+          >
+            ย่อทั้งหมด
+          </Button>
+        </div>
+        {children}
+      </div>
+    </PanelAccordionContext.Provider>
+  );
+};
+
+export interface PanelSectionProps {
+  title: ReactNode;
+  children: ReactNode;
+  /** Open this group on mount; the first group is open unless told otherwise. */
+  defaultOpen?: boolean;
+}
+
+/** A collapsible group of panel controls; content stays mounted when folded. */
+export const PanelSection = ({ title, children, defaultOpen }: PanelSectionProps) => {
+  const context = useContext(PanelAccordionContext);
+  const [position] = useState(() => context?.register() ?? 0);
+  const [open, setOpen] = useState(defaultOpen ?? position === 0);
+  const bodyId = useId();
+
+  useEffect(() => {
+    if (context?.command) setOpen(context.command.open);
+  }, [context?.command]);
+
+  return (
+    <section className={cn('lumio-panel-section', open && 'is-open')}>
+      <button
+        type="button"
+        className="lumio-panel-section__toggle"
+        aria-expanded={open}
+        aria-controls={bodyId}
+        onClick={() => setOpen((current) => !current)}
+      >
+        <h3 className="lumio-panel-section__title">{title}</h3>
+        <Icon name={open ? 'chevron-up' : 'chevron-down'} size={16} />
+      </button>
+      <div id={bodyId} className="lumio-panel-section__body" hidden={!open}>
+        {children}
+      </div>
+    </section>
+  );
+};
 
 const SPACING_LABELS: Record<SpacingScale, string> = {
   none: 'ไม่มี',

@@ -1,4 +1,4 @@
-import { registry, type EditorDevice } from '@lumio/blocks';
+import { PanelAccordion, registry, type EditorDevice } from '@lumio/blocks';
 import type { BlockEditorMode, BlockNode } from '@lumio/shared';
 import { Button, Switch, useT, type MessageKey } from '@lumio/ui';
 import type { ReactNode } from 'react';
@@ -75,12 +75,14 @@ export const BlockInspector = ({
       <div className="editor-inspector__body">
         {aiPanel ? <div className="editor-inspector__ai">{aiPanel}</div> : null}
         {Panel ? (
-          <Panel
-            props={block.props}
-            style={block.style}
-            mode={panelMode}
-            onChange={onChange}
-          />
+          <PanelAccordion key={block.id}>
+            <Panel
+              props={block.props}
+              style={block.style}
+              mode={panelMode}
+              onChange={onChange}
+            />
+          </PanelAccordion>
         ) : (
           <p className="editor-inspector__hint">{t('editor.noPanel')}</p>
         )}
