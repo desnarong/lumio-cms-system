@@ -59,6 +59,12 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
           value={props.subheading}
           onChange={(event) => onChange('props.subheading', event.target.value)}
         />
+        <TextField
+          label="ข้อความเพิ่มเติมใต้คำอธิบาย"
+          hint="เช่น โปรโมชั่นหรือหมายเหตุการจัดส่ง เว้นว่างได้"
+          value={props.note}
+          onChange={(event) => onChange('props.note', event.target.value)}
+        />
       </PanelSection>
 
       <PanelSection title="ปุ่ม">

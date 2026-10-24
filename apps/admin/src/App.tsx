@@ -295,7 +295,7 @@ export const AdminApp = ({
           formsApi={clients.forms}
           ai={clients.ai}
           design={clients.design}
-          onBack={() => go('/dashboard')}
+          onBack={() => go('/content/page')}
           onSignOut={signOut}
           onOpenContent={(contentId) => go(`/editor/${contentId}`)}
         />

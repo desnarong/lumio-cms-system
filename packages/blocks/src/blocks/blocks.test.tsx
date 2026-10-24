@@ -195,6 +195,8 @@ describe('hero block', () => {
     expect(html).toContain('เรื่องราวของเรา');
     expect(html).toContain('loading="eager"');
     expect(html).toContain('alt="บรรยากาศร้านกาแฟ"');
+    expect(html).toContain('lumio-hero__note');
+    expect(html).toContain('ส่งฟรีเมื่อสั่งครบ 500 บาท');
   });
 
   it('puts the text on top of the picture in the full-bleed overlay layout', () => {

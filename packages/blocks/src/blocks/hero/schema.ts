@@ -36,6 +36,8 @@ export const heroPropsSchema = z.object({
   subheading: z
     .string()
     .default('เลือกเมล็ดกาแฟจากสวนทางภาคเหนือ คั่วใหม่ทุกสัปดาห์ พร้อมส่งทั่วประเทศ'),
+  /** Extra line under the subheading, e.g. a promotion or delivery note. */
+  note: z.string().default('ส่งฟรีเมื่อสั่งครบ 500 บาท'),
   buttons: z
     .array(buttonValueSchema)
     .max(HERO_MAX_BUTTONS)

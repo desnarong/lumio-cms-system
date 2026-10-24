@@ -9,6 +9,7 @@ export const heroDefaults: BlockData<HeroProps> = {
     contentWidth: 'normal',
     heading: 'กาแฟคั่วสดจากดอย ส่งตรงถึงบ้านคุณ',
     subheading: 'เลือกเมล็ดกาแฟจากสวนทางภาคเหนือ คั่วใหม่ทุกสัปดาห์ พร้อมส่งทั่วประเทศ',
+    note: 'ส่งฟรีเมื่อสั่งครบ 500 บาท',
     buttons: [
       { label: 'สั่งซื้อเลย', href: '/shop', variant: 'primary', external: false },
       { label: 'เรื่องราวของเรา', href: '/about', variant: 'ghost', external: false },

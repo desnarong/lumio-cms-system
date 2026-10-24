@@ -130,3 +130,36 @@
 .editor-inspector__ai {
   margin-bottom: var(--space-lg);
 }
+
+/* The assistant folds like the settings groups, so it never pushes the block
+   controls out of reach on a short screen. */
+.ai-panel__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.ai-panel__toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.ai-panel__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.ai-panel__content[hidden] {
+  display: none;
+}

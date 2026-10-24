@@ -516,13 +516,36 @@ export const ProductsTab = ({ api, media, canManage }: ProductsTabProps) => {
       await api.archiveProduct(product.id);
       await state.reload();
       toast.push({
-        title: t('commerce.archived', { title: product.title }),
+        title: t('commerce.deleted', { title: product.title }),
         tone: 'info',
         undo: {
           label: t('commerce.undo'),
           onClick: () => {
             void api
               .updateProduct(product.id, { status: 'active' })
+              .then(() => state.reload())
+              .catch(() => undefined);
+          },
+        },
+      });
+    } catch (caught) {
+      toast.push({ title: messageOf(caught) || t('common.genericError'), tone: 'danger' });
+    }
+  };
+
+  /** Brings an archived product back into the shop; undo archives it again. */
+  const restore = async (product: ProductSummary): Promise<void> => {
+    try {
+      await api.updateProduct(product.id, { status: 'active' });
+      await state.reload();
+      toast.push({
+        title: t('commerce.restored', { title: product.title }),
+        tone: 'success',
+        undo: {
+          label: t('commerce.undo'),
+          onClick: () => {
+            void api
+              .archiveProduct(product.id)
               .then(() => state.reload())
               .catch(() => undefined);
           },
@@ -598,9 +621,15 @@ export const ProductsTab = ({ api, media, canManage }: ProductsTabProps) => {
                   <Button variant="ghost" size="sm" onClick={() => setEditing(product)}>
                     {t('commerce.edit')}
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => void archive(product)}>
-                    {t('commerce.archive')}
-                  </Button>
+                  {product.status === 'archived' ? (
+                    <Button variant="ghost" size="sm" onClick={() => void restore(product)}>
+                      {t('commerce.restore')}
+                    </Button>
+                  ) : (
+                    <Button variant="ghost" size="sm" onClick={() => void archive(product)}>
+                      {t('commerce.delete')}
+                    </Button>
+                  )}
                 </div>
               ) : null}
             </li>

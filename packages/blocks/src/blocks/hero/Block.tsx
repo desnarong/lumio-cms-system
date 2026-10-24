@@ -24,6 +24,15 @@ const HeroContent = ({ props, block }: { props: HeroProps; block: BlockNode }) =
       className="lumio-hero__subheading"
       label="คำอธิบายใต้หัวข้อ"
     />
+    <Editable
+      as="p"
+      multiline
+      path="props.note"
+      value={props.note}
+      runs={block.textStyles?.['props.note']}
+      className="lumio-hero__note"
+      label="ข้อความเพิ่มเติมใต้คำอธิบาย"
+    />
     {props.buttons.length > 0 ? (
       <div className="lumio-hero__actions">
         {props.buttons.map((button, index) => (

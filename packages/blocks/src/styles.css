@@ -391,6 +391,15 @@
   line-height: var(--text-lg-line-height);
 }
 
+/* Extra note under the subheading; the negative top margin pulls it closer. */
+.lumio-hero__note {
+  margin: calc(-1 * var(--space-md)) 0 var(--space-xl);
+  max-width: 60ch;
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+  line-height: var(--text-base-line-height);
+}
+
 .lumio-hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -498,11 +507,13 @@
 }
 
 .lumio-hero--overlay .lumio-hero__heading,
-.lumio-hero--overlay .lumio-hero__subheading {
+.lumio-hero--overlay .lumio-hero__subheading,
+.lumio-hero--overlay .lumio-hero__note {
   color: inherit;
 }
 
-.lumio-hero--overlay .lumio-hero__subheading {
+.lumio-hero--overlay .lumio-hero__subheading,
+.lumio-hero--overlay .lumio-hero__note {
   max-width: 52ch;
 }
 

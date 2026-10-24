@@ -56,6 +56,7 @@ export const AiAssistant = ({
   onError,
 }: AiAssistantProps) => {
   const t = useT();
+  const [open, setOpen] = useState(true);
   const [status, setStatus] = useState<AiStatus | null>(null);
   const [loadingStatus, setLoadingStatus] = useState(true);
   const [style, setStyle] = useState<AiRewriteStyle>('shorter');
@@ -223,10 +224,19 @@ export const AiAssistant = ({
 
   return (
     <section className="ai-panel" aria-label={t('ai.panel.title')}>
-      <p className="ai-panel__title">
-        <Icon name="sparkles" size={16} />
-        {t('ai.panel.title')}
-      </p>
+      <button
+        type="button"
+        className="ai-panel__toggle"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+      >
+        <span className="ai-panel__title">
+          <Icon name="sparkles" size={16} />
+          {t('ai.panel.title')}
+        </span>
+        <Icon name={open ? 'chevron-up' : 'chevron-down'} size={16} />
+      </button>
+      <div className="ai-panel__content" hidden={!open}>
       <p className="ai-panel__hint">
         {status
           ? `${quotaLabel(status.usage)} · ${aiProviderLabel(status.provider)}`
@@ -375,6 +385,7 @@ export const AiAssistant = ({
           setPending(null);
         }}
       />
+      </div>
     </section>
   );
 };
