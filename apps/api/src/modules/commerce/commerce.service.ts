@@ -40,6 +40,7 @@ import {
   type ProductList,
   type ProductListQuery,
   type ProductOption,
+  type ProductSpec,
   type ProductStatus,
   type ProductSummary,
   type ProductVariant,
@@ -73,6 +74,16 @@ const asRecord = (value: unknown): Record<string, unknown> =>
 
 const readImageIds = (value: unknown): string[] =>
   Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : [];
+
+const readSpecs = (value: unknown): ProductSpec[] => {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry) => {
+    const record = asRecord(entry);
+    const label = typeof record.label === 'string' ? record.label : '';
+    const specValue = typeof record.value === 'string' ? record.value : '';
+    return label && specValue ? [{ label, value: specValue }] : [];
+  });
+};
 
 const readProductStatus = (value: string): ProductStatus =>
   value === 'active' || value === 'archived' ? value : 'draft';
@@ -128,6 +139,7 @@ const toProductSummary = (row: ProductWithVariants, media: Map<string, Media>): 
   currency: row.currency,
   images: imageUrlsFor(readImageIds(row.images), media),
   imageIds: readImageIds(row.images),
+  specs: readSpecs(row.specs),
   stock: row.stock,
   weightGrams: row.weightGrams,
   options: readOptions(row.options),
@@ -613,6 +625,7 @@ export class CommerceService {
           price: input.price,
           compareAtPrice: input.compareAtPrice,
           images: asJson(input.images),
+          specs: asJson(input.specs),
           stock: stockAfterVariants(input.options, input.variants, input.stock),
           weightGrams: input.weightGrams,
           options: asJson(input.options),
@@ -701,6 +714,7 @@ export class CommerceService {
           ...(input.price !== undefined ? { price: input.price } : {}),
           ...(input.compareAtPrice !== undefined ? { compareAtPrice: input.compareAtPrice } : {}),
           ...(input.images !== undefined ? { images: asJson(input.images) } : {}),
+          ...(input.specs !== undefined ? { specs: asJson(input.specs) } : {}),
           ...(input.weightGrams !== undefined ? { weightGrams: input.weightGrams } : {}),
           ...(input.options !== undefined ? { options: asJson(nextOptions) } : {}),
           ...(replaceVariants

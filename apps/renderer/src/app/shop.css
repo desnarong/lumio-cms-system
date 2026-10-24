@@ -623,3 +623,61 @@
   padding-top: var(--space-sm);
   border-top: 1px solid var(--color-border);
 }
+
+/* Product gallery: a large main picture plus tappable thumbnails that open
+   the full-size file in a new tab (no client JavaScript needed). */
+.shop-product__main-image {
+  display: block;
+}
+
+.shop-product__thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin: var(--space-sm) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shop-product__thumb {
+  width: 88px;
+  height: 72px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--color-surface-muted);
+}
+
+.shop-product__thumb:hover {
+  border-color: var(--color-primary);
+}
+
+.shop-specs {
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--color-border);
+}
+
+.shop-specs__list {
+  display: grid;
+  gap: 0;
+  max-width: 820px;
+  margin: var(--space-md) 0 0;
+}
+
+.shop-specs__row {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.6fr) minmax(0, 1.4fr);
+  gap: var(--space-md);
+  padding-block: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.shop-specs__row dt {
+  color: var(--color-text-muted);
+  font-weight: var(--weight-semibold);
+}
+
+.shop-specs__row dd {
+  margin: 0;
+}

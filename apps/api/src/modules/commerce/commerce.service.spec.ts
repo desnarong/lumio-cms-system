@@ -172,6 +172,7 @@ describe('CommerceService products', () => {
         price: 35_000,
         compareAtPrice: null,
         images: [MEDIA_ID],
+        specs: [{ label: 'กำลังไฟ', value: '9.5 วัตต์' }],
         stock: 10,
         weightGrams: 0,
         options: [],
@@ -183,6 +184,13 @@ describe('CommerceService products', () => {
     );
 
     expect(created.price).toBe(35_000);
+    expect(all.productCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          specs: [{ label: 'กำลังไฟ', value: '9.5 วัตต์' }],
+        }),
+      }),
+    );
     expect(all.productCreate).toHaveBeenCalledOnce();
     expect(all.auditCreate).toHaveBeenCalledOnce();
   });
@@ -201,6 +209,7 @@ describe('CommerceService products', () => {
           price: 1_000,
           compareAtPrice: null,
           images: [MEDIA_ID],
+          specs: [],
           stock: null,
           weightGrams: 0,
           options: [],

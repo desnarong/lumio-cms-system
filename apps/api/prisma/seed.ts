@@ -555,6 +555,11 @@ async function seedCafe(): Promise<void> {
           price: 35_000,
           compareAtPrice: 42_000,
           images: [ID.cafeShop],
+          specs: [
+            { label: 'น้ำหนัก', value: '250 กรัม' },
+            { label: 'ระดับการคั่ว', value: 'กลาง' },
+            { label: 'แหล่งปลูก', value: 'ดอยช้าง เชียงราย' },
+          ],
           stock: 24,
           category: 'เมล็ดกาแฟ',
           status: 'active',
@@ -567,6 +572,10 @@ async function seedCafe(): Promise<void> {
           description: 'ดริปกาแฟคั่วใหม่ 10 ซอง ชงง่ายด้วยน้ำร้อน พกไปทำงานได้ทุกวัน',
           price: 25_000,
           images: [ID.cafeShop],
+          specs: [
+            { label: 'จำนวน', value: '10 ซอง' },
+            { label: 'น้ำหนักต่อซอง', value: '12 กรัม' },
+          ],
           stock: 40,
           category: 'ชุดพร้อมชง',
           status: 'active',
@@ -579,6 +588,10 @@ async function seedCafe(): Promise<void> {
           description: 'แก้วเซรามิก handmade ขนาด 300 มล. ทรงถนัดมือ ลายจากช่างในเชียงใหม่',
           price: 29_000,
           images: [ID.cafeLogo],
+          specs: [
+            { label: 'ความจุ', value: '300 มล.' },
+            { label: 'วัสดุ', value: 'เซรามิก' },
+          ],
           stock: null,
           category: 'ของที่ระลึก',
           status: 'active',

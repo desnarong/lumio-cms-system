@@ -21,6 +21,7 @@ describe('demo commerce api', () => {
       price: 19_000,
       compareAtPrice: null,
       images: [],
+      specs: [],
       stock: 5,
       weightGrams: 0,
       options: [],

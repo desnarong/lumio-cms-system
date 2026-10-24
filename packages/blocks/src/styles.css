@@ -394,10 +394,17 @@
 /* Extra note under the subheading; the negative top margin pulls it closer. */
 .lumio-hero__note {
   margin: calc(-1 * var(--space-md)) 0 var(--space-xl);
-  max-width: 60ch;
+  max-width: 50%;
   color: var(--color-text-muted);
   font-size: var(--text-base);
   line-height: var(--text-base-line-height);
+}
+
+/* A half-width note is unreadable on a phone, so it uses the full column there. */
+@media (max-width: 639px) {
+  .lumio-hero__note {
+    max-width: 100%;
+  }
 }
 
 .lumio-hero__actions {
@@ -512,9 +519,13 @@
   color: inherit;
 }
 
-.lumio-hero--overlay .lumio-hero__subheading,
-.lumio-hero--overlay .lumio-hero__note {
+.lumio-hero--overlay .lumio-hero__subheading {
   max-width: 52ch;
+}
+
+/* The extra note uses half of the content column, as requested. */
+.lumio-hero--overlay .lumio-hero__note {
+  max-width: 50%;
 }
 
 /* Product cut-out floating over the banner, positioned from the editor. */
@@ -619,7 +630,7 @@
 }
 
 .lumio-features__heading {
-  margin: 0 0 var(--space-sm);
+  margin: 0 0 var(--space-lg);
   color: var(--color-text);
   font-family: var(--font-display);
   font-size: var(--text-2xl);
@@ -1285,7 +1296,7 @@
 
 .lumio-products__subheading,
 .lumio-posts__subheading {
-  margin: var(--space-xs) 0 0;
+  margin: var(--space-lg) 0 0;
   color: var(--color-text-muted);
   font-size: var(--text-base);
 }

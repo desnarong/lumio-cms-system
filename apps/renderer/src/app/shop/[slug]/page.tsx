@@ -77,16 +77,45 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="shop-product">
         <div className="shop-product__gallery">
           {product.images[0] ? (
-            <img
-              className="shop-product__image"
-              src={product.images[0]}
-              alt={product.title}
-              width={640}
-              height={480}
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
-            />
+            <>
+              <a
+                className="shop-product__main-image"
+                href={product.images[0]}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`ดูรูป ${product.title} ขนาดเต็ม`}
+              >
+                <img
+                  className="shop-product__image"
+                  src={product.images[0]}
+                  alt={product.title}
+                  width={640}
+                  height={480}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              </a>
+              {product.images.length > 1 ? (
+                <ul className="shop-product__thumbs">
+                  {product.images.slice(1).map((src, index) => (
+                    <li key={src}>
+                      <a href={src} target="_blank" rel="noreferrer">
+                        <img
+                          className="shop-product__thumb"
+                          src={src}
+                          alt={`${product.title} รูปที่ ${index + 2}`}
+                          width={160}
+                          height={120}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </>
           ) : (
             <span className="shop-product__image shop-product__image--empty" aria-hidden="true">
               🛍
@@ -169,6 +198,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
           ) : null}
         </div>
       </div>
+
+      {product.specs.length > 0 ? (
+        <section className="shop-specs" aria-labelledby="spec-heading">
+          <h2 className="shop-section-title" id="spec-heading">
+            ข้อมูลผลิตภัณฑ์
+          </h2>
+          <dl className="shop-specs__list">
+            {product.specs.map((row) => (
+              <div className="shop-specs__row" key={`${row.label}-${row.value}`}>
+                <dt>{row.label}</dt>
+                <dd>{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      ) : null}
 
       {shop.related.length > 0 ? (
         <section className="shop-related" aria-labelledby="related-heading">

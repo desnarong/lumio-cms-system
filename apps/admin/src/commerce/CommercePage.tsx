@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   canRefundOrder,
   formatBaht,
@@ -25,6 +25,7 @@ import {
   Button,
   Card,
   EmptyState,
+  ImagePicker,
   Modal,
   Select,
   Skeleton,
@@ -36,8 +37,9 @@ import {
   useToast,
   type MessageKey,
 } from '@lumio/ui';
+import { useMediaPicker } from '@lumio/blocks';
 import { ApiError } from '../api-error.js';
-import type { MediaApi } from '../media/api.js';
+import { ACCEPTED_UPLOAD_TYPES, type MediaApi } from '../media/api.js';
 import type { CommerceApi } from './api.js';
 import type { CommerceTab } from '../route.js';
 import {
@@ -96,6 +98,12 @@ interface ProductDraft {
   description: string;
   status: ProductStatus;
   mediaId: string;
+  /** Preview URL of the chosen image; kept beside the id so the picker can show it. */
+  mediaUrl: string;
+  /** Extra gallery images after the main picture, in display order. */
+  galleryIds: string[];
+  galleryUrls: string[];
+  specs: { label: string; value: string }[];
 }
 
 const emptyDraft = (): ProductDraft => ({
@@ -111,6 +119,10 @@ const emptyDraft = (): ProductDraft => ({
   description: '',
   status: 'draft',
   mediaId: '',
+  mediaUrl: '',
+  galleryIds: [],
+  galleryUrls: [],
+  specs: [],
 });
 
 const variantDraftsFor = (
@@ -168,13 +180,18 @@ const draftFor = (product: ProductSummary): ProductDraft => ({
   description: product.description,
   status: product.status,
   mediaId: product.imageIds[0] ?? '',
+  mediaUrl: product.images[0] ?? '',
+  galleryIds: product.imageIds.slice(1),
+  galleryUrls: product.images.slice(1),
+  specs: product.specs,
 });
 
 export interface ProductEditorProps {
   product: ProductSummary | null;
   saving: boolean;
   error: string | null;
-  images: { id: string; label: string }[];
+  /** Media library, so the editor can pick an existing picture or upload one. */
+  media?: MediaApi;
   onCancel: () => void;
   onSubmit: (draft: ProductDraft) => void;
 }
@@ -183,17 +200,72 @@ export const ProductEditor = ({
   product,
   saving,
   error,
-  images,
+  media,
   onCancel,
   onSubmit,
 }: ProductEditorProps) => {
   const t = useT();
+  const mediaPicker = useMediaPicker();
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
   const [draft, setDraft] = useState<ProductDraft>(() =>
     product ? draftFor(product) : emptyDraft(),
   );
   const set = <K extends keyof ProductDraft>(key: K, value: ProductDraft[K]): void =>
     setDraft((current) => ({ ...current, [key]: value }));
   const options = parseOptionsText(draft.optionsText);
+
+  const chooseImage = (url: string, mediaId: string): void =>
+    setDraft((current) => ({ ...current, mediaId, mediaUrl: url }));
+
+  const addGalleryImage = (url: string, mediaId: string): void =>
+    setDraft((current) => ({
+      ...current,
+      galleryIds: [...current.galleryIds, mediaId],
+      galleryUrls: [...current.galleryUrls, url],
+    }));
+
+  const removeGalleryImage = (index: number): void =>
+    setDraft((current) => ({
+      ...current,
+      galleryIds: current.galleryIds.filter((_, position) => position !== index),
+      galleryUrls: current.galleryUrls.filter((_, position) => position !== index),
+    }));
+
+  const updateSpec = (index: number, patch: { label?: string; value?: string }): void =>
+    setDraft((current) => ({
+      ...current,
+      specs: current.specs.map((row, position) =>
+        position === index ? { ...row, ...patch } : row,
+      ),
+    }));
+
+  const uploadImages = async (files: File[]): Promise<void> => {
+    if (!media || files.length === 0) return;
+    setUploading(true);
+    setImageError(null);
+    try {
+      for (const file of files) {
+        const item = await media.upload(file, { folder: 'products' });
+        setDraft((current) =>
+          current.mediaId
+            ? {
+                ...current,
+                galleryIds: [...current.galleryIds, item.id],
+                galleryUrls: [...current.galleryUrls, item.url],
+              }
+            : { ...current, mediaId: item.id, mediaUrl: item.url },
+        );
+      }
+    } catch (caught) {
+      setImageError(
+        caught instanceof ApiError ? caught.message : t('common.genericError'),
+      );
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const changeOptions = (text: string): void =>
     setDraft((current) => {
@@ -344,15 +416,136 @@ export const ProductEditor = ({
           }))}
           onChange={(event) => set('status', event.target.value as ProductStatus)}
         />
-        <Select
+        <ImagePicker
           label={t('commerce.image')}
-          value={draft.mediaId}
-          options={[
-            { value: '', label: t('commerce.noImage') },
-            ...images.map((image) => ({ value: image.id, label: image.label })),
-          ]}
-          onChange={(event) => set('mediaId', event.target.value)}
+          hint={t('commerce.imageHint')}
+          value={draft.mediaUrl || null}
+          alt={draft.title}
+          aspect="square"
+          disabled={!mediaPicker}
+          pickLabel={t('commerce.chooseImage')}
+          onPick={() => {
+            void mediaPicker
+              ?.pick({ aspect: 'square' })
+              .then((picked) => {
+                if (picked) chooseImage(picked.url, picked.mediaId ?? '');
+              })
+              .catch((caught: unknown) => {
+                setImageError(
+                  caught instanceof ApiError ? caught.message : t('common.genericError'),
+                );
+              });
+          }}
+          onChange={(url) => {
+            if (!url) chooseImage('', '');
+          }}
         />
+        {draft.galleryUrls.length > 0 ? (
+          <ul className="commerce-gallery" aria-label={t('commerce.gallery')}>
+            {draft.galleryUrls.map((url, index) => (
+              <li className="commerce-gallery__item" key={`${url}-${index}`}>
+                <img className="commerce-gallery__image" src={url} alt="" />
+                <button
+                  type="button"
+                  className="commerce-gallery__remove"
+                  aria-label={t('commerce.removeImage')}
+                  title={t('common.delete')}
+                  onClick={() => removeGalleryImage(index)}
+                >
+                  <Icon name="close" size={14} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <div className="commerce-image-upload">
+          <input
+            ref={fileRef}
+            type="file"
+            accept={ACCEPTED_UPLOAD_TYPES}
+            multiple
+            hidden
+            onChange={(event) => {
+              const files = [...(event.target.files ?? [])];
+              event.target.value = '';
+              void uploadImages(files);
+            }}
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            disabled={!mediaPicker}
+            onClick={() => {
+              void mediaPicker
+                ?.pick({ aspect: 'square' })
+                .then((picked) => {
+                  if (picked) addGalleryImage(picked.url, picked.mediaId ?? '');
+                })
+                .catch(() => undefined);
+            }}
+          >
+            {t('commerce.addGalleryImage')}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            disabled={!media || uploading}
+            onClick={() => fileRef.current?.click()}
+          >
+            {uploading ? t('common.loading') : t('commerce.uploadImage')}
+          </Button>
+          {imageError ? (
+            <span className="commerce-image-upload__error" role="alert">
+              {imageError}
+            </span>
+          ) : null}
+        </div>
+
+        <div className="commerce-specs">
+          <p className="commerce-specs__title">{t('commerce.specs')}</p>
+          {draft.specs.map((row, index) => (
+            <div className="commerce-specs__row" key={index}>
+              <TextField
+                label={t('commerce.specLabel')}
+                value={row.label}
+                onChange={(event) => updateSpec(index, { label: event.target.value })}
+              />
+              <TextField
+                label={t('commerce.specValue')}
+                value={row.value}
+                onChange={(event) => updateSpec(index, { value: event.target.value })}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() =>
+                  setDraft((current) => ({
+                    ...current,
+                    specs: current.specs.filter((_, position) => position !== index),
+                  }))
+                }
+              >
+                {t('common.delete')}
+              </Button>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() =>
+              setDraft((current) => ({
+                ...current,
+                specs: [...current.specs, { label: '', value: '' }],
+              }))
+            }
+          >
+            {t('commerce.addSpec')}
+          </Button>
+        </div>
         <Textarea
           label={t('commerce.description')}
           value={draft.description}
@@ -407,25 +600,9 @@ export const ProductsTab = ({ api, media, canManage }: ProductsTabProps) => {
   const t = useT();
   const toast = useToast();
   const state = useProducts(api);
-  const [images, setImages] = useState<{ id: string; label: string }[]>([]);
   const [editing, setEditing] = useState<ProductSummary | null | undefined>(undefined);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!media) return;
-    void media
-      .list({ limit: 100 })
-      .then((page) =>
-        setImages(
-          page.items.map((item) => ({
-            id: item.id,
-            label: item.filename ?? item.alt ?? item.id,
-          })),
-        ),
-      )
-      .catch(() => setImages([]));
-  }, [media]);
 
   const save = async (draft: ProductDraft): Promise<void> => {
     const price = parseBaht(draft.price);
@@ -496,7 +673,10 @@ export const ProductsTab = ({ api, media, canManage }: ProductsTabProps) => {
       variants,
       category: draft.category.trim() || null,
       status: draft.status,
-      images: draft.mediaId ? [draft.mediaId] : [],
+      images: [draft.mediaId, ...draft.galleryIds].filter((id) => id.length > 0),
+      specs: draft.specs
+        .map((row) => ({ label: row.label.trim(), value: row.value.trim() }))
+        .filter((row) => row.label.length > 0 && row.value.length > 0),
     };
     try {
       if (editing) await api.updateProduct(editing.id, input);
@@ -642,7 +822,7 @@ export const ProductsTab = ({ api, media, canManage }: ProductsTabProps) => {
           product={editing}
           saving={saving}
           error={formError}
-          images={images}
+          {...(media ? { media } : {})}
           onCancel={() => {
             setEditing(undefined);
             setFormError(null);

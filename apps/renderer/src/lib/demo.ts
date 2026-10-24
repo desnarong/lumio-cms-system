@@ -93,6 +93,11 @@ const demoProducts: ShopProduct[] = [
     options: [],
     variants: [],
     category: 'เมล็ดกาแฟ',
+    specs: [
+      { label: 'น้ำหนัก', value: '250 กรัม' },
+      { label: 'ระดับการคั่ว', value: 'กลาง' },
+      { label: 'แหล่งปลูก', value: 'ดอยช้าง เชียงราย' },
+    ],
   },
   {
     id: '00000000-0000-4000-8000-000000000202',
@@ -109,6 +114,10 @@ const demoProducts: ShopProduct[] = [
     options: [],
     variants: [],
     category: 'ชุดพร้อมชง',
+    specs: [
+      { label: 'จำนวน', value: '10 ซอง' },
+      { label: 'น้ำหนักต่อซอง', value: '12 กรัม' },
+    ],
   },
   {
     id: '00000000-0000-4000-8000-000000000203',
@@ -125,6 +134,10 @@ const demoProducts: ShopProduct[] = [
     options: [],
     variants: [],
     category: 'ของที่ระลึก',
+    specs: [
+      { label: 'ความจุ', value: '300 มล.' },
+      { label: 'วัสดุ', value: 'เซรามิก' },
+    ],
   },
 ];
 

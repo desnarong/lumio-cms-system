@@ -472,3 +472,79 @@
     white-space: normal;
   }
 }
+
+/* Product image: the library picker shows a preview, and the owner can also
+   upload straight from the product form. */
+.commerce-image-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.commerce-image-upload__error {
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+}
+
+/* Gallery thumbnails beside the main product image. */
+.commerce-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.commerce-gallery__item {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.commerce-gallery__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.commerce-gallery__remove {
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-end: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-text) 65%, transparent);
+  color: var(--color-surface);
+  cursor: pointer;
+}
+
+.commerce-specs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.commerce-specs__title {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.commerce-specs__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--space-sm);
+}

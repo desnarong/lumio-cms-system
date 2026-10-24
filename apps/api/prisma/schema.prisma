@@ -434,6 +434,8 @@ model Product {
   compareAtPrice Int?     @map("compare_at_price")
   currency       String   @default("THB")
   images         Json     @default("[]") @db.JsonB
+  /// Spec table rows: [{ label, value }].
+  specs          Json     @default("[]") @db.JsonB
   /// NULL means unlimited stock; a number is what is left on the shelf.
   stock          Int?
   /// Delivery weight in grams, used by weight-based shipping rules.

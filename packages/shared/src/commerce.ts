@@ -295,6 +295,13 @@ export const productImagesSchema = z
   .max(MAX_PRODUCT_IMAGES, `ใส่รูปได้สูงสุด ${MAX_PRODUCT_IMAGES} รูป`)
   .default([]);
 
+/** One row of the product specification table (label on the left, value on the right). */
+export const productSpecSchema = z.object({
+  label: z.string().trim().min(1).max(60),
+  value: z.string().trim().min(1).max(200),
+});
+export type ProductSpec = z.infer<typeof productSpecSchema>;
+
 /** A size/colour picker: one name and the values the buyer can choose. */
 export const productOptionSchema = z.object({
   name: z.string().trim().min(1, 'กรุณากรอกชื่อตัวเลือก').max(40),
@@ -369,6 +376,8 @@ const productBaseSchema = z.object({
   price: priceSchema,
   compareAtPrice: priceSchema.nullable().default(null),
   images: productImagesSchema,
+  /** Spec table shown on the product page, e.g. wattage, lumens, base type. */
+  specs: z.array(productSpecSchema).max(40).default([]),
   /** `null` means unlimited; a number is the remaining quantity. */
   stock: z.number().int().min(0).max(1_000_000).nullable().default(null),
   /** Shown on the delivery estimate; 0 means the shop does not use weight pricing. */
@@ -447,6 +456,8 @@ export interface ProductSummary {
   images: string[];
   /** Media ids in display order, so the admin can edit the gallery. */
   imageIds: string[];
+  /** Specification rows rendered as a table on the product page. */
+  specs: ProductSpec[];
   stock: number | null;
   weightGrams: number;
   options: ProductOption[];
@@ -502,6 +513,7 @@ export interface ShopProduct {
   options: ProductOption[];
   variants: ShopVariant[];
   category: string | null;
+  specs: ProductSpec[];
 }
 
 export const isInStock = (stock: number | null): boolean => stock === null || stock > 0;
@@ -927,6 +939,7 @@ export const shopProductSchema = z.object({
   options: z.array(productOptionSchema).default([]),
   variants: z.array(shopVariantSchema).default([]),
   category: z.string().nullable(),
+  specs: z.array(productSpecSchema).default([]),
 });
 
 export const shopChromeSchema = z.object({

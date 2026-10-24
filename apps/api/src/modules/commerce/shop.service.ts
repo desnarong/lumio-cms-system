@@ -78,6 +78,16 @@ const asRecord = (value: unknown): Record<string, unknown> =>
 const readImageIds = (value: unknown): string[] =>
   Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : [];
 
+const readProductSpecs = (value: unknown): ShopProduct['specs'] => {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry) => {
+    const record = asRecord(entry);
+    const label = typeof record.label === 'string' ? record.label : '';
+    const specValue = typeof record.value === 'string' ? record.value : '';
+    return label && specValue ? [{ label, value: specValue }] : [];
+  });
+};
+
 const mediaIndex = (rows: readonly Media[]): Map<string, Media> =>
   new Map(rows.map((row) => [row.id, row]));
 
@@ -141,6 +151,7 @@ const toShopProduct = (row: ProductWithVariants, media: Map<string, Media>): Sho
     options,
     variants,
     category: row.category,
+    specs: readProductSpecs(row.specs),
   };
 };
 
