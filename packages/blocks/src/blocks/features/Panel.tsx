@@ -391,10 +391,27 @@ export const FeaturesPanel = ({ props, style, mode, onChange }: BlockPanelProps<
             )
           }
         />
-        <Switch
+        <Select
           label="พื้นหลังข้อความ"
-          checked={props.textBackground ?? false}
-          onChange={(checked) => onChange('props.textBackground', checked)}
+          value={
+            props.textBackground === true
+              ? 'panel'
+              : props.textBackground === false
+                ? 'none'
+                : (props.textBackground ?? 'none')
+          }
+          options={[
+            { value: 'none', label: 'ไม่มีพื้นหลัง' },
+            { value: 'panel', label: 'แผงข้อความ' },
+            { value: 'full', label: 'เต็มซ้าย-ขวาการ์ด' },
+            { value: 'fade', label: 'ไล่จางจากด้านบน' },
+          ]}
+          onChange={(event) => onChange('props.textBackground', event.target.value)}
+        />
+        <Switch
+          label="ข้อความชิดขอบล่าง"
+          checked={props.textFlushBottom ?? false}
+          onChange={(checked) => onChange('props.textFlushBottom', checked)}
         />
         <Select
           label="ข้อความบนปุ่ม"

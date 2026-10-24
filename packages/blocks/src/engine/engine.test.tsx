@@ -77,6 +77,16 @@ describe('BlockShell', () => {
     expect(html).toContain('--block-padding-x:calc(var(--space-lg) * var(--density-scale, 1))');
   });
 
+  it('lets the owner replace the preset with exact pixel padding', () => {
+    const html = renderToStaticMarkup(
+      <BlockShell block={node({ style: { ...defaultBlockStyle, paddingYpx: 72, paddingXpx: 40 } })}>
+        เนื้อหา
+      </BlockShell>,
+    );
+    expect(html).toContain('--block-padding-y:72px');
+    expect(html).toContain('--block-padding-x:40px');
+  });
+
   it('leaves background and animation off when they are set to none', () => {
     const html = renderToStaticMarkup(<BlockShell block={node()}>เนื้อหา</BlockShell>);
     expect(html).not.toContain('data-background');

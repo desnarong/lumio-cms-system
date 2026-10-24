@@ -22,6 +22,12 @@ import { languageSwitcherSchema } from './blocks/language-switcher/schema.js';
 import { ParagraphBlock } from './blocks/paragraph/Block.js';
 import { paragraphDefaults } from './blocks/paragraph/defaults.js';
 import { paragraphSchema } from './blocks/paragraph/schema.js';
+import { PostsBlock } from './blocks/posts/Block.js';
+import { postsDefaults } from './blocks/posts/defaults.js';
+import { postsSchema } from './blocks/posts/schema.js';
+import { ProductsBlock } from './blocks/products/Block.js';
+import { productsDefaults } from './blocks/products/defaults.js';
+import { productsSchema } from './blocks/products/schema.js';
 import { registry } from './registry.js';
 import type { AnyBlockDefinition } from './types.js';
 
@@ -91,6 +97,26 @@ export const renderBuiltinBlocks = [
     schema: featuresSchema,
     defaults: featuresDefaults,
     Block: FeaturesBlock,
+  },
+  {
+    type: 'products',
+    label: 'สินค้า (การ์ดสินค้า)',
+    category: 'landing',
+    version: 1,
+    icon: 'Package',
+    schema: productsSchema,
+    defaults: productsDefaults,
+    Block: ProductsBlock,
+  },
+  {
+    type: 'posts',
+    label: 'บทความ (การ์ดบทความ)',
+    category: 'dynamic',
+    version: 1,
+    icon: 'Book',
+    schema: postsSchema,
+    defaults: postsDefaults,
+    Block: PostsBlock,
   },
   {
     type: 'form',

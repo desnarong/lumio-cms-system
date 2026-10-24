@@ -27,6 +27,8 @@ describe('render entry', () => {
       'button',
       'hero',
       'features',
+      'products',
+      'posts',
       'form',
       'language-switcher',
     ]);

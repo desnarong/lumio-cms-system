@@ -311,6 +311,12 @@ export const EditorPage = ({
                 onSelect={editor.select}
                 onTextChange={editor.setBlockPath}
                 onTextStyle={editor.setTextStyles}
+                onTextOffset={(id, offsetX, offsetY) =>
+                  editor.applyBlockChanges(id, [
+                    { path: 'style.offsetX', value: offsetX },
+                    { path: 'style.offsetY', value: offsetY },
+                  ])
+                }
                 onInsert={editor.insertBlock}
                 onDuplicate={editor.duplicateBlock}
                 onRemove={editor.removeBlock}

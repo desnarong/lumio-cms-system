@@ -56,7 +56,15 @@ const FeatureIcon = ({ item }: { item: FeatureItem }) => {
   return null;
 };
 
-export const FeaturesBlock = ({ props, block }: BlockRenderProps<FeaturesProps>) => (
+export const FeaturesBlock = ({ props, block }: BlockRenderProps<FeaturesProps>) => {
+  const backgroundMode =
+    props.textBackground === true
+      ? 'panel'
+      : props.textBackground === false || props.textBackground === undefined
+        ? 'none'
+        : props.textBackground;
+
+  return (
   <div
     className="lumio-features"
     data-subheading-width={props.subheadingWidth ?? 'normal'}
@@ -65,7 +73,9 @@ export const FeaturesBlock = ({ props, block }: BlockRenderProps<FeaturesProps>)
     data-content-align={props.contentAlign ?? 'left'}
     data-text-overlay={props.textOverlay ? 'true' : 'false'}
     data-full-width={props.fullWidth ? 'true' : 'false'}
-    data-text-background={props.textBackground ? 'true' : 'false'}
+    data-text-background={backgroundMode !== 'none' ? 'true' : 'false'}
+    data-text-background-mode={backgroundMode}
+    data-text-flush-bottom={props.textFlushBottom ? 'true' : 'false'}
     data-button-visibility={props.buttonVisibility ?? 'always'}
     style={
       {
@@ -156,4 +166,5 @@ export const FeaturesBlock = ({ props, block }: BlockRenderProps<FeaturesProps>)
       ))}
     </ul>
   </div>
-);
+  );
+};

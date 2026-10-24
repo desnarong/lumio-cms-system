@@ -36,6 +36,8 @@ const BLOCK_ICONS: Record<string, IconName> = {
   logos: 'layers',
   newsletter: 'send',
   product: 'package',
+  products: 'package',
+  posts: 'book',
   cart: 'cart',
   languages: 'globe',
   'language-switcher': 'globe',

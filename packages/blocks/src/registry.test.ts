@@ -25,6 +25,8 @@ describe('BlockRegistry', () => {
       'button',
       'hero',
       'features',
+      'products',
+      'posts',
       'form',
       'language-switcher',
     ]);

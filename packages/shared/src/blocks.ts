@@ -18,7 +18,24 @@ export const visibilitySchema = z.object({
 export const blockStyleSchema = z.object({
   paddingY: z.enum(SPACING_SCALE).default('md'),
   paddingX: z.enum(SPACING_SCALE).default('md'),
+  /** Custom top/bottom spacing in px; wins over the spacing preset. */
+  paddingYpx: z.number().int().min(0).max(240).optional(),
+  /** Custom left/right spacing in px; wins over the spacing preset. */
+  paddingXpx: z.number().int().min(0).max(240).optional(),
   background: z.enum(BACKGROUNDS).default('none'),
+  /** Free background colour chosen in the editor; wins over `background`. */
+  backgroundColor: z
+    .string()
+    .regex(/^#[0-9a-f]{3,8}$/i)
+    .optional(),
+  /** Paint the background edge to edge, past the content column. */
+  backgroundFullWidth: z.boolean().optional(),
+  /** Where the block's text sits inside its column. */
+  textAlign: z.enum(['left', 'center', 'right']).optional(),
+  /** Moves the block's text horizontally (px) without changing layout flow. */
+  offsetX: z.number().int().min(-600).max(600).optional(),
+  /** Moves the block's text vertically (px) without changing layout flow. */
+  offsetY: z.number().int().min(-600).max(600).optional(),
   visibility: visibilitySchema.default({}),
   animation: z.enum(ANIMATIONS).default('none'),
 });

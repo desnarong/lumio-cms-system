@@ -14,6 +14,9 @@
 .lumio-block__inner {
   max-width: var(--layout-content-max-width);
   margin-inline: auto;
+  /* The editor's "move text" handle writes these offsets; 0px is a no-op. */
+  transform: translate(var(--block-offset-x, 0), var(--block-offset-y, 0));
+  text-align: var(--block-text-align, inherit);
 }
 
 .lumio-block__children {
@@ -46,6 +49,11 @@
 .lumio-block[data-background='brand'] {
   background: var(--color-primary);
   color: var(--color-on-primary);
+}
+
+/* A colour picked by hand covers the whole band, not just the text column. */
+.lumio-block[data-custom-background='true'] {
+  background: var(--block-background);
 }
 
 /* Text blocks set their own colour; inside a brand band they follow the band. */
@@ -591,7 +599,7 @@
 }
 
 .lumio-block:has(> .lumio-block__inner > .lumio-features[data-full-width='true']) {
-  padding: 0;
+  padding-inline: 0;
 }
 
 .lumio-block:has(> .lumio-block__inner > .lumio-features[data-full-width='true'])
@@ -694,14 +702,75 @@
   z-index: 1;
 }
 
-.lumio-features[data-text-background='true'] .lumio-features__body {
+.lumio-features[data-text-background-mode='panel'] .lumio-features__body {
   padding: var(--space-lg);
   background: var(--color-surface-hover);
   border-radius: var(--radius-md);
 }
 
-.lumio-features[data-text-overlay='true'][data-text-background='true'] .lumio-features__body {
+.lumio-features[data-text-overlay='true'][data-text-background-mode='panel']
+  .lumio-features__body {
   background: color-mix(in srgb, var(--color-overlay) 82%, transparent);
+}
+
+/* A band that reaches both card edges. */
+.lumio-features[data-text-background-mode='full'] .lumio-features__body {
+  padding-inline: var(--space-lg);
+  background: color-mix(in srgb, var(--color-surface-hover) 92%, transparent);
+  border-radius: 0;
+}
+
+.lumio-features[data-card-style='card'][data-text-background-mode='full']
+  .lumio-features__body,
+.lumio-features[data-text-overlay='true'][data-text-background-mode='full']
+  .lumio-features__body {
+  margin-inline: calc(var(--space-xl) * -1);
+  padding-inline: var(--space-xl);
+}
+
+.lumio-features[data-text-overlay='true'][data-text-background-mode='full']
+  .lumio-features__body {
+  background: color-mix(in srgb, var(--color-overlay) 82%, transparent);
+}
+
+/* Backdrop that fades out toward the top edge of the card, edge to edge. */
+.lumio-features[data-text-background-mode='fade'] .lumio-features__item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--color-overlay) 25%, var(--color-text)) 100%);
+  pointer-events: none;
+}
+
+.lumio-features[data-text-overlay='true'][data-text-background-mode='fade']
+  .lumio-features__item::after {
+  background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--color-overlay) 25%, var(--color-text)) 100%);
+}
+
+.lumio-features[data-text-background-mode='fade'] .lumio-features__body {
+  padding: var(--space-lg) var(--space-md);
+  color: var(--color-on-primary);
+  background: transparent;
+  border-radius: 0;
+}
+
+.lumio-features[data-text-background-mode='fade'] .lumio-features__title,
+.lumio-features[data-text-background-mode='fade'] .lumio-features__text {
+  color: var(--color-on-primary);
+}
+
+.lumio-features[data-text-flush-bottom='true'] .lumio-features__item {
+  padding-bottom: 0;
+}
+
+.lumio-features[data-text-flush-bottom='true'] .lumio-features__body {
+  padding-bottom: 0;
+}
+
+.lumio-features[data-text-overlay='true'][data-text-flush-bottom='true']
+  .lumio-features__item {
+  padding-bottom: 0;
 }
 
 .lumio-features[data-button-visibility='hover'] .lumio-features__button {
@@ -790,6 +859,18 @@
   margin: 0;
 }
 
+/* The picture must cover the whole card, whatever aspect it was uploaded at. */
+.lumio-features[data-text-overlay='true'] .lumio-features__media > .lumio-img {
+  width: 100%;
+  height: 100%;
+}
+
+.lumio-features[data-text-overlay='true'] .lumio-features__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .lumio-features[data-text-overlay='true']
   .lumio-features__item
   > :not(.lumio-features__media):not(.lumio-features__overlay) {
@@ -813,6 +894,22 @@
 
 .lumio-features__button {
   margin-top: var(--space-md);
+}
+
+/* On a picture the secondary button needs its own contrast; hovering keeps
+   white text instead of flipping to dark text on a white surface. */
+.lumio-features[data-text-overlay='true'] .lumio-features__button,
+.lumio-features[data-text-background-mode='fade'] .lumio-features__button {
+  color: var(--color-on-primary);
+  border-color: color-mix(in srgb, var(--color-on-primary) 65%, transparent);
+  background: color-mix(in srgb, var(--color-overlay) 45%, transparent);
+}
+
+.lumio-features[data-text-overlay='true'] .lumio-features__button:hover,
+.lumio-features[data-text-background-mode='fade'] .lumio-features__button:hover {
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
 }
 
 .lumio-features__overlay {
@@ -1118,4 +1215,182 @@
   margin: 0;
   color: var(--color-text-muted);
   font-size: var(--text-sm);
+}
+
+/* Products */
+.lumio-products__heading,
+.lumio-posts__heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl-line-height);
+}
+
+.lumio-products__subheading,
+.lumio-posts__subheading {
+  margin: var(--space-xs) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+}
+
+.lumio-products__grid,
+.lumio-posts__grid {
+  display: grid;
+  gap: var(--space-lg);
+  margin: var(--space-lg) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lumio-products[data-columns='2'] .lumio-products__grid,
+.lumio-posts[data-columns='2'] .lumio-posts__grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lumio-products[data-columns='3'] .lumio-products__grid,
+.lumio-posts[data-columns='3'] .lumio-posts__grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.lumio-products[data-columns='4'] .lumio-products__grid,
+.lumio-posts[data-columns='4'] .lumio-posts__grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.lumio-posts[data-columns='1'] .lumio-posts__grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.lumio-products__card,
+.lumio-posts__card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.lumio-products[data-card-style='card'] .lumio-products__card {
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.lumio-posts__card {
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.lumio-products__media,
+.lumio-posts__media {
+  position: relative;
+  background: var(--color-bg);
+}
+
+.lumio-products__media .lumio-img,
+.lumio-posts__media .lumio-img {
+  width: 100%;
+}
+
+.lumio-products__badge {
+  position: absolute;
+  inset-block-start: var(--space-sm);
+  inset-inline-start: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.lumio-products__body,
+.lumio-posts__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding: var(--space-lg);
+}
+
+.lumio-products__name,
+.lumio-posts__title {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: var(--text-lg-line-height);
+  font-weight: 600;
+}
+
+.lumio-products__description,
+.lumio-posts__excerpt {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm-line-height);
+}
+
+.lumio-products__price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  margin-block-start: var(--space-xs);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.lumio-products__compare {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 400;
+}
+
+.lumio-products__soldout {
+  margin-block-start: var(--space-xs);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.lumio-products__button,
+.lumio-posts__link {
+  margin-block-start: auto;
+  padding-block-start: var(--space-sm);
+}
+
+.lumio-products__card[data-sold-out='true'] .lumio-products__media {
+  opacity: 0.55;
+}
+
+.lumio-posts__category {
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lumio-posts__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.lumio-posts__link {
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lumio-posts__link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 767px) {
+  .lumio-products__grid,
+  .lumio-posts__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

@@ -27,11 +27,13 @@ const readSecret = (name: string): string => {
 
 /** Auth settings come from the environment (see .env.example). */
 export const getAuthConfig = (): AuthConfig => {
-  const refreshTtl = process.env.JWT_REFRESH_TTL ?? '24h';
+  // A working day should not need a fresh sign-in: the access token lasts an
+  // hour and the refresh cookie lasts a month (rotated on every refresh).
+  const refreshTtl = process.env.JWT_REFRESH_TTL ?? '30d';
   return {
     accessSecret: readSecret('JWT_ACCESS_SECRET'),
     refreshSecret: readSecret('JWT_REFRESH_SECRET'),
-    accessTtl: process.env.JWT_ACCESS_TTL ?? '15m',
+    accessTtl: process.env.JWT_ACCESS_TTL ?? '1h',
     refreshTtl,
     refreshCookieName: 'lumio_refresh',
     refreshCookieMaxAgeMs: ttlToMs(refreshTtl),

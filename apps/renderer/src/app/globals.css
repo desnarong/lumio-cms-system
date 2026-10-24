@@ -342,6 +342,15 @@ body {
   padding-block: var(--space-xl);
 }
 
+/* A block with a background fills the viewport edge to edge, while its own
+   inner column keeps the text aligned with the rest of the page. */
+.site-article > .lumio-block[data-background]:not([data-background='none']):not([data-background-full='false']),
+.site-article > .lumio-block[data-custom-background='true']:not([data-background-full='false']) {
+  width: 100vw;
+  max-width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+
 /* A full-bleed hero must start right under the header, not inside the column. */
 .site-article:has(> .lumio-block:first-child .lumio-hero--overlay) {
   padding-top: 0;

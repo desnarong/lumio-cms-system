@@ -6,6 +6,8 @@ import { heroBlock } from './blocks/hero/index.js';
 import { imageBlock } from './blocks/image/index.js';
 import { languageSwitcherBlock } from './blocks/language-switcher/index.js';
 import { paragraphBlock } from './blocks/paragraph/index.js';
+import { postsBlock } from './blocks/posts/index.js';
+import { productsBlock } from './blocks/products/index.js';
 import { registry } from './registry.js';
 import type { AnyBlockDefinition } from './types.js';
 
@@ -17,6 +19,8 @@ export const builtinBlocks: AnyBlockDefinition[] = [
   buttonBlock as unknown as AnyBlockDefinition,
   heroBlock as unknown as AnyBlockDefinition,
   featuresBlock as unknown as AnyBlockDefinition,
+  productsBlock as unknown as AnyBlockDefinition,
+  postsBlock as unknown as AnyBlockDefinition,
   formBlock as unknown as AnyBlockDefinition,
   languageSwitcherBlock as unknown as AnyBlockDefinition,
 ];

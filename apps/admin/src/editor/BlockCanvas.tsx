@@ -7,6 +7,7 @@ import {
   type DragEvent as ReactDragEvent,
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -36,6 +37,8 @@ export interface BlockCanvasProps {
   onTextChange: (id: string, path: string, value: unknown) => void;
   /** Stores inline colour/size runs for one text path of a block. */
   onTextStyle: (id: string, path: string, runs: TextRun[]) => void;
+  /** Moves the block's text by a pixel offset, as one undo step. */
+  onTextOffset?: (id: string, offsetX: number, offsetY: number) => void;
   onInsert: (type: string, index: number) => void;
   onDuplicate: (id: string) => void;
   onRemove: (id: string) => void;
@@ -67,6 +70,7 @@ interface BlockRegionProps {
   onSelect: () => void;
   onTextChange: (path: string, value: unknown) => void;
   onTextStyle: (path: string, runs: TextRun[]) => void;
+  onTextOffset?: (offsetX: number, offsetY: number) => void;
   onDuplicate: () => void;
   onRemove: () => void;
   onToggleVisibility: () => void;
@@ -113,6 +117,7 @@ const BlockRegion = ({
   onSelect,
   onTextChange,
   onTextStyle,
+  onTextOffset,
   onDuplicate,
   onRemove,
   onToggleVisibility,
@@ -136,6 +141,62 @@ const BlockRegion = ({
   const [customColor, setCustomColor] = useState('#17469d');
   const [customSize, setCustomSize] = useState('24');
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const textDragRef = useRef<{
+    startX: number;
+    startY: number;
+    baseX: number;
+    baseY: number;
+    x: number;
+    y: number;
+    scale: number;
+  } | null>(null);
+
+  const innerElement = (): HTMLElement | null =>
+    contentRef.current?.querySelector<HTMLElement>('.lumio-block__inner') ?? null;
+
+  /** Drags the text of this block, previewing the move before committing it once. */
+  const startTextDrag = (event: ReactPointerEvent<HTMLButtonElement>): void => {
+    if (!onTextOffset || event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    onSelect();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    textDragRef.current = {
+      startX: event.clientX,
+      startY: event.clientY,
+      baseX: block.style.offsetX ?? 0,
+      baseY: block.style.offsetY ?? 0,
+      x: block.style.offsetX ?? 0,
+      y: block.style.offsetY ?? 0,
+      scale: previewScale || 1,
+    };
+  };
+
+  const moveText = (event: ReactPointerEvent<HTMLButtonElement>): void => {
+    const drag = textDragRef.current;
+    if (!drag) return;
+    event.preventDefault();
+    drag.x = Math.min(600, Math.max(-600, Math.round(drag.baseX + (event.clientX - drag.startX) / drag.scale)));
+    drag.y = Math.min(600, Math.max(-600, Math.round(drag.baseY + (event.clientY - drag.startY) / drag.scale)));
+    const inner = innerElement();
+    if (inner) inner.style.transform = `translate(${drag.x}px, ${drag.y}px)`;
+  };
+
+  const endTextDrag = (event: ReactPointerEvent<HTMLButtonElement>): void => {
+    const drag = textDragRef.current;
+    if (!drag) return;
+    textDragRef.current = null;
+    const inner = innerElement();
+    if (inner) inner.style.transform = '';
+    try {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    } catch {
+      // The pointer may already be released; nothing to clean up.
+    }
+    if (drag.x !== drag.baseX || drag.y !== drag.baseY) {
+      onTextOffset?.(drag.x, drag.y);
+    }
+  };
 
   const readSelection = (): void => {
     const root = contentRef.current;
@@ -464,6 +525,20 @@ const BlockRegion = ({
         >
           <Icon name="grip" size={14} />
         </span>
+        {onTextOffset ? (
+          <button
+            type="button"
+            className="editor-block__handle editor-block__move"
+            aria-label={t('editor.moveText', { name: label })}
+            title={t('editor.moveTextTitle')}
+            onPointerDown={startTextDrag}
+            onPointerMove={moveText}
+            onPointerUp={endTextDrag}
+            onPointerCancel={endTextDrag}
+          >
+            <Icon name="move" size={14} />
+          </button>
+        ) : null}
         <IconButton
           size="sm"
           aria-label={t('editor.duplicateBlock', { name: label })}
@@ -540,6 +615,7 @@ export const BlockCanvas = ({
   onSelect,
   onTextChange,
   onTextStyle,
+  onTextOffset,
   onInsert,
   onDuplicate,
   onRemove,
@@ -750,6 +826,9 @@ export const BlockCanvas = ({
                   onSelect={() => onSelect(block.id)}
                   onTextChange={(path, value) => onTextChange(block.id, path, value)}
                   onTextStyle={(path, runs) => onTextStyle(block.id, path, runs)}
+                  {...(onTextOffset
+                    ? { onTextOffset: (x, y) => onTextOffset(block.id, x, y) }
+                    : {})}
                   onDuplicate={() => onDuplicate(block.id)}
                   onRemove={() => onRemove(block.id)}
                   onToggleVisibility={() => onToggleVisibility(block.id)}

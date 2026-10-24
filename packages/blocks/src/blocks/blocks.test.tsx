@@ -67,6 +67,8 @@ describe('starter blocks', () => {
       'button',
       'hero',
       'features',
+      'products',
+      'posts',
       'form',
       'language-switcher',
     ]);
@@ -77,13 +79,24 @@ describe('starter blocks', () => {
       'interactive',
       'landing',
       'landing',
+      'landing',
+      'dynamic',
       'interactive',
       'interactive',
     ]);
   });
 
   it('uses real Thai copy in every block that carries text', () => {
-    for (const type of ['heading', 'paragraph', 'button', 'hero', 'features', 'form']) {
+    for (const type of [
+      'heading',
+      'paragraph',
+      'button',
+      'hero',
+      'features',
+      'products',
+      'posts',
+      'form',
+    ]) {
       expect(JSON.stringify(byType(type).defaults)).toMatch(/[\u0E00-\u0E7F]/);
     }
   });
@@ -325,12 +338,15 @@ describe('features block', () => {
       fullWidth: true,
       cardHeight: 420,
       textBackground: true,
+      textFlushBottom: true,
       buttonVisibility: 'hover',
       items: [{ iconName: 'sun', iconSize: 64, title: 'ไอคอนใหญ่', description: 'ทดสอบ' }],
     });
     expect(html).toContain('data-full-width="true"');
     expect(html).toContain('--feature-card-height:420px');
     expect(html).toContain('data-text-background="true"');
+    expect(html).toContain('data-text-flush-bottom="true"');
+    expect(html).toContain('data-text-background-mode="panel"');
     expect(html).toContain('data-button-visibility="hover"');
     expect(html).toContain('--feature-icon-size:64px');
   });
@@ -542,5 +558,44 @@ describe('language switcher block', () => {
     );
     expect(html).not.toContain('ยังมีภาษาที่เผยแพร่แล้วเพียงภาษาเดียว');
     expect(html).not.toContain('lumio-language');
+  });
+});
+
+describe('products block', () => {
+  it('renders product cards with price, badge and a call to action', () => {
+    const html = render('products');
+    expect(html).toContain('lumio-products__grid');
+    expect(html).toContain('กาแฟคั่วอ่อน เอสเปรสโซ่');
+    expect(html).toContain('lumio-products__price');
+    expect(html).toContain('ขายดี');
+    expect(html).toContain('ดูสินค้า');
+  });
+
+  it('shows sold-out instead of a price when the product is unavailable', () => {
+    const html = render('products', {
+      items: [
+        {
+          name: 'กาแฟหมดสต็อก',
+          description: '',
+          price: 100,
+          currency: '฿',
+          badge: '',
+          link: '/shop',
+          buttonLabel: 'ดูสินค้า',
+          soldOut: true,
+        },
+      ],
+    });
+    expect(html).toContain('สินค้าหมด');
+  });
+});
+
+describe('posts block', () => {
+  it('renders article cards with category, title and date', () => {
+    const html = render('posts');
+    expect(html).toContain('lumio-posts__grid');
+    expect(html).toContain('ความรู้เรื่องกาแฟ');
+    expect(html).toContain('คั่วอ่อน คั่วกลาง คั่วเข้ม ต่างกันอย่างไร');
+    expect(html).toContain('12 ต.ค. 2026');
   });
 });

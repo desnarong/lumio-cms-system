@@ -9,5 +9,7 @@ export * from './blocks/image/index.js';
 export * from './blocks/button/index.js';
 export * from './blocks/hero/index.js';
 export * from './blocks/features/index.js';
+export * from './blocks/products/index.js';
+export * from './blocks/posts/index.js';
 export * from './blocks/form/index.js';
 export * from './blocks/language-switcher/index.js';

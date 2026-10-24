@@ -62,6 +62,9 @@ export const featureItemSchema = z.object({
   buttonLabel: z.string().max(60).default(''),
 });
 
+export const FEATURE_TEXT_BACKGROUNDS = ['none', 'panel', 'full', 'fade'] as const;
+export type FeatureTextBackground = (typeof FEATURE_TEXT_BACKGROUNDS)[number];
+
 export const featuresPropsSchema = z.object({
   heading: z.string().default('ทำไมลูกค้าถึงเลือกเรา'),
   subheading: z.string().default('สามสิ่งที่เราตั้งใจทำให้ดีที่สุดในทุกออเดอร์'),
@@ -77,8 +80,10 @@ export const featuresPropsSchema = z.object({
   fullWidth: z.boolean().default(false),
   /** Minimum card height in pixels; `0` follows the content. */
   cardHeight: z.number().int().min(0).max(1200).default(0),
-  /** Put a panel behind the icon, title and description. */
-  textBackground: z.boolean().default(false),
+  /** Panel, full-width band or top-fading backdrop behind the text. */
+  textBackground: z.union([z.enum(FEATURE_TEXT_BACKGROUNDS), z.boolean()]).default('none'),
+  /** Drop the card's bottom padding so the text sits on the bottom edge. */
+  textFlushBottom: z.boolean().default(false),
   /** Keep the call to action hidden until the visitor hovers the card. */
   buttonVisibility: z.enum(['always', 'hover']).default('always'),
   /** Space between cards; `none` joins them edge to edge. */

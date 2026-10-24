@@ -386,6 +386,12 @@ const ICONS = {
     </>
   ),
   grip: <path d="M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01" strokeWidth={2.4} />,
+  move: (
+    <>
+      <path d="M12 3v18M3 12h18" />
+      <path d="m9 6 3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3" />
+    </>
+  ),
   'more-vertical': <path d="M12 5h.01M12 12h.01M12 19h.01" strokeWidth={2.4} />,
   inbox: (
     <>

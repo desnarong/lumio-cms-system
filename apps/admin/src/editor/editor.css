@@ -309,6 +309,12 @@
   outline-offset: 1px;
 }
 
+/* The move button drags the block's text, so the page must not scroll under it. */
+.editor-block__move {
+  cursor: move;
+  touch-action: none;
+}
+
 .editor-block__content .lumio-editable[contenteditable='true'] {
   border-radius: var(--radius-sm);
   transition: background var(--motion-duration-fast) var(--motion-ease);

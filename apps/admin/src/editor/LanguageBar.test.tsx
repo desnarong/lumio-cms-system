@@ -58,7 +58,7 @@ describe('LanguageBarView', () => {
 
   it('keeps a single primary button when the create dialog is open', () => {
     const html = render({ creating: 'en' });
-    expect(html).toContain('สร้างคำแปลEnglish');
+    expect(html).toContain('สร้างคำแปล English');
     expect(html).toContain('ชื่อลิงก์');
     // Only "สร้างคำแปล" is primary; ยกเลิก stays a ghost button (04-ux.md 4.5).
     expect(html.match(/ui-button--primary/g) ?? []).toHaveLength(1);
