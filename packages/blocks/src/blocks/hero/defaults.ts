@@ -5,6 +5,8 @@ export const heroDefaults: BlockData<HeroProps> = {
   version: 1,
   props: {
     layout: 'split-right',
+    headingSize: 'md',
+    contentWidth: 'normal',
     heading: 'กาแฟคั่วสดจากดอย ส่งตรงถึงบ้านคุณ',
     subheading: 'เลือกเมล็ดกาแฟจากสวนทางภาคเหนือ คั่วใหม่ทุกสัปดาห์ พร้อมส่งทั่วประเทศ',
     buttons: [
@@ -12,6 +14,13 @@ export const heroDefaults: BlockData<HeroProps> = {
       { label: 'เรื่องราวของเรา', href: '/about', variant: 'ghost', external: false },
     ],
     image: null,
+    heightMode: 'cover',
+    contentAlign: 'bottom',
+    backgroundZoom: 100,
+    backgroundX: 50,
+    backgroundY: 50,
+    scrimOpacity: 100,
+    foregrounds: [],
   },
   style: { ...defaultBlockStyle, paddingY: 'xl' },
 };

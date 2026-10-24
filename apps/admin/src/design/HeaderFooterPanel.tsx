@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import {
   createBlockNode,
   duplicateBlockById,
@@ -12,20 +12,30 @@ import {
   setBlockVisibility,
   writeBlockAt,
 } from '@lumio/blocks';
-import type { BlockEditorMode, BlockNode, BlockTree, GlobalBlockKind } from '@lumio/shared';
+import type {
+  BlockEditorMode,
+  BlockNode,
+  BlockTree,
+  GlobalBlockKind,
+  SiteChrome,
+} from '@lumio/shared';
 import {
   Icon,
   Button,
   EmptyState,
+  ImagePicker,
   Select,
   Skeleton,
   Tabs,
+  TextField,
   useT,
+  useToast,
   useUiLocale,
   type MessageKey,
   type UiLocale,
 } from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
+import { useMediaPicker } from '@lumio/blocks';
 import { BlockInspector } from '../editor/BlockInspector.js';
 import type { DesignApi } from './api.js';
 import { useGlobalBlocks } from './hooks.js';
@@ -177,9 +187,251 @@ const BlocksEditor = ({ blocks, onChange }: BlocksEditorProps) => {
   );
 };
 
+const HEADER_HEIGHT_MAX = 200;
+const LOGO_HEIGHT_MAX = 160;
+
+/** Size controls that sit above the header blocks (docs/design/08). */
+const HeaderChrome = ({ api }: { api: DesignApi }) => {
+  const t = useT();
+  const toast = useToast();
+  const [height, setHeight] = useState(0);
+  const [logoHeight, setLogoHeight] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    api
+      .getChrome()
+      .then((chrome) => {
+        if (active) {
+          setHeight(chrome.headerHeight);
+          setLogoHeight(chrome.logoHeight);
+        }
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [api]);
+
+  if (loading) return <Skeleton shape="block" height={96} />;
+
+  const save = async (): Promise<void> => {
+    setSaving(true);
+    try {
+      const chrome = await api.updateChrome({ headerHeight: height, logoHeight });
+      setHeight(chrome.headerHeight);
+      setLogoHeight(chrome.logoHeight);
+      toast.push({ tone: 'success', title: t('design.saved') });
+    } catch (error) {
+      toast.push({
+        tone: 'danger',
+        title: error instanceof Error ? error.message : t('common.retry'),
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="design-panel">
+      <TextField
+        label={t('headerFooter.height')}
+        hint={t('headerFooter.heightHint')}
+        type="number"
+        min={0}
+        max={HEADER_HEIGHT_MAX}
+        value={String(height)}
+        onChange={(event) =>
+          setHeight(
+            Math.min(HEADER_HEIGHT_MAX, Math.max(0, Math.round(Number(event.target.value) || 0))),
+          )
+        }
+      />
+      <TextField
+        label={t('headerFooter.logoHeight')}
+        hint={t('headerFooter.logoHeightHint')}
+        type="number"
+        min={0}
+        max={LOGO_HEIGHT_MAX}
+        value={String(logoHeight)}
+        onChange={(event) =>
+          setLogoHeight(
+            Math.min(LOGO_HEIGHT_MAX, Math.max(0, Math.round(Number(event.target.value) || 0))),
+          )
+        }
+      />
+      <div className="design-actions">
+        <Button variant="primary" disabled={saving} onClick={() => void save()}>
+          {saving ? t('design.savingDots') : t('headerFooter.saveHeight')}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+
+const FOOTER_BACKGROUNDS = [
+  { value: 'none', label: 'ไม่มีพื้นหลัง' },
+  { value: 'surface', label: 'พื้นผิว' },
+  { value: 'muted', label: 'เทาอ่อน' },
+  { value: 'brand', label: 'สีแบรนด์' },
+] as const;
+
+type ChromeLink = { label: string; href: string };
+
+/** Footer band, social links and legal links, all stored in the site chrome. */
+const FooterChrome = ({ api }: { api: DesignApi }) => {
+  const t = useT();
+  const toast = useToast();
+  const mediaPicker = useMediaPicker();
+  const [chrome, setChrome] = useState<SiteChrome | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    api
+      .getChrome()
+      .then((value) => {
+        if (active) setChrome(value);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [api]);
+
+  if (!chrome) return <Skeleton shape="block" height={160} />;
+
+  const patch = (value: Partial<SiteChrome>): void => setChrome({ ...chrome, ...value });
+
+  const updateLink = (
+    key: 'socialLinks' | 'legalLinks',
+    index: number,
+    value: Partial<ChromeLink>,
+  ): void =>
+    patch({
+      [key]: chrome[key].map((item, itemIndex) =>
+        itemIndex === index ? { ...item, ...value } : item,
+      ),
+    } as Partial<SiteChrome>);
+
+  const addLink = (key: 'socialLinks' | 'legalLinks'): void =>
+    patch({ [key]: [...chrome[key], { label: 'Facebook', href: '' }] } as Partial<SiteChrome>);
+
+  const removeLink = (key: 'socialLinks' | 'legalLinks', index: number): void =>
+    patch({ [key]: chrome[key].filter((_, itemIndex) => itemIndex !== index) } as Partial<SiteChrome>);
+
+  const save = async (): Promise<void> => {
+    setSaving(true);
+    try {
+      const saved = await api.updateChrome(chrome);
+      setChrome(saved);
+      toast.push({ tone: 'success', title: t('design.saved') });
+    } catch (error) {
+      toast.push({
+        tone: 'danger',
+        title: error instanceof Error ? error.message : t('common.retry'),
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const linkFields = (key: 'socialLinks' | 'legalLinks', addLabel: string): ReactNode => (
+    <>
+      {chrome[key].map((item, index) => (
+        <div className="hero-float-editor" key={index}>
+          <TextField
+            label={t('headerFooter.linkLabel')}
+            value={item.label}
+            onChange={(event) => updateLink(key, index, { label: event.target.value })}
+          />
+          <TextField
+            label={t('headerFooter.linkHref')}
+            value={item.href}
+            onChange={(event) => updateLink(key, index, { href: event.target.value })}
+          />
+          <Button variant="secondary" onClick={() => removeLink(key, index)}>
+            {t('headerFooter.removeLink')}
+          </Button>
+        </div>
+      ))}
+      <Button variant="secondary" onClick={() => addLink(key)}>
+        {addLabel}
+      </Button>
+    </>
+  );
+
+  return (
+    <div className="design-panel">
+      <Select
+        label={t('headerFooter.footerBackground')}
+        value={chrome.footerBackground}
+        options={[...FOOTER_BACKGROUNDS]}
+        onChange={(event) =>
+          patch({ footerBackground: event.target.value as SiteChrome['footerBackground'] })
+        }
+      />
+      <ImagePicker
+        label={t('headerFooter.footerImage')}
+        value={chrome.footerBackgroundImage || null}
+        alt=""
+        disabled={!mediaPicker}
+        hint={mediaPicker ? t('headerFooter.footerImageHint') : t('headerFooter.noMedia')}
+        onPick={() => {
+          void mediaPicker
+            ?.pick({ aspect: 'wide' })
+            .then((picked) => {
+              if (picked) patch({ footerBackgroundImage: picked.url });
+            })
+            .catch(() => undefined);
+        }}
+        onChange={(url) => patch({ footerBackgroundImage: url ?? '' })}
+      />
+      <TextField
+        label={t('headerFooter.footerOverlay')}
+        type="number"
+        min={0}
+        max={100}
+        value={String(chrome.footerOverlay)}
+        onChange={(event) =>
+          patch({
+            footerOverlay: Math.min(100, Math.max(0, Math.round(Number(event.target.value) || 0))),
+          })
+        }
+      />
+      <TextField
+        label={t('headerFooter.copyright')}
+        hint={t('headerFooter.copyrightHint')}
+        value={chrome.copyright}
+        onChange={(event) => patch({ copyright: event.target.value })}
+      />
+      <p className="lumio-panel-section__title">{t('headerFooter.socialTitle')}</p>
+      {linkFields('socialLinks', t('headerFooter.addSocial'))}
+      <p className="lumio-panel-section__title">{t('headerFooter.legalTitle')}</p>
+      {linkFields('legalLinks', t('headerFooter.addLegal'))}
+      <div className="design-actions">
+        <Button variant="primary" disabled={saving} onClick={() => void save()}>
+          {saving ? t('design.savingDots') : t('headerFooter.saveFooter')}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const KindEditor = ({ api, kind }: { api: DesignApi; kind: GlobalBlockKind }) => {
   const t = useT();
+  const toast = useToast();
   const globals = useGlobalBlocks(api, kind);
+
+  const save = async (): Promise<void> => {
+    if (await globals.save()) toast.push({ tone: 'success', title: t('design.saved') });
+  };
 
   if (globals.loading) {
     return <Skeleton shape="block" height={260} />;
@@ -205,7 +457,7 @@ const KindEditor = ({ api, kind }: { api: DesignApi; kind: GlobalBlockKind }) =>
       <p className="design-hint">{t('headerFooter.hint')}</p>
       <BlocksEditor blocks={globals.blocks} onChange={globals.setBlocks} />
       <div className="design-actions">
-        <Button variant="primary" disabled={globals.saving} onClick={() => void globals.save()}>
+        <Button variant="primary" disabled={globals.saving} onClick={() => void save()}>
           {globals.saving
             ? t('design.savingDots')
             : kind === 'header'
@@ -237,6 +489,7 @@ export const HeaderFooterPanel = ({ api }: { api: DesignApi }) => {
         value={kind}
         onChange={(id) => setKind(id as GlobalBlockKind)}
       />
+      {kind === 'header' ? <HeaderChrome api={api} /> : <FooterChrome api={api} />}
       <KindEditor api={api} kind={kind} />
     </div>
   );

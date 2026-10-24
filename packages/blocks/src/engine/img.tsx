@@ -1,6 +1,6 @@
 import { cn } from '@lumio/ui/cn';
 
-export type ImageAspect = 'auto' | 'square' | 'wide' | 'video';
+export type ImageAspect = 'auto' | 'square' | 'wide' | 'photo' | 'video';
 
 export interface ImgProps {
   /** Resolved media URL. When absent a neutral placeholder keeps the layout stable. */

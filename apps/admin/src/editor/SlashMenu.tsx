@@ -3,50 +3,55 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
 import { filterBlockCatalog, listBlockCatalog } from '@lumio/blocks';
 import type { SectionTemplate } from '@lumio/shared';
-import { Icon, useT, useUiLocale, type IconName } from '@lumio/ui';
+import { Icon, IconButton, useT, useUiLocale, type IconName } from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 
 /** Glyph per block icon name; a plain square stands in for anything unmapped. */
 const BLOCK_ICONS: Record<string, IconName> = {
-  Heading: 'type',
-  Paragraph: 'align-left',
-  Image: 'image',
-  Button: 'link',
-  Layout: 'layout',
-  Grid: 'grid',
-  Hero: 'layout',
-  Features: 'grid',
-  Gallery: 'image',
-  Quote: 'book',
-  CTA: 'zap',
-  Testimonials: 'star',
-  Pricing: 'tag',
-  FAQ: 'info',
-  Contact: 'mail',
-  Form: 'inbox',
-  Video: 'play',
-  Map: 'map-pin',
-  Team: 'users',
-  Stats: 'chart-bar',
-  Logos: 'layers',
-  Newsletter: 'send',
-  Product: 'package',
-  Cart: 'cart',
-  Languages: 'globe',
-  Footer: 'layout',
-  Header: 'layout',
-  Countdown: 'clock',
-  Menu: 'list',
-  Slider: 'layers',
+  heading: 'type',
+  paragraph: 'align-left',
+  image: 'image',
+  button: 'link',
+  layout: 'layout',
+  grid: 'grid',
+  hero: 'layout',
+  features: 'grid',
+  gallery: 'image',
+  quote: 'book',
+  cta: 'zap',
+  testimonials: 'star',
+  pricing: 'tag',
+  faq: 'info',
+  contact: 'mail',
+  form: 'inbox',
+  video: 'play',
+  map: 'map-pin',
+  team: 'users',
+  stats: 'chart-bar',
+  logos: 'layers',
+  newsletter: 'send',
+  product: 'package',
+  cart: 'cart',
+  languages: 'globe',
+  'language-switcher': 'globe',
+  footer: 'layout',
+  header: 'layout',
+  countdown: 'clock',
+  menu: 'list',
+  slider: 'layers',
 };
 
 export interface SlashMenuProps {
   onPick: (type: string) => void;
   onClose: () => void;
+  /** Viewport position of the row that opened the panel. */
+  top?: number;
+  left?: number;
   /** Sections the user saved from this site (docs/design/07-blocks.md 7.2). */
   sections?: SectionTemplate[];
   onPickSection?: (sectionId: string) => void;
@@ -60,7 +65,14 @@ const matches = (label: string, needle: string): boolean =>
   needle.length === 0 || label.toLowerCase().includes(needle);
 
 /** Notion-style `/` menu: search, arrow keys, Enter to insert (docs/design/04-ux.md 4.2). */
-export const SlashMenu = ({ onPick, onClose, sections = [], onPickSection }: SlashMenuProps) => {
+export const SlashMenu = ({
+  onPick,
+  onClose,
+  top = 12,
+  left = 12,
+  sections = [],
+  onPickSection,
+}: SlashMenuProps) => {
   const t = useT();
   const locale = useUiLocale();
   const [query, setQuery] = useState('');
@@ -101,6 +113,17 @@ export const SlashMenu = ({ onPick, onClose, sections = [], onPickSection }: Sla
     inputRef.current?.focus();
   }, []);
 
+  // Escape must close the panel even after the pointer moved focus away.
+  useEffect(() => {
+    const onKey = (event: globalThis.KeyboardEvent): void => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
   useEffect(() => {
     setActiveIndex(0);
   }, [query]);
@@ -112,11 +135,6 @@ export const SlashMenu = ({ onPick, onClose, sections = [], onPickSection }: Sla
   };
 
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>): void => {
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      onClose();
-      return;
-    }
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       setActiveIndex((current) => (choices.length === 0 ? 0 : (current + 1) % choices.length));
@@ -136,8 +154,27 @@ export const SlashMenu = ({ onPick, onClose, sections = [], onPickSection }: Sla
   };
 
   return (
-    <div className="editor-slash" role="dialog" aria-label={t('editor.slash.label')}>
-      <input
+    <div className="editor-slash-layer" onClick={onClose}>
+      <div
+        className="editor-slash"
+        role="dialog"
+        aria-modal="true"
+        aria-label={t('editor.slash.label')}
+        style={{ '--slash-top': `${top}px`, '--slash-left': `${left}px` } as CSSProperties}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <header className="editor-slash__header">
+          <span className="editor-slash__title">{t('editor.slash.label')}</span>
+          <IconButton
+            size="sm"
+            aria-label={t('common.close')}
+            title={t('common.close')}
+            onClick={onClose}
+          >
+            <Icon name="close" size={16} />
+          </IconButton>
+        </header>
+        <input
         ref={inputRef}
         className="editor-slash__input"
         type="search"
@@ -212,6 +249,7 @@ export const SlashMenu = ({ onPick, onClose, sections = [], onPickSection }: Sla
             </ul>
           </section>
         ))}
+      </div>
       </div>
     </div>
   );

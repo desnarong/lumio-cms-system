@@ -88,6 +88,21 @@ describe('buildMetadata', () => {
       follow: false,
     });
   });
+
+  it('uses the uploaded favicon as the browser-tab icon', () => {
+    const page: PublicPage = {
+      ...pageOf('home'),
+      site: { ...demoSite, faviconUrl: 'https://cdn.example.com/icon.png' },
+    };
+    expect(buildMetadata(page, 'baandoi.example.com').icons).toEqual({
+      icon: 'https://cdn.example.com/icon.png',
+      apple: 'https://cdn.example.com/icon.png',
+    });
+  });
+
+  it('leaves the icon unset when the site has no favicon', () => {
+    expect(buildMetadata(pageOf('home'), 'baandoi.example.com').icons).toBeUndefined();
+  });
 });
 
 describe('buildPageSeo', () => {

@@ -57,6 +57,17 @@ const pickEnum = <T extends string>(value: unknown, allowed: readonly T[], fallb
 const pickText = (value: unknown, fallback: string): string =>
   typeof value === 'string' && value.trim().length > 0 ? value.trim() : fallback;
 
+/**
+ * Stored tokens used to contain whole stacks such as
+ * `"'Noto Sans Thai', 'Inter', sans-serif"`. Keep only the chosen family so the
+ * panel can match it and `fontStack` does not wrap the whole stack in quotes.
+ */
+const pickFont = (value: unknown, fallback: string): string => {
+  if (typeof value !== 'string') return fallback;
+  const first = value.split(',')[0]?.trim().replace(/^['"]|['"]$/g, '') ?? '';
+  return first.length > 0 ? first : fallback;
+};
+
 const pickColor = (value: unknown, fallback: string): string => {
   const parsed = hexColorSchema.safeParse(value);
   return parsed.success ? parsed.data.toUpperCase() : fallback;
@@ -79,8 +90,8 @@ export const normalizeThemeTokens = (raw: unknown): ThemeTokens => {
       neutral: pickText(colors.neutral ?? record.colorNeutral, DEFAULT_THEME_TOKENS.colors.neutral),
     },
     fonts: {
-      heading: pickText(fonts.heading ?? record.fontHeading, DEFAULT_THEME_TOKENS.fonts.heading),
-      body: pickText(fonts.body ?? record.fontBody, DEFAULT_THEME_TOKENS.fonts.body),
+      heading: pickFont(fonts.heading ?? record.fontHeading, DEFAULT_THEME_TOKENS.fonts.heading),
+      body: pickFont(fonts.body ?? record.fontBody, DEFAULT_THEME_TOKENS.fonts.body),
     },
     radius: pickEnum(record.radius, THEME_RADIUS_SCALES, DEFAULT_THEME_TOKENS.radius),
     button: pickEnum(record.button, THEME_BUTTON_STYLES, DEFAULT_THEME_TOKENS.button),

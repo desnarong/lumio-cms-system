@@ -8,6 +8,8 @@ export interface PageSeoInput {
   /** `hreflang` map (locale → absolute URL) for multi-language pages (design 17.4). */
   languages?: Record<string, string>;
   ogImage?: string;
+  /** Square site icon for the browser tab. */
+  favicon?: string | null;
   type?: 'website' | 'article';
   noindex?: boolean;
 }
@@ -22,6 +24,8 @@ export interface PageSeo {
   description?: string;
   alternates?: { canonical: string; languages?: Record<string, string> };
   robots?: { index: boolean; follow: boolean };
+  /** Browser-tab icons; `apple` is the home-screen shortcut on iOS. */
+  icons?: { icon: string; apple?: string };
   openGraph: {
     title: string;
     description?: string;
@@ -52,6 +56,9 @@ export const buildPageSeo = (input: PageSeoInput): PageSeo => {
         }
       : undefined,
     ...(input.noindex ? { robots: { index: false, follow: false } } : {}),
+    ...(input.favicon
+      ? { icons: { icon: input.favicon, apple: input.favicon } }
+      : {}),
     openGraph: {
       title: input.title,
       description: input.description,

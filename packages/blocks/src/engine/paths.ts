@@ -46,5 +46,11 @@ export const setPath = <T>(source: T, path: string, value: unknown): T => {
 };
 
 /** Returns a new block node with one panel change applied. */
-export const setBlockPath = (block: BlockNode, path: string, value: unknown): BlockNode =>
-  setPath(block, path, value);
+export const setBlockPath = (block: BlockNode, path: string, value: unknown): BlockNode => {
+  const next = setPath(block, path, value);
+  // Editing the text itself invalidates the character offsets of its runs.
+  if (!next.textStyles || !(path in next.textStyles)) return next;
+  const textStyles = { ...next.textStyles };
+  delete textStyles[path];
+  return { ...next, textStyles };
+};

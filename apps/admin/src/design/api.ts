@@ -9,6 +9,8 @@ import type {
   MenuDetail,
   MenuLocation,
   SectionTemplate,
+  SiteChrome,
+  SiteChromePatch,
   TemplateSummary,
   ThemeTokensPatch,
   UpdateMenuInput,
@@ -28,6 +30,9 @@ export interface DesignApi {
   updateMenu(location: MenuLocation, input: UpdateMenuInput): Promise<MenuDetail>;
   getGlobalBlocks(): Promise<GlobalBlocks>;
   updateGlobalBlock(kind: GlobalBlockKind, blocks: BlockTree): Promise<GlobalBlocks>;
+  /** Height of the site header in pixels; `0` fits the content. */
+  getChrome(): Promise<SiteChrome>;
+  updateChrome(patch: SiteChromePatch): Promise<SiteChrome>;
   listSections(): Promise<SectionTemplate[]>;
   createSection(input: CreateSectionTemplateInput): Promise<SectionTemplate>;
   renameSection(id: string, input: UpdateSectionTemplateInput): Promise<SectionTemplate>;
@@ -114,6 +119,9 @@ export const createHttpDesignApi = ({
         method: 'PUT',
         body: JSON.stringify({ blocks }),
       }),
+    getChrome: () => request<SiteChrome>('/design/chrome'),
+    updateChrome: (patch) =>
+      request<SiteChrome>('/design/chrome', { method: 'PATCH', body: JSON.stringify(patch) }),
 
     listSections: () => request<SectionTemplate[]>('/section-templates'),
     createSection: (input) =>

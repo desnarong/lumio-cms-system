@@ -17,6 +17,7 @@ import type {
 } from '@lumio/shared';
 import { FEATURE_FLAG_KEYS, FEATURE_FLAG_META, normalizeLocales, SITE_EXPORT_VERSION } from '@lumio/shared';
 import { ApiError } from '../api-error.js';
+import type { MediaApi } from '../media/api.js';
 import type { SettingsApi } from './api.js';
 
 const DEMO_SITE_ID = 'demo-site-1';
@@ -47,7 +48,8 @@ const demoTrash = (): ContentSummary => ({
 });
 
 /** In-memory settings backend so the screens work before the API is up. */
-export const createDemoSettingsApi = (): SettingsApi => {
+export const createDemoSettingsApi = ({ media }: { media?: MediaApi } = {}): SettingsApi => {
+  let brand: Record<string, unknown> = {};
   let site: SiteSummary = {
     id: DEMO_SITE_ID,
     name: 'กาแฟบ้านดอย',
@@ -57,7 +59,21 @@ export const createDemoSettingsApi = (): SettingsApi => {
     plan: 'pro',
     role: 'owner',
     createdAt: new Date().toISOString(),
+    logoUrl: null,
+    faviconUrl: null,
   };
+
+  const brandUrl = async (value: unknown): Promise<string | null> => {
+    if (typeof value !== 'string' || !media) return null;
+    const page = await media.list({ limit: 100 });
+    return page.items.find((item) => item.id === value)?.url ?? null;
+  };
+
+  const withBrand = async (): Promise<SiteSummary> => ({
+    ...site,
+    logoUrl: await brandUrl(brand.logoMediaId),
+    faviconUrl: await brandUrl(brand.faviconMediaId),
+  });
 
   let domains: DomainSummary[] = [];
   let members: MemberSummary[] = [demoMember(1, 'owner'), demoMember(2, 'editor')];
@@ -120,7 +136,7 @@ export const createDemoSettingsApi = (): SettingsApi => {
   const now = (): string => new Date().toISOString();
 
   return {
-    getSite: async () => site,
+    getSite: async () => withBrand(),
     updateSite: async (input) => {
       const localeDefault = input.localeDefault ?? site.localeDefault;
       site = {
@@ -130,7 +146,8 @@ export const createDemoSettingsApi = (): SettingsApi => {
         localeDefault,
         locales: input.locales ? normalizeLocales(input.locales, localeDefault) : site.locales,
       };
-      return site;
+      if (input.settings) brand = { ...brand, ...input.settings };
+      return withBrand();
     },
 
     listDomains: async () => ({

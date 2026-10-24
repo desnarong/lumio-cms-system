@@ -36,6 +36,24 @@ const pageOf = (slug: string, locale = 'th'): PublicPage => {
 };
 
 describe('PageView', () => {
+  it('aligns the header and footer menus as the site asked', () => {
+    const html = renderToStaticMarkup(
+      <PageView
+        page={{
+          ...pageOf('home'),
+          site: {
+            ...demoSite,
+            settings: { ...demoSite.settings, menuAlign: { header: 'center', footer: 'right' } },
+          },
+        }}
+        host={HOST}
+      />,
+    );
+
+    expect(html).toContain('site-nav--align-center');
+    expect(html).toContain('site-nav--align-right');
+  });
+
   it('renders the published blocks through the block engine', () => {
     const html = renderToStaticMarkup(<PageView page={pageOf('home')} host={HOST} />);
     expect(html).toContain('lumio-hero');
@@ -75,6 +93,18 @@ describe('PageView', () => {
     expect(html).toContain('aria-label="เมนูหลัก"');
     expect(html).toContain('href="/about"');
     expect(html).toContain('aria-label="เมนูส่วนท้าย"');
+  });
+
+  it('marks the menu item that points at the page being read', () => {
+    const html = renderToStaticMarkup(<PageView page={pageOf('home')} host={HOST} />);
+    expect(html).toContain('site-nav__link is-active');
+    expect(html).toContain('aria-current="page"');
+  });
+
+  it('offers a back-to-top icon link on every page', () => {
+    const html = renderToStaticMarkup(<PageView page={pageOf('home')} host={HOST} />);
+    expect(html).toContain('site-back-to-top');
+    expect(html).toContain('aria-label="กลับขึ้นด้านบน"');
   });
 
   it('inlines structured data derived from the page', () => {
@@ -174,6 +204,23 @@ describe('PageView', () => {
     expect(html).toContain('href="/en"');
     expect(html).toContain('hreflang="en"');
     expect(html).toContain('aria-current="true"');
+  });
+
+  it('leaves the header switcher out when the site has one language', () => {
+    const page = pageOf('home');
+    const html = renderToStaticMarkup(
+      <PageView
+        page={{
+          ...page,
+          translations: page.translations.filter((entry) => entry.locale === 'th'),
+        }}
+        host={HOST}
+      />,
+    );
+
+    expect(html).not.toContain('ยังมีภาษาที่เผยแพร่แล้วเพียงภาษาเดียว');
+    const header = html.slice(html.indexOf('<header'), html.indexOf('</header>'));
+    expect(header).not.toContain('lumio-language');
   });
 
   it('shows a notice when the page fell back to the default language', () => {

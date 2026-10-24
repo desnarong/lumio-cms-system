@@ -11,6 +11,7 @@ import type { Prisma, Site } from '@prisma/client';
 import { ApiException } from '../../common/api-error';
 import type { Page } from '../../common/pagination';
 import { AuditService } from '../audit/audit.service';
+import { toPublicMediaUrl } from '../media/media-url';
 import { PrismaService } from '../prisma/prisma.service';
 import { PublishService } from '../publish/publish.service';
 
@@ -18,7 +19,46 @@ export interface PublishAllResult {
   published: number;
 }
 
-const toSummary = (site: Site, role: string): SiteSummary => ({
+/** Keys in `sites.settings` that point at an uploaded brand image. */
+const BRAND_KEYS = ['logoMediaId', 'faviconMediaId'] as const;
+
+interface BrandUrls {
+  logoUrl: string | null;
+  faviconUrl: string | null;
+}
+
+const NO_BRAND: BrandUrls = { logoUrl: null, faviconUrl: null };
+
+const asRecord = (value: unknown): Record<string, unknown> =>
+  value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+
+/** Resolves the logo and favicon that belong to this site, never another one. */
+const resolveBrand = async (
+  tx: Prisma.TransactionClient,
+  settings: unknown,
+): Promise<BrandUrls> => {
+  const record = asRecord(settings);
+  const ids = BRAND_KEYS.flatMap((key) => {
+    const value = record[key];
+    return typeof value === 'string' && value.length > 0 ? [value] : [];
+  });
+  if (ids.length === 0) return NO_BRAND;
+
+  const rows = await tx.media.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, storageKey: true, variants: true, status: true },
+  });
+  const urlOf = (key: (typeof BRAND_KEYS)[number]): string | null => {
+    const id = record[key];
+    if (typeof id !== 'string') return null;
+    return toPublicMediaUrl(rows.find((row) => row.id === id) ?? null);
+  };
+  return { logoUrl: urlOf('logoMediaId'), faviconUrl: urlOf('faviconMediaId') };
+};
+
+const toSummary = (site: Site, role: string, brand: BrandUrls = NO_BRAND): SiteSummary => ({
   id: site.id,
   name: site.name,
   subdomain: site.subdomain,
@@ -27,6 +67,7 @@ const toSummary = (site: Site, role: string): SiteSummary => ({
   plan: site.plan,
   role: isRole(role) ? role : 'viewer',
   createdAt: site.createdAt.toISOString(),
+  ...brand,
 });
 
 @Injectable()
@@ -61,7 +102,8 @@ export class SitesService {
       tx.site.findUnique({ where: { id: siteId } }),
     );
     if (!site) throw ApiException.notFound('ไม่พบเว็บนี้');
-    return toSummary(site, role);
+    const brand = await this.db.forSite(siteId, (tx) => resolveBrand(tx, site.settings));
+    return toSummary(site, role, brand);
   }
 
   async update(
@@ -70,11 +112,36 @@ export class SitesService {
     actorId: string,
     role: Role,
   ): Promise<SiteSummary> {
-    if (input.subdomain) await this.assertSubdomainFree(input.subdomain);
+    if (input.subdomain) await this.assertSubdomainFree(siteId, input.subdomain);
+
+    // The logo and favicon live in the header of every page, so a change has to
+    // clear the renderer cache for the whole site, not just the home page.
+    const brandChanged =
+      input.settings !== undefined &&
+      BRAND_KEYS.some((key) => Object.prototype.hasOwnProperty.call(input.settings, key));
 
     const site = await this.db.forSite(siteId, async (tx) => {
       const current = await tx.site.findUnique({ where: { id: siteId } });
       if (!current) throw ApiException.notFound('ไม่พบเว็บนี้');
+
+      // A media id must belong to this site (RLS scopes the lookup), otherwise a
+      // crafted request could point the header at another site's upload.
+      if (input.settings !== undefined) {
+        for (const key of BRAND_KEYS) {
+          const value = input.settings[key];
+          if (value === undefined || value === null) continue;
+          if (typeof value !== 'string') {
+            throw ApiException.validation('รูปที่เลือกไม่ถูกต้อง');
+          }
+          const media = await tx.media.findFirst({
+            where: { id: value },
+            select: { id: true, status: true },
+          });
+          if (!media || media.status === 'trashed') {
+            throw ApiException.validation('ไม่พบรูปที่เลือกในคลังสื่อ');
+          }
+        }
+      }
 
       const settings =
         input.settings === undefined
@@ -117,7 +184,10 @@ export class SitesService {
       return updated;
     });
 
-    return toSummary(site, role);
+    if (brandChanged) await this.publishJobs.enqueueChrome(siteId);
+
+    const brand = await this.db.forSite(siteId, (tx) => resolveBrand(tx, site.settings));
+    return toSummary(site, role, brand);
   }
 
   async publishAll(siteId: string, actorId: string): Promise<PublishAllResult> {
@@ -159,8 +229,12 @@ export class SitesService {
     return result;
   }
 
-  private async assertSubdomainFree(subdomain: string): Promise<void> {
-    const taken = await this.db.site.findUnique({ where: { subdomain }, select: { id: true } });
+  /** A site may keep its own subdomain; only another site's is a conflict. */
+  private async assertSubdomainFree(siteId: string, subdomain: string): Promise<void> {
+    const taken = await this.db.site.findFirst({
+      where: { subdomain, id: { not: siteId } },
+      select: { id: true },
+    });
     if (taken) throw ApiException.conflict('subdomain นี้ถูกใช้งานแล้ว');
   }
 }

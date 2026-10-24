@@ -62,7 +62,10 @@ const txWith = (overrides: Record<string, unknown> = {}): Record<string, unknown
     },
     menu: { findMany: vi.fn().mockResolvedValue([]) },
     globalBlock: { findMany: vi.fn().mockResolvedValue([]) },
-    media: { findFirst: vi.fn().mockResolvedValue(null) },
+    media: {
+      findFirst: vi.fn().mockResolvedValue(null),
+      findMany: vi.fn().mockResolvedValue([]),
+    },
     redirect: { findFirst: vi.fn().mockResolvedValue(null) },
     product: { findMany: vi.fn().mockResolvedValue([]) },
   };
@@ -330,16 +333,43 @@ describe('PublicService.getPage', () => {
       tx: {
         content: { findFirst: vi.fn().mockResolvedValue(contentRow()) },
         media: {
-          findFirst: vi.fn().mockResolvedValue({
-            storageKey: 'baandoi/logo/logo.png',
-            variants: [],
-            status: 'ready',
-          }),
+          findMany: vi.fn().mockResolvedValue([
+            {
+              id: '00000000-0000-4000-8000-0000000000b1',
+              storageKey: 'baandoi/logo/logo.png',
+              variants: [],
+              status: 'ready',
+            },
+          ]),
         },
       },
     }).getPage('baandoi.example.com', 'home');
 
     expect(page.site.logoUrl).toBe('http://localhost:49100/media/baandoi/logo/logo.png');
+  });
+
+  it('resolves the favicon the owner uploaded into a URL', async () => {
+    const page = await service({
+      domain: {
+        hostname: 'baandoi.example.com',
+        site: siteRow({ settings: { faviconMediaId: '00000000-0000-4000-8000-0000000000b2' } }),
+      },
+      tx: {
+        content: { findFirst: vi.fn().mockResolvedValue(contentRow()) },
+        media: {
+          findMany: vi.fn().mockResolvedValue([
+            {
+              id: '00000000-0000-4000-8000-0000000000b2',
+              storageKey: 'baandoi/brand/icon.png',
+              variants: [],
+              status: 'ready',
+            },
+          ]),
+        },
+      },
+    }).getPage('baandoi.example.com', 'home');
+
+    expect(page.site.faviconUrl).toBe('http://localhost:49100/media/baandoi/brand/icon.png');
   });
 
   it('leaves the logo empty when no logo was uploaded', async () => {

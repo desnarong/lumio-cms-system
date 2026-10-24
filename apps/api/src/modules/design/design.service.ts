@@ -3,15 +3,19 @@ import {
   DEFAULT_THEME_TOKENS,
   applyThemeTokensPatch,
   normalizeThemeTokens,
+  siteChromeSchema,
   type ApplyTemplateInput,
   type DesignTemplateResult,
   type DesignTokens,
+  type SiteChrome,
+  type SiteChromePatch,
   type ThemeTokensPatch,
 } from '@lumio/shared';
 import { Prisma } from '@prisma/client';
 import { ApiException } from '../../common/api-error';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { PublishService } from '../publish/publish.service';
 import { TemplateApplyService } from '../templates/template-apply.service';
 import { TemplatesService } from '../templates/templates.service';
 
@@ -34,6 +38,7 @@ export class DesignService {
     private readonly audit: AuditService,
     private readonly templates: TemplatesService,
     private readonly apply: TemplateApplyService,
+    private readonly publish?: PublishService,
   ) {}
 
   async getTokens(siteId: string): Promise<DesignTokens> {
@@ -90,7 +95,60 @@ export class DesignService {
       };
     });
 
+    await this.publish?.enqueueChrome(siteId);
     return result;
+  }
+
+  /** Header height and other chrome sizes the Design Panel can change. */
+  async getChrome(siteId: string): Promise<SiteChrome> {
+    const site = await this.db.forSite(siteId, (tx) =>
+      tx.site.findUnique({ where: { id: siteId }, select: { settings: true } }),
+    );
+    if (!site) throw ApiException.notFound('ไม่พบเว็บนี้');
+    return this.readChrome(site.settings);
+  }
+
+  async updateChrome(
+    siteId: string,
+    patch: SiteChromePatch,
+    actorId: string,
+  ): Promise<SiteChrome> {
+    const result = await this.db.forSite(siteId, async (tx) => {
+      const site = await tx.site.findUnique({
+        where: { id: siteId },
+        select: { settings: true },
+      });
+      if (!site) throw ApiException.notFound('ไม่พบเว็บนี้');
+
+      const chrome = siteChromeSchema.parse({ ...this.readChrome(site.settings), ...patch });
+      const settings = asRecord(site.settings);
+
+      await tx.site.update({
+        where: { id: siteId },
+        data: { settings: asJson({ ...settings, chrome }) },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          siteId,
+          userId: actorId,
+          action: 'design.chrome_update',
+          target: siteId,
+          meta: { changed: Object.keys(patch) } as Prisma.InputJsonObject,
+        },
+      });
+
+      return chrome;
+    });
+
+    await this.publish?.enqueueChrome(siteId);
+    return result;
+  }
+
+  private readChrome(settings: unknown): SiteChrome {
+    const stored = asRecord(asRecord(settings).chrome);
+    const parsed = siteChromeSchema.safeParse(stored);
+    return parsed.success ? parsed.data : siteChromeSchema.parse({});
   }
 
   /** Applies another template: new tokens, and optionally new header/footer. */
@@ -102,7 +160,7 @@ export class DesignService {
   ): Promise<DesignTemplateResult> {
     const pack = this.templates.byId(templateId);
 
-    return this.db.forSite(siteId, async (tx) => {
+    const result = await this.db.forSite(siteId, async (tx) => {
       const site = await tx.site.findUnique({
         where: { id: siteId },
         select: { settings: true },
@@ -147,11 +205,14 @@ export class DesignService {
         headerFooterApplied: input.applyHeaderFooter,
       };
     });
+
+    await this.publish?.enqueueChrome(siteId);
+    return result;
   }
 
   /** Puts the current template's colours, fonts and corners back. */
   async resetTokens(siteId: string, actorId: string): Promise<DesignTokens> {
-    return this.db.forSite(siteId, async (tx) => {
+    const result = await this.db.forSite(siteId, async (tx) => {
       const site = await tx.site.findUnique({
         where: { id: siteId },
         select: { templateId: true, settings: true },
@@ -179,5 +240,8 @@ export class DesignService {
         styleId: typeof settings.styleId === 'string' ? settings.styleId : null,
       };
     });
+
+    await this.publish?.enqueueChrome(siteId);
+    return result;
   }
 }

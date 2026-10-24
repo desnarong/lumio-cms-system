@@ -7,6 +7,7 @@ export const headingDefaults: BlockData<HeadingProps> = {
     text: 'หัวข้อของคุณ',
     level: 'h2',
     align: 'left',
+    weight: 'semibold',
   },
   style: defaultBlockStyle,
 };

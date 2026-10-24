@@ -69,7 +69,11 @@ export const collectFormIds = (blocks: BlockTree): string[] => {
   return [...ids];
 };
 
-const toPublicSite = (site: Site, logoUrl: string | null = null): PublicSite => ({
+const toPublicSite = (
+  site: Site,
+  logoUrl: string | null = null,
+  faviconUrl: string | null = null,
+): PublicSite => ({
   id: site.id,
   name: site.name,
   subdomain: site.subdomain,
@@ -78,6 +82,7 @@ const toPublicSite = (site: Site, logoUrl: string | null = null): PublicSite => 
   themeTokens: asRecord(site.themeTokens),
   settings: asRecord(site.settings),
   logoUrl,
+  faviconUrl,
 });
 
 interface MediaLike {
@@ -505,16 +510,23 @@ export class PublicService {
     });
   }
 
-  /** Site payload plus the logo chosen during onboarding, when there is one. */
+  /** Site payload plus the brand images the owner uploaded, when there are any. */
   private async publicSite(tx: Prisma.TransactionClient, row: Site): Promise<PublicSite> {
-    const logoMediaId = asRecord(row.settings).logoMediaId;
-    if (typeof logoMediaId !== 'string' || logoMediaId.length === 0) return toPublicSite(row);
+    const settings = asRecord(row.settings);
+    const ids = [settings.logoMediaId, settings.faviconMediaId].flatMap((value) =>
+      typeof value === 'string' && value.length > 0 ? [value] : [],
+    );
+    if (ids.length === 0) return toPublicSite(row);
 
-    const logo = await tx.media.findFirst({
-      where: { id: logoMediaId },
-      select: { storageKey: true, variants: true, status: true },
+    const rows = await tx.media.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, storageKey: true, variants: true, status: true },
     });
-    return toPublicSite(row, toMediaUrl(logo));
+    const urlOf = (value: unknown): string | null => {
+      if (typeof value !== 'string') return null;
+      return toMediaUrl(rows.find((media) => media.id === value) ?? null);
+    };
+    return toPublicSite(row, urlOf(settings.logoMediaId), urlOf(settings.faviconMediaId));
   }
 
   /** Header/footer are global blocks, rendered on every page (design 8.3). */

@@ -3,6 +3,7 @@ import type {
   BlockTree,
   DesignTokens,
   GlobalBlockKind,
+  MenuAlign,
   MenuItem,
   MenuLocation,
   SectionTemplate,
@@ -131,12 +132,15 @@ export const useTemplates = (api: DesignApi): TemplatesController => {
 
 export interface MenuController {
   items: MenuItem[];
+  align: MenuAlign;
   loading: boolean;
   error: string | null;
   saving: boolean;
   setItems: (items: MenuItem[]) => void;
+  setAlign: (align: MenuAlign) => void;
   reload: () => Promise<void>;
-  save: () => Promise<void>;
+  /** Resolves `true` after a successful save so the panel can confirm it. */
+  save: () => Promise<boolean>;
 }
 
 /**
@@ -150,6 +154,7 @@ export const useMenu = (
   locale?: string,
 ): MenuController => {
   const [items, setItems] = useState<MenuItem[]>([]);
+  const [align, setAlign] = useState<MenuAlign>('left');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -164,6 +169,7 @@ export const useMenu = (
       const shared =
         loaded.items.length === 0 && locale ? await apiRef.current.getMenu(location) : null;
       setItems(shared ? shared.items : loaded.items);
+      setAlign(loaded.align);
     } catch (loadError) {
       setError(designErrorMessage(loadError));
     } finally {
@@ -179,15 +185,29 @@ export const useMenu = (
     setSaving(true);
     setError(null);
     try {
-      setItems((await apiRef.current.updateMenu(location, { items, locale })).items);
+      const saved = await apiRef.current.updateMenu(location, { items, locale, align });
+      setItems(saved.items);
+      setAlign(saved.align);
+      return true;
     } catch (saveError) {
       setError(designErrorMessage(saveError));
+      return false;
     } finally {
       setSaving(false);
     }
-  }, [items, location, locale]);
+  }, [items, align, location, locale]);
 
-  return { items, loading, error, saving, setItems, reload, save };
+  return {
+    items,
+    align,
+    loading,
+    error,
+    saving,
+    setItems,
+    setAlign,
+    reload,
+    save,
+  };
 };
 
 /* ------------------------------------------------------------ global blocks */
@@ -199,7 +219,8 @@ export interface GlobalBlocksController {
   saving: boolean;
   setBlocks: (blocks: BlockTree) => void;
   reload: () => Promise<void>;
-  save: () => Promise<void>;
+  /** Resolves `true` after a successful save so the panel can confirm it. */
+  save: () => Promise<boolean>;
 }
 
 /** Header/footer tab: global blocks rendered on every page. */
@@ -237,8 +258,10 @@ export const useGlobalBlocks = (
     try {
       const all = await apiRef.current.updateGlobalBlock(kind, blocks);
       setBlocks(all[kind]);
+      return true;
     } catch (saveError) {
       setError(designErrorMessage(saveError));
+      return false;
     } finally {
       setSaving(false);
     }

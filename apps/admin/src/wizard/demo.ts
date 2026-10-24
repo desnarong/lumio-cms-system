@@ -310,6 +310,8 @@ export const createDemoWizardApi = (): WizardApi => {
         plan: 'free',
         role: 'owner',
         createdAt: new Date().toISOString(),
+        logoUrl: null,
+        faviconUrl: null,
       };
       sites = [...sites, site];
       lastExtras = input.locales.filter((locale) => locale !== input.localeDefault);

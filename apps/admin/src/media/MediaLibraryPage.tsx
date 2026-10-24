@@ -1,4 +1,4 @@
-import { Icon, useT } from '@lumio/ui';
+import { useT } from '@lumio/ui';
 import { MediaLibraryBody } from './MediaLibraryBody.js';
 import type { AiApi } from '../ai/api.js';
 import type { MediaApi } from './api.js';
@@ -8,14 +8,13 @@ export interface MediaLibraryPageProps {
   api: MediaApi;
   /** The AI assistant, so a picture can get an alt text suggestion. */
   ai?: AiApi;
-  onBack?: () => void;
 }
 
 /**
  * Full-page media library (docs/design/05-admin-ia.md). It shares its body with
  * the picker dialog, so both stay identical without duplicated markup.
  */
-export const MediaLibraryPage = ({ api, ai, onBack }: MediaLibraryPageProps) => {
+export const MediaLibraryPage = ({ api, ai }: MediaLibraryPageProps) => {
   const t = useT();
   const library = useMediaLibrary(api);
 
@@ -30,12 +29,6 @@ export const MediaLibraryPage = ({ api, ai, onBack }: MediaLibraryPageProps) => 
               : t('media.summary', { count: library.items.length })}
           </p>
         </div>
-        {onBack ? (
-          <button type="button" className="media-page__back" onClick={onBack}>
-            <Icon name="arrow-left" size={16} />
-            {t('media.backToDashboard')}
-          </button>
-        ) : null}
       </header>
 
       <MediaLibraryBody

@@ -101,6 +101,7 @@ describe('BillingView', () => {
 
   it('marks the plan in use and offers the others', () => {
     const html = render();
+    expect(html).toContain('billing-plan--current');
     expect(html).toContain('แพ็กเกจที่ใช้อยู่');
     expect(html).toContain('เลือกแพ็กเกจนี้');
     expect(html).toContain('ติดต่อฝ่ายขาย');

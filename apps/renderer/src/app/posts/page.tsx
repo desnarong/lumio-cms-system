@@ -19,6 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
     siteName: site.name,
     description: `เรื่องราวและความรู้ล่าสุดจาก ${site.name}`,
     canonical: `${siteOrigin(host)}${localePathFor('page', 'posts', effective, site.localeDefault)}`,
+    favicon: site.faviconUrl,
   });
 }
 
@@ -30,7 +31,12 @@ export default async function PostsPage() {
 
   return (
     <div className="site" style={theme.style} {...theme.attributes}>
-      <SiteHeader site={site} menus={menus} blocks={globalBlocks.header} />
+      <SiteHeader
+        site={site}
+        menus={menus}
+        blocks={globalBlocks.header}
+        currentPath={localePathFor('page', 'posts', effective, site.localeDefault)}
+      />
       <main className="site-main" id="main">
         <article className="site-article" lang={effective}>
           <h1 className="site-page-title">บทความ</h1>

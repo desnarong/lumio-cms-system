@@ -98,11 +98,13 @@ describe('Editable', () => {
     expect(html).not.toContain('role="textbox"');
   });
 
-  it('shows the placeholder while the text is still empty', () => {
+  it('keeps the placeholder out of the public markup for empty text', () => {
     const html = renderToStaticMarkup(
       <Editable as="figcaption" path="props.caption" value="" placeholder="คำบรรยายภาพ" />,
     );
-    expect(html).toContain('คำบรรยายภาพ');
+    expect(html).not.toContain('>คำบรรยายภาพ<');
+    expect(html).not.toMatch(/>\s*คำบรรยายภาพ\s*</);
+    expect(html).toContain('data-editable-placeholder="คำบรรยายภาพ"');
   });
 });
 

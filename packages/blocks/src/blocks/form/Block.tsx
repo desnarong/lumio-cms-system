@@ -110,6 +110,7 @@ export const FormBlock = ({ props, block, forms = [] }: BlockRenderProps<FormPro
         as="h2"
         path="props.heading"
         value={props.heading}
+        runs={block.textStyles?.['props.heading']}
         className="lumio-form__heading"
         label="หัวข้อฟอร์ม"
       />
@@ -119,6 +120,7 @@ export const FormBlock = ({ props, block, forms = [] }: BlockRenderProps<FormPro
           multiline
           path="props.description"
           value={props.description}
+          runs={block.textStyles?.['props.description']}
           className="lumio-form__description"
           label="คำอธิบายฟอร์ม"
         />
@@ -145,7 +147,12 @@ export const FormBlock = ({ props, block, forms = [] }: BlockRenderProps<FormPro
           ))}
 
           <button type="submit" className="ui-button ui-button--primary ui-button--md lumio-form__submit">
-            <Editable path="props.submitLabel" value={props.submitLabel} label="ข้อความบนปุ่ม" />
+            <Editable
+              path="props.submitLabel"
+              value={props.submitLabel}
+              runs={block.textStyles?.['props.submitLabel']}
+              label="ข้อความบนปุ่ม"
+            />
           </button>
         </form>
       )}

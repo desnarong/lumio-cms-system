@@ -1,6 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { FormsCatalogProvider, registry } from '@lumio/blocks';
-import type { AiSiteCommandProposal, ContentDetail, Form } from '@lumio/shared';
+import {
+  themeCssVariables,
+  themeDataAttributes,
+  type AiSiteCommandProposal,
+  type ContentDetail,
+  type Form,
+  type ThemeTokens,
+} from '@lumio/shared';
 import { Banner, Button, EmptyState, Modal, Skeleton, TextField, useT, useToast } from '@lumio/ui';
 import { AiAssistant } from '../ai/AiAssistant.js';
 import type { AiApi } from '../ai/api.js';
@@ -64,6 +71,7 @@ export const EditorPage = ({
   const [templateName, setTemplateName] = useState('');
   const [forms, setForms] = useState<Form[]>([]);
   const [aiFields, setAiFields] = useState<EditorTextField[]>([]);
+  const [previewTokens, setPreviewTokens] = useState<ThemeTokens | null>(null);
 
   // The form block needs the site's forms both for its panel picker (context)
   // and for its live preview (the `forms` prop on the canvas).
@@ -79,6 +87,36 @@ export const EditorPage = ({
       active = false;
     };
   }, [formsApi]);
+
+  // The canvas must paint with the site's own colours and density, otherwise the
+  // owner sees the admin's default pink accent instead of their brand colours.
+  useEffect(() => {
+    if (!design) return undefined;
+    let active = true;
+    void design
+      .getTokens()
+      .then((designTokens) => {
+        if (active) setPreviewTokens(designTokens.tokens);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [design]);
+
+  const previewTheme = useMemo(
+    () =>
+      previewTokens
+        ? {
+            style: themeCssVariables(previewTokens) as unknown as CSSProperties,
+            attributes: {
+              ...themeDataAttributes(previewTokens),
+              ...(previewTokens.colorMode === 'dark' ? { 'data-theme': 'dark' } : {}),
+            },
+          }
+        : null,
+    [previewTokens],
+  );
 
   const editor = useEditor({
     api,
@@ -267,10 +305,12 @@ export const EditorPage = ({
                 blocks={editor.blocks}
                 selectedId={state.selectedId}
                 device={state.device}
+                theme={previewTheme}
                 draggingId={state.draggingId}
                 dropIndex={state.dropIndex}
                 onSelect={editor.select}
                 onTextChange={editor.setBlockPath}
+                onTextStyle={editor.setTextStyles}
                 onInsert={editor.insertBlock}
                 onDuplicate={editor.duplicateBlock}
                 onRemove={editor.removeBlock}

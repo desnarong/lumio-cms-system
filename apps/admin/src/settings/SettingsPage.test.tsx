@@ -13,6 +13,8 @@ const site: SiteSummary = {
   plan: 'pro',
   role: 'owner',
   createdAt: '2026-10-20T00:00:00.000Z',
+  logoUrl: null,
+  faviconUrl: null,
 };
 
 const domain = (overrides: Partial<DomainSummary> = {}): DomainSummary => ({
@@ -108,6 +110,31 @@ describe('GeneralView', () => {
       />,
     );
     expect(unchanged).toContain('disabled');
+  });
+
+  it('offers logo and favicon fields in the same save step', () => {
+    const html = renderToStaticMarkup(
+      <GeneralView
+        site={site}
+        name="กาแฟบ้านดอย"
+        subdomain="baandoi"
+        saving={false}
+        error={null}
+        onNameChange={vi.fn()}
+        onSubdomainChange={vi.fn()}
+        onSave={vi.fn()}
+        logoUrl="https://cdn.example.com/logo.png"
+        faviconUrl={null}
+        brandDirty
+        onPickLogo={vi.fn()}
+        onPickFavicon={vi.fn()}
+        onRemoveLogo={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain('โลโก้และไอคอน');
+    expect(html).toContain('https://cdn.example.com/logo.png');
+    expect(html).not.toMatch(/ui-button--primary[^>]*disabled/);
   });
 });
 
@@ -259,6 +286,9 @@ describe('RedirectsView', () => {
     expect(html).toContain('เปลี่ยนเส้นทาง');
     expect(html).toContain('ยังไม่มีการเปลี่ยนเส้นทาง');
     expect(html).toMatch(/ui-button--primary[^>]*disabled/);
+    // Both address inputs share the row instead of collapsing to label width.
+    expect(html.match(/settings-inline__field/g)).toHaveLength(2);
+    expect(html).toContain('settings-inline__action');
   });
 
   it('lists a rule with where it points and its type', () => {

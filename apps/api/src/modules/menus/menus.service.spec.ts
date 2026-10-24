@@ -12,6 +12,7 @@ interface Stubs {
   create: Mock;
   update: Mock;
   auditLogCreate: Mock;
+  siteUpdate: Mock;
 }
 
 /**
@@ -29,18 +30,23 @@ const stubs = (row: unknown = null): Stubs => {
   const create = vi.fn(echo);
   const update = vi.fn(echo);
   const auditLogCreate = vi.fn().mockResolvedValue({});
+  const siteUpdate = vi.fn().mockResolvedValue({});
 
   const db = {
     site: { findUnique: vi.fn().mockResolvedValue(null) },
     forSite: vi.fn(async (_siteId: string, fn: (tx: unknown) => unknown) =>
       fn({
+        site: {
+          findUnique: vi.fn().mockResolvedValue({ settings: {} }),
+          update: siteUpdate,
+        },
         menu: { findFirst, create, update },
         auditLog: { create: auditLogCreate },
       }),
     ),
   } as unknown as PrismaService;
 
-  return { db, findFirst, create, update, auditLogCreate };
+  return { db, findFirst, create, update, auditLogCreate, siteUpdate };
 };
 
 const service = (all: Stubs): MenusService =>
@@ -128,6 +134,28 @@ describe('MenusService', () => {
       expect.objectContaining({ data: expect.objectContaining({ target: 'header:en' }) }),
     );
     expect(menu.locale).toBe('en');
+  });
+
+  it('saves the menu alignment with the menu', async () => {
+    const all = stubs(null);
+
+    const menu = await service(all).update(
+      SITE_ID,
+      'header',
+      { items: [], align: 'center' },
+      USER_ID,
+    );
+
+    expect(menu.align).toBe('center');
+    expect(all.siteUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          settings: expect.objectContaining({
+            menuAlign: expect.objectContaining({ header: 'center' }),
+          }),
+        }),
+      }),
+    );
   });
 
   it('reads the menu for the requested language', async () => {

@@ -47,8 +47,10 @@ export const publicSiteSchema = z.object({
   locales: z.array(z.string()),
   themeTokens: z.record(z.unknown()).default({}),
   settings: z.record(z.unknown()).default({}),
-  /** Logo uploaded during onboarding, if the owner added one. */
+  /** Logo chosen by the owner, shown in the site header. */
   logoUrl: z.string().nullable().default(null),
+  /** Square icon shown in the browser tab, when the owner uploaded one. */
+  faviconUrl: z.string().nullable().default(null),
 });
 export type PublicSite = z.infer<typeof publicSiteSchema>;
 

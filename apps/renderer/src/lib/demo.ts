@@ -173,6 +173,7 @@ export const demoSite: PublicSite = {
   },
   settings: { timezone: 'Asia/Bangkok' },
   logoUrl: null,
+  faviconUrl: null,
 };
 
 export const demoMenus = {

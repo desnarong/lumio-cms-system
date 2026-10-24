@@ -21,16 +21,21 @@ const linkAttrs = (link: LanguageLink): Record<string, string> => ({
  */
 export const LanguageSwitcherBlock = ({
   props,
-  languages = [],
+  block,
+  languages,
 }: BlockRenderProps<LanguageSwitcherProps>) => {
-  const links = props.showUnavailable ? languages : languages.filter((link) => link.available);
+  const offered = languages ?? [];
+  const links = props.showUnavailable ? offered : offered.filter((link) => link.available);
 
-  if (links.length === 0) {
-    return (
+  if (links.length === 0 || offered.length < 2) {
+    // A single-language site has nothing to switch to, and an empty switcher is
+    // noise for visitors. The editor passes no language list at all, so the hint
+    // below keeps the block visible there and selectable in the canvas.
+    return languages === undefined ? (
       <p className="lumio-language__note" role="note">
         ยังมีภาษาที่เผยแพร่แล้วเพียงภาษาเดียว
       </p>
-    );
+    ) : null;
   }
 
   return (
@@ -44,6 +49,7 @@ export const LanguageSwitcherBlock = ({
           as="span"
           path="props.label"
           value={props.label}
+          runs={block.textStyles?.['props.label']}
           className="lumio-language__label"
           label="ป้ายกำกับภาษา"
         />

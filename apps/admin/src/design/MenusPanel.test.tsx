@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { ToastProvider } from '@lumio/ui';
 import { MenusPanel } from './MenusPanel.js';
 import type { DesignApi } from './api.js';
 
@@ -11,7 +12,11 @@ import type { DesignApi } from './api.js';
 const api = {} as DesignApi;
 
 const render = (locales?: string[]): string =>
-  renderToStaticMarkup(<MenusPanel api={api} locales={locales} />);
+  renderToStaticMarkup(
+    <ToastProvider>
+      <MenusPanel api={api} locales={locales} />
+    </ToastProvider>,
+  );
 
 describe('MenusPanel languages', () => {
   it('offers a menu per language plus the shared one', () => {

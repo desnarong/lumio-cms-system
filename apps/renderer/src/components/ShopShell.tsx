@@ -30,7 +30,12 @@ export const ShopShell = ({ chrome, path, children, hideTracker = false }: ShopS
   return (
     <div className="site" style={theme.style} {...theme.attributes}>
       {hideTracker ? null : <PageViewTracker path={path} />}
-      <SiteHeader site={chrome.site} menus={chrome.menus} blocks={chrome.globalBlocks.header} />
+      <SiteHeader
+        site={chrome.site}
+        menus={chrome.menus}
+        blocks={chrome.globalBlocks.header}
+        currentPath={path}
+      />
       <main className="site-main shop-main" id="main">
         {children}
       </main>

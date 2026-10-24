@@ -1,15 +1,23 @@
 import { useId, useState, type ReactNode } from 'react';
-import { localeLabel, type MenuItem, type MenuLocation } from '@lumio/shared';
+import {
+  MENU_ALIGNS,
+  localeLabel,
+  type MenuAlign,
+  type MenuItem,
+  type MenuLocation,
+} from '@lumio/shared';
 import {
   Button,
   EmptyState,
   Icon,
   IconButton,
+  Select,
   Skeleton,
   Tabs,
   TextField,
   Tooltip,
   useT,
+  useToast,
   type MessageKey,
 } from '@lumio/ui';
 import type { DesignApi } from './api.js';
@@ -20,6 +28,12 @@ const LOCATION_LABEL_KEYS: Record<MenuLocation, MessageKey> = {
   footer: 'menus.footer',
 };
 
+const ALIGN_LABEL_KEYS: Record<MenuAlign, MessageKey> = {
+  left: 'menus.alignLeft',
+  center: 'menus.alignCenter',
+  right: 'menus.alignRight',
+};
+
 const emptyItem = (): MenuItem => ({ label: '', href: '', children: [] });
 
 const replaceAt = (items: MenuItem[], index: number, next: MenuItem): MenuItem[] =>
@@ -28,12 +42,25 @@ const replaceAt = (items: MenuItem[], index: number, next: MenuItem): MenuItem[]
 const removeAt = (items: MenuItem[], index: number): MenuItem[] =>
   items.filter((_, position) => position !== index);
 
+const moveAt = (items: MenuItem[], from: number, to: number): MenuItem[] => {
+  if (to < 0 || to >= items.length) return items;
+  const next = [...items];
+  const [item] = next.splice(from, 1);
+  if (!item) return items;
+  next.splice(to, 0, item);
+  return next;
+};
+
 interface MenuNodeProps {
   item: MenuItem;
   depth: number;
   onChange: (next: MenuItem) => void;
   onRemove: () => void;
   onAddChild?: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
   children?: ReactNode;
 }
 
@@ -45,7 +72,18 @@ const FieldHelp = ({ text, id }: { text: string; id: string }) => (
   </Tooltip>
 );
 
-const MenuNode = ({ item, depth, onChange, onRemove, onAddChild, children }: MenuNodeProps) => {
+const MenuNode = ({
+  item,
+  depth,
+  onChange,
+  onRemove,
+  onAddChild,
+  onMoveUp,
+  onMoveDown,
+  canMoveUp = false,
+  canMoveDown = false,
+  children,
+}: MenuNodeProps) => {
   const t = useT();
   const itemName = item.label.trim() || t('menus.itemPlaceholder');
   const hrefHintId = `${useId()}-href-hint`;
@@ -72,6 +110,30 @@ const MenuNode = ({ item, depth, onChange, onRemove, onAddChild, children }: Men
           onChange={(event) => onChange({ ...item, href: event.target.value })}
         />
         <div className="menu-node__actions">
+          {onMoveUp ? (
+            <Tooltip content={t('menus.moveUp', { name: itemName })} className="ui-tooltip--end">
+              <IconButton
+                size="sm"
+                aria-label={t('menus.moveUp', { name: itemName })}
+                disabled={!canMoveUp}
+                onClick={onMoveUp}
+              >
+                <Icon name="arrow-up" size={16} />
+              </IconButton>
+            </Tooltip>
+          ) : null}
+          {onMoveDown ? (
+            <Tooltip content={t('menus.moveDown', { name: itemName })} className="ui-tooltip--end">
+              <IconButton
+                size="sm"
+                aria-label={t('menus.moveDown', { name: itemName })}
+                disabled={!canMoveDown}
+                onClick={onMoveDown}
+              >
+                <Icon name="arrow-down" size={16} />
+              </IconButton>
+            </Tooltip>
+          ) : null}
           {onAddChild ? (
             <Tooltip content={t('menus.addChild')} className="ui-tooltip--end">
               <IconButton size="sm" aria-label={t('menus.addChild')} onClick={onAddChild}>
@@ -125,6 +187,10 @@ const MenuEditor = ({
               depth={0}
               onChange={(next) => onChange(replaceAt(items, index, next))}
               onRemove={() => onChange(removeAt(items, index))}
+              onMoveUp={() => onChange(moveAt(items, index, index - 1))}
+              onMoveDown={() => onChange(moveAt(items, index, index + 1))}
+              canMoveUp={index > 0}
+              canMoveDown={index < items.length - 1}
               onAddChild={() =>
                 onChange(
                   replaceAt(items, index, { ...item, children: [...item.children, emptyItem()] }),
@@ -152,6 +218,24 @@ const MenuEditor = ({
                       }),
                     )
                   }
+                  onMoveUp={() =>
+                    onChange(
+                      replaceAt(items, index, {
+                        ...item,
+                        children: moveAt(item.children, childIndex, childIndex - 1),
+                      }),
+                    )
+                  }
+                  onMoveDown={() =>
+                    onChange(
+                      replaceAt(items, index, {
+                        ...item,
+                        children: moveAt(item.children, childIndex, childIndex + 1),
+                      }),
+                    )
+                  }
+                  canMoveUp={childIndex > 0}
+                  canMoveDown={childIndex < item.children.length - 1}
                 />
               ))}
             </MenuNode>
@@ -178,7 +262,12 @@ const LocationEditor = ({
   locale?: string;
 }) => {
   const t = useT();
+  const toast = useToast();
   const menu = useMenu(api, location, locale);
+
+  const save = async (): Promise<void> => {
+    if (await menu.save()) toast.push({ tone: 'success', title: t('design.saved') });
+  };
 
   if (menu.loading) {
     return <Skeleton shape="block" height={220} />;
@@ -201,9 +290,19 @@ const LocationEditor = ({
 
   return (
     <div className="design-panel">
+      <Select
+        label={t('menus.alignLabel')}
+        hint={t('menus.alignHint')}
+        value={menu.align}
+        options={MENU_ALIGNS.map((align) => ({
+          value: align,
+          label: t(ALIGN_LABEL_KEYS[align]),
+        }))}
+        onChange={(event) => menu.setAlign(event.target.value as MenuAlign)}
+      />
       <MenuEditor items={menu.items} onChange={menu.setItems} />
       <div className="design-actions">
-        <Button variant="primary" disabled={menu.saving} onClick={() => void menu.save()}>
+        <Button variant="primary" disabled={menu.saving} onClick={() => void save()}>
           {menu.saving ? t('design.savingDots') : t('menus.save')}
         </Button>
         {menu.error ? (

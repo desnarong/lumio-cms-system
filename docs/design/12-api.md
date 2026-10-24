@@ -88,7 +88,7 @@ PUT /api/v1/contents/8f2.../blocks
 ## 12.5 Auth Flow
 
 ```
-login ─▶ access token (อายุ 15 นาที) + refresh token (อายุ 30 วัน, httpOnly)
+login ─▶ access token (อายุ 15 นาที) + refresh token (อายุ 24 ชั่วโมง, httpOnly)
       ─▶ เก็บ refresh ใน httpOnly cookie / secure storage
 refresh ─▶ ออก access token ใหม่
 ```

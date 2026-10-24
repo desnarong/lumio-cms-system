@@ -30,6 +30,7 @@ interface AuditStub {
 interface PublishStub {
   enqueuePage: Mock;
   enqueueSite: Mock;
+  enqueueChrome: Mock;
   primaryHost: Mock;
 }
 
@@ -38,6 +39,7 @@ const auditStub = (): AuditStub => ({ log: vi.fn().mockResolvedValue(undefined) 
 const publishStub = (): PublishStub => ({
   enqueuePage: vi.fn().mockResolvedValue({}),
   enqueueSite: vi.fn().mockResolvedValue({}),
+  enqueueChrome: vi.fn().mockResolvedValue({}),
   primaryHost: vi.fn().mockResolvedValue(null),
 });
 
@@ -156,5 +158,103 @@ describe('SitesService', () => {
     expect(siteUpdate).toHaveBeenCalledWith(
       expect.objectContaining({ data: expect.objectContaining({ locales: ['th', 'en'] }) }),
     );
+  });
+
+  it('stores a brand image and answers with the resolved favicon URL', async () => {
+    const faviconId = '00000000-0000-4000-8000-0000000000b2';
+    const siteUpdate = vi
+      .fn()
+      .mockResolvedValue(siteRow({ settings: { faviconMediaId: faviconId } }));
+    const db = {
+      forSite: vi.fn(async (_siteId: string, fn: (tx: unknown) => unknown) =>
+        fn({
+          site: { findUnique: vi.fn().mockResolvedValue(siteRow()), update: siteUpdate },
+          media: {
+            findFirst: vi.fn().mockResolvedValue({ id: faviconId, status: 'ready' }),
+            findMany: vi.fn().mockResolvedValue([
+              { id: faviconId, storageKey: 'brand/icon.png', variants: [], status: 'ready' },
+            ]),
+          },
+          content: {
+            findMany: vi.fn().mockResolvedValue([
+              { type: 'page', slug: 'home', locale: 'th' },
+              { type: 'page', slug: 'about', locale: 'th' },
+            ]),
+          },
+          auditLog: { create: vi.fn().mockResolvedValue({}) },
+        }),
+      ),
+    } as unknown as PrismaService;
+    const publish = publishStub();
+
+    const summary = await service(db, auditStub(), publish).update(
+      SITE_ID,
+      { settings: { faviconMediaId: faviconId } },
+      USER_ID,
+      'owner',
+    );
+
+    expect(summary.faviconUrl).toBe('http://localhost:49100/media/brand/icon.png');
+    expect(publish.enqueueChrome).toHaveBeenCalledWith(SITE_ID);
+  });
+
+  it('refuses a brand image that is not in the library of this site', async () => {
+    const db = {
+      forSite: vi.fn(async (_siteId: string, fn: (tx: unknown) => unknown) =>
+        fn({
+          site: { findUnique: vi.fn().mockResolvedValue(siteRow()) },
+          media: { findFirst: vi.fn().mockResolvedValue(null) },
+          auditLog: { create: vi.fn().mockResolvedValue({}) },
+        }),
+      ),
+    } as unknown as PrismaService;
+
+    await expect(
+      service(db).update(
+        SITE_ID,
+        { settings: { logoMediaId: '00000000-0000-4000-8000-0000000000ff' } },
+        USER_ID,
+        'owner',
+      ),
+    ).rejects.toMatchObject({ code: 'validation_error' });
+  });
+
+  it('lets a site save its own unchanged subdomain', async () => {
+    const db = {
+      site: { findFirst: vi.fn().mockResolvedValue(null) },
+      forSite: vi.fn(async (_siteId: string, fn: (tx: unknown) => unknown) =>
+        fn({
+          site: {
+            findUnique: vi.fn().mockResolvedValue(siteRow()),
+            update: vi.fn().mockResolvedValue(siteRow()),
+          },
+          auditLog: { create: vi.fn().mockResolvedValue({}) },
+        }),
+      ),
+    } as unknown as PrismaService;
+
+    const summary = await service(db).update(
+      SITE_ID,
+      { name: 'กาแฟบ้านดอย', subdomain: 'baandoi' },
+      USER_ID,
+      'owner',
+    );
+
+    expect(summary.subdomain).toBe('baandoi');
+    expect(db.site.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { subdomain: 'baandoi', id: { not: SITE_ID } } }),
+    );
+  });
+
+  it('refuses a subdomain another site already uses', async () => {
+    const db = {
+      site: {
+        findFirst: vi.fn().mockResolvedValue({ id: '00000000-0000-4000-8000-0000000000ff' }),
+      },
+    } as unknown as PrismaService;
+
+    await expect(
+      service(db).update(SITE_ID, { subdomain: 'baandoi' }, USER_ID, 'owner'),
+    ).rejects.toMatchObject({ code: 'conflict' });
   });
 });

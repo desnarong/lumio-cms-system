@@ -1,5 +1,5 @@
 import { BlockTreeRenderer, registerRenderBlocks } from '@lumio/blocks/render';
-import { buildJsonLd, localeLabel, localePathFor, type PublicPage } from '@lumio/shared';
+import { buildJsonLd, localeLabel, localePathFor, type BlockNode, type PublicPage } from '@lumio/shared';
 import { siteOrigin } from '../lib/host';
 import { languageLinks } from '../lib/languages';
 import { fallbackTitle } from '../lib/page-title';
@@ -51,11 +51,22 @@ export const PageView = ({ page, host, preview = false }: PageViewProps) => {
     blocks: content.blocks.map((block) => ({ type: block.type, props: block.props })),
   });
 
+  const languages = languageLinks(page);
+  // A switcher with nothing to switch to only adds an empty block to the bar.
+  const chromeBlocks = (blocks: BlockNode[]): BlockNode[] =>
+    languages.length > 1 ? blocks : blocks.filter((block) => block.type !== 'language-switcher');
+
   return (
     <div className="site" style={theme.style} {...theme.attributes}>
       <JsonLd data={jsonLd} />
       {preview ? null : <PageViewTracker path={path} />}
-      <SiteHeader site={site} menus={menus} blocks={globalBlocks.header} />
+      <SiteHeader
+        site={site}
+        menus={menus}
+        blocks={chromeBlocks(globalBlocks.header)}
+        languages={languages}
+        currentPath={path}
+      />
       {/*
         A page with no version in the requested language falls back to the default
         one; the notice tells the visitor why the language differs
@@ -69,14 +80,15 @@ export const PageView = ({ page, host, preview = false }: PageViewProps) => {
       <main className="site-main" id="main">
         <article className="site-article" data-content-slug={content.slug} lang={content.locale}>
           {fallbackH1 ? <h1 className="site-page-title">{fallbackH1}</h1> : null}
-          <BlockTreeRenderer
-            blocks={content.blocks}
-            forms={page.forms}
-            languages={languageLinks(page)}
-          />
+          <BlockTreeRenderer blocks={content.blocks} forms={page.forms} languages={languages} />
         </article>
       </main>
-      <SiteFooter site={site} menus={menus} blocks={globalBlocks.footer} />
+      <SiteFooter
+        site={site}
+        menus={menus}
+        blocks={chromeBlocks(globalBlocks.footer)}
+        languages={languages}
+      />
     </div>
   );
 };

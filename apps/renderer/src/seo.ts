@@ -61,5 +61,6 @@ export const buildMetadata = (page: PublicPage, host: string): PageSeo => {
   return buildPageSeo({
     ...resolved,
     ogImage: resolved.ogImage ?? ogImageUrl(origin, resolved.title, site.name),
+    favicon: site.faviconUrl,
   });
 };

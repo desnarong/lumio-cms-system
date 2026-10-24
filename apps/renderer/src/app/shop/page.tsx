@@ -7,11 +7,17 @@ import { loadShop } from '../../lib/shop';
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: 'สินค้าทั้งหมด',
-  description: 'เลือกซื้อสินค้าจากร้านของเรา',
-  alternates: { canonical: '/shop' },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const host = await requestHost();
+  const locale = await requestLocale();
+  const { site } = await loadShop(host, locale);
+  return {
+    title: 'สินค้าทั้งหมด',
+    description: 'เลือกซื้อสินค้าจากร้านของเรา',
+    alternates: { canonical: '/shop' },
+    ...(site.faviconUrl ? { icons: { icon: site.faviconUrl } } : {}),
+  };
+}
 
 export interface ShopPageProps {
   searchParams: Promise<{ category?: string }>;

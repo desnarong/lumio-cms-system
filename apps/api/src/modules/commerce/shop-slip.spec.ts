@@ -72,6 +72,7 @@ const service = (
         localeDefault: 'th',
         locales: ['th'],
         logoUrl: null,
+        faviconUrl: null,
       },
       menus: { header: [], footer: [] },
       globalBlocks: { header: [], footer: [] },

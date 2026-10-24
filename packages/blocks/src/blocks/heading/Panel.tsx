@@ -4,7 +4,20 @@ import { Select, TextField } from '@lumio/ui';
 import { CommonStylePanel, PanelSection } from '../../engine/panel.js';
 import type { BlockPanelProps } from '../../types.js';
 import { alignmentOptions } from '../common.js';
-import { HEADING_LEVELS, type HeadingLevel, type HeadingProps } from './schema.js';
+import {
+  HEADING_LEVELS,
+  HEADING_WEIGHTS,
+  type HeadingLevel,
+  type HeadingProps,
+  type HeadingWeight,
+} from './schema.js';
+
+const WEIGHT_LABELS: Record<HeadingWeight, string> = {
+  light: 'ตัวบาง',
+  regular: 'ปกติ',
+  semibold: 'กึ่งหนา',
+  bold: 'ตัวหนา',
+};
 
 const LEVEL_LABELS: Record<HeadingLevel, string> = {
   h1: 'หัวข้อใหญ่สุด (H1)',
@@ -26,6 +39,15 @@ export const HeadingPanel = ({ props, style, mode, onChange }: BlockPanelProps<H
         value={props.level}
         options={HEADING_LEVELS.map((level) => ({ value: level, label: LEVEL_LABELS[level] }))}
         onChange={(event) => onChange('props.level', event.target.value)}
+      />
+      <Select
+        label="น้ำหนักตัวอักษร"
+        value={props.weight}
+        options={HEADING_WEIGHTS.map((weight) => ({
+          value: weight,
+          label: WEIGHT_LABELS[weight],
+        }))}
+        onChange={(event) => onChange('props.weight', event.target.value)}
       />
       <Select
         label="การจัดวาง"

@@ -283,3 +283,95 @@ a {
 :where(div, form, section, li, article):has(> .ui-field) > :is(.ui-button, .ui-tooltip, .ui-split-button) {
   align-self: end;
 }
+
+/* Floating toolbar for colour/size of a text selection in the canvas. */
+.editor-text-toolbar {
+  position: fixed;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.editor-text-toolbar__label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.editor-text-toolbar__swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+}
+
+.editor-text-toolbar__swatch.is-inherit { background: var(--color-text); }
+.editor-text-toolbar__swatch.is-primary { background: var(--color-primary); }
+.editor-text-toolbar__swatch.is-accent { background: var(--color-accent); }
+.editor-text-toolbar__swatch.is-muted { background: var(--color-text-muted); }
+
+.editor-text-toolbar__size {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.editor-text-toolbar__custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.editor-text-toolbar__custom input[type='color'] {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.editor-text-toolbar__number {
+  width: 52px;
+  height: 24px;
+  padding: 0 4px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+}
+
+/* On-top hero pictures stay clickable while editing, so the owner can pick and
+   drag the logo or product cut-out instead of only the block and its text. */
+.editor-block__content [data-hero-foreground] {
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.editor-block__content [data-hero-foreground]:hover {
+  outline: 1px dashed var(--color-primary);
+  outline-offset: 4px;
+}
+
+.editor-block__content [data-hero-foreground].is-editor-selected-foreground {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  cursor: grabbing;
+}

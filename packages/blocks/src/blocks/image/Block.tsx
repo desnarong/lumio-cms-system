@@ -3,7 +3,7 @@ import { Img } from '../../engine/img.js';
 import type { BlockRenderProps } from '../../types.js';
 import type { ImageProps } from './schema.js';
 
-export const ImageBlock = ({ props }: BlockRenderProps<ImageProps>) => (
+export const ImageBlock = ({ props, block }: BlockRenderProps<ImageProps>) => (
   <figure
     className={`lumio-image lumio-image--${props.align}${
       props.rounded ? ' lumio-image--rounded' : ''
@@ -23,6 +23,7 @@ export const ImageBlock = ({ props }: BlockRenderProps<ImageProps>) => (
       as="figcaption"
       path="props.caption"
       value={props.caption}
+      runs={block.textStyles?.['props.caption']}
       className="lumio-image__caption"
       label="คำบรรยายภาพ"
       placeholder="คำบรรยายภาพ (ไม่บังคับ)"

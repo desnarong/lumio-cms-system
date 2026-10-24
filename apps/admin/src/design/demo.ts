@@ -5,9 +5,11 @@ import {
   normalizeThemeTokens,
   type DesignTokens,
   type GlobalBlocks,
+  type MenuAlign,
   type MenuItem,
   type MenuLocation,
   type SectionTemplate,
+  type SiteChrome,
 } from '@lumio/shared';
 import { ApiError } from '../api-error.js';
 import { demoItems } from '../wizard/demo.js';
@@ -38,8 +40,19 @@ export const createDemoDesignApi = (): DesignApi => {
   let templateId = demoItems[0]?.id ?? null;
   let tokens = normalizeThemeTokens(demoItems[0]?.tokens ?? {});
   let menus = defaultMenus();
+  let menuAlign: Record<MenuLocation, MenuAlign> = { header: 'right', footer: 'left' };
   let globalBlocks = defaultGlobalBlocks();
   let sections: SectionTemplate[] = [];
+  let chrome: SiteChrome = {
+    headerHeight: 0,
+    logoHeight: 0,
+    footerBackground: 'brand',
+    footerBackgroundImage: '',
+    footerOverlay: 60,
+    socialLinks: [],
+    legalLinks: [],
+    copyright: '',
+  };
 
   const design = (): DesignTokens => ({
     tokens,
@@ -76,16 +89,25 @@ export const createDemoDesignApi = (): DesignApi => {
       location,
       locale: locale ?? null,
       items: menus[location],
+      align: menuAlign[location],
       updatedAt: new Date().toISOString(),
     }),
     updateMenu: async (location, input) => {
       menus = { ...menus, [location]: input.items };
+      if (input.align) menuAlign = { ...menuAlign, [location]: input.align };
       return {
         location,
         locale: input.locale ?? null,
         items: menus[location],
+        align: menuAlign[location],
         updatedAt: new Date().toISOString(),
       };
+    },
+
+    getChrome: async () => chrome,
+    updateChrome: async (patch) => {
+      chrome = { ...chrome, ...patch };
+      return chrome;
     },
 
     getGlobalBlocks: async () => globalBlocks,

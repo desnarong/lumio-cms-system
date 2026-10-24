@@ -37,7 +37,10 @@ commit แบบ Conventional Commits
 ## เมื่อทำงานที่ตรงกับสกิล
 
 ใช้สกิลใน `.crush/skills` ก่อนเสมอ (architecture, block, endpoint, migration,
-design, editor-ux, seo-performance, security, template, app-sdk)
+design, editor-ux, seo-performance, security, template, app-sdk, versioning)
+
+**ทุกครั้งที่แก้ไฟล์ ต้อง bump เวอร์ชันก่อนจบงาน** ด้วย
+`node scripts/bump-version.mjs patch|minor|major` (ดู `.crush/skills/lumio-versioning`)
 
 ## การใช้เครื่องมือ (อ่านก่อนแก้ไฟล์ทุกครั้ง)
 

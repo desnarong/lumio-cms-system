@@ -128,14 +128,4 @@ describe('MediaLibraryPage', () => {
     expect(html).toContain('รูปภาพ');
     expect(html).toContain('ค้นหารูป');
   });
-
-  it('offers a way back to the overview when the shell provides one', () => {
-    const html = renderToStaticMarkup(
-      <ToastProvider>
-        <MediaLibraryPage api={createApi()} onBack={() => undefined} />
-      </ToastProvider>,
-    );
-
-    expect(html).toContain('กลับไปภาพรวม');
-  });
 });

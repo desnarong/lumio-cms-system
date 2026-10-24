@@ -1,5 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { localePathFor, publicPathFor, type ContentType } from '@lumio/shared';
+import {
+  isContentType,
+  localePathFor,
+  publicPathFor,
+  type ContentType,
+} from '@lumio/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { rootDomain } from '../public/host';
 import { PUBLISH_QUEUE, type PublishJob, type PublishQueue } from './publish.queue';
@@ -50,6 +55,38 @@ export class PublishService {
   async enqueueSite(siteId: string, paths: string[] = ['/', SITEMAP_PATH]): Promise<PublishJob> {
     const host = await this.primaryHost(siteId);
     return this.queue.add({ siteId, kind: 'site', host, paths });
+  }
+
+  /**
+   * Revalidates every public path that renders the site chrome. Theme tokens,
+   * menus, header/footer and brand images are shared by all pages, so changing
+   * one has to clear the whole site instead of only the home page.
+   */
+  async enqueueChrome(siteId: string, extraPaths: readonly string[] = []): Promise<PublishJob> {
+    const paths = await this.db.forSite(siteId, async (tx) => {
+      const site = await tx.site.findUnique({
+        where: { id: siteId },
+        select: { localeDefault: true },
+      });
+      const defaultLocale = site?.localeDefault ?? 'th';
+      const contents = await tx.content.findMany({
+        where: { status: 'published' },
+        select: { type: true, slug: true, locale: true },
+      });
+
+      const set = new Set<string>(['/', '/shop', '/posts', SITEMAP_PATH, ...extraPaths]);
+      for (const content of contents) {
+        if (!isContentType(content.type)) continue;
+        set.add(
+          content.locale === defaultLocale
+            ? publicPathFor(content.type, content.slug)
+            : localePathFor(content.type, content.slug, content.locale, defaultLocale),
+        );
+      }
+      return [...set];
+    });
+
+    return this.enqueueSite(siteId, paths);
   }
 
   /**

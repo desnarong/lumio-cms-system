@@ -1,11 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { parseMenuItems, type MenuDetail, type MenuLocation, type UpdateMenuInput } from '@lumio/shared';
+import {
+  menuAlignFromSettings,
+  parseMenuItems,
+  type MenuDetail,
+  type MenuLocation,
+  type UpdateMenuInput,
+} from '@lumio/shared';
 import { Prisma } from '@prisma/client';
 import { ApiException } from '../../common/api-error';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { PublishService } from '../publish/publish.service';
 
 const asJson = (value: unknown): Prisma.InputJsonValue => value as Prisma.InputJsonValue;
+
+const asRecord = (value: unknown): Record<string, unknown> =>
+  value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
 
 const readItems = (value: unknown): MenuDetail['items'] => parseMenuItems(value);
 
@@ -23,23 +35,37 @@ export class MenusService {
   constructor(
     private readonly db: PrismaService,
     private readonly audit: AuditService,
+    private readonly publish?: PublishService,
   ) {}
 
   async get(siteId: string, location: MenuLocation, locale?: string): Promise<MenuDetail> {
     const wanted = locale?.trim().toLowerCase() || null;
 
-    const row = await this.db.forSite(siteId, (tx) =>
-      tx.menu.findFirst({
-        where: { location, locale: wanted },
-        select: { items: true, locale: true, updatedAt: true },
-      }),
-    );
+    const { row, align } = await this.db.forSite(siteId, async (tx) => {
+      const [menu, site] = await Promise.all([
+        tx.menu.findFirst({
+          where: { location, locale: wanted },
+          select: { items: true, locale: true, updatedAt: true },
+        }),
+        tx.site.findUnique({ where: { id: siteId }, select: { settings: true } }),
+      ]);
+      return { row: menu, align: menuAlignFromSettings(site?.settings, location) };
+    });
 
-    if (!row) return { location, items: [], locale: wanted, updatedAt: new Date(0).toISOString() };
+    if (!row) {
+      return {
+        location,
+        items: [],
+        locale: wanted,
+        align,
+        updatedAt: new Date(0).toISOString(),
+      };
+    }
     return {
       location,
       items: readItems(row.items),
       locale: row.locale,
+      align,
       updatedAt: row.updatedAt.toISOString(),
     };
   }
@@ -52,7 +78,28 @@ export class MenusService {
   ): Promise<MenuDetail> {
     const wanted = input.locale?.trim().toLowerCase() || null;
 
-    const row = await this.db.forSite(siteId, async (tx) => {
+    const { row, align } = await this.db.forSite(siteId, async (tx) => {
+      const site = await tx.site.findUnique({
+        where: { id: siteId },
+        select: { settings: true },
+      });
+      const settings = asRecord(site?.settings);
+      let nextAlign = menuAlignFromSettings(settings, location);
+
+      if (input.align) {
+        nextAlign = input.align;
+        const current = asRecord(settings.menuAlign);
+        await tx.site.update({
+          where: { id: siteId },
+          data: {
+            settings: asJson({
+              ...settings,
+              menuAlign: { ...current, [location]: nextAlign },
+            }),
+          },
+        });
+      }
+
       const existing = await tx.menu.findFirst({ where: { location, locale: wanted } });
       const saved = existing
         ? await tx.menu.update({
@@ -71,17 +118,19 @@ export class MenusService {
           userId: actorId,
           action: 'menu.update',
           target: wanted ? `${location}:${wanted}` : location,
-          meta: { items: input.items.length } as Prisma.InputJsonObject,
+          meta: { items: input.items.length, align: nextAlign } as Prisma.InputJsonObject,
         },
       });
 
-      return saved;
+      return { row: saved, align: nextAlign };
     });
 
+    await this.publish?.enqueueChrome(siteId);
     return {
       location,
       items: readItems(row.items),
       locale: row.locale,
+      align,
       updatedAt: row.updatedAt.toISOString(),
     };
   }

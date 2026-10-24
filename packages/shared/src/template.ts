@@ -182,6 +182,11 @@ export type CreateSiteFromTemplateInput = z.infer<typeof createSiteFromTemplateI
 export const menuLocationSchema = z.enum(['header', 'footer']);
 export type MenuLocation = z.infer<typeof menuLocationSchema>;
 
+/** Horizontal position of a navigation menu on its bar. */
+export const MENU_ALIGNS = ['left', 'center', 'right'] as const;
+export const menuAlignSchema = z.enum(MENU_ALIGNS);
+export type MenuAlign = z.infer<typeof menuAlignSchema>;
+
 export const updateMenuInputSchema = z.object({
   items: menuItemsSchema,
   /**
@@ -190,6 +195,8 @@ export const updateMenuInputSchema = z.object({
    * sites stay `null`, so they keep working for all languages.
    */
   locale: z.string().trim().max(10).toLowerCase().nullable().optional(),
+  /** Optional so older clients keep saving without moving the menu. */
+  align: menuAlignSchema.optional(),
 });
 export type UpdateMenuInput = z.infer<typeof updateMenuInputSchema>;
 
@@ -198,8 +205,29 @@ export interface MenuDetail {
   items: z.infer<typeof menuItemsSchema>;
   /** Language of this menu, or `null` when it serves every language. */
   locale: string | null;
+  align: MenuAlign;
   updatedAt: string;
 }
+
+/**
+ * Alignment is a property of the bar, not of one language, so it lives in
+ * `sites.settings.menuAlign` and applies to every menu of that location.
+ */
+export const menuAlignFromSettings = (
+  settings: unknown,
+  location: MenuLocation,
+): MenuAlign => {
+  // Sites that never chose an alignment keep the look they already had: the
+  // header menu at the end of the bar, the footer menu at its start.
+  const fallback: MenuAlign = location === 'header' ? 'right' : 'left';
+  if (settings === null || typeof settings !== 'object' || Array.isArray(settings)) {
+    return fallback;
+  }
+  const align = (settings as Record<string, unknown>).menuAlign;
+  if (align === null || typeof align !== 'object' || Array.isArray(align)) return fallback;
+  const value = (align as Record<string, unknown>)[location];
+  return value === 'center' || value === 'right' || value === 'left' ? value : fallback;
+};
 
 /** Merges section styles into a block tree without touching block props. */
 export const withSectionStyles = (blocks: BlockTree, styles: SectionStyles): BlockTree =>

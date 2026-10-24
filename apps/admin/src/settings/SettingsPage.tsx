@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   CONTENT_TRASH_RETENTION_DAYS,
   localeLabel,
@@ -23,6 +23,7 @@ import {
   Button,
   Card,
   EmptyState,
+  ImagePicker,
   Modal,
   Select,
   Skeleton,
@@ -34,6 +35,7 @@ import {
   useToast,
   type MessageKey,
 } from '@lumio/ui';
+import { useMediaPicker } from '@lumio/blocks';
 import { ApiError } from '../api-error.js';
 import type { SettingsTab } from '../route.js';
 import type { SettingsApi } from './api.js';
@@ -100,6 +102,14 @@ export interface GeneralViewProps {
   onNameChange: (value: string) => void;
   onSubdomainChange: (value: string) => void;
   onSave: () => void;
+  logoUrl?: string | null;
+  faviconUrl?: string | null;
+  /** True once the owner picked or removed a brand image. */
+  brandDirty?: boolean;
+  onPickLogo?: () => void;
+  onPickFavicon?: () => void;
+  onRemoveLogo?: () => void;
+  onRemoveFavicon?: () => void;
 }
 
 export const GeneralView = ({
@@ -111,9 +121,19 @@ export const GeneralView = ({
   onNameChange,
   onSubdomainChange,
   onSave,
+  logoUrl = null,
+  faviconUrl = null,
+  brandDirty = false,
+  onPickLogo,
+  onPickFavicon,
+  onRemoveLogo,
+  onRemoveFavicon,
 }: GeneralViewProps) => {
   const t = useT();
-  const dirty = name.trim() !== site.name || subdomain.trim() !== site.subdomain;
+  const dirty =
+    name.trim() !== site.name ||
+    subdomain.trim() !== site.subdomain ||
+    brandDirty;
 
   return (
     <div className="settings-panel">
@@ -132,6 +152,29 @@ export const GeneralView = ({
           })}
           onChange={(event) => onSubdomainChange(event.target.value.toLowerCase())}
         />
+        <section className="settings-brand" aria-labelledby="settings-brand-title">
+          <h3 className="settings-brand__title" id="settings-brand-title">
+            {t('settings.brand.title')}
+          </h3>
+          <ImagePicker
+            label={t('settings.brand.logo')}
+            hint={t('settings.brand.logoHint')}
+            aspect="wide"
+            value={logoUrl}
+            alt={site.name}
+            {...(onPickLogo ? { onPick: onPickLogo } : {})}
+            {...(onRemoveLogo ? { onChange: () => onRemoveLogo() } : {})}
+          />
+          <ImagePicker
+            label={t('settings.brand.favicon')}
+            hint={t('settings.brand.faviconHint')}
+            aspect="square"
+            value={faviconUrl}
+            alt={site.name}
+            {...(onPickFavicon ? { onPick: onPickFavicon } : {})}
+            {...(onRemoveFavicon ? { onChange: () => onRemoveFavicon() } : {})}
+          />
+        </section>
         <div className="settings-actions">
           <Button variant="primary" disabled={!dirty || saving} onClick={onSave}>
             {saving ? t('settings.saving') : t('common.save')}
@@ -150,9 +193,15 @@ export const GeneralView = ({
 const GeneralTab = ({ api }: { api: SettingsApi }) => {
   const t = useT();
   const toast = useToast();
+  const picker = useMediaPicker();
   const [site, setSite] = useState<SiteSummary | null>(null);
   const [name, setName] = useState('');
   const [subdomain, setSubdomain] = useState('');
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
+  // `undefined` means "untouched"; `null` removes the image.
+  const [logoMediaId, setLogoMediaId] = useState<string | null | undefined>(undefined);
+  const [faviconMediaId, setFaviconMediaId] = useState<string | null | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -166,6 +215,10 @@ const GeneralTab = ({ api }: { api: SettingsApi }) => {
         setSite(loaded);
         setName(loaded.name);
         setSubdomain(loaded.subdomain);
+        setLogoUrl(loaded.logoUrl);
+        setFaviconUrl(loaded.faviconUrl);
+        setLogoMediaId(undefined);
+        setFaviconMediaId(undefined);
       })
       .catch((loadError) => {
         if (active) setError(messageOf(loadError));
@@ -193,10 +246,22 @@ const GeneralTab = ({ api }: { api: SettingsApi }) => {
     setSaving(true);
     setError(null);
     try {
-      const updated = await api.updateSite({ name: name.trim(), subdomain: subdomain.trim() });
+      const settings: Record<string, unknown> = {};
+      if (logoMediaId !== undefined) settings.logoMediaId = logoMediaId;
+      if (faviconMediaId !== undefined) settings.faviconMediaId = faviconMediaId;
+
+      const updated = await api.updateSite({
+        name: name.trim(),
+        subdomain: subdomain.trim(),
+        ...(Object.keys(settings).length > 0 ? { settings } : {}),
+      });
       setSite(updated);
       setName(updated.name);
       setSubdomain(updated.subdomain);
+      setLogoUrl(updated.logoUrl);
+      setFaviconUrl(updated.faviconUrl);
+      setLogoMediaId(undefined);
+      setFaviconMediaId(undefined);
       toast.push({ tone: 'success', title: t('settings.saved') });
     } catch (saveError) {
       setError(messageOf(saveError));
@@ -204,6 +269,21 @@ const GeneralTab = ({ api }: { api: SettingsApi }) => {
       setSaving(false);
     }
   };
+
+  const pickBrand = async (kind: 'logo' | 'favicon'): Promise<void> => {
+    if (!picker) return;
+    const picked = await picker.pick({ aspect: kind === 'favicon' ? 'square' : 'wide' });
+    if (!picked?.mediaId) return;
+    if (kind === 'logo') {
+      setLogoUrl(picked.url);
+      setLogoMediaId(picked.mediaId);
+    } else {
+      setFaviconUrl(picked.url);
+      setFaviconMediaId(picked.mediaId);
+    }
+  };
+
+  const brandDirty = logoMediaId !== undefined || faviconMediaId !== undefined;
 
   return (
     <GeneralView
@@ -215,6 +295,19 @@ const GeneralTab = ({ api }: { api: SettingsApi }) => {
       onNameChange={setName}
       onSubdomainChange={setSubdomain}
       onSave={() => void save()}
+      logoUrl={logoUrl}
+      faviconUrl={faviconUrl}
+      brandDirty={brandDirty}
+      onPickLogo={() => void pickBrand('logo')}
+      onPickFavicon={() => void pickBrand('favicon')}
+      onRemoveLogo={() => {
+        setLogoUrl(null);
+        setLogoMediaId(null);
+      }}
+      onRemoveFavicon={() => {
+        setFaviconUrl(null);
+        setFaviconMediaId(null);
+      }}
     />
   );
 };
@@ -953,22 +1046,46 @@ export const BackupView = ({
   onImport,
 }: BackupViewProps) => {
   const t = useT();
+  const fileInput = useRef<HTMLInputElement>(null);
 
   return (
     <div className="settings-panel">
       <Card className="settings-card">
         <h2 className="settings-card__title">{t('settings.backup.exportTitle')}</h2>
-        <p className="settings-card__hint">{t('settings.backup.exportHint')}</p>
-        <div className="settings-actions">
-          <Button variant="primary" disabled={exporting} onClick={onExport}>
-            {exporting ? t('settings.backup.exporting') : t('settings.backup.export')}
-          </Button>
-          <label className="settings-import">
-            <span className="settings-import__label">{t('settings.backup.import')}</span>
+        <div className="settings-backup-actions">
+          <div className="settings-backup-action">
+            <span className="settings-backup-action__icon" aria-hidden="true">
+              <Icon name="download" size={20} />
+            </span>
+            <div className="settings-backup-action__body">
+              <p className="settings-backup-action__title">{t('settings.backup.export')}</p>
+              <p className="settings-backup-action__hint">{t('settings.backup.exportTileHint')}</p>
+            </div>
+            <Button variant="primary" disabled={exporting} onClick={onExport}>
+              {exporting ? t('settings.backup.exporting') : t('settings.backup.downloadFile')}
+            </Button>
+          </div>
+
+          <div className="settings-backup-action">
+            <span className="settings-backup-action__icon" aria-hidden="true">
+              <Icon name="upload" size={20} />
+            </span>
+            <div className="settings-backup-action__body">
+              <p className="settings-backup-action__title">{t('settings.backup.import')}</p>
+              <p className="settings-backup-action__hint">{t('settings.backup.importHint')}</p>
+            </div>
+            <Button
+              variant="secondary"
+              disabled={busy}
+              onClick={() => fileInput.current?.click()}
+            >
+              {busy ? t('settings.backup.importing') : t('settings.backup.chooseFile')}
+            </Button>
             <input
-              className="settings-import__input"
+              ref={fileInput}
               type="file"
               accept="application/json,.json"
+              hidden
               disabled={busy}
               onChange={(event) => {
                 const file = event.target.files?.[0];
@@ -976,7 +1093,7 @@ export const BackupView = ({
                 event.target.value = '';
               }}
             />
-          </label>
+          </div>
         </div>
       </Card>
 
@@ -1279,6 +1396,7 @@ export const SettingsPage = ({ api, billing, tab, onNavigate, security }: Settin
       </header>
 
       <Tabs
+        className="settings-tabs"
         items={TABS.map((item) => ({ id: item.id, label: t(item.labelKey) }))}
         value={tab}
         onChange={(id) => onNavigate(`/settings/${id}`)}

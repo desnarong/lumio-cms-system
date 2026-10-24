@@ -95,6 +95,8 @@ export const typography = {
   xl: { size: '24px', lineHeight: '1.5' },
   '2xl': { size: '32px', lineHeight: '1.4' },
   '3xl': { size: '40px', lineHeight: '1.3' },
+  '4xl': { size: '56px', lineHeight: '1.15' },
+  '5xl': { size: '72px', lineHeight: '1.1' },
 } as const;
 
 export const fonts = {
@@ -131,6 +133,7 @@ export const layout = {
   sidebarWidth: '240px',
   sidebarCollapsedWidth: '72px',
   contentMaxWidth: '1200px',
+  wideMaxWidth: '1728px',
   controlHeightSm: '32px',
   controlHeightMd: '40px',
   controlHeightLg: '48px',

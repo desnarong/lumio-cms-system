@@ -83,15 +83,17 @@ const RedirectRow = ({
   return (
     <li className="settings-row">
       {editing ? (
-        <div className="settings-inline">
+        <div className="settings-inline settings-inline--aligned">
           <TextField
             label={t('settings.redirects.to')}
             hint={t('settings.redirects.toHint')}
+            fieldClassName="settings-inline__field"
             value={toPath}
             onChange={(event) => setToPath(event.target.value)}
           />
           <Select
             label={t('settings.redirects.code')}
+            fieldClassName="settings-inline__role"
             options={codeOptions(
               t('settings.redirects.permanent'),
               t('settings.redirects.temporary'),
@@ -163,21 +165,24 @@ export const RedirectsView = ({
       <Card className="settings-card">
         <h2 className="settings-card__title">{t('settings.redirects.title')}</h2>
         <p className="settings-card__hint">{t('settings.redirects.hint')}</p>
-        <div className="settings-inline">
+        <div className="settings-inline settings-inline--aligned">
           <TextField
             label={t('settings.redirects.from')}
             hint={t('settings.redirects.fromHint')}
+            fieldClassName="settings-inline__field"
             value={fromPath}
             onChange={(event) => onFromPathChange(event.target.value)}
           />
           <TextField
             label={t('settings.redirects.to')}
             hint={t('settings.redirects.toHint')}
+            fieldClassName="settings-inline__field"
             value={toPath}
             onChange={(event) => onToPathChange(event.target.value)}
           />
           <Select
             label={t('settings.redirects.code')}
+            fieldClassName="settings-inline__role"
             options={codeOptions(
               t('settings.redirects.permanent'),
               t('settings.redirects.temporary'),
@@ -185,13 +190,15 @@ export const RedirectsView = ({
             value={String(code)}
             onChange={(event) => onCodeChange(event.target.value === '302' ? 302 : 301)}
           />
-          <Button
-            variant="primary"
-            disabled={busy || fromPath.trim().length === 0 || toPath.trim().length === 0}
-            onClick={onAdd}
-          >
-            {t('settings.redirects.add')}
-          </Button>
+          <div className="settings-inline__action">
+            <Button
+              variant="primary"
+              disabled={busy || fromPath.trim().length === 0 || toPath.trim().length === 0}
+              onClick={onAdd}
+            >
+              {t('settings.redirects.add')}
+            </Button>
+          </div>
         </div>
         {error ? (
           <span className="settings-error" role="alert">

@@ -17,6 +17,13 @@ describe('buildContentSecurityPolicy', () => {
     expect(directiveOf(csp, 'script-src')).toContain("'unsafe-eval'");
   });
 
+  it('allows the chosen design fonts while keeping scripts locked down', () => {
+    const csp = buildContentSecurityPolicy({ nonce: 'n' });
+
+    expect(directiveOf(csp, 'style-src')).toContain('https://fonts.googleapis.com');
+    expect(directiveOf(csp, 'font-src')).toContain('https://fonts.gstatic.com');
+  });
+
   it('blocks framing, objects and base tag abuse', () => {
     const csp = buildContentSecurityPolicy({ nonce: 'n' });
 

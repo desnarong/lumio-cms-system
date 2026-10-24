@@ -2,7 +2,7 @@ import { Editable } from '../../engine/editable.js';
 import type { BlockRenderProps } from '../../types.js';
 import type { ButtonProps } from './schema.js';
 
-export const ButtonBlock = ({ props }: BlockRenderProps<ButtonProps>) => (
+export const ButtonBlock = ({ props, block }: BlockRenderProps<ButtonProps>) => (
   <div className={`lumio-button lumio-button--${props.align}`}>
     <a
       className={`ui-button ui-button--${props.variant} ui-button--${props.size}${
@@ -12,7 +12,8 @@ export const ButtonBlock = ({ props }: BlockRenderProps<ButtonProps>) => (
       target={props.external ? '_blank' : undefined}
       rel={props.external ? 'noopener noreferrer' : undefined}
     >
-      <Editable path="props.label" value={props.label} label="ข้อความปุ่ม" />
+      <Editable path="props.label" value={props.label}
+      runs={block.textStyles?.['props.label']} label="ข้อความปุ่ม" />
     </a>
   </div>
 );

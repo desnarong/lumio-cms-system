@@ -92,21 +92,26 @@ export const BillingView = ({
 
       <Card className="settings-card">
         <div className="billing-current">
-          <div>
-            <h2 className="settings-card__title">{t('billing.currentPlan')}</h2>
-            <p className="billing-current__plan">{summary.planLabel}</p>
-            <p className="billing-current__price">{formatPlanPrice(summary.price)}</p>
-            {summary.subscription ? (
-              <p className="billing-current__renew">
-                {summary.subscription.cancelAtPeriodEnd
-                  ? t('billing.renewalEnds', {
-                      date: summary.subscription.renewsAt?.slice(0, 10) ?? '',
-                    })
-                  : t('billing.renewsOn', {
-                      date: summary.subscription.renewsAt?.slice(0, 10) ?? '',
-                    })}
-              </p>
-            ) : null}
+          <div className="billing-current__main">
+            <span className="billing-current__icon" aria-hidden="true">
+              <Icon name="sparkles" size={22} />
+            </span>
+            <div>
+              <h2 className="settings-card__title">{t('billing.currentPlan')}</h2>
+              <p className="billing-current__plan">{summary.planLabel}</p>
+              <p className="billing-current__price">{formatPlanPrice(summary.price)}</p>
+              {summary.subscription ? (
+                <p className="billing-current__renew">
+                  {summary.subscription.cancelAtPeriodEnd
+                    ? t('billing.renewalEnds', {
+                        date: summary.subscription.renewsAt?.slice(0, 10) ?? '',
+                      })
+                    : t('billing.renewsOn', {
+                        date: summary.subscription.renewsAt?.slice(0, 10) ?? '',
+                      })}
+                </p>
+              ) : null}
+            </div>
           </div>
           {summary.subscription &&
           !summary.subscription.cancelAtPeriodEnd &&
@@ -147,12 +152,20 @@ export const BillingView = ({
 
       <div className="billing-plans">
         {summary.plans.map((plan) => (
-          <Card key={plan.id} className="billing-plan">
-            <h3 className="billing-plan__name">{plan.label}</h3>
-            <p className="billing-plan__price">{formatPlanPrice(plan.price)}</p>
+          <Card
+            key={plan.id}
+            className={plan.current ? 'billing-plan billing-plan--current' : 'billing-plan'}
+          >
+            <div className="billing-plan__head">
+              <h3 className="billing-plan__name">{plan.label}</h3>
+              <p className="billing-plan__price">{formatPlanPrice(plan.price)}</p>
+            </div>
             <ul className="billing-plan__features">
               {plan.features.map((feature) => (
-                <li key={feature}>{feature}</li>
+                <li key={feature}>
+                  <Icon name="check" size={14} />
+                  <span>{feature}</span>
+                </li>
               ))}
             </ul>
             {plan.credit > 0 && plan.payable !== null ? (
@@ -162,18 +175,23 @@ export const BillingView = ({
                 {t('billing.payable', { amount: plan.payable.toLocaleString('th-TH') })}
               </p>
             ) : null}
-            {plan.current ? (
-              <p className="billing-plan__current">{t('billing.current')}</p>
-            ) : (
-              <Button
-                variant="secondary"
-                size="sm"
-                disabled={busy || plan.price === null}
-                onClick={() => onChangePlan(plan.id)}
-              >
-                {plan.price === null ? t('billing.contactSales') : t('billing.choose')}
-              </Button>
-            )}
+            <div className="billing-plan__footer">
+              {plan.current ? (
+                <p className="billing-plan__current">
+                  <Icon name="check" size={14} />
+                  <span>{t('billing.current')}</span>
+                </p>
+              ) : (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={busy || plan.price === null}
+                  onClick={() => onChangePlan(plan.id)}
+                >
+                  {plan.price === null ? t('billing.contactSales') : t('billing.choose')}
+                </Button>
+              )}
+            </div>
           </Card>
         ))}
       </div>

@@ -122,7 +122,7 @@ export const LanguageBarView = ({
       {creating ? (
         <Modal
           open
-          size="sm"
+          size="md"
           title={t('editor.lang.createTitle', { language: localeLabel(creating) })}
           description={t('editor.lang.createBody')}
           onClose={onCloseDialog}

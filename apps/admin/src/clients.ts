@@ -123,7 +123,7 @@ export const createAdminClients = ({
       dashboard: createDemoDashboardApi(),
       commerce: createDemoCommerceApi(),
       design: createDemoDesignApi(),
-      settings: createDemoSettingsApi(),
+      settings: createDemoSettingsApi({ media }),
       billing: createDemoBillingApi(),
       seo: createDemoSeoApi(ai),
       analytics: createDemoAnalyticsApi(),

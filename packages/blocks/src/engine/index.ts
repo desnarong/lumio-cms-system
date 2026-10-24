@@ -12,5 +12,6 @@ export * from './migrate.js';
 export * from './panel.js';
 export * from './paths.js';
 export * from './renderer.js';
+export * from './runs.js';
 export * from './shell.js';
 export * from './tree.js';

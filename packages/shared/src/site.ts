@@ -126,6 +126,41 @@ export const memberSummarySchema = z.object({
 });
 export type MemberSummary = z.infer<typeof memberSummarySchema>;
 
+/**
+ * Size of the site chrome, edited in the Design Panel. `0` means "fit the
+ * content", anything else is a pixel height the header keeps on every page.
+ */
+export const SITE_CHROME_HEADER_HEIGHT_MAX = 200;
+
+const chromeLinkSchema = z.object({
+  label: z.string().trim().min(1).max(40),
+  href: z.string().trim().max(500),
+});
+
+export const siteChromeSchema = z.object({
+  headerHeight: z.number().int().min(0).max(SITE_CHROME_HEADER_HEIGHT_MAX).default(0),
+  /** Logo height in pixels; `0` keeps the default template size. */
+  logoHeight: z.number().int().min(0).max(160).default(0),
+  /** Footer band: brand colour, a neutral surface, or nothing. */
+  footerBackground: z.enum(['none', 'surface', 'muted', 'brand']).default('brand'),
+  /** Photo behind the footer, as a media URL; empty keeps the plain band. */
+  footerBackgroundImage: z.string().max(500).default(''),
+  /** 0 shows the photo untouched, 100 hides it behind the brand colour. */
+  footerOverlay: z.number().int().min(0).max(100).default(60),
+  socialLinks: z.array(chromeLinkSchema).max(6).default([]),
+  legalLinks: z.array(chromeLinkSchema).max(4).default([]),
+  /** Bottom line; empty falls back to the site name and the current year. */
+  copyright: z.string().max(200).default(''),
+});
+export type SiteChrome = z.infer<typeof siteChromeSchema>;
+
+export type SiteChromeLink = z.infer<typeof chromeLinkSchema>;
+
+
+/** Partial update from the Design Panel; unknown keys are ignored. */
+export const siteChromePatchSchema = siteChromeSchema.partial();
+export type SiteChromePatch = z.infer<typeof siteChromePatchSchema>;
+
 /** Shape the admin uses for its site switcher; the API answers exactly this. */
 export const siteSummarySchema = z.object({
   id: z.string(),
@@ -136,6 +171,9 @@ export const siteSummarySchema = z.object({
   plan: z.string(),
   role: z.enum(ROLES),
   createdAt: z.string(),
+  /** Resolved brand images, so the settings screen can preview them. */
+  logoUrl: z.string().nullable().default(null),
+  faviconUrl: z.string().nullable().default(null),
 });
 export type SiteSummary = z.infer<typeof siteSummarySchema>;
 

@@ -5,6 +5,9 @@ import { TEXT_ALIGNMENTS } from '../common.js';
 export const PARAGRAPH_SIZES = ['base', 'lg'] as const;
 export type ParagraphSize = (typeof PARAGRAPH_SIZES)[number];
 
+export const PARAGRAPH_WIDTHS = ['contained', 'full'] as const;
+export type ParagraphWidth = (typeof PARAGRAPH_WIDTHS)[number];
+
 export const paragraphPropsSchema = z.object({
   text: z
     .string()
@@ -13,6 +16,7 @@ export const paragraphPropsSchema = z.object({
     ),
   align: z.enum(TEXT_ALIGNMENTS).default('left'),
   size: z.enum(PARAGRAPH_SIZES).default('base'),
+  width: z.enum(PARAGRAPH_WIDTHS).default('contained'),
 });
 
 export const paragraphSchema = z.object({

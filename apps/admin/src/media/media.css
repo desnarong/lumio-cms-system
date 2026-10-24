@@ -320,24 +320,6 @@
   font-size: var(--text-sm);
 }
 
-.media-page__back {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-  text-decoration: none;
-}
-
-.media-page__back:hover {
-  color: var(--color-primary);
-}
-
-.media-page__back:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
 /* Bulk alt-text editor */
 .media-bulk {
   display: flex;

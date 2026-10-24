@@ -8,6 +8,7 @@ import {
 import { Prisma } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { PublishService } from '../publish/publish.service';
 
 const asJson = (value: unknown): Prisma.InputJsonValue => value as Prisma.InputJsonValue;
 
@@ -26,6 +27,7 @@ export class GlobalBlocksService {
   constructor(
     private readonly db: PrismaService,
     private readonly audit: AuditService,
+    private readonly publish?: PublishService,
   ) {}
 
   get(siteId: string): Promise<GlobalBlocks> {
@@ -38,7 +40,7 @@ export class GlobalBlocksService {
     input: UpdateGlobalBlockInput,
     actorId: string,
   ): Promise<GlobalBlocks> {
-    return this.db.forSite(siteId, async (tx) => {
+    const result = await this.db.forSite(siteId, async (tx) => {
       const existing = await tx.globalBlock.findFirst({
         where: { kind },
         select: { id: true },
@@ -73,6 +75,9 @@ export class GlobalBlocksService {
 
       return this.read(tx);
     });
+
+    await this.publish?.enqueueChrome(siteId);
+    return result;
   }
 
   private async read(tx: Prisma.TransactionClient): Promise<GlobalBlocks> {

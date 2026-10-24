@@ -183,6 +183,94 @@ describe('hero block', () => {
     expect(html).toContain('loading="eager"');
     expect(html).toContain('alt="บรรยากาศร้านกาแฟ"');
   });
+
+  it('puts the text on top of the picture in the full-bleed overlay layout', () => {
+    const html = render('hero', {
+      layout: 'overlay',
+      heading: 'Light That Feel',
+      image: { mediaId: 'med_2', alt: 'หลอดไฟ LED', src: '/images/banner.jpg' },
+    });
+    expect(html).toContain('lumio-hero--overlay');
+    expect(html).toContain('lumio-hero__background');
+    expect(html).toContain('Light That Feel');
+    expect(html.match(/<h1/g) ?? []).toHaveLength(1);
+  });
+
+  it('can keep the real picture height instead of cropping to the viewport', () => {
+    const html = render('hero', {
+      layout: 'overlay',
+      heightMode: 'image',
+      image: { mediaId: 'med_2', alt: 'แบนเนอร์', src: '/images/banner.jpg', width: 1440, height: 701 },
+    });
+    expect(html).toContain('data-height="image"');
+    expect(html).toContain('--hero-aspect:1440 / 701');
+  });
+
+  it('exposes the headline size and wide content choice to the stylesheet', () => {
+    const html = render('hero', {
+      layout: 'overlay',
+      headingSize: 'xl',
+      contentWidth: 'wide',
+    });
+    expect(html).toContain('data-heading-size="xl"');
+    expect(html).toContain('data-content-width="wide"');
+  });
+
+  it('floats several pictures over the banner at the chosen pixel offsets', () => {
+    const html = render('hero', {
+      layout: 'overlay',
+      backgroundZoom: 140,
+      backgroundX: 30,
+      backgroundY: 70,
+      scrimOpacity: 60,
+      foregrounds: [
+        {
+          image: { mediaId: 'med_3', alt: 'หลอดไฟ', src: '/images/bulb.png' },
+          width: 280,
+          x: 40,
+          y: -20,
+          shadow: true,
+        },
+        {
+          image: { mediaId: 'med_4', alt: 'โคมไฟ', src: '/images/lamp.png' },
+          width: 160,
+          x: 320,
+          y: 10,
+          shadow: false,
+        },
+      ],
+    });
+    expect(html).toContain('--hero-zoom:1.4');
+    expect(html).toContain('--hero-x:30%');
+    expect(html).toContain('--hero-y:70%');
+    expect(html).toContain('--hero-scrim:0.6');
+    expect(html.match(/lumio-hero__foreground/g) ?? []).toHaveLength(2);
+    expect(html).toContain('width:280px');
+    expect(html).toContain('right:40px');
+    expect(html).toContain('bottom:-20px');
+    expect(html).toContain('data-shadow="true"');
+    expect(html).toContain('alt="หลอดไฟ"');
+    expect(html).toContain('alt="โคมไฟ"');
+  });
+
+  it('swaps a foreground picture on hover', () => {
+    const html = render('hero', {
+      layout: 'overlay',
+      foregrounds: [
+        {
+          image: { mediaId: 'med_3', alt: 'หลอดไฟ', src: '/images/bulb.png' },
+          hoverImage: { mediaId: 'med_5', alt: '', src: '/images/bulb-on.png' },
+          width: 280,
+          x: 40,
+          y: -20,
+          shadow: true,
+        },
+      ],
+    });
+    expect(html).toContain('data-hover-image="true"');
+    expect(html).toContain('lumio-hero__foreground-hover');
+    expect(html).toContain('src="/images/bulb-on.png"');
+  });
 });
 
 describe('features block', () => {
@@ -192,6 +280,104 @@ describe('features block', () => {
     expect(html.match(/<li/g) ?? []).toHaveLength(3);
     expect(html).toContain('คั่วสดทุกสัปดาห์');
     expect(html).toContain('ปรึกษาการชงได้ทุกวัน');
+  });
+
+  it('lets the intro use the full width when asked', () => {
+    const html = render('features', { subheadingWidth: 'full' });
+    expect(html).toContain('data-subheading-width="full"');
+  });
+
+  it('can join plain cards edge to edge', () => {
+    const html = render('features', { cardStyle: 'plain', cardGap: 'none' });
+    expect(html).toContain('data-card-style="plain"');
+    expect(html).toContain('data-card-gap="none"');
+  });
+
+  it('can hide the icon and use a taller photo crop', () => {
+    const html = render('features', {
+      items: [
+        {
+          showIcon: false,
+          iconName: 'sun',
+          image: { mediaId: 'med_2', alt: 'ห้องนั่งเล่น', src: '/images/room.jpg' },
+          mediaAspect: 'photo',
+          title: 'ไม่มีไอคอน',
+          description: 'ทดสอบ',
+        },
+      ],
+    });
+    expect(html).not.toContain('lumio-features__icon');
+    expect(html).toContain('lumio-img--photo');
+  });
+
+  it('can align the icon and text left, centre or right', () => {
+    const html = render('features', { contentAlign: 'center' });
+    expect(html).toContain('data-content-align="center"');
+  });
+
+  it('can paint the text on top of the card picture', () => {
+    const html = render('features', { textOverlay: true });
+    expect(html).toContain('data-text-overlay="true"');
+  });
+
+  it('offers full-width cards, a fixed height, text panels and hover buttons', () => {
+    const html = render('features', {
+      fullWidth: true,
+      cardHeight: 420,
+      textBackground: true,
+      buttonVisibility: 'hover',
+      items: [{ iconName: 'sun', iconSize: 64, title: 'ไอคอนใหญ่', description: 'ทดสอบ' }],
+    });
+    expect(html).toContain('data-full-width="true"');
+    expect(html).toContain('--feature-card-height:420px');
+    expect(html).toContain('data-text-background="true"');
+    expect(html).toContain('data-button-visibility="hover"');
+    expect(html).toContain('--feature-icon-size:64px');
+  });
+
+  it('swaps in a second picture when the card is hovered', () => {
+    const html = render('features', {
+      items: [
+        {
+          image: { mediaId: 'med_a', alt: 'ปกติ', src: '/images/a.jpg' },
+          hoverImage: { mediaId: 'med_b', alt: '', src: '/images/b.jpg' },
+          title: 'hover',
+          description: 'ทดสอบ',
+        },
+      ],
+    });
+    expect(html).toContain('lumio-features__image--hover');
+    expect(html).toContain('src="/images/b.jpg"');
+  });
+
+  it('draws a real line icon instead of the emoji fallback when one is chosen', () => {
+    const html = render('features', {
+      items: [{ icon: '🔆', iconName: 'sun', title: 'แสงนวล', description: 'ทดสอบไอคอน' }],
+    });
+    expect(html).toContain('lumio-features__icon--line');
+    expect(html).toContain('class="ui-icon"');
+    expect(html).not.toContain('🔆');
+  });
+
+  it('can use an uploaded picture as the icon and crops the card picture as asked', () => {
+    const html = render('features', {
+      items: [
+        {
+          iconImage: { mediaId: 'med_icon', alt: 'ไอคอนหลอดไฟ', src: '/images/icon.png' },
+          image: { mediaId: 'med_2', alt: 'ห้องนั่งเล่น', src: '/images/room.jpg' },
+          mediaAspect: 'square',
+          mediaFit: 'contain',
+          mediaPosition: 'top',
+          title: 'ไอคอนรูปภาพ',
+          description: 'ทดสอบรูปไอคอน',
+        },
+      ],
+    });
+    expect(html).toContain('lumio-features__icon--image');
+    expect(html).toContain('alt="ไอคอนหลอดไฟ"');
+    expect(html).toContain('lumio-img--square');
+    expect(html).toContain('data-fit="contain"');
+    expect(html).toContain('object-position:50% 0%');
   });
 });
 
@@ -342,8 +528,19 @@ describe('language switcher block', () => {
     expect(html).toContain('aria-disabled="true"');
   });
 
-  it('says so when the site has only one language', () => {
+  it('says so in the editor when no language list is available', () => {
     const html = renderToStaticMarkup(<BlockRenderer block={nodeFor('language-switcher')} />);
     expect(html).toContain('ยังมีภาษาที่เผยแพร่แล้วเพียงภาษาเดียว');
+  });
+
+  it('renders nothing on the site when there is only one language', () => {
+    const html = renderToStaticMarkup(
+      <BlockRenderer
+        block={nodeFor('language-switcher')}
+        languages={[{ locale: 'th', label: 'ไทย', href: '/', active: true, available: true }]}
+      />,
+    );
+    expect(html).not.toContain('ยังมีภาษาที่เผยแพร่แล้วเพียงภาษาเดียว');
+    expect(html).not.toContain('lumio-language');
   });
 });

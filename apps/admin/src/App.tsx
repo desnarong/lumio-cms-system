@@ -301,8 +301,9 @@ export const AdminApp = ({
         />
       </MediaLibraryProvider>
     ) : (
-      <AdminShell
-        route={effective}
+      <MediaLibraryProvider api={clients.media} ai={clients.ai}>
+        <AdminShell
+          route={effective}
         siteName={context?.siteName ?? ''}
         userName={clients.session.read()?.user.name ?? ''}
         role={role}
@@ -349,7 +350,7 @@ export const AdminApp = ({
           />
         ) : null}
         {effective.name === 'media' ? (
-          <MediaLibraryPage api={clients.media} ai={clients.ai} onBack={() => go('/dashboard')} />
+          <MediaLibraryPage api={clients.media} ai={clients.ai} />
         ) : null}
         {effective.name === 'design' ? (
           <DesignPage
@@ -394,7 +395,8 @@ export const AdminApp = ({
             onNavigate={go}
           />
         ) : null}
-      </AdminShell>
+        </AdminShell>
+      </MediaLibraryProvider>
     );
 
   return (

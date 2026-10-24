@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import {
   applyTemplateInputSchema,
+  siteChromePatchSchema,
   themeTokensPatchSchema,
   type Role,
 } from '@lumio/shared';
@@ -21,6 +22,23 @@ const DESIGN_ROLES: Role[] = ['owner', 'admin', 'editor'];
 @UseGuards(AuthGuard, SiteGuard, RolesGuard)
 export class DesignController {
   constructor(private readonly design: DesignService) {}
+
+  @Get('chrome')
+  @Roles(...READ_ROLES)
+  async getChrome(@CurrentSite() siteId: string) {
+    return ok(await this.design.getChrome(siteId));
+  }
+
+  @Patch('chrome')
+  @Roles(...DESIGN_ROLES)
+  async updateChrome(
+    @CurrentSite() siteId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() body: unknown,
+  ) {
+    const patch = siteChromePatchSchema.parse(body);
+    return ok(await this.design.updateChrome(siteId, patch, user.id));
+  }
 
   @Get('tokens')
   @Roles(...READ_ROLES)

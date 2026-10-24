@@ -123,6 +123,7 @@ const chrome = (
       ...(banking ? { banking } : {}),
     },
     logoUrl: null,
+    faviconUrl: null,
   },
   menus: { header: [], footer: [] },
   globalBlocks: { header: [], footer: [] },

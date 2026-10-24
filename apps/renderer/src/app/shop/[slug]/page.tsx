@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     description: shop.product.description.slice(0, 160),
     alternates: { canonical: `/shop/${shop.product.slug}` },
     openGraph: shop.product.images[0] ? { images: [shop.product.images[0]] } : undefined,
+    ...(shop.site.faviconUrl ? { icons: { icon: shop.site.faviconUrl } } : {}),
   };
 }
 

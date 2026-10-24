@@ -10,7 +10,7 @@ export type BlockButtonVariant = (typeof BUTTON_VARIANTS)[number];
 export const BUTTON_SIZES = ['sm', 'md', 'lg'] as const;
 export type BlockButtonSize = (typeof BUTTON_SIZES)[number];
 
-export const IMAGE_ASPECTS = ['auto', 'square', 'wide', 'video'] as const;
+export const IMAGE_ASPECTS = ['auto', 'square', 'wide', 'photo', 'video'] as const;
 export type BlockImageAspect = (typeof IMAGE_ASPECTS)[number];
 
 /** Image reference shared by every block that shows a picture. */
@@ -61,6 +61,7 @@ export const imageAspectOptions = [
   { value: 'auto', label: 'ตามภาพต้นฉบับ' },
   { value: 'square', label: 'จัตุรัส' },
   { value: 'wide', label: 'แนวนอน' },
+  { value: 'photo', label: 'ภาพถ่าย (4:3)' },
   { value: 'video', label: 'อัตราส่วนวิดีโอ' },
 ];
 
