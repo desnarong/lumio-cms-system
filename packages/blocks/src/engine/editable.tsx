@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import type { CSSProperties, ElementType } from 'react';
-import type { TextRun } from '@lumio/shared';
+import type { TextLayout, TextRun } from '@lumio/shared';
 import { cn } from '@lumio/ui/cn';
 import { textSegments } from './runs.js';
 
@@ -17,6 +17,8 @@ export interface EditableProps {
   placeholder?: string;
   /** Inline styling for parts of the value; offsets are character positions. */
   runs?: readonly TextRun[];
+  /** Editor-set position and size for this text, relative to the block. */
+  layout?: TextLayout;
 }
 
 const runClassName = (run: TextRun): string =>
@@ -41,15 +43,28 @@ export const Editable = ({
   label,
   placeholder,
   runs,
+  layout,
 }: EditableProps) => {
   const Tag = (as ?? 'span') as ElementType;
   const segments = textSegments(value, runs);
+  const moved = layout && (layout.x !== 0 || layout.y !== 0);
+  const resized = layout !== undefined && layout.scale !== 100;
+  const mergedStyle: CSSProperties | undefined =
+    moved || resized
+      ? {
+          ...style,
+          ...(moved
+            ? { transform: `translate(${layout?.x ?? 0}px, ${layout?.y ?? 0}px)` }
+            : {}),
+          ...(resized ? { zoom: (layout?.scale ?? 100) / 100 } : {}),
+        }
+      : style;
 
   return createElement(
     Tag,
     {
       className: cn('lumio-editable', className),
-      style,
+      style: mergedStyle,
       'data-editable-path': path,
       'data-editable-multiline': multiline ? 'true' : undefined,
       'data-editable-label': label,

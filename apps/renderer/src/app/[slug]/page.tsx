@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { PageView } from '../../components/PageView';
+import { loadPageShopProducts } from '../../lib/block-shop';
 import { loadPageOrNull } from '../../lib/content';
 import { applyRedirect } from '../../lib/redirect';
 import { requestHost } from '../../lib/request-host';
@@ -38,5 +39,6 @@ export default async function SlugPage({ params }: SlugPageProps) {
     notFound();
   }
 
-  return <PageView page={page} host={host} />;
+  const shopProducts = await loadPageShopProducts(page, host, locale);
+  return <PageView page={page} host={host} {...(shopProducts ? { shopProducts } : {})} />;
 }

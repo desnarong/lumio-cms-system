@@ -8,6 +8,8 @@ export const imagePropsSchema = z.object({
   aspect: z.enum(IMAGE_ASPECTS).default('auto'),
   rounded: z.boolean().default(true),
   align: z.enum(TEXT_ALIGNMENTS).default('center'),
+  /** Zoom of the crop (percent); 100 shows the picture at cover size. */
+  zoom: z.number().int().min(100).max(300).default(100),
 });
 
 export const imageSchema = z.object({

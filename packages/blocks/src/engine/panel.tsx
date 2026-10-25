@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { Button, ColorPicker, Icon, Select, Switch, TextField } from '@lumio/ui';
+import { Button, ColorPicker, Icon, Select, Slider, Switch, TextField } from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import {
   ANIMATIONS,
@@ -156,7 +156,7 @@ export interface CommonStylePanelProps {
  */
 export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProps) => (
   <>
-    <PanelSection title="หน้าตา">
+    <PanelSection title="ระยะห่างและพื้นหลัง">
       <Select
         label="ระยะห่างบน-ล่าง"
         value={style.paddingY}
@@ -165,17 +165,21 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
       />
       <TextField
         label="ระยะห่างบน-ล่างกำหนดเอง (px)"
-        hint="เว้นว่างเพื่อใช้ค่าด้านบน"
+        hint="เว้นว่างเพื่อใช้ค่าด้านบน — ถ้ากำหนดบน/ล่างแยกไว้ จะใช้ค่านั้นแทน"
         type="number"
         min={0}
         max={240}
         value={style.paddingYpx === undefined ? '' : String(style.paddingYpx)}
         onChange={(event) => {
           const raw = event.target.value.trim();
-          onChange(
-            'style.paddingYpx',
-            raw === '' ? undefined : Math.min(240, Math.max(0, Math.round(Number(raw) || 0))),
-          );
+          const value =
+            raw === '' ? undefined : Math.min(240, Math.max(0, Math.round(Number(raw) || 0)));
+          onChange('style.paddingYpx', value);
+          // The two separate fields win over this one; clear them so the number typed here applies.
+          if (value !== undefined) {
+            onChange('style.paddingTopPx', undefined);
+            onChange('style.paddingBottomPx', undefined);
+          }
         }}
       />
       <Select
@@ -196,6 +200,81 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
           onChange(
             'style.paddingXpx',
             raw === '' ? undefined : Math.min(240, Math.max(0, Math.round(Number(raw) || 0))),
+          );
+        }}
+      />
+      <TextField
+        label="ระยะห่างด้านบน (px)"
+        hint="เว้นว่างเพื่อใช้ระยะบน-ล่าง"
+        type="number"
+        min={0}
+        max={240}
+        value={style.paddingTopPx === undefined ? '' : String(style.paddingTopPx)}
+        onChange={(event) => {
+          const raw = event.target.value.trim();
+          onChange(
+            'style.paddingTopPx',
+            raw === '' ? undefined : Math.min(240, Math.max(0, Math.round(Number(raw) || 0))),
+          );
+        }}
+      />
+      <TextField
+        label="ระยะห่างด้านล่าง (px)"
+        hint="เว้นว่างเพื่อใช้ระยะบน-ล่าง"
+        type="number"
+        min={0}
+        max={240}
+        value={style.paddingBottomPx === undefined ? '' : String(style.paddingBottomPx)}
+        onChange={(event) => {
+          const raw = event.target.value.trim();
+          onChange(
+            'style.paddingBottomPx',
+            raw === '' ? undefined : Math.min(240, Math.max(0, Math.round(Number(raw) || 0))),
+          );
+        }}
+      />
+      <TextField
+        label="เลื่อนบล็อกขึ้น/ลง (px)"
+        hint="ค่าลบ = เลื่อนขึ้น, ค่าบวก = เลื่อนลง"
+        type="number"
+        min={-1200}
+        max={1200}
+        value={style.marginTopPx === undefined ? '' : String(style.marginTopPx)}
+        onChange={(event) => {
+          const raw = event.target.value.trim();
+          onChange(
+            'style.marginTopPx',
+            raw === '' ? undefined : Math.min(1200, Math.max(-1200, Math.round(Number(raw) || 0))),
+          );
+        }}
+      />
+      <TextField
+        label="ความกว้างสูงสุด (px)"
+        hint="เว้นว่างเพื่อเต็มความกว้างของหน้า"
+        type="number"
+        min={160}
+        max={2400}
+        value={style.widthPx === undefined ? '' : String(style.widthPx)}
+        onChange={(event) => {
+          const raw = event.target.value.trim();
+          onChange(
+            'style.widthPx',
+            raw === '' ? undefined : Math.min(2400, Math.max(160, Math.round(Number(raw) || 0))),
+          );
+        }}
+      />
+      <TextField
+        label="ความสูงขั้นต่ำ (px)"
+        hint="เว้นว่างเพื่อให้สูงตามเนื้อหา"
+        type="number"
+        min={80}
+        max={2400}
+        value={style.heightPx === undefined ? '' : String(style.heightPx)}
+        onChange={(event) => {
+          const raw = event.target.value.trim();
+          onChange(
+            'style.heightPx',
+            raw === '' ? undefined : Math.min(2400, Math.max(80, Math.round(Number(raw) || 0))),
           );
         }}
       />
@@ -241,6 +320,15 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
           )
         }
       />
+      <Slider
+        label="ขนาดข้อความ (%)"
+        min={50}
+        max={300}
+        step={5}
+        value={style.textScale ?? 100}
+        formatValue={(value) => `${value}%`}
+        onChange={(value) => onChange('style.textScale', value === 100 ? undefined : value)}
+      />
       <TextField
         label="เลื่อนข้อความแนวนอน (px)"
         hint="ค่าลบเลื่อนไปทางซ้าย ค่าบวกเลื่อนไปทางขวา"
@@ -269,6 +357,64 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
           )
         }
       />
+      <div className="lumio-panel-nudge" role="group" aria-label="ย้ายข้อความทีละ 8 พิกเซล">
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          aria-label="ย้ายข้อความขึ้น"
+          onClick={() =>
+            onChange(
+              'style.offsetY',
+              Math.min(600, Math.max(-600, (style.offsetY ?? 0) - 8)),
+            )
+          }
+        >
+          <Icon name="arrow-up" size={16} />
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          aria-label="ย้ายข้อความลง"
+          onClick={() =>
+            onChange(
+              'style.offsetY',
+              Math.min(600, Math.max(-600, (style.offsetY ?? 0) + 8)),
+            )
+          }
+        >
+          <Icon name="arrow-down" size={16} />
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          aria-label="ย้ายข้อความไปทางซ้าย"
+          onClick={() =>
+            onChange(
+              'style.offsetX',
+              Math.min(600, Math.max(-600, (style.offsetX ?? 0) - 8)),
+            )
+          }
+        >
+          <Icon name="arrow-left" size={16} />
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          aria-label="ย้ายข้อความไปทางขวา"
+          onClick={() =>
+            onChange(
+              'style.offsetX',
+              Math.min(600, Math.max(-600, (style.offsetX ?? 0) + 8)),
+            )
+          }
+        >
+          <Icon name="arrow-right" size={16} />
+        </Button>
+      </div>
       {style.offsetX || style.offsetY ? (
         <Button
           type="button"
@@ -280,6 +426,16 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
           }}
         >
           คืนตำแหน่งเดิม
+        </Button>
+      ) : null}
+      {style.textScale && style.textScale !== 100 ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => onChange('style.textScale', undefined)}
+        >
+          คืนขนาดข้อความเดิม
         </Button>
       ) : null}
     </PanelSection>

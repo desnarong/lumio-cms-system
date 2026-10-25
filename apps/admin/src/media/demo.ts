@@ -110,6 +110,12 @@ export const createDemoMediaApi = (): MediaApi => {
         (a, b) => a.localeCompare(b, 'th'),
       ),
 
+    get: async (id) => {
+      const current = items.find((item) => item.id === id);
+      if (!current) throw new ApiError('not_found', translateNow('demo.mediaNotFound'), 404);
+      return current;
+    },
+
     upload: async (file, options) => {
       const invalid = checkUploadCandidate(file);
       if (invalid) throw new ApiError('validation_error', invalid, 400);

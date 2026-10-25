@@ -170,6 +170,53 @@ describe('PublicService.getPage', () => {
     expect(page.content?.publishedAt).toBe('2026-09-01T02:00:00.000Z');
   });
 
+  it('refreshes image urls from the media ladder instead of the saved copy', async () => {
+    const findManyMedia = vi.fn().mockResolvedValue([
+      {
+        id: 'm1',
+        siteId: SITE_ID,
+        status: 'ready',
+        width: 1280,
+        height: 720,
+        storageKey: 'orig.png',
+        focalPoint: null,
+        variants: [
+          { w: 480, url: 'orig-480.webp', format: 'webp' },
+          { w: 1280, url: 'orig-1280.webp', format: 'webp' },
+          { w: 480, url: 'orig-480.avif', format: 'avif' },
+          { w: 1280, url: 'orig-1280.avif', format: 'avif' },
+        ],
+      },
+    ]);
+    const blocks = [
+      {
+        id: 'b1',
+        type: 'hero',
+        version: 1,
+        props: { image: { mediaId: 'm1', alt: 'แบนเนอร์', src: 'old.png' } },
+        style: {},
+        children: [],
+      },
+    ];
+
+    const page = await service({
+      domain: { hostname: 'baandoi.example.com', site: siteRow() },
+      tx: {
+        content: { findFirst: vi.fn().mockResolvedValue(contentRow({ blocksPublished: blocks })) },
+        media: { findMany: findManyMedia },
+      },
+    }).getPage('baandoi.example.com', 'home');
+
+    expect(findManyMedia).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: { in: ['m1'] } } }),
+    );
+    const image = (page.content?.blocks[0]?.props.image ?? {}) as Record<string, unknown>;
+    expect(String(image.src)).toContain('orig-1280.webp');
+    expect(String(image.srcSet)).toContain('orig-480.webp 480w');
+    expect(String(image.avifSrcSet)).toContain('orig-1280.avif 1280w');
+    expect(image.width).toBe(1280);
+  });
+
   it('asks only for published content of the site default locale', async () => {
     const findFirst = vi.fn().mockResolvedValue(contentRow());
     await service({

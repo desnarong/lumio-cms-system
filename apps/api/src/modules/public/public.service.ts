@@ -2,15 +2,19 @@ import { Injectable } from '@nestjs/common';
 import type { Content, Media, Prisma, Site } from '@prisma/client';
 import {
   blockTreeSchema,
+  buildSrcSet,
   HOME_SLUG,
   isContentType,
   isSupportedLocale,
   localePathFor,
   mediaUrlFor,
+  mediaVariantsSchema,
   normalizeLocales,
   normalizeNotFoundPath,
   parseMenuItems,
+  pickVariant,
   publicFormSchema,
+  resolveVariantUrl,
   seoSchema,
   type BlockTree,
   type ContentType,
@@ -67,6 +71,74 @@ export const collectFormIds = (blocks: BlockTree): string[] => {
   };
   walk(blocks);
   return [...ids];
+};
+
+const readFocalPoint = (value: unknown): { x: number; y: number } | null => {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return null;
+  const { x, y } = value as { x?: unknown; y?: unknown };
+  return typeof x === 'number' && typeof y === 'number' ? { x, y } : null;
+};
+
+/** Every media id any block points at, including nested floats and galleries. */
+export const collectBlockMediaIds = (value: unknown, ids = new Set<string>()): Set<string> => {
+  if (Array.isArray(value)) {
+    for (const entry of value) collectBlockMediaIds(entry, ids);
+    return ids;
+  }
+  if (value === null || typeof value !== 'object') return ids;
+  for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+    if (key === 'mediaId' && typeof child === 'string' && child.length > 0) ids.add(child);
+    else collectBlockMediaIds(child, ids);
+  }
+  return ids;
+};
+
+/**
+ * Puts the media row's current files back into an image value. Blocks store the
+ * urls they were picked with, so an image uploaded before its ladder existed
+ * would otherwise stay a single soft file forever.
+ */
+const refreshImageValue = (
+  value: Record<string, unknown>,
+  media: Media,
+  base: string,
+): Record<string, unknown> => {
+  if (media.status === 'trashed') return value;
+  const parsed = mediaVariantsSchema.safeParse(media.variants);
+  const variants = parsed.success ? parsed.data : [];
+  if (variants.length === 0) return value;
+  // The plain source stays WebP: it is the fallback for a browser that ignores srcSet.
+  const webpVariants = variants.filter((variant) => variant.format === 'webp');
+  const largest = pickVariant(
+    webpVariants.length > 0 ? webpVariants : variants,
+    Number.MAX_SAFE_INTEGER,
+  );
+  const webp = buildSrcSet(variants, base);
+  const avif = buildSrcSet(variants, base, { format: 'avif' });
+  const focal = readFocalPoint(media.focalPoint);
+  return {
+    ...value,
+    ...(largest ? { src: resolveVariantUrl(largest, base) } : {}),
+    ...(webp ? { srcSet: webp } : {}),
+    ...(avif ? { avifSrcSet: avif } : {}),
+    ...(typeof media.width === 'number' ? { width: media.width } : {}),
+    ...(typeof media.height === 'number' ? { height: media.height } : {}),
+    ...(value.focalPoint === undefined && focal ? { focalPoint: focal } : {}),
+  };
+};
+
+const refreshBlockTree = (value: unknown, media: Map<string, Media>, base: string): unknown => {
+  if (Array.isArray(value)) return value.map((entry) => refreshBlockTree(entry, media, base));
+  if (value === null || typeof value !== 'object') return value;
+  const record = Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([key, child]) => [
+      key,
+      refreshBlockTree(child, media, base),
+    ]),
+  );
+  const id = record.mediaId;
+  const row = typeof id === 'string' ? media.get(id) : undefined;
+  return row ? refreshImageValue(record, row, base) : record;
 };
 
 const toPublicSite = (
@@ -225,7 +297,8 @@ export class PublicService {
       const menus = await this.readMenus(tx, row.locale);
       const globalBlocks = await this.readGlobalBlocks(tx);
       const published = toPublicContent(row, row.coverMedia);
-      const blocks = readBlocks(row.blocksDraft);
+      const images = await this.refreshBlockImages(tx, readBlocks(row.blocksDraft), globalBlocks);
+      const blocks = images.blocks;
       const content = {
         ...published,
         blocks,
@@ -236,7 +309,7 @@ export class PublicService {
         site,
         content,
         menus,
-        globalBlocks,
+        globalBlocks: images.globalBlocks,
         forms: await this.readForms(tx, collectFormIds(blocks), row.locale),
         locale: row.locale,
         isFallback: false,
@@ -346,6 +419,33 @@ export class PublicService {
     };
   }
 
+  /**
+   * Replaces image values with the media row's newest ladder, so a page that
+   * picked a picture while it was still rendering becomes sharp again without
+   * the owner re-picking it. One query for the whole page, header and footer.
+   */
+  private async refreshBlockImages(
+    tx: Prisma.TransactionClient,
+    blocks: BlockTree,
+    globalBlocks: PublicGlobalBlocks,
+  ): Promise<{ blocks: BlockTree; globalBlocks: PublicGlobalBlocks }> {
+    const ids = collectBlockMediaIds([blocks, globalBlocks.header, globalBlocks.footer]);
+    if (ids.size === 0) return { blocks, globalBlocks };
+
+    const rows = await tx.media.findMany({ where: { id: { in: [...ids] } } });
+    if (rows.length === 0) return { blocks, globalBlocks };
+
+    const media = new Map(rows.map((row) => [row.id, row]));
+    const base = mediaPublicBaseUrl();
+    return {
+      blocks: refreshBlockTree(blocks, media, base) as BlockTree,
+      globalBlocks: {
+        header: refreshBlockTree(globalBlocks.header, media, base) as BlockTree,
+        footer: refreshBlockTree(globalBlocks.footer, media, base) as BlockTree,
+      },
+    };
+  }
+
   private async getContent(
     host: string,
     type: ContentType,
@@ -377,12 +477,14 @@ export class PublicService {
       }
 
       if (row) {
-        const content = toPublicContent(row, row.coverMedia);
+        const published = toPublicContent(row, row.coverMedia);
+        const images = await this.refreshBlockImages(tx, published.blocks, globalBlocks);
+        const content = { ...published, blocks: images.blocks };
         return {
           site,
           content,
           menus,
-          globalBlocks,
+          globalBlocks: images.globalBlocks,
           forms: await this.readForms(tx, collectFormIds(content.blocks), row.locale),
           locale: row.locale,
           isFallback,

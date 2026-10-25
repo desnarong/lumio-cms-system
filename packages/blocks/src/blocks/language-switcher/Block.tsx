@@ -50,6 +50,7 @@ export const LanguageSwitcherBlock = ({
           path="props.label"
           value={props.label}
           runs={block.textStyles?.['props.label']}
+          layout={block.textLayouts?.['props.label']}
           className="lumio-language__label"
           label="ป้ายกำกับภาษา"
         />

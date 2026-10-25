@@ -9,6 +9,7 @@
 export * from './types.js';
 export * from './registry.js';
 export * from './blocks/common.js';
+export * from './blocks/products/shop.js';
 export * from './engine/editable.js';
 export * from './engine/img.js';
 export * from './engine/migrate.js';

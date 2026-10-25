@@ -86,8 +86,62 @@ describe('starter blocks', () => {
     ]);
   });
 
-  it('uses real Thai copy in every block that carries text', () => {
-    for (const type of [
+  it('applies a width and minimum height set by dragging in the editor', () => {
+    const node = nodeFor('paragraph');
+    const html = renderToStaticMarkup(
+      <BlockRenderer
+        block={{ ...node, style: { ...node.style, widthPx: 640, heightPx: 320 } }}
+      />,
+    );
+
+    expect(html).toContain('--block-width:640px');
+    expect(html).toContain('--block-height:320px');
+    expect(html).toContain('data-custom-width="true"');
+    expect(html).toContain('data-custom-height="true"');
+  });
+
+  it('can space the top and bottom separately and nudge the block vertically', () => {
+    const node = nodeFor('paragraph');
+    const html = renderToStaticMarkup(
+      <BlockRenderer
+        block={{
+          ...node,
+          style: {
+            ...node.style,
+            paddingTopPx: 40,
+            paddingBottomPx: 12,
+            marginTopPx: -24,
+          },
+        }}
+      />,
+    );
+
+    expect(html).toContain('--block-padding-top:40px');
+    expect(html).toContain('--block-padding-bottom:12px');
+    expect(html).toContain('--block-margin-top:-24px');
+  });
+
+  it('scales a block’s text from the panel size slider', () => {
+    const node = nodeFor('paragraph');
+    const html = renderToStaticMarkup(
+      <BlockRenderer block={{ ...node, style: { ...node.style, textScale: 140 } }} />,
+    );
+
+    expect(html).toContain('--block-text-scale:1.4');
+    expect(html).toContain('data-text-scale="true"');
+  });
+
+  it('offers width and height controls in the style panel', () => {
+    const html = renderPanel('paragraph');
+
+    expect(html).toContain('ความกว้างสูงสุด (px)');
+    expect(html).toContain('ความสูงขั้นต่ำ (px)');
+    expect(html).toContain('ระยะห่างด้านบน (px)');
+    expect(html).toContain('ระยะห่างด้านล่าง (px)');
+    expect(html).toContain('เลื่อนบล็อกขึ้น/ลง (px)');
+  });
+
+  it('uses real Thai copy in every block that carries text', () => {    for (const type of [
       'heading',
       'paragraph',
       'button',
@@ -143,6 +197,31 @@ describe('image block', () => {
     expect(html).toContain('<figcaption');
     expect(html).toContain('คั่วสดทุกสัปดาห์');
   });
+
+  it('zooms the crop and keeps the chosen focal point', () => {
+    const html = render('image', {
+      image: {
+        mediaId: 'med_1',
+        alt: 'เมล็ดกาแฟคั่ว',
+        src: '/images/beans.jpg',
+        focalPoint: { x: 0.2, y: 0.8 },
+      },
+      zoom: 160,
+    });
+
+    expect(html).toContain('object-position:20% 80%');
+    expect(html).toContain('transform:scale(1.6)');
+  });
+
+  it('offers crop controls in the image panel', () => {
+    const html = renderPanel('image');
+
+    expect(html).toContain('ครอปรูป');
+    expect(html).toContain('ซูมรูป (%)');
+    expect(html).toContain('ตำแหน่งแนวนอน (%)');
+    expect(html).toContain('ตำแหน่งแนวตั้ง (%)');
+    expect(html).toContain('เลื่อนรูปขึ้น');
+  });
 });
 
 describe('button block', () => {
@@ -185,6 +264,21 @@ describe('button block', () => {
 });
 
 describe('hero block', () => {
+  it('moves and resizes one text without moving the whole banner', () => {
+    const node = nodeFor('hero');
+    const html = renderToStaticMarkup(
+      <BlockRenderer
+        block={{
+          ...node,
+          textLayouts: { 'props.heading': { x: 24, y: -8, scale: 120 } },
+        }}
+      />,
+    );
+
+    expect(html).toContain('translate(24px, -8px)');
+    expect(html).toContain('zoom:1.2');
+  });
+
   it('renders a single h1, both calls to action and a priority image', () => {
     const html = render('hero', {
       image: { mediaId: 'med_2', alt: 'บรรยากาศร้านกาแฟ', src: '/images/hero.jpg' },
@@ -231,7 +325,7 @@ describe('hero block', () => {
     expect(html).toContain('data-content-width="wide"');
   });
 
-  it('floats several pictures over the banner at the chosen pixel offsets', () => {
+  it('floats several pictures over the banner at proportional offsets', () => {
     const html = render('hero', {
       layout: 'overlay',
       backgroundZoom: 140,
@@ -260,12 +354,99 @@ describe('hero block', () => {
     expect(html).toContain('--hero-y:70%');
     expect(html).toContain('--hero-scrim:0.6');
     expect(html.match(/lumio-hero__foreground/g) ?? []).toHaveLength(2);
-    expect(html).toContain('width:280px');
-    expect(html).toContain('right:40px');
-    expect(html).toContain('bottom:-20px');
+    expect(html).toContain('width:19.44%');
+    expect(html).toContain('right:2.78%');
+    expect(html).toContain('bottom:-2.47%');
     expect(html).toContain('data-shadow="true"');
     expect(html).toContain('alt="หลอดไฟ"');
     expect(html).toContain('alt="โคมไฟ"');
+  });
+
+  it('spaces the split picture and text by a share of the banner', () => {
+    const html = render('hero', { layout: 'split-right', splitGap: 6 });
+
+    expect(html).toContain('--hero-split-gap:6%');
+    expect(html).toContain('--hero-split-gap-vw:6vw');
+  });
+
+  it('lets the owner choose how wide the description runs', () => {
+    const html = render('hero', { layout: 'overlay', subheadingWidth: 40 });
+
+    expect(html).toContain('--hero-copy-width:40%');
+  });
+
+  it('swaps the banner picture on hover when one is chosen', () => {
+    const html = render('hero', {
+      layout: 'overlay',
+      image: { mediaId: 'med_2', alt: 'แบนเนอร์', src: '/images/banner.jpg' },
+      hoverImage: { mediaId: 'med_6', alt: '', src: '/images/banner-hover.jpg' },
+    });
+
+    expect(html).toContain('data-banner-hover="true"');
+    expect(html).toContain('lumio-hero__image-hover');
+    expect(html).toContain('/images/banner-hover.jpg');
+  });
+
+  it('exposes the block text alignment so constrained copy can centre too', () => {
+    const node = nodeFor('paragraph');
+    const html = renderToStaticMarkup(
+      <BlockRenderer block={{ ...node, style: { ...node.style, textAlign: 'center' } }} />,
+    );
+
+    expect(html).toContain('data-text-align="center"');
+  });
+
+  it('requests a source wide enough for the zoomed full-bleed photo', () => {
+    const html = render('hero', {
+      layout: 'overlay',
+      backgroundZoom: 140,
+      image: { mediaId: 'med_2', alt: 'แบนเนอร์', src: '/images/banner.jpg' },
+    });
+
+    expect(html).toContain('sizes="140vw"');
+  });
+
+  it('keeps a cut-out in the same relative place when the banner is resized', () => {
+    const html = render('hero', {
+      layout: 'overlay',
+      foregrounds: [
+        {
+          image: { mediaId: 'med_3', alt: 'หลอดไฟ', src: '/images/bulb.png' },
+          width: 280,
+          widthPercent: 20,
+          x: 40,
+          xPercent: 5,
+          y: -20,
+          yPercent: 10,
+          anchorX: 'left',
+          anchorY: 'top',
+        },
+      ],
+    });
+
+    expect(html).toContain('width:20%');
+    expect(html).toContain('left:5%');
+    expect(html).toContain('top:10%');
+  });
+
+  it('paints the floating cut-outs on the split layouts too', () => {
+    const html = render('hero', {
+      layout: 'split-left',
+      foregrounds: [
+        {
+          image: { mediaId: 'med_3', alt: 'หลอดไฟ', src: '/images/bulb.png' },
+          widthPercent: 20,
+          xPercent: 5,
+          yPercent: 10,
+          anchorX: 'left',
+          anchorY: 'top',
+        },
+      ],
+    });
+
+    expect(html).toContain('lumio-hero--split-left');
+    expect(html).toContain('lumio-hero__foreground');
+    expect(html).toContain('width:20%');
   });
 
   it('swaps a foreground picture on hover', () => {
@@ -504,7 +685,7 @@ describe('media picker wiring', () => {
 
     expect(html).not.toContain('ยังไม่ได้เชื่อมคลังรูปภาพในหน้านี้');
     expect(html).toContain('เลือกภาพ');
-    expect(html).not.toContain('disabled');
+    expect(html).toContain('ui-button--secondary ui-button--sm">เลือกภาพ');
   });
 
   it('keeps the hero image picker in the same state', () => {
@@ -589,6 +770,42 @@ describe('products block', () => {
       ],
     });
     expect(html).toContain('สินค้าหมด');
+  });
+
+  it('renders the live shop catalog instead of the saved cards', () => {
+    const html = renderToStaticMarkup(
+      <BlockRenderer
+        block={nodeFor('products', { source: 'shop' })}
+        shopProducts={[
+          {
+            id: 'p1',
+            name: 'หลอดไฟ LED 9.5W',
+            description: 'แสงนวล ประหยัดไฟ',
+            price: 269,
+            compareAtPrice: 459,
+            currency: '฿',
+            image: null,
+            category: null,
+            link: '/shop/led-9-5w',
+            soldOut: false,
+          },
+        ]}
+      />,
+    );
+
+    expect(html).toContain('หลอดไฟ LED 9.5W');
+    expect(html).toContain('/shop/led-9-5w');
+    expect(html).toContain('459');
+    expect(html).not.toContain('กาแฟคั่วอ่อน');
+  });
+
+  it('tells the visitor when the shop has nothing published yet', () => {
+    const html = renderToStaticMarkup(
+      <BlockRenderer block={nodeFor('products', { source: 'shop' })} shopProducts={[]} />,
+    );
+
+    expect(html).toContain('ยังไม่มีสินค้าที่เผยแพร่ในร้าน');
+    expect(html).not.toContain('lumio-products__grid');
   });
 });
 

@@ -53,6 +53,17 @@
   font-size: var(--text-xs);
 }
 
+.media-library__pick {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.media-library__pick .media-library__hint {
+  flex-basis: auto;
+}
+
 .media-library__content {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;

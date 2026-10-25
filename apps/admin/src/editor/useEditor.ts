@@ -14,6 +14,7 @@ import type {
   ContentDetail,
   SectionTemplate,
   Seo,
+  TextLayout,
   TextRun,
 } from '@lumio/shared';
 import { useT } from '@lumio/ui';
@@ -61,6 +62,8 @@ export interface EditorController {
   setBlockPath: (id: string, path: string, value: unknown) => void;
   /** Stores inline colour/size runs for one text path, as one undo step. */
   setTextStyles: (id: string, path: string, runs: TextRun[]) => void;
+  /** Stores one text's own position/size, as one undo step. */
+  setTextLayout: (id: string, path: string, layout: TextLayout | undefined) => void;
   /** Applies several text edits of one block as one undo step (AI suggestions). */
   applyBlockChanges: (id: string, changes: { path: string; value: unknown }[]) => void;
   /** Stores an accepted SEO suggestion for this page; false when saving failed. */
@@ -401,6 +404,11 @@ export const useEditor = ({
     setTextStyles: useCallback(
       (id: string, path: string, runs: TextRun[]) =>
         dispatch({ type: 'text-styles', id, path, runs }),
+      [],
+    ),
+    setTextLayout: useCallback(
+      (id: string, path: string, layout: TextLayout | undefined) =>
+        dispatch({ type: 'text-layout', id, path, layout }),
       [],
     ),
     applyBlockChanges: useCallback(

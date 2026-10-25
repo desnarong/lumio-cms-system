@@ -4,6 +4,14 @@ import { HeroPanel } from './Panel.js';
 import { heroDefaults } from './defaults.js';
 import { heroSchema, type HeroProps } from './schema.js';
 
+export {
+  HERO_FLOAT_BASE_HEIGHT,
+  HERO_FLOAT_BASE_WIDTH,
+  floatWidthPercent,
+  floatXPercent,
+  floatYPercent,
+} from './schema.js';
+
 export const heroBlock: BlockDefinition<HeroProps> = {
   type: 'hero',
   label: 'ส่วนต้อนรับ (Hero)',

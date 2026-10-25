@@ -15,15 +15,20 @@ import {
   applyTextRun,
   attachInlineEditing,
   deviceWidth,
+  floatXPercent,
+  floatYPercent,
   registry,
   resolveDropIndex,
   type BlockIndexPath,
   type EditorDevice,
+  type ShopProductCard,
 } from '@lumio/blocks';
 import type { BlockNode, BlockTree, PublicForm, SectionTemplate, TextRun } from '@lumio/shared';
 import { Icon, IconButton, useT } from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import { labelForPath } from './fields.js';
+import { coverOverflow, panFocalPoint } from './crop.js';
+import { panPosition } from './pan.js';
 import { SlashMenu } from './SlashMenu.js';
 import type { EditorTextField } from './types.js';
 
@@ -50,10 +55,17 @@ export interface BlockCanvasProps {
   onInsertSection?: (sectionId: string, index: number) => void;
   /** Contact forms the page can render; passed to blocks that need them. */
   forms?: readonly PublicForm[];
+  /** Live shop products, so a products block previews the real catalog. */
+  shopProducts?: readonly ShopProductCard[];
   onMove: (from: BlockIndexPath, to: BlockIndexPath) => void;
   onDragStart: (id: string) => void;
   onDropIndex: (index: number | null) => void;
   onDragEnd: () => void;
+  /** Persists a drag-to-resize result on one block, as a single undo step. */
+  onResize?: (
+    id: string,
+    size: { widthPx?: number; heightPx?: number; marginTopPx?: number },
+  ) => void;
   /** Text fields of the selected block, read back from the rendered markup. */
   onFields?: (blockId: string, fields: EditorTextField[]) => void;
   /** Site theme tokens, so the preview matches the published page. */
@@ -77,7 +89,9 @@ interface BlockRegionProps {
   onSaveAsTemplate?: () => void;
   onDragStart: () => void;
   onDragEnd: () => void;
+  onResize?: (size: { widthPx?: number; heightPx?: number; marginTopPx?: number }) => void;
   forms?: readonly PublicForm[];
+  shopProducts?: readonly ShopProductCard[];
 }
 
 interface ForegroundDrag {
@@ -85,11 +99,14 @@ interface ForegroundDrag {
   node: HTMLElement;
   startX: number;
   startY: number;
+  /** Position as a share of the banner, so a resize keeps the same layout. */
   baseX: number;
   baseY: number;
   anchorX: 'left' | 'right';
   anchorY: 'top' | 'bottom';
   scale: number;
+  heroWidth: number;
+  heroHeight: number;
   startRect: DOMRect;
   /** The picture just before this one, used as the alignment plane. */
   previous: DOMRect | null;
@@ -124,10 +141,18 @@ const BlockRegion = ({
   onSaveAsTemplate,
   onDragStart,
   onDragEnd,
+  onResize,
   forms,
+  shopProducts,
 }: BlockRegionProps) => {
   const t = useT();
   const contentRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [resizing, setResizing] = useState<{ axis: 'x' | 'y'; value: number } | null>(null);
+  const [verticalDrag, setVerticalDrag] = useState<{
+    height?: number;
+    marginTop?: number;
+  } | null>(null);
   const label = registry.get(block.type)?.label ?? block.type;
   const hidden = block.style.visibility[device] === false;
   const [selection, setSelection] = useState<{
@@ -302,16 +327,20 @@ const BlockRegion = ({
         event.preventDefault();
         event.stopPropagation();
         node.setPointerCapture(event.pointerId);
+        const heroRect = node.closest('.lumio-hero')?.getBoundingClientRect();
+        const scale = previewScaleRef.current || 1;
         foregroundDragRef.current = {
           index,
           node,
           startX: event.clientX,
           startY: event.clientY,
-          baseX: item.x,
-          baseY: item.y,
+          baseX: floatXPercent(item),
+          baseY: floatYPercent(item),
           anchorX: item.anchorX,
           anchorY: item.anchorY,
-          scale: previewScaleRef.current || 1,
+          scale,
+          heroWidth: (heroRect?.width ?? 0) / scale,
+          heroHeight: (heroRect?.height ?? 0) / scale,
           startRect: node.getBoundingClientRect(),
           previous:
             index > 0 ? (nodes[index - 1]?.getBoundingClientRect() ?? null) : null,
@@ -376,10 +405,22 @@ const BlockRegion = ({
 
         const pageX = dx / drag.scale;
         const pageY = dy / drag.scale;
-        const x = Math.round(drag.baseX + (drag.anchorX === 'left' ? pageX : -pageX));
-        const y = Math.round(drag.baseY + (drag.anchorY === 'top' ? pageY : -pageY));
-        onTextChangeRef.current(`props.foregrounds.${index}.x`, x);
-        onTextChangeRef.current(`props.foregrounds.${index}.y`, y);
+        // Store the result as a share of the banner, so a later resize keeps the
+        // composition instead of leaving the cut-outs stranded in old pixels.
+        const widthRatio = drag.heroWidth > 0 ? 100 / drag.heroWidth : 0;
+        const heightRatio = drag.heroHeight > 0 ? 100 / drag.heroHeight : 0;
+        const x =
+          drag.baseX + (drag.anchorX === 'left' ? pageX : -pageX) * widthRatio;
+        const y =
+          drag.baseY + (drag.anchorY === 'top' ? pageY : -pageY) * heightRatio;
+        onTextChangeRef.current(
+          `props.foregrounds.${index}.xPercent`,
+          Math.round(Math.min(250, Math.max(-150, x)) * 100) / 100,
+        );
+        onTextChangeRef.current(
+          `props.foregrounds.${index}.yPercent`,
+          Math.round(Math.min(250, Math.max(-150, y)) * 100) / 100,
+        );
       };
 
       const onPointerUp = (event: PointerEvent): void => {
@@ -414,10 +455,364 @@ const BlockRegion = ({
     });
 
     return () => cleanups.forEach((cleanup) => cleanup());
-  }, [block.id]);
+  }, [block.id, block.props.layout]);
+
+  // Panning the hero photo: the editor writes the background position the
+  // panel shows, so the crop can be moved by dragging the picture itself.
+  const backgroundDragRef = useRef<{
+    startX: number;
+    startY: number;
+    baseX: number;
+    baseY: number;
+    scale: number;
+    overflowX: number;
+    overflowY: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const root = contentRef.current;
+    const hero = root?.querySelector<HTMLElement>('.lumio-hero--overlay');
+    const image = hero?.querySelector<HTMLImageElement>('.lumio-hero__background img');
+    if (!hero || !image) return undefined;
+
+    const onPointerDown = (event: PointerEvent): void => {
+      if (event.button !== 0) return;
+      const target = event.target as HTMLElement;
+      if (
+        target.closest(
+          'a, button, input, select, textarea, [data-editable-path], [data-hero-foreground]',
+        )
+      ) {
+        return;
+      }
+      const props = blockRef.current.props as {
+        backgroundX?: number;
+        backgroundY?: number;
+        backgroundZoom?: number;
+      };
+      const scale = previewScaleRef.current || 1;
+      const box = hero.getBoundingClientRect();
+      const width = box.width / scale;
+      const height = box.height / scale;
+      const zoom = (props.backgroundZoom ?? 100) / 100;
+      const naturalWidth = image.naturalWidth || 1;
+      const naturalHeight = image.naturalHeight || 1;
+      const { overflowX, overflowY } = coverOverflow({
+        boxWidth: width,
+        boxHeight: height,
+        naturalWidth,
+        naturalHeight,
+        zoom,
+      });
+      // Nothing to pan when the picture already fits the frame exactly.
+      if (overflowX < 1 && overflowY < 1) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      try {
+        hero.setPointerCapture(event.pointerId);
+      } catch {
+        // Dragging still works without capture in older browsers.
+      }
+      backgroundDragRef.current = {
+        startX: event.clientX,
+        startY: event.clientY,
+        baseX: props.backgroundX ?? 50,
+        baseY: props.backgroundY ?? 50,
+        scale,
+        overflowX,
+        overflowY,
+      };
+      hero.classList.add('is-panning-background');
+      onSelectRef.current();
+    };
+
+    const onPointerMove = (event: PointerEvent): void => {
+      const drag = backgroundDragRef.current;
+      if (!drag) return;
+      event.preventDefault();
+      const next = panPosition(drag, event.clientX, event.clientY);
+      if (drag.overflowX > 0) onTextChangeRef.current('props.backgroundX', next.x);
+      if (drag.overflowY > 0) onTextChangeRef.current('props.backgroundY', next.y);
+    };
+
+    const onPointerUp = (event: PointerEvent): void => {
+      if (!backgroundDragRef.current) return;
+      backgroundDragRef.current = null;
+      hero.classList.remove('is-panning-background');
+      try {
+        hero.releasePointerCapture(event.pointerId);
+      } catch {
+        // The pointer may already be gone; releasing twice is harmless.
+      }
+    };
+
+    hero.addEventListener('pointerdown', onPointerDown);
+    hero.addEventListener('pointermove', onPointerMove);
+    hero.addEventListener('pointerup', onPointerUp);
+    hero.addEventListener('pointercancel', onPointerUp);
+    return () => {
+      hero.removeEventListener('pointerdown', onPointerDown);
+      hero.removeEventListener('pointermove', onPointerMove);
+      hero.removeEventListener('pointerup', onPointerUp);
+      hero.removeEventListener('pointercancel', onPointerUp);
+      hero.classList.remove('is-panning-background');
+    };
+  }, [block.id, block.props.layout]);
+
+  // Cropped image blocks: drag the photo to choose which part stays in frame.
+  // The result is stored as the media focal point the block already renders.
+  useEffect(() => {
+    if (block.type !== 'image') return undefined;
+    const image = contentRef.current?.querySelector<HTMLImageElement>(
+      '.lumio-image .lumio-img__element',
+    );
+    if (!image) return undefined;
+
+    let drag: {
+      startX: number;
+      startY: number;
+      base: { x: number; y: number };
+      scale: number;
+      overflowX: number;
+      overflowY: number;
+    } | null = null;
+
+    const onPointerDown = (event: PointerEvent): void => {
+      if (event.button !== 0) return;
+      const props = blockRef.current.props as {
+        image?: { focalPoint?: { x: number; y: number } } | null;
+        zoom?: number;
+      };
+      const scale = previewScaleRef.current || 1;
+      // Measure the clipping frame, not the zoomed picture, so the zoom
+      // transform is not counted twice.
+      const box = (image.closest('.lumio-img') ?? image).getBoundingClientRect();
+      const { overflowX, overflowY } = coverOverflow({
+        boxWidth: box.width / scale,
+        boxHeight: box.height / scale,
+        naturalWidth: image.naturalWidth,
+        naturalHeight: image.naturalHeight,
+        zoom: (props.zoom ?? 100) / 100,
+      });
+      if (overflowX < 1 && overflowY < 1) return;
+      event.preventDefault();
+      event.stopPropagation();
+      try {
+        image.setPointerCapture(event.pointerId);
+      } catch {
+        // Dragging still works without capture in older browsers.
+      }
+      drag = {
+        startX: event.clientX,
+        startY: event.clientY,
+        base: props.image?.focalPoint ?? { x: 0.5, y: 0.5 },
+        scale,
+        overflowX,
+        overflowY,
+      };
+      image.classList.add('is-panning-image');
+      onSelectRef.current();
+    };
+
+    const onPointerMove = (event: PointerEvent): void => {
+      if (!drag) return;
+      event.preventDefault();
+      const props = blockRef.current.props as { image?: Record<string, unknown> | null };
+      if (!props.image) return;
+      onTextChangeRef.current('props.image', {
+        ...props.image,
+        focalPoint: panFocalPoint(drag, event.clientX, event.clientY),
+      });
+    };
+
+    const onPointerUp = (event: PointerEvent): void => {
+      if (!drag) return;
+      drag = null;
+      image.classList.remove('is-panning-image');
+      try {
+        image.releasePointerCapture(event.pointerId);
+      } catch {
+        // The pointer may already be gone; releasing twice is harmless.
+      }
+    };
+
+    image.addEventListener('pointerdown', onPointerDown);
+    image.addEventListener('pointermove', onPointerMove);
+    image.addEventListener('pointerup', onPointerUp);
+    image.addEventListener('pointercancel', onPointerUp);
+    return () => {
+      image.removeEventListener('pointerdown', onPointerDown);
+      image.removeEventListener('pointermove', onPointerMove);
+      image.removeEventListener('pointerup', onPointerUp);
+      image.removeEventListener('pointercancel', onPointerUp);
+      image.classList.remove('is-panning-image');
+    };
+  }, [block.id, block.type]);
+
+  /** Current size in page pixels, falling back to what the block renders today. */
+  const sizeOf = (axis: 'x' | 'y'): number => {
+    const scale = previewScale || 1;
+    if (axis === 'x') {
+      return (
+        block.style.widthPx ??
+        Math.round((contentRef.current?.getBoundingClientRect().width ?? 0) / scale)
+      );
+    }
+    return (
+      block.style.heightPx ??
+      Math.round((sectionRef.current?.getBoundingClientRect().height ?? 0) / scale)
+    );
+  };
+
+  const clampSize = (axis: 'x' | 'y', value: number): number =>
+    axis === 'x'
+      ? Math.min(2400, Math.max(160, Math.round(value)))
+      : Math.min(2400, Math.max(80, Math.round(value)));
+
+  const beginResize =
+    (axis: 'x' | 'y') =>
+    (event: ReactPointerEvent<HTMLButtonElement>): void => {
+      if (!onResize) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const scale = previewScale || 1;
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const base = sizeOf(axis);
+      let value = base;
+      setResizing({ axis, value });
+
+      const handle = event.currentTarget;
+      handle.setPointerCapture(event.pointerId);
+
+      const move = (moveEvent: PointerEvent): void => {
+        const delta =
+          axis === 'x' ? (moveEvent.clientX - startX) / scale : (moveEvent.clientY - startY) / scale;
+        value = clampSize(axis, base + delta);
+        setResizing({ axis, value });
+      };
+      const finish = (): void => {
+        handle.removeEventListener('pointermove', move);
+        handle.removeEventListener('pointerup', finish);
+        handle.removeEventListener('pointercancel', finish);
+        setResizing(null);
+        onResize(axis === 'x' ? { widthPx: value } : { heightPx: value });
+      };
+      handle.addEventListener('pointermove', move);
+      handle.addEventListener('pointerup', finish);
+      handle.addEventListener('pointercancel', finish);
+    };
+
+  const clampMargin = (value: number): number => Math.min(1200, Math.max(-1200, Math.round(value)));
+
+  /** Drags the top edge: the block grows upward while its bottom stays put. */
+  const beginTopResize = (event: ReactPointerEvent<HTMLButtonElement>): void => {
+    if (!onResize) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const scale = previewScale || 1;
+    const startY = event.clientY;
+    const baseHeight = sizeOf('y');
+    const baseMargin = block.style.marginTopPx ?? 0;
+    let height = baseHeight;
+    let marginTop = baseMargin;
+    setVerticalDrag({ height, marginTop });
+    const handle = event.currentTarget;
+    handle.setPointerCapture(event.pointerId);
+    const move = (moveEvent: PointerEvent): void => {
+      const delta = (moveEvent.clientY - startY) / scale;
+      height = clampSize('y', baseHeight - delta);
+      marginTop = clampMargin(baseMargin - (height - baseHeight));
+      setVerticalDrag({ height, marginTop });
+    };
+    const finish = (): void => {
+      handle.removeEventListener('pointermove', move);
+      handle.removeEventListener('pointerup', finish);
+      handle.removeEventListener('pointercancel', finish);
+      setVerticalDrag(null);
+      onResize({ heightPx: height, marginTopPx: marginTop });
+    };
+    handle.addEventListener('pointermove', move);
+    handle.addEventListener('pointerup', finish);
+    handle.addEventListener('pointercancel', finish);
+  };
+
+  /** Drags the whole block up or down without changing its height. */
+  const beginMoveBox = (event: ReactPointerEvent<HTMLButtonElement>): void => {
+    if (!onResize) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const scale = previewScale || 1;
+    const startY = event.clientY;
+    const baseMargin = block.style.marginTopPx ?? 0;
+    let marginTop = baseMargin;
+    setVerticalDrag({ marginTop });
+    const handle = event.currentTarget;
+    handle.setPointerCapture(event.pointerId);
+    const move = (moveEvent: PointerEvent): void => {
+      marginTop = clampMargin(baseMargin + (moveEvent.clientY - startY) / scale);
+      setVerticalDrag({ marginTop });
+    };
+    const finish = (): void => {
+      handle.removeEventListener('pointermove', move);
+      handle.removeEventListener('pointerup', finish);
+      handle.removeEventListener('pointercancel', finish);
+      setVerticalDrag(null);
+      onResize({ marginTopPx: marginTop });
+    };
+    handle.addEventListener('pointermove', move);
+    handle.addEventListener('pointerup', finish);
+    handle.addEventListener('pointercancel', finish);
+  };
+
+  /** Keyboard equivalent for the top edge and the vertical move handle. */
+  const nudgeTop = (step: number): void => {
+    if (!onResize) return;
+    const baseHeight = sizeOf('y');
+    const baseMargin = block.style.marginTopPx ?? 0;
+    const height = clampSize('y', baseHeight + step);
+    onResize({
+      heightPx: height,
+      marginTopPx: clampMargin(baseMargin - (height - baseHeight)),
+    });
+  };
+
+  const nudgeBox = (step: number): void => {
+    if (!onResize) return;
+    onResize({ marginTopPx: clampMargin((block.style.marginTopPx ?? 0) + step) });
+  };
+
+  /** Keyboard equivalent of the drag, so resizing never needs a mouse. */
+  const nudgeSize = (axis: 'x' | 'y', step: number): void => {
+    if (!onResize) return;
+    const next = clampSize(axis, sizeOf(axis) + step);
+    onResize(axis === 'x' ? { widthPx: next } : { heightPx: next });
+  };
+
+  // The block renders with the size being dragged, so the preview matches the
+  // value that is committed when the pointer is released.
+  // The editor moves the wrapper instead of the inner block, so the resize
+  // handles stay on the block's visible edges while dragging.
+  const editorMargin = verticalDrag?.marginTop ?? block.style.marginTopPx ?? 0;
+  const previewBlock = {
+    ...block,
+    style: {
+      ...block.style,
+      ...(resizing
+        ? resizing.axis === 'x'
+          ? { widthPx: resizing.value }
+          : { heightPx: resizing.value }
+        : {}),
+      ...(verticalDrag?.height === undefined ? {} : { heightPx: verticalDrag.height }),
+      marginTopPx: 0,
+    },
+  };
 
   return (
     <section
+      ref={sectionRef}
+      style={editorMargin === 0 ? undefined : { marginTop: `${editorMargin}px` }}
       className={cn(
         'editor-block',
         selected && 'is-selected',
@@ -539,6 +934,24 @@ const BlockRegion = ({
             <Icon name="move" size={14} />
           </button>
         ) : null}
+        {onResize ? (
+          <button
+            type="button"
+            className="editor-block__handle editor-block__move"
+            aria-label={t('editor.moveBox', { name: label })}
+            title={t('editor.moveBoxTitle')}
+            onPointerDown={beginMoveBox}
+            onKeyDown={(event) => {
+              if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+              event.preventDefault();
+              nudgeBox(event.key === 'ArrowDown' ? 16 : -16);
+            }}
+          >
+            <span className="editor-block__move-glyph" aria-hidden="true">
+              ↕
+            </span>
+          </button>
+        ) : null}
         <IconButton
           size="sm"
           aria-label={t('editor.duplicateBlock', { name: label })}
@@ -580,8 +993,58 @@ const BlockRegion = ({
       </div>
 
       <div className="editor-block__content" ref={contentRef}>
-        <BlockRenderer block={block} {...(forms ? { forms } : {})} />
+        <BlockRenderer
+          block={previewBlock}
+          {...(forms ? { forms } : {})}
+          {...(shopProducts ? { shopProducts } : {})}
+        />
       </div>
+
+      {selected && onResize ? (
+        <>
+          <button
+            type="button"
+            className="editor-block__resize editor-block__resize--right"
+            aria-label={t('editor.resizeWidth')}
+            title={t('editor.resizeWidth')}
+            onPointerDown={beginResize('x')}
+            onKeyDown={(event) => {
+              if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+              event.preventDefault();
+              nudgeSize('x', event.key === 'ArrowRight' ? 16 : -16);
+            }}
+          />
+          <button
+            type="button"
+            className="editor-block__resize editor-block__resize--top"
+            aria-label={t('editor.resizeTop')}
+            title={t('editor.resizeTop')}
+            onPointerDown={beginTopResize}
+            onKeyDown={(event) => {
+              if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+              event.preventDefault();
+              nudgeTop(event.key === 'ArrowUp' ? 16 : -16);
+            }}
+          />
+          <button
+            type="button"
+            className="editor-block__resize editor-block__resize--bottom"
+            aria-label={t('editor.resizeHeight')}
+            title={t('editor.resizeHeight')}
+            onPointerDown={beginResize('y')}
+            onKeyDown={(event) => {
+              if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+              event.preventDefault();
+              nudgeSize('y', event.key === 'ArrowDown' ? 16 : -16);
+            }}
+          />
+          {resizing || verticalDrag ? (
+            <span className="editor-block__size" role="status">
+              {resizing ? resizing.value : verticalDrag?.height ?? editorMargin} px
+            </span>
+          ) : null}
+        </>
+      ) : null}
     </section>
   );
 };
@@ -624,10 +1087,12 @@ export const BlockCanvas = ({
   sections = [],
   onInsertSection,
   forms,
+  shopProducts,
   onMove,
   onDragStart,
   onDropIndex,
   onDragEnd,
+  onResize,
   onFields,
   theme,
 }: BlockCanvasProps) => {
@@ -833,7 +1298,9 @@ export const BlockCanvas = ({
                   onRemove={() => onRemove(block.id)}
                   onToggleVisibility={() => onToggleVisibility(block.id)}
                   onSaveAsTemplate={onSaveAsTemplate ? () => onSaveAsTemplate(block.id) : undefined}
+                  {...(onResize ? { onResize: (size) => onResize(block.id, size) } : {})}
                   {...(forms ? { forms } : {})}
+                  {...(shopProducts ? { shopProducts } : {})}
                   onDragStart={() => {
                     dragFromRef.current = index;
                     onDragStart(block.id);

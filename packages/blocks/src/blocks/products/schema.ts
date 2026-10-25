@@ -10,6 +10,14 @@ export const PRODUCTS_MAX_ITEMS = 12;
 export const PRODUCT_CARD_STYLES = ['card', 'plain'] as const;
 export type ProductCardStyle = (typeof PRODUCT_CARD_STYLES)[number];
 
+/** Where the cards come from: typed by hand, or read from the shop catalog. */
+export const PRODUCT_SOURCES = ['manual', 'shop'] as const;
+export type ProductSource = (typeof PRODUCT_SOURCES)[number];
+
+/** How many shop products a card grid may show. */
+export const PRODUCT_SOURCE_LIMITS = [3, 6, 9, 12] as const;
+export type ProductSourceLimit = (typeof PRODUCT_SOURCE_LIMITS)[number];
+
 /** One product card shown on the page. */
 export const productCardSchema = z.object({
   image: imageValueSchema.nullable().default(null),
@@ -34,6 +42,12 @@ export const productsPropsSchema = z.object({
   cardStyle: z.enum(PRODUCT_CARD_STYLES).default('card'),
   showPrice: z.boolean().default(true),
   showDescription: z.boolean().default(true),
+  /** `shop` keeps the grid in step with the catalog, including deleted products. */
+  source: z.enum(PRODUCT_SOURCES).default('manual'),
+  /** How many shop products to show; ignored when `source` is `manual`. */
+  sourceLimit: z.number().int().min(1).max(PRODUCTS_MAX_ITEMS).default(6),
+  /** Optional shop category filter, e.g. "โคมไฟ"; empty means every category. */
+  sourceCategory: z.string().max(60).default(''),
   items: z
     .array(productCardSchema)
     .min(1)

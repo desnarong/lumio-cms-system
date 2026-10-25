@@ -23,6 +23,8 @@ export interface ImgProps {
   width?: number;
   height?: number;
   aspect?: ImageAspect;
+  /** Zoom of the cover crop (percent); 100 is a plain cover fit. */
+  zoom?: number;
   /** Hero/above-the-fold images load eagerly, everything else stays lazy. */
   priority?: boolean;
   className?: string;
@@ -41,6 +43,7 @@ export const Img = ({
   width,
   height,
   aspect = 'auto',
+  zoom,
   priority = false,
   className,
 }: ImgProps) => {
@@ -69,8 +72,19 @@ export const Img = ({
       loading={priority ? 'eager' : 'lazy'}
       decoding="async"
       style={
-        focalPoint
-          ? { objectPosition: `${Math.round(focalPoint.x * 100)}% ${Math.round(focalPoint.y * 100)}%` }
+        focalPoint || (zoom !== undefined && zoom !== 100)
+          ? {
+              ...(focalPoint
+                ? {
+                    objectPosition: `${Math.round(focalPoint.x * 100)}% ${Math.round(
+                      focalPoint.y * 100,
+                    )}%`,
+                  }
+                : {}),
+              ...(zoom !== undefined && zoom !== 100
+                ? { transform: `scale(${zoom / 100})` }
+                : {}),
+            }
           : undefined
       }
     />

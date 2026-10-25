@@ -22,6 +22,41 @@ export const isUploadMimeType = (value: unknown): value is UploadMimeType =>
 
 export const MEDIA_MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
 
+const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+
+const latin1 = (bytes: Uint8Array, start: number, end: number): string => {
+  let text = '';
+  for (let index = start; index < end; index += 1) text += String.fromCharCode(bytes[index] ?? 0);
+  return text;
+};
+
+/**
+ * Reads the real format from the first bytes instead of trusting the file name
+ * or the type the browser claims. A PNG saved from a web page is often WebP
+ * underneath, and uploads must not be refused just because the extension lies.
+ */
+export const sniffImageMime = (bytes: Uint8Array): UploadMimeType | null => {
+  if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+    return 'image/jpeg';
+  }
+  if (bytes.length >= 8 && PNG_SIGNATURE.every((value, index) => bytes[index] === value)) {
+    return 'image/png';
+  }
+  if (bytes.length >= 4 && latin1(bytes, 0, 4) === 'GIF8') return 'image/gif';
+  if (
+    bytes.length >= 12 &&
+    latin1(bytes, 0, 4) === 'RIFF' &&
+    latin1(bytes, 8, 12) === 'WEBP'
+  ) {
+    return 'image/webp';
+  }
+  if (bytes.length >= 12 && latin1(bytes, 4, 8) === 'ftyp') {
+    const brand = latin1(bytes, 8, 12);
+    if (brand === 'avif' || brand === 'avis') return 'image/avif';
+  }
+  return null;
+};
+
 /** `pending` = URL handed out, `trashed` = deleted but still restorable (undo). */
 export const MEDIA_STATUSES = ['pending', 'processing', 'ready', 'failed', 'trashed'] as const;
 export type MediaStatus = (typeof MEDIA_STATUSES)[number];

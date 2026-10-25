@@ -55,6 +55,7 @@ import { ApiException } from '../../common/api-error';
 import { encryptSecret } from '../../common/secret-box';
 import { toPublicMediaUrl } from '../media/media-url';
 import { PrismaService } from '../prisma/prisma.service';
+import { PublishService } from '../publish/publish.service';
 import { OrderNotifier, publicSiteUrl } from './order-notifier';
 import { OrderWebhookNotifier, type WebhookOrderSource } from './order-webhook';
 import {
@@ -134,6 +135,10 @@ const toProductSummary = (row: ProductWithVariants, media: Map<string, Media>): 
   title: row.title,
   slug: row.slug,
   description: row.description,
+  tagline: row.tagline,
+  summary: row.summary,
+  rating: row.rating,
+  ratingCount: row.ratingCount,
   price: row.price,
   compareAtPrice: row.compareAtPrice,
   currency: row.currency,
@@ -259,6 +264,7 @@ export class CommerceService {
     private readonly db: PrismaService,
     private readonly notifier: OrderNotifier,
     @Optional() private readonly webhooks?: OrderWebhookNotifier,
+    @Optional() private readonly publishJobs?: PublishService,
   ) {}
 
   async getSettings(siteId: string): Promise<CommerceSettings> {
@@ -611,7 +617,7 @@ export class CommerceService {
     input: CreateProductInput,
     actorId: string,
   ): Promise<ProductSummary> {
-    return this.db.forSite(siteId, async (tx) => {
+    const product = await this.db.forSite(siteId, async (tx) => {
       await this.assertImages(tx, input.images);
       const clash = await tx.product.findFirst({ where: { slug: input.slug }, select: { id: true } });
       if (clash) throw ApiException.conflict('ชื่อลิงก์นี้ถูกใช้แล้ว');
@@ -622,6 +628,10 @@ export class CommerceService {
           title: input.title,
           slug: input.slug,
           description: input.description,
+          tagline: input.tagline,
+          summary: input.summary,
+          rating: input.rating,
+          ratingCount: input.ratingCount,
           price: input.price,
           compareAtPrice: input.compareAtPrice,
           images: asJson(input.images),
@@ -656,6 +666,9 @@ export class CommerceService {
       });
       return toProductSummary(row, await this.mediaFor(tx, input.images));
     });
+
+    await this.revalidateShop(siteId, [product.slug]);
+    return product;
   }
 
   async updateProduct(
@@ -664,12 +677,14 @@ export class CommerceService {
     input: UpdateProductInput,
     actorId: string,
   ): Promise<ProductSummary> {
-    return this.db.forSite(siteId, async (tx) => {
+    let previousSlug: string | null = null;
+    const product = await this.db.forSite(siteId, async (tx) => {
       const current = await tx.product.findUnique({
         where: { id: productId },
         include: { variants: { orderBy: [{ position: 'asc' }, { id: 'asc' }] } },
       });
       if (!current) throw ApiException.notFound('ไม่พบสินค้านี้');
+      previousSlug = current.slug;
 
       if (input.images) await this.assertImages(tx, input.images);
       if (input.slug && input.slug !== current.slug) {
@@ -711,6 +726,10 @@ export class CommerceService {
           ...(input.title !== undefined ? { title: input.title } : {}),
           ...(input.slug !== undefined ? { slug: input.slug } : {}),
           ...(input.description !== undefined ? { description: input.description } : {}),
+          ...(input.tagline !== undefined ? { tagline: input.tagline } : {}),
+          ...(input.summary !== undefined ? { summary: input.summary } : {}),
+          ...(input.rating !== undefined ? { rating: input.rating } : {}),
+          ...(input.ratingCount !== undefined ? { ratingCount: input.ratingCount } : {}),
           ...(input.price !== undefined ? { price: input.price } : {}),
           ...(input.compareAtPrice !== undefined ? { compareAtPrice: input.compareAtPrice } : {}),
           ...(input.images !== undefined ? { images: asJson(input.images) } : {}),
@@ -752,16 +771,23 @@ export class CommerceService {
         : { ...row, variants: current.variants ?? [] };
       return toProductSummary(updated, await this.mediaFor(tx, ids));
     });
+
+    const slugs = [product.slug];
+    if (previousSlug !== null && previousSlug !== product.slug) slugs.push(previousSlug);
+    await this.revalidateShop(siteId, slugs);
+    return product;
   }
 
   /** Archiving keeps the row (and old orders) intact so it can be restored. */
   async archiveProduct(siteId: string, productId: string, actorId: string): Promise<void> {
+    let slug: string | null = null;
     await this.db.forSite(siteId, async (tx) => {
       const current = await tx.product.findUnique({
         where: { id: productId },
-        select: { title: true },
+        select: { title: true, slug: true },
       });
       if (!current) throw ApiException.notFound('ไม่พบสินค้านี้');
+      slug = current.slug;
       await tx.product.update({ where: { id: productId }, data: { status: 'archived' } });
       await tx.auditLog.create({
         data: {
@@ -773,6 +799,25 @@ export class CommerceService {
         },
       });
     });
+
+    if (slug !== null) await this.revalidateShop(siteId, [slug]);
+  }
+
+  /**
+   * Rebuilds the public pages a product change touches, so a grid that reads the
+   * catalog and the product page never keep the old cards until the hourly
+   * refresh. A failed rebuild must not fail the save itself.
+   */
+  private async revalidateShop(siteId: string, slugs: readonly string[]): Promise<void> {
+    if (!this.publishJobs) return;
+    try {
+      await this.publishJobs.enqueueChrome(
+        siteId,
+        slugs.map((slug) => `/shop/${slug}`),
+      );
+    } catch {
+      // The product is already saved; the next publish or hourly refresh will catch up.
+    }
   }
 
   async listOrders(siteId: string, query: OrderListQuery): Promise<OrderList> {

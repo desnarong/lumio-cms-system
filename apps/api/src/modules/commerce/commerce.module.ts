@@ -4,6 +4,7 @@ import { mediaStorageDriver } from '../media/media.config';
 import { createS3MediaStorage } from '../media/media.s3.storage';
 import { LocalMediaStorage, MEDIA_STORAGE, type MediaStorage } from '../media/media.storage';
 import { PublicModule } from '../public/public.module';
+import { PublishModule } from '../publish/publish.module';
 import { RolesGuard } from '../rbac/roles.guard';
 import { SiteGuard } from '../site/site.guard';
 import { CommerceController } from './commerce.controller';
@@ -18,7 +19,7 @@ const createSlipStorage = (): MediaStorage =>
   mediaStorageDriver() === 's3' ? createS3MediaStorage() : new LocalMediaStorage();
 
 @Module({
-  imports: [PublicModule],
+  imports: [PublicModule, PublishModule],
   controllers: [CommerceController, ShopController],
   providers: [
     CommerceService,

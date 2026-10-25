@@ -259,6 +259,100 @@
   opacity: 0.55;
 }
 
+/* Drag the hero photo to choose which part of it the frame shows. */
+.editor-block.is-selected .lumio-hero--overlay .lumio-hero__background {
+  cursor: grab;
+}
+
+.lumio-hero.is-panning-background .lumio-hero__background {
+  cursor: grabbing;
+}
+
+/* Cut-outs can be grabbed straight away in the editor, even before the block
+   itself is selected, so one drag both selects and moves them. */
+.editor-preview .lumio-hero__foreground {
+  pointer-events: auto;
+  cursor: grab;
+}
+
+/* Floating hero cut-outs stay clickable while their block is selected. */
+.editor-block.is-selected .lumio-hero__foreground {
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.editor-block.is-selected .lumio-hero__foreground.is-editor-selected-foreground {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Cropped image blocks can be panned the same way. */
+.editor-block.is-selected .lumio-image .lumio-img__element {
+  cursor: grab;
+}
+
+.lumio-image .lumio-img__element.is-panning-image {
+  cursor: grabbing;
+}
+
+/* Drag handles on the selected block: the right edge changes the width, the
+   bottom edge changes the minimum height. */
+.editor-block__resize {
+  position: absolute;
+  z-index: var(--z-dropdown);
+  display: none;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+  opacity: 0.85;
+}
+
+.editor-block.is-selected .editor-block__resize {
+  display: block;
+}
+
+.editor-block__resize--right {
+  inset-block: 18%;
+  inset-inline-end: -4px;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+.editor-block__resize--top {
+  inset-inline: 18%;
+  inset-block-start: -4px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.editor-block__resize--bottom {
+  inset-inline: 18%;
+  inset-block-end: -4px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.editor-block__resize:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.editor-block__size {
+  position: absolute;
+  inset-block-end: -12px;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-text);
+  color: var(--color-surface);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 .editor-block__tools {
   position: absolute;
   inset-block-start: -14px;
@@ -280,6 +374,11 @@
 .editor-block:focus-within .editor-block__tools,
 .editor-block.is-selected .editor-block__tools {
   opacity: 1;
+}
+
+.editor-block__move-glyph {
+  font-size: 14px;
+  line-height: 1;
 }
 
 .editor-block__handle {
@@ -575,6 +674,63 @@
   font-size: var(--text-sm);
 }
 
+/* Per-text move/size controls, so a banner heading can move without its siblings. */
+.editor-inspector__text-layouts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+
+.editor-inspector__subtitle {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.editor-inspector__text-layouts .editor-inspector__hint {
+  padding: 0;
+  font-size: var(--text-xs);
+}
+
+.editor-text-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding-block: var(--space-sm);
+  border-top: 1px solid var(--color-border);
+}
+
+.editor-text-layout:first-of-type {
+  border-top: 0;
+}
+
+.editor-text-layout__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.editor-text-layout__label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.editor-text-layout__nudge {
+  display: flex;
+  gap: 2px;
+}
+
+.editor-text-layout__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
 @media (max-width: 1023px) {
   .editor-body {
     grid-template-columns: minmax(0, 1fr);
@@ -798,3 +954,44 @@
     text-align: end;
   }
 }
+
+/* Media queries read the browser window, so the device toggle needs these
+   overrides to preview the phone layout inside the canvas. */
+.editor-frame--mobile .site .lumio-block[data-custom-width] > .lumio-block__inner {
+  max-width: 100%;
+}
+
+.editor-frame--mobile .site .lumio-hero__subheading,
+.editor-frame--mobile .site .lumio-hero__note {
+  max-width: 100%;
+}
+
+.editor-frame--mobile .site .lumio-hero--split-left,
+.editor-frame--mobile .site .lumio-hero--split-right,
+.editor-frame--tablet .site .lumio-hero--split-left,
+.editor-frame--tablet .site .lumio-hero--split-right {
+  grid-template-columns: 1fr;
+}
+
+.editor-frame--mobile .site .lumio-hero--split-left .lumio-hero__content,
+.editor-frame--mobile .site .lumio-hero--split-left .lumio-hero__media,
+.editor-frame--tablet .site .lumio-hero--split-left .lumio-hero__content,
+.editor-frame--tablet .site .lumio-hero--split-left .lumio-hero__media {
+  order: 0;
+}
+
+.editor-frame--mobile .site .lumio-hero[data-heading-size='lg'] .lumio-hero__heading {
+  font-size: var(--text-3xl);
+  line-height: var(--text-3xl-line-height);
+}
+
+.editor-frame--mobile .site .lumio-hero[data-heading-size='xl'] .lumio-hero__heading {
+  font-size: var(--text-4xl);
+  line-height: var(--text-4xl-line-height);
+}
+
+.editor-frame--mobile .site .lumio-products__grid,
+.editor-frame--mobile .site .lumio-posts__grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+

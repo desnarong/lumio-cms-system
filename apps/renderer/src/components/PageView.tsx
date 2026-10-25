@@ -1,4 +1,4 @@
-import { BlockTreeRenderer, registerRenderBlocks } from '@lumio/blocks/render';
+import { BlockTreeRenderer, registerRenderBlocks, type ShopProductCard } from '@lumio/blocks/render';
 import { buildJsonLd, localeLabel, localePathFor, type BlockNode, type PublicPage } from '@lumio/shared';
 import { siteOrigin } from '../lib/host';
 import { languageLinks } from '../lib/languages';
@@ -17,6 +17,8 @@ export interface PageViewProps {
   host: string;
   /** Draft preview: render the page but never record a page view. */
   preview?: boolean;
+  /** Live shop products for a products block that reads the catalog. */
+  shopProducts?: readonly ShopProductCard[];
 }
 
 /**
@@ -24,7 +26,7 @@ export interface PageViewProps {
  * generated from them. It is a plain server component, so the output is static
  * HTML with no client JavaScript from the blocks.
  */
-export const PageView = ({ page, host, preview = false }: PageViewProps) => {
+export const PageView = ({ page, host, preview = false, shopProducts }: PageViewProps) => {
   const { site, content, menus, globalBlocks } = page;
   if (!content) return null;
 
@@ -66,6 +68,7 @@ export const PageView = ({ page, host, preview = false }: PageViewProps) => {
         blocks={chromeBlocks(globalBlocks.header)}
         languages={languages}
         currentPath={path}
+        {...(shopProducts ? { shopProducts } : {})}
       />
       {/*
         A page with no version in the requested language falls back to the default
@@ -80,7 +83,12 @@ export const PageView = ({ page, host, preview = false }: PageViewProps) => {
       <main className="site-main" id="main">
         <article className="site-article" data-content-slug={content.slug} lang={content.locale}>
           {fallbackH1 ? <h1 className="site-page-title">{fallbackH1}</h1> : null}
-          <BlockTreeRenderer blocks={content.blocks} forms={page.forms} languages={languages} />
+          <BlockTreeRenderer
+            blocks={content.blocks}
+            forms={page.forms}
+            languages={languages}
+            {...(shopProducts ? { shopProducts } : {})}
+          />
         </article>
       </main>
       <SiteFooter
@@ -88,6 +96,7 @@ export const PageView = ({ page, host, preview = false }: PageViewProps) => {
         menus={menus}
         blocks={chromeBlocks(globalBlocks.footer)}
         languages={languages}
+        {...(shopProducts ? { shopProducts } : {})}
       />
     </div>
   );

@@ -293,6 +293,7 @@ export const AdminApp = ({
           contentId={effective.contentId}
           sectionsApi={clients.sections}
           formsApi={clients.forms}
+          commerceApi={clients.commerce}
           ai={clients.ai}
           design={clients.design}
           onBack={() => go('/content/page')}

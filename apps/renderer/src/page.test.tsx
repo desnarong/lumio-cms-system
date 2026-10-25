@@ -95,6 +95,14 @@ describe('PageView', () => {
     expect(html).toContain('aria-label="เมนูส่วนท้าย"');
   });
 
+  it('folds the header menu into a hamburger on a phone', () => {
+    const html = renderToStaticMarkup(<PageView page={pageOf('home')} host={HOST} />);
+    expect(html).toContain('class="site-nav__checkbox"');
+    expect(html).toContain('class="site-nav__toggle"');
+    expect(html).toContain('aria-label="เมนู"');
+    expect(html).toContain('aria-controls="site-nav-menu"');
+  });
+
   it('marks the menu item that points at the page being read', () => {
     const html = renderToStaticMarkup(<PageView page={pageOf('home')} host={HOST} />);
     expect(html).toContain('site-nav__link is-active');

@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { BlockTreeRenderer, type LanguageLink } from '@lumio/blocks/render';
+import { BlockTreeRenderer, type LanguageLink, type ShopProductCard } from '@lumio/blocks/render';
 import { Icon } from '@lumio/ui/icon';
 import {
   menuAlignFromSettings,
@@ -23,6 +23,8 @@ export interface SiteFooterProps {
   blocks?: BlockNode[];
   /** Languages the page can be read in, so a switcher in the footer works. */
   languages?: readonly LanguageLink[];
+  /** Live shop products for a products block that reads the catalog. */
+  shopProducts?: readonly ShopProductCard[];
 }
 
 type SocialKind = 'line' | 'facebook' | 'tiktok' | 'youtube' | 'instagram' | 'generic';
@@ -46,7 +48,7 @@ const SOCIAL_STYLE: Record<SocialKind, { color: string; glyph: string }> = {
   generic: { color: 'rgba(255, 255, 255, 0.24)', glyph: '•' },
 };
 
-export const SiteFooter = ({ site, menus, blocks = [], languages }: SiteFooterProps) => {
+export const SiteFooter = ({ site, menus, blocks = [], languages, shopProducts }: SiteFooterProps) => {
   const social = socialLinks(site);
   const legal = legalLinks(site);
   const background = footerBackground(site);
@@ -71,7 +73,11 @@ export const SiteFooter = ({ site, menus, blocks = [], languages }: SiteFooterPr
           ) : null}
           {blocks.length > 0 ? (
             <div className="site-footer__blocks">
-              <BlockTreeRenderer blocks={blocks} {...(languages ? { languages } : {})} />
+              <BlockTreeRenderer
+                blocks={blocks}
+                {...(languages ? { languages } : {})}
+                {...(shopProducts ? { shopProducts } : {})}
+              />
             </div>
           ) : (
             <p className="site-footer__name">{site.name}</p>

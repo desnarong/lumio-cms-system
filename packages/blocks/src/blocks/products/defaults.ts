@@ -10,6 +10,9 @@ export const productsDefaults: BlockData<ProductsProps> = {
     cardStyle: 'card',
     showPrice: true,
     showDescription: true,
+    source: 'manual',
+    sourceLimit: 6,
+    sourceCategory: '',
     items: [
       {
         image: null,

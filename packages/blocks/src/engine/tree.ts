@@ -1,4 +1,4 @@
-import type { BlockNode, BlockTree, TextRun } from '@lumio/shared';
+import type { BlockNode, BlockTree, TextLayout, TextRun } from '@lumio/shared';
 
 /** Index path to a block inside the tree, e.g. `[2, 0]` = first child of the third root block. */
 export type BlockIndexPath = readonly number[];
@@ -225,6 +225,20 @@ export const setBlockTextStyles = (
     if (runs.length === 0) delete textStyles[path];
     else textStyles[path] = [...runs];
     return { ...block, textStyles };
+  });
+
+/** Stores one text's own position/size; passing undefined clears it. */
+export const setBlockTextLayout = (
+  blocks: BlockTree,
+  id: string,
+  path: string,
+  layout: TextLayout | undefined,
+): BlockTree =>
+  updateBlockById(blocks, id, (block) => {
+    const textLayouts = { ...(block.textLayouts ?? {}) };
+    if (layout === undefined) delete textLayouts[path];
+    else textLayouts[path] = layout;
+    return { ...block, textLayouts };
   });
 
 export const setBlockVisibility = (

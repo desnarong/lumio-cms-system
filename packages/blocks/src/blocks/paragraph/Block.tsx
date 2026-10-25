@@ -9,6 +9,7 @@ export const ParagraphBlock = ({ props, block }: BlockRenderProps<ParagraphProps
     path="props.text"
     value={props.text}
     runs={block.textStyles?.['props.text']}
+    layout={block.textLayouts?.['props.text']}
     className={`lumio-paragraph lumio-paragraph--${props.size}${
       props.width === 'full' ? ' lumio-paragraph--full' : ''
     }`}

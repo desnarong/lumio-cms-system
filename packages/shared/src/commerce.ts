@@ -373,6 +373,13 @@ const productBaseSchema = z.object({
   title: z.string().trim().min(1, 'กรุณากรอกชื่อสินค้า').max(200),
   slug: slugSchema,
   description: z.string().trim().max(5_000).default(''),
+  /** One-line selling point shown under the product name. */
+  tagline: z.string().trim().max(160).default(''),
+  /** Short introduction shown above the buy box. */
+  summary: z.string().trim().max(600).default(''),
+  /** Average review score; `null` hides the stars until the shop adds some. */
+  rating: z.number().min(0).max(5).nullable().default(null),
+  ratingCount: z.number().int().min(0).max(1_000_000).default(0),
   price: priceSchema,
   compareAtPrice: priceSchema.nullable().default(null),
   images: productImagesSchema,
@@ -450,6 +457,13 @@ export interface ProductSummary {
   title: string;
   slug: string;
   description: string;
+  /** One-line selling point shown under the product name. */
+  tagline: string;
+  /** Short introduction above the buy box. */
+  summary: string;
+  /** Average review score; `null` hides the stars. */
+  rating: number | null;
+  ratingCount: number;
   price: number;
   compareAtPrice: number | null;
   currency: string;
@@ -503,6 +517,10 @@ export interface ShopProduct {
   title: string;
   slug: string;
   description: string;
+  tagline: string;
+  summary: string;
+  rating: number | null;
+  ratingCount: number;
   price: number;
   compareAtPrice: number | null;
   currency: string;
@@ -929,6 +947,10 @@ export const shopProductSchema = z.object({
   title: z.string(),
   slug: z.string(),
   description: z.string(),
+  tagline: z.string().default(''),
+  summary: z.string().default(''),
+  rating: z.number().nullable().default(null),
+  ratingCount: z.number().int().default(0),
   price: z.number().int(),
   compareAtPrice: z.number().int().nullable(),
   currency: z.string(),

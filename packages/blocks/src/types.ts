@@ -27,6 +27,24 @@ export interface LanguageLink {
   available: boolean;
 }
 
+/**
+ * One product the shop publishes right now, prepared for a product card.
+ * Prices are in baht and picture URLs are already absolute, so the same markup
+ * works in SSR, ISR and the editor preview (docs/design/07-blocks.md 7.8).
+ */
+export interface ShopProductCard {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  compareAtPrice: number | null;
+  currency: string;
+  image: string | null;
+  category: string | null;
+  link: string;
+  soldOut: boolean;
+}
+
 /** Props handed to a block renderer. `style` is already parsed by the shared schema. */
 export interface BlockRenderProps<P> {
   props: P;
@@ -42,6 +60,12 @@ export interface BlockRenderProps<P> {
    * (docs/design/17-i18n.md 17.3). Only the language-switcher block reads it.
    */
   languages?: readonly LanguageLink[];
+  /**
+   * Products the shop publishes right now, so a products block follows the
+   * catalog instead of hand-typed cards. `undefined` means "not loaded", which
+   * lets an offline preview fall back to the saved items.
+   */
+  shopProducts?: readonly ShopProductCard[];
 }
 
 /**

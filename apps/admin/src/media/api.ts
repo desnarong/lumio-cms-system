@@ -2,6 +2,7 @@ import {
   MEDIA_MAX_UPLOAD_BYTES,
   UPLOAD_MIME_TYPES,
   isUploadMimeType,
+  sniffImageMime,
   type BrandPalette,
   type BulkMediaUpdateResult,
   type BulkUpdateMediaInput,
@@ -29,6 +30,8 @@ export interface MediaPage {
 export interface MediaApi {
   list(query?: MediaListQuery): Promise<MediaPage>;
   folders(): Promise<string[]>;
+  /** One image by id; the picker polls it while a crop is re-rendering. */
+  get(id: string): Promise<MediaItem>;
   /** Presigns, uploads the bytes and confirms: one call for the caller. */
   upload(file: File, options?: { folder?: string }): Promise<MediaItem>;
   update(id: string, input: UpdateMediaInput): Promise<MediaItem>;
@@ -62,6 +65,21 @@ const EXTENSION_MIME: Record<string, UploadMimeType> = {
 export const mimeFromFilename = (filename: string): UploadMimeType | null => {
   const ext = filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
   return EXTENSION_MIME[ext] ?? null;
+};
+
+/**
+ * The browser labels a file by its extension, which is often wrong: a picture
+ * saved from a web page as "photo.png" is usually WebP underneath. Reading the
+ * first bytes lets the presign declare the format the API will actually find,
+ * instead of the upload being refused for a type mismatch.
+ */
+export const detectImageMime = async (file: Blob): Promise<UploadMimeType | null> => {
+  try {
+    const head = new Uint8Array(await file.slice(0, 32).arrayBuffer());
+    return sniffImageMime(head);
+  } catch {
+    return null;
+  }
 };
 
 export interface UploadCandidate {
@@ -145,8 +163,9 @@ export const createHttpMediaApi = ({
     const invalid = checkUploadCandidate(file);
     if (invalid) throw new ApiError('validation_error', invalid, 400);
 
-    const mime = isUploadMimeType(file.type) ? file.type : mimeFromFilename(file.name);
-    if (!mime) throw new ApiError('validation_error', translateNow('media.unknownType'), 400);
+    const declared = isUploadMimeType(file.type) ? file.type : mimeFromFilename(file.name);
+    if (!declared) throw new ApiError('validation_error', translateNow('media.unknownType'), 400);
+    const mime = (await detectImageMime(file)) ?? declared;
 
     const presigned = (
       await request<PresignUploadResult>('/media/presign', {
@@ -162,13 +181,30 @@ export const createHttpMediaApi = ({
 
     // Step 3 of docs/design/12-api.md 12.6: the bytes go straight to storage,
     // signed by the URL itself, so no session headers are sent.
-    const put = await doFetch(presigned.uploadUrl, {
-      method: presigned.method,
-      headers: presigned.headers,
-      body: file,
-    });
+    const send = (): Promise<Response> =>
+      doFetch(presigned.uploadUrl, {
+        method: presigned.method,
+        headers: presigned.headers,
+        body: file,
+      });
+
+    let put: Response;
+    try {
+      put = await send();
+      // A dropped connection or a 5xx from storage is worth one more try before
+      // the user has to pick the file again; PUT is idempotent.
+      if (!put.ok && put.status >= 500) put = await send();
+    } catch {
+      put = await send();
+    }
+
     if (!put.ok) {
-      throw new ApiError('upload_failed', translateNow('media.uploadFailed'), put.status);
+      const failure = (await put.json().catch(() => null)) as ErrorEnvelope | null;
+      throw new ApiError(
+        failure?.error ?? 'upload_failed',
+        failure?.message ?? translateNow('media.uploadFailed'),
+        put.status,
+      );
     }
 
     return (
@@ -191,6 +227,7 @@ export const createHttpMediaApi = ({
       return { items: envelope.data, cursor: envelope.meta?.cursor ?? null };
     },
     folders: async () => (await request<{ folders: string[] }>('/media/folders')).data.folders,
+    get: async (id) => (await request<MediaItem>(`/media/${id}`)).data,
     upload,
     update: async (id, input) =>
       (await request<MediaItem>(`/media/${id}`, { method: 'PATCH', body: JSON.stringify(input) }))

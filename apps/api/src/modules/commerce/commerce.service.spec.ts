@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, type Mock } from 'vitest';
 import type { PrismaService } from '../prisma/prisma.service';
+import type { PublishService } from '../publish/publish.service';
 import type { OrderNotifier } from './order-notifier';
 import { CommerceService } from './commerce.service';
 
@@ -142,13 +143,15 @@ const stubs = (
   return { db, tx, auditCreate, productCreate, productUpdate, productUpdateMany, orderUpdate };
 };
 
-const service = (all: Stubs): CommerceService =>
+const service = (all: Stubs, publish?: { enqueueChrome: Mock }): CommerceService =>
   new CommerceService(
     all.db,
     {
       created: vi.fn().mockResolvedValue(undefined),
       statusChanged: vi.fn().mockResolvedValue(undefined),
     } as unknown as OrderNotifier,
+    undefined,
+    publish as unknown as PublishService,
   );
 
 describe('CommerceService products', () => {
@@ -169,6 +172,10 @@ describe('CommerceService products', () => {
         title: 'กาแฟคั่วกลาง',
         slug: 'medium-roast',
         description: '',
+        tagline: '',
+        summary: '',
+        rating: null,
+        ratingCount: 0,
         price: 35_000,
         compareAtPrice: null,
         images: [MEDIA_ID],
@@ -195,6 +202,45 @@ describe('CommerceService products', () => {
     expect(all.auditCreate).toHaveBeenCalledOnce();
   });
 
+  it('rebuilds the product page and the pages that show the catalog', async () => {
+    const all = stubs();
+    const publish = { enqueueChrome: vi.fn().mockResolvedValue({}) };
+    await service(all, publish).createProduct(
+      SITE_ID,
+      {
+        title: 'กาแฟคั่วกลาง',
+        slug: 'medium-roast',
+        description: '',
+        tagline: '',
+        summary: '',
+        rating: null,
+        ratingCount: 0,
+        price: 35_000,
+        compareAtPrice: null,
+        images: [MEDIA_ID],
+        specs: [],
+        stock: 10,
+        weightGrams: 0,
+        options: [],
+        variants: [],
+        category: null,
+        status: 'active',
+      },
+      USER_ID,
+    );
+
+    expect(publish.enqueueChrome).toHaveBeenCalledWith(SITE_ID, ['/shop/medium-roast']);
+  });
+
+  it('keeps the saved product even when the rebuild cannot be queued', async () => {
+    const all = stubs();
+    const publish = { enqueueChrome: vi.fn().mockRejectedValue(new Error('queue down')) };
+
+    await expect(
+      service(all, publish).archiveProduct(SITE_ID, PRODUCT_ID, USER_ID),
+    ).resolves.toBeUndefined();
+  });
+
   it('rejects an image that is not in the site library', async () => {
     const all = stubs();
     (all.tx.media as { findMany: Mock }).findMany.mockResolvedValue([]);
@@ -206,6 +252,10 @@ describe('CommerceService products', () => {
           title: 'กาแฟ',
           slug: 'beans',
           description: '',
+          tagline: '',
+          summary: '',
+          rating: null,
+          ratingCount: 0,
           price: 1_000,
           compareAtPrice: null,
           images: [MEDIA_ID],

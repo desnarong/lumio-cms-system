@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
-import { FormsCatalogProvider, registry } from '@lumio/blocks';
+import { FormsCatalogProvider, registry, type ShopProductCard } from '@lumio/blocks';
 import {
   themeCssVariables,
   themeDataAttributes,
@@ -11,6 +11,7 @@ import {
 import { Banner, Button, EmptyState, Modal, Skeleton, TextField, useT, useToast } from '@lumio/ui';
 import { AiAssistant } from '../ai/AiAssistant.js';
 import type { AiApi } from '../ai/api.js';
+import type { CommerceApi } from '../commerce/api.js';
 import type { DesignApi } from '../design/api.js';
 import type { FormsApi } from '../forms/api.js';
 import { loadFullForms } from '../forms/useForms.js';
@@ -21,6 +22,7 @@ import { BlockInspector } from './BlockInspector.js';
 import { EditorToolbar } from './EditorToolbar.js';
 import { LanguageBar } from './LanguageBar.js';
 import type { EditorTextField } from './types.js';
+import { shopCardsFromSummaries } from './shop-products.js';
 import { VersionHistoryPanel } from './VersionHistoryPanel.js';
 import { CONFLICT_MESSAGE_KEY, useEditor } from './useEditor.js';
 
@@ -31,6 +33,8 @@ export interface EditorPageProps {
   sectionsApi?: SectionTemplateApi;
   /** Contact forms, so the form block can pick one and preview it. */
   formsApi?: FormsApi;
+  /** Shop products, so a products block previews the real catalog. */
+  commerceApi?: CommerceApi;
   /** The AI assistant; omit to hide it entirely. */
   ai?: AiApi;
   /** Design tokens, so a whole-site AI command can be applied and undone. */
@@ -55,6 +59,7 @@ export const EditorPage = ({
   contentId,
   sectionsApi,
   formsApi,
+  commerceApi,
   ai,
   design,
   initialContent,
@@ -70,6 +75,7 @@ export const EditorPage = ({
   const [naming, setNaming] = useState<{ id: string; label: string } | null>(null);
   const [templateName, setTemplateName] = useState('');
   const [forms, setForms] = useState<Form[]>([]);
+  const [shopProducts, setShopProducts] = useState<ShopProductCard[]>([]);
   const [aiFields, setAiFields] = useState<EditorTextField[]>([]);
   const [previewTokens, setPreviewTokens] = useState<ThemeTokens | null>(null);
 
@@ -87,6 +93,22 @@ export const EditorPage = ({
       active = false;
     };
   }, [formsApi]);
+
+  // A products block set to read the catalog needs today's products, otherwise
+  // the canvas would show cards the shop no longer publishes.
+  useEffect(() => {
+    if (!commerceApi) return undefined;
+    let active = true;
+    void commerceApi
+      .listProducts({ limit: 12, status: 'active' })
+      .then((page) => {
+        if (active) setShopProducts(shopCardsFromSummaries(page.items));
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [commerceApi]);
 
   // The canvas must paint with the site's own colours and density, otherwise the
   // owner sees the admin's default pink accent instead of their brand colours.
@@ -317,6 +339,19 @@ export const EditorPage = ({
                     { path: 'style.offsetY', value: offsetY },
                   ])
                 }
+                onResize={(id, size) =>
+                  editor.applyBlockChanges(id, [
+                    ...(size.widthPx === undefined
+                      ? []
+                      : [{ path: 'style.widthPx', value: size.widthPx }]),
+                    ...(size.heightPx === undefined
+                      ? []
+                      : [{ path: 'style.heightPx', value: size.heightPx }]),
+                    ...(size.marginTopPx === undefined
+                      ? []
+                      : [{ path: 'style.marginTopPx', value: size.marginTopPx }]),
+                  ])
+                }
                 onInsert={editor.insertBlock}
                 onDuplicate={editor.duplicateBlock}
                 onRemove={editor.removeBlock}
@@ -341,6 +376,7 @@ export const EditorPage = ({
                 onDropIndex={editor.setDropIndex}
                 onDragEnd={editor.endDrag}
                 {...(forms.length > 0 ? { forms } : {})}
+                {...(shopProducts.length > 0 ? { shopProducts } : {})}
                 onFields={handleAiFields}
               />
             )}
@@ -395,6 +431,12 @@ export const EditorPage = ({
             onRemove={() => state.selectedId && editor.removeBlock(state.selectedId)}
             onToggleVisibility={() =>
               state.selectedId && editor.toggleVisibility(state.selectedId, state.device)
+            }
+            fields={aiFields}
+            onTextLayoutChange={(path, layout) =>
+              state.selectedId
+                ? editor.setTextLayout(state.selectedId, path, layout)
+                : undefined
             }
             {...(ai
               ? {

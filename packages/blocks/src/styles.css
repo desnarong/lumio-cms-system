@@ -7,12 +7,21 @@
 
 .lumio-block {
   position: relative;
-  padding-block: var(--block-padding-y, var(--space-md));
+  min-height: var(--block-height, 0px);
+  margin-block-start: var(--block-margin-top, 0px);
+  padding-block: var(--block-padding-top, var(--block-padding-y, var(--space-md)))
+    var(--block-padding-bottom, var(--block-padding-y, var(--space-md)));
   padding-inline: var(--block-padding-x, var(--space-md));
 }
 
+/* A hero with floating cut-outs paints above the next block, so a cut-out can
+   hang outside the banner instead of being covered by the section below. */
+.lumio-block:has(.lumio-hero__foreground) {
+  z-index: 1;
+}
+
 .lumio-block__inner {
-  max-width: var(--layout-content-max-width);
+  max-width: var(--block-width, var(--layout-content-max-width, 100%));
   margin-inline: auto;
   /* The editor's "move text" handle writes these offsets; 0px is a no-op. */
   transform: translate(var(--block-offset-x, 0), var(--block-offset-y, 0));
@@ -238,24 +247,25 @@
   font-weight: 700;
 }
 
+/* The editor's text-size slider writes --block-text-scale (1 = design size). */
 .lumio-heading--h1 {
-  font-size: var(--text-3xl);
-  line-height: var(--text-3xl-line-height);
+  font-size: calc(var(--text-3xl) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-3xl-line-height) * var(--block-text-scale, 1));
 }
 
 .lumio-heading--h2 {
-  font-size: var(--text-2xl);
-  line-height: var(--text-2xl-line-height);
+  font-size: calc(var(--text-2xl) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-2xl-line-height) * var(--block-text-scale, 1));
 }
 
 .lumio-heading--h3 {
-  font-size: var(--text-xl);
-  line-height: var(--text-xl-line-height);
+  font-size: calc(var(--text-xl) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-xl-line-height) * var(--block-text-scale, 1));
 }
 
 .lumio-heading--h4 {
-  font-size: var(--text-lg);
-  line-height: var(--text-lg-line-height);
+  font-size: calc(var(--text-lg) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-lg-line-height) * var(--block-text-scale, 1));
 }
 
 .lumio-paragraph {
@@ -269,13 +279,13 @@
 }
 
 .lumio-paragraph--base {
-  font-size: var(--text-base);
-  line-height: var(--text-base-line-height);
+  font-size: calc(var(--text-base) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-base-line-height) * var(--block-text-scale, 1));
 }
 
 .lumio-paragraph--lg {
-  font-size: var(--text-lg);
-  line-height: var(--text-lg-line-height);
+  font-size: calc(var(--text-lg) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-lg-line-height) * var(--block-text-scale, 1));
 }
 
 /* Image block */
@@ -338,6 +348,8 @@
 
 /* Hero */
 .lumio-hero {
+  position: relative;
+  isolation: isolate;
   display: grid;
   gap: var(--space-2xl);
   align-items: center;
@@ -347,48 +359,56 @@
   margin: 0 0 var(--space-md);
   color: var(--color-text);
   font-family: var(--font-display);
-  font-size: var(--text-3xl);
-  line-height: var(--text-3xl-line-height);
+  font-size: calc(var(--text-3xl) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-3xl-line-height) * var(--block-text-scale, 1));
 }
 
 .lumio-hero[data-heading-size='sm'] .lumio-hero__heading {
-  font-size: var(--text-2xl);
-  line-height: var(--text-2xl-line-height);
+  font-size: calc(var(--text-2xl) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-2xl-line-height) * var(--block-text-scale, 1));
 }
 
 .lumio-hero[data-heading-size='md'] .lumio-hero__heading {
-  font-size: var(--text-3xl);
-  line-height: var(--text-3xl-line-height);
+  font-size: calc(var(--text-3xl) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-3xl-line-height) * var(--block-text-scale, 1));
 }
 
 .lumio-hero[data-heading-size='lg'] .lumio-hero__heading {
-  font-size: var(--text-4xl);
-  line-height: var(--text-4xl-line-height);
+  font-size: calc(var(--text-4xl) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-4xl-line-height) * var(--block-text-scale, 1));
 }
 
 .lumio-hero[data-heading-size='xl'] .lumio-hero__heading {
-  font-size: var(--text-5xl);
-  line-height: var(--text-5xl-line-height);
+  font-size: calc(var(--text-5xl) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-5xl-line-height) * var(--block-text-scale, 1));
 }
 
 @media (max-width: 640px) {
   .lumio-hero[data-heading-size='lg'] .lumio-hero__heading {
-    font-size: var(--text-3xl);
-    line-height: var(--text-3xl-line-height);
+    font-size: calc(var(--text-3xl) * var(--block-text-scale, 1));
+    line-height: calc(var(--text-3xl-line-height) * var(--block-text-scale, 1));
   }
 
   .lumio-hero[data-heading-size='xl'] .lumio-hero__heading {
-    font-size: var(--text-4xl);
-    line-height: var(--text-4xl-line-height);
+    font-size: calc(var(--text-4xl) * var(--block-text-scale, 1));
+    line-height: calc(var(--text-4xl-line-height) * var(--block-text-scale, 1));
   }
 }
 
 .lumio-hero__subheading {
   margin: 0 0 var(--space-xl);
-  max-width: 60ch;
+  max-width: var(--hero-copy-width, 60ch);
   color: var(--color-text-muted);
-  font-size: var(--text-lg);
-  line-height: var(--text-lg-line-height);
+  font-size: calc(var(--text-lg) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-lg-line-height) * var(--block-text-scale, 1));
+}
+
+/* The split/centred layouts already give the text its own column, so the
+   description fills it instead of using the full-bleed banner width. */
+.lumio-hero--split-left .lumio-hero__subheading,
+.lumio-hero--split-right .lumio-hero__subheading,
+.lumio-hero--centered .lumio-hero__subheading {
+  max-width: 100%;
 }
 
 /* Extra note under the subheading; the negative top margin pulls it closer. */
@@ -396,8 +416,25 @@
   margin: calc(-1 * var(--space-md)) 0 var(--space-xl);
   max-width: 50%;
   color: var(--color-text-muted);
-  font-size: var(--text-base);
-  line-height: var(--text-base-line-height);
+  font-size: calc(var(--text-base) * var(--block-text-scale, 1));
+  line-height: calc(var(--text-base-line-height) * var(--block-text-scale, 1));
+}
+
+/* Centred blocks centre their constrained copy and buttons too, not only the headline. */
+.lumio-block[data-text-align='center'] .lumio-hero__subheading,
+.lumio-block[data-text-align='center'] .lumio-hero__note,
+.lumio-block[data-text-align='center'] .lumio-hero__actions {
+  margin-inline: auto;
+}
+
+.lumio-block[data-text-align='center'] .lumio-hero__actions {
+  justify-content: center;
+}
+
+.lumio-block[data-text-align='right'] .lumio-hero__subheading,
+.lumio-block[data-text-align='right'] .lumio-hero__note,
+.lumio-block[data-text-align='right'] .lumio-hero__actions {
+  margin-inline-start: auto;
 }
 
 /* A half-width note is unreadable on a phone, so it uses the full column there. */
@@ -414,6 +451,7 @@
 }
 
 .lumio-hero__media {
+  position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-md);
@@ -425,6 +463,28 @@
   text-align: center;
 }
 
+/* Optional picture swapped in on hover; both layouts use the same overlay. */
+.lumio-hero__image-hover {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-duration-base) var(--motion-ease);
+}
+
+.lumio-hero__image-hover .lumio-img__element,
+.lumio-hero__image-hover picture,
+.lumio-hero__image-hover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lumio-hero[data-banner-hover='true']:hover .lumio-hero__image-hover {
+  opacity: 1;
+}
+
 /* Full-bleed banner: the photo is the background and the text sits on it. */
 .lumio-hero--overlay {
   position: relative;
@@ -433,7 +493,6 @@
   align-items: end;
   width: 100%;
   min-height: clamp(360px, 62vh, 720px);
-  overflow: hidden;
   background: var(--color-primary);
 }
 
@@ -471,10 +530,24 @@
   margin-inline: calc(50% - 50vw);
 }
 
+/* When the editor gives the block a size, the banner grows with it instead of
+   keeping the viewport width, so the photo and every cut-out scale together. */
+.lumio-block[data-custom-width] .lumio-hero--overlay {
+  width: 100%;
+  margin-inline: 0;
+}
+
+.lumio-block[data-custom-height] .lumio-hero--overlay {
+  min-height: var(--block-height, clamp(360px, 62vh, 720px));
+  aspect-ratio: auto;
+}
+
 .lumio-hero__background {
   position: absolute;
   inset: 0;
   z-index: -2;
+  /* The zoomed photo is clipped here, so cut-outs can still float outside. */
+  overflow: hidden;
 }
 
 .lumio-hero__background .lumio-img,
@@ -589,6 +662,14 @@
 
 .lumio-hero--centered .lumio-hero__actions {
   justify-content: center;
+}
+
+/* Text/picture spacing in split layouts is a share of the banner, and a
+   viewport share when the layout stacks on a phone. */
+.lumio-hero--split-left,
+.lumio-hero--split-right {
+  column-gap: var(--hero-split-gap, var(--space-2xl));
+  row-gap: var(--hero-split-gap-vw, var(--space-2xl));
 }
 
 @media (min-width: 1024px) {
@@ -1071,6 +1152,12 @@
   display: none;
 }
 
+/* Four arrow buttons that nudge text without typing a pixel value. */
+.lumio-panel-nudge {
+  display: flex;
+  gap: var(--space-xs);
+}
+
 .lumio-panel-list {
   display: flex;
   flex-direction: column;
@@ -1301,6 +1388,12 @@
   font-size: var(--text-base);
 }
 
+.lumio-products__empty {
+  margin: var(--space-lg) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+}
+
 .lumio-products__grid,
 .lumio-posts__grid {
   display: grid;
@@ -1457,8 +1550,34 @@
 }
 
 @media (max-width: 767px) {
-  .lumio-products__grid,
-  .lumio-posts__grid {
+  /* The column count set in the editor is a desktop value; a phone always
+     shows one card per row, even when the editor picked 2, 3 or 4. */
+  .lumio-products[data-columns] .lumio-products__grid,
+  .lumio-posts[data-columns] .lumio-posts__grid {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Sizes picked by dragging are desktop values. On a phone the block goes back
+   to the full column, the copy runs full width, and a tall section never grows
+   past the screen. */
+@media (max-width: 767px) {
+  .lumio-block[data-custom-width] > .lumio-block__inner {
+    max-width: 100%;
+  }
+
+  .lumio-block[data-custom-height] {
+    min-height: min(var(--block-height, 0px), 100vh);
+  }
+
+  .lumio-hero__subheading,
+  .lumio-hero__note {
+    max-width: 100%;
+  }
+
+  .lumio-hero--overlay .lumio-hero__content {
+    max-width: 100%;
+  }
+}
+
+

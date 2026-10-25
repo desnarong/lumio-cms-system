@@ -9,6 +9,9 @@ import {
   HERO_LAYOUTS,
   HERO_MAX_BUTTONS,
   HERO_MAX_FLOATS,
+  floatWidthPercent,
+  floatXPercent,
+  floatYPercent,
   type HeroButton,
   type HeroFloat,
   type HeroLayout,
@@ -58,6 +61,20 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
           label="คำอธิบายใต้หัวข้อ"
           value={props.subheading}
           onChange={(event) => onChange('props.subheading', event.target.value)}
+        />
+        <TextField
+          label="ความกว้างคำอธิบาย (% ของพื้นที่)"
+          hint="มีผลกับเลย์เอาต์เต็มเฟรม — รูปซ้าย/ขวาใช้เต็มคอลัมน์ข้อความ"
+          type="number"
+          min={20}
+          max={100}
+          value={String(props.subheadingWidth)}
+          onChange={(event) =>
+            onChange(
+              'props.subheadingWidth',
+              Math.min(100, Math.max(20, Math.round(Number(event.target.value) || 60))),
+            )
+          }
         />
         <TextField
           label="ข้อความเพิ่มเติมใต้คำอธิบาย"
@@ -141,11 +158,57 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
             );
           }}
         />
+        <ImagePicker
+          label="รูปเมื่อเอาเมาส์ชี้ (ไม่บังคับ)"
+          hint="รูปนี้จะค่อย ๆ ปรากฏทับรูปหลักเมื่อผู้ชมเอาเมาส์ชี้"
+          value={props.hoverImage?.src ?? null}
+          alt=""
+          disabled={!mediaPicker}
+          onPick={() => {
+            void mediaPicker
+              ?.pick({ aspect: 'wide' })
+              .then((picked) => {
+                if (picked) onChange('props.hoverImage', imageFromPick(picked, ''));
+              })
+              .catch(() => undefined);
+          }}
+          onChange={(url) => onChange('props.hoverImage', url ? imageFromUrl(url, '') : null)}
+        />
+        {props.hoverImage ? (
+          <Button variant="ghost" size="sm" onClick={() => onChange('props.hoverImage', null)}>
+            ลบรูป hover
+          </Button>
+        ) : null}
       </PanelSection>
 
       <PanelSection title="พื้นหลังแบนเนอร์">
+        <p className="lumio-panel-hint">
+          ลากบนรูปในหน้าจอเพื่อเลื่อนตำแหน่งรูปได้เลย หรือใส่ตัวเลขด้านล่างก็ได้
+        </p>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() =>
+            onChange('style', {
+              ...style,
+              widthPx: undefined,
+              heightPx: undefined,
+              paddingXpx: undefined,
+              paddingX: 'none',
+              offsetX: undefined,
+              marginTopPx: undefined,
+              backgroundFullWidth: true,
+            })
+          }
+        >
+          เต็มจอ (เต็มความกว้าง)
+        </Button>
+        <p className="lumio-panel-hint">
+          ใช้กับเลย์เอาต์ ‘เต็มเฟรม · รูปพื้นหลัง ข้อความทับรูป’ แล้วกดปุ่มนี้เพื่อล้างความกว้าง/ระยะห่างที่ตั้งไว้
+          ให้ภาพพื้นหลังกินเต็มขอบจอ
+        </p>
         <Select
-          label="ตำแหน่งข้อความ"
+          label="ตำแหน่งข้อความ (บน–ล่าง)"
           value={props.contentAlign}
           options={[
             { value: 'top', label: 'ชิดบน' },
@@ -265,13 +328,16 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
               }
             />
             <TextField
-              label="ความกว้าง (px)"
+              label="ความกว้าง (% ของแบนเนอร์)"
+              hint="ลากขนาดในหน้าจอได้เลย ค่านี้จะปรับตามความกว้างของแบนเนอร์"
               type="number"
               min={0}
-              max={2000}
-              value={String(item.width)}
+              max={100}
+              value={String(Math.round(floatWidthPercent(item)))}
               onChange={(event) =>
-                updateFloat(index, { width: Math.max(0, Number(event.target.value) || 0) })
+                updateFloat(index, {
+                  widthPercent: Math.min(100, Math.max(0, Number(event.target.value) || 0)),
+                })
               }
             />
             <Select
@@ -284,11 +350,12 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
               onChange={(event) => updateFloat(index, { anchorX: event.target.value as 'left' | 'right' })}
             />
             <TextField
-              label="ระยะแนวนอน (px)"
+              label="ระยะแนวนอน (%)"
+              hint="เปอร์เซ็นต์ของความกว้างแบนเนอร์"
               type="number"
-              value={String(item.x)}
+              value={String(Math.round(floatXPercent(item) * 10) / 10)}
               onChange={(event) =>
-                updateFloat(index, { x: Math.round(Number(event.target.value) || 0) })
+                updateFloat(index, { xPercent: Number(event.target.value) || 0 })
               }
             />
             <Select
@@ -301,11 +368,12 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
               onChange={(event) => updateFloat(index, { anchorY: event.target.value as 'top' | 'bottom' })}
             />
             <TextField
-              label="ระยะแนวตั้ง (px)"
+              label="ระยะแนวตั้ง (%)"
+              hint="เปอร์เซ็นต์ของความสูงแบนเนอร์"
               type="number"
-              value={String(item.y)}
+              value={String(Math.round(floatYPercent(item) * 10) / 10)}
               onChange={(event) =>
-                updateFloat(index, { y: Math.round(Number(event.target.value) || 0) })
+                updateFloat(index, { yPercent: Number(event.target.value) || 0 })
               }
             />
             <Switch
@@ -332,7 +400,7 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
           onClick={() =>
             onChange('props.foregrounds', [
               ...props.foregrounds,
-              { image: null, width: 360, anchorX: 'right', x: 80, anchorY: 'bottom', y: 0, shadow: true },
+              { image: null, width: 360, widthPercent: 25, x: 80, xPercent: 5, anchorX: 'right', anchorY: 'bottom', y: 0, yPercent: 0, shadow: true },
             ])
           }
         >
@@ -340,7 +408,7 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
         </Button>
       </PanelSection>
 
-      <PanelSection title="หน้าตา">
+      <PanelSection title="การจัดวางแบนเนอร์">
         <Select
           label="ขนาดหัวข้อ"
           value={props.headingSize ?? 'md'}
@@ -361,6 +429,32 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
             { value: 'wide', label: 'กว้าง (เต็มจอ)' },
           ]}
           onChange={(event) => onChange('props.contentWidth', event.target.value)}
+        />
+        <Select
+          label="การจัดตำแหน่งข้อความ (ซ้าย–ขวา)"
+          hint="กึ่งกลางจะจัดหัวข้อ คำอธิบาย และปุ่มให้อยู่กลางพร้อมกัน"
+          value={style.textAlign ?? 'left'}
+          options={[
+            { value: 'left', label: 'ชิดซ้าย' },
+            { value: 'center', label: 'กึ่งกลาง' },
+            { value: 'right', label: 'ชิดขวา' },
+          ]}
+          onChange={(event) => onChange('style.textAlign', event.target.value)}
+        />
+        <TextField
+          label="ระยะห่างรูปกับข้อความ (%)"
+          hint="ใช้กับเลย์เอาต์รูปซ้าย/ขวา ปรับตามจอบนมือถือ"
+          type="number"
+          min={0}
+          max={20}
+          step={0.5}
+          value={String(props.splitGap)}
+          onChange={(event) =>
+            onChange(
+              'props.splitGap',
+              Math.min(20, Math.max(0, Math.round((Number(event.target.value) || 0) * 2) / 2)),
+            )
+          }
         />
         <Select
           label="รูปแบบการวาง"

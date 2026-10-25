@@ -4,6 +4,8 @@ import { ProductsPanel } from './Panel.js';
 import { productsDefaults } from './defaults.js';
 import { productsSchema, type ProductsProps } from './schema.js';
 
+export * from './shop.js';
+
 export const productsBlock: BlockDefinition<ProductsProps> = {
   type: 'products',
   label: 'สินค้า (การ์ดสินค้า)',

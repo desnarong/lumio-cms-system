@@ -96,6 +96,10 @@ interface ProductDraft {
   variants: VariantDraft[];
   category: string;
   description: string;
+  tagline: string;
+  summary: string;
+  rating: string;
+  ratingCount: string;
   status: ProductStatus;
   mediaId: string;
   /** Preview URL of the chosen image; kept beside the id so the picker can show it. */
@@ -117,6 +121,10 @@ const emptyDraft = (): ProductDraft => ({
   variants: [],
   category: '',
   description: '',
+  tagline: '',
+  summary: '',
+  rating: '',
+  ratingCount: '0',
   status: 'draft',
   mediaId: '',
   mediaUrl: '',
@@ -178,6 +186,10 @@ const draftFor = (product: ProductSummary): ProductDraft => ({
   variants: variantDraftsFor(product.options, product),
   category: product.category ?? '',
   description: product.description,
+  tagline: product.tagline,
+  summary: product.summary,
+  rating: product.rating === null ? '' : String(product.rating),
+  ratingCount: String(product.ratingCount),
   status: product.status,
   mediaId: product.imageIds[0] ?? '',
   mediaUrl: product.images[0] ?? '',
@@ -232,6 +244,54 @@ export const ProductEditor = ({
       galleryIds: current.galleryIds.filter((_, position) => position !== index),
       galleryUrls: current.galleryUrls.filter((_, position) => position !== index),
     }));
+
+  /** Moves a gallery picture one slot earlier or later, so the order is editable. */
+  const moveGalleryImage = (index: number, offset: number): void =>
+    setDraft((current) => {
+      const target = index + offset;
+      const ids = [...current.galleryIds];
+      const urls = [...current.galleryUrls];
+      const id = ids[index];
+      const url = urls[index];
+      const targetId = ids[target];
+      const targetUrl = urls[target];
+      if (id === undefined || url === undefined || targetId === undefined || targetUrl === undefined) {
+        return current;
+      }
+      ids[index] = targetId;
+      ids[target] = id;
+      urls[index] = targetUrl;
+      urls[target] = url;
+      return { ...current, galleryIds: ids, galleryUrls: urls };
+    });
+
+  /** Uses a gallery picture as the main image; the old main takes its slot. */
+  const promoteGalleryImage = (index: number): void =>
+    setDraft((current) => {
+      const id = current.galleryIds[index];
+      const url = current.galleryUrls[index];
+      if (id === undefined || url === undefined) return current;
+      if (current.mediaId.length === 0) {
+        return {
+          ...current,
+          mediaId: id,
+          mediaUrl: url,
+          galleryIds: current.galleryIds.filter((_, position) => position !== index),
+          galleryUrls: current.galleryUrls.filter((_, position) => position !== index),
+        };
+      }
+      return {
+        ...current,
+        mediaId: id,
+        mediaUrl: url,
+        galleryIds: current.galleryIds.map((entry, position) =>
+          position === index ? current.mediaId : entry,
+        ),
+        galleryUrls: current.galleryUrls.map((entry, position) =>
+          position === index ? current.mediaUrl : entry,
+        ),
+      };
+    });
 
   const updateSpec = (index: number, patch: { label?: string; value?: string }): void =>
     setDraft((current) => ({
@@ -324,6 +384,19 @@ export const ProductEditor = ({
           onChange={(event) => set('slug', event.target.value.toLowerCase())}
           hint={t('commerce.slugHint')}
         />
+        <TextField
+          label={t('commerce.tagline')}
+          value={draft.tagline}
+          onChange={(event) => set('tagline', event.target.value)}
+          hint={t('commerce.taglineHint')}
+        />
+        <Textarea
+          label={t('commerce.summary')}
+          value={draft.summary}
+          rows={3}
+          onChange={(event) => set('summary', event.target.value)}
+        />
+        <p className="commerce-settings__hint">{t('commerce.summaryHint')}</p>
         <div className="commerce-form__row">
           <TextField
             label={t('commerce.price')}
@@ -445,15 +518,46 @@ export const ProductEditor = ({
             {draft.galleryUrls.map((url, index) => (
               <li className="commerce-gallery__item" key={`${url}-${index}`}>
                 <img className="commerce-gallery__image" src={url} alt="" />
-                <button
-                  type="button"
-                  className="commerce-gallery__remove"
-                  aria-label={t('commerce.removeImage')}
-                  title={t('common.delete')}
-                  onClick={() => removeGalleryImage(index)}
-                >
-                  <Icon name="close" size={14} />
-                </button>
+                <div className="commerce-gallery__actions">
+                  <button
+                    type="button"
+                    className="commerce-gallery__action"
+                    aria-label={t('commerce.moveEarlier')}
+                    title={t('commerce.moveEarlier')}
+                    disabled={index === 0}
+                    onClick={() => moveGalleryImage(index, -1)}
+                  >
+                    <Icon name="chevron-left" size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    className="commerce-gallery__action"
+                    aria-label={t('commerce.moveLater')}
+                    title={t('commerce.moveLater')}
+                    disabled={index === draft.galleryUrls.length - 1}
+                    onClick={() => moveGalleryImage(index, 1)}
+                  >
+                    <Icon name="chevron-right" size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    className="commerce-gallery__action"
+                    aria-label={t('commerce.setAsMain')}
+                    title={t('commerce.setAsMain')}
+                    onClick={() => promoteGalleryImage(index)}
+                  >
+                    <Icon name="image" size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    className="commerce-gallery__action commerce-gallery__action--danger"
+                    aria-label={t('commerce.removeImage')}
+                    title={t('common.delete')}
+                    onClick={() => removeGalleryImage(index)}
+                  >
+                    <Icon name="close" size={14} />
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
@@ -546,6 +650,22 @@ export const ProductEditor = ({
             {t('commerce.addSpec')}
           </Button>
         </div>
+        <div className="commerce-form__row">
+          <TextField
+            label={t('commerce.rating')}
+            value={draft.rating}
+            inputMode="decimal"
+            onChange={(event) => set('rating', event.target.value)}
+            hint={t('commerce.ratingHint')}
+          />
+          <TextField
+            label={t('commerce.ratingCount')}
+            value={draft.ratingCount}
+            inputMode="numeric"
+            onChange={(event) => set('ratingCount', event.target.value)}
+            hint={t('commerce.ratingCountHint')}
+          />
+        </div>
         <Textarea
           label={t('commerce.description')}
           value={draft.description}
@@ -625,6 +745,16 @@ export const ProductsTab = ({ api, media, canManage }: ProductsTabProps) => {
       setFormError(t('commerce.weightInvalid'));
       return;
     }
+    const rating = draft.rating.trim() === '' ? null : Number(draft.rating);
+    if (rating !== null && (!Number.isFinite(rating) || rating < 0 || rating > 5)) {
+      setFormError(t('commerce.ratingInvalid'));
+      return;
+    }
+    const ratingCount = Number(draft.ratingCount.trim() || '0');
+    if (!Number.isInteger(ratingCount) || ratingCount < 0) {
+      setFormError(t('commerce.ratingInvalid'));
+      return;
+    }
 
     const options = parseOptionsText(draft.optionsText);
     const variants: ProductVariantInput[] = [];
@@ -665,6 +795,10 @@ export const ProductsTab = ({ api, media, canManage }: ProductsTabProps) => {
       title: draft.title.trim(),
       slug: draft.slug.trim(),
       description: draft.description.trim(),
+      tagline: draft.tagline.trim(),
+      summary: draft.summary.trim(),
+      rating,
+      ratingCount,
       price,
       compareAtPrice: compareAt,
       stock,

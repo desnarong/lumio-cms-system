@@ -9,6 +9,7 @@ export const imageDefaults: BlockData<ImageProps> = {
     aspect: 'wide',
     rounded: true,
     align: 'center',
+    zoom: 100,
   },
   style: defaultBlockStyle,
 };

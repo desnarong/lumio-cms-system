@@ -3,8 +3,18 @@ body {
   height: 100%;
 }
 
+/* Padding must never widen a block past the phone's screen, so every box
+   counts its padding inside its width. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -48,7 +58,6 @@ body {
   align-items: flex-start;
   gap: var(--space-xl);
   border-top: 1px solid var(--color-border);
-  margin-top: var(--space-4xl);
   color: var(--color-text-muted);
   font-size: var(--text-sm);
   max-width: none;
@@ -243,6 +252,7 @@ body {
 .site-header__action {
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
   gap: var(--space-xs);
   color: var(--color-text);
   font-size: var(--text-sm);
@@ -258,6 +268,8 @@ body {
 }
 
 .site-header__action--language span {
+  flex: none;
+  white-space: nowrap;
   font-weight: 600;
 }
 
@@ -270,9 +282,16 @@ body {
 }
 
 /* The bar gives the menu the room it needs, so the chosen alignment can move
-   it without touching the brand or the header blocks. */
+   it without touching the brand or the header blocks. On a phone the same menu
+   folds into a hamburger (see the media query at the end of this file). */
 .site-nav {
   flex: 1 1 auto;
+}
+
+/* Only the phone shows the hamburger; a wide screen keeps the bar inline. */
+.site-nav__toggle,
+.site-nav__checkbox {
+  display: none;
 }
 
 .site-nav--footer {
@@ -339,7 +358,9 @@ body {
 .site-article {
   max-width: var(--layout-content-max-width);
   margin-inline: auto;
-  padding-block: var(--space-xl);
+  /* The last block's own padding is the only breathing room before the footer,
+     so the footer band sits flush against the page content. */
+  padding-block: var(--space-xl) 0;
 }
 
 /* A block with a background fills the viewport edge to edge, while its own
@@ -466,4 +487,155 @@ body {
 .site-footer > .site-back-to-top:focus-visible {
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
+}
+
+/* Phone chrome: the menu folds into a hamburger and opens as a panel under the
+   bar, so the links stay readable, and the footer clears the back-to-top
+   button. */
+@media (max-width: 767px) {
+  .site-header {
+    position: relative;
+    flex-wrap: wrap;
+    row-gap: var(--space-sm);
+    padding-block: var(--space-md);
+  }
+
+  .site-header__brand {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .site-header__logo {
+    max-width: min(52vw, 200px);
+  }
+
+  .site-header__actions {
+    order: 2;
+    margin-inline-start: auto;
+  }
+
+  .site-nav__checkbox {
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    opacity: 0;
+  }
+
+  .site-nav__checkbox:focus-visible + .site-nav__toggle {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .site-nav__toggle {
+    order: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    color: var(--color-text);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .site-nav__toggle-bar {
+    position: relative;
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: var(--radius-full);
+    background: currentColor;
+    box-shadow: 0 -6px 0 currentColor, 0 6px 0 currentColor;
+    transition: background var(--motion-duration-fast) var(--motion-ease);
+  }
+
+  .site-nav__checkbox:checked + .site-nav__toggle .site-nav__toggle-bar {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .site-nav__checkbox:checked + .site-nav__toggle .site-nav__toggle-bar::before,
+  .site-nav__checkbox:checked + .site-nav__toggle .site-nav__toggle-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-full);
+    background: currentColor;
+  }
+
+  .site-nav__checkbox:checked + .site-nav__toggle .site-nav__toggle-bar::before {
+    transform: rotate(45deg);
+  }
+
+  .site-nav__checkbox:checked + .site-nav__toggle .site-nav__toggle-bar::after {
+    transform: rotate(-45deg);
+  }
+
+  .site-header .site-nav {
+    order: 5;
+    display: none;
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    z-index: var(--z-sticky);
+    max-height: 70dvh;
+    overflow-y: auto;
+    padding: var(--space-sm) var(--space-xl) var(--space-lg);
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+  }
+
+  .site-nav__checkbox:checked ~ .site-nav {
+    display: block;
+  }
+
+  .site-header .site-nav__list {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .site-header .site-nav__link {
+    width: 100%;
+    padding-block: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .site-header .site-nav__link.is-active {
+    color: var(--color-primary);
+  }
+
+  .site-header .site-nav__link.is-active::after {
+    display: none;
+  }
+
+  .site-nav__item .site-nav__list {
+    padding-inline-start: var(--space-lg);
+  }
+
+  .site-header__blocks {
+    order: 6;
+    flex-basis: 100%;
+  }
+
+  .site-footer {
+    padding-block-end: calc(var(--space-4xl) + var(--space-sm));
+  }
+
+  .site-footer__social-link {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav__toggle-bar {
+    transition: none;
+  }
 }

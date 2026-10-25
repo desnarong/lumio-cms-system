@@ -1,4 +1,4 @@
-import { BlockTreeRenderer, type LanguageLink } from '@lumio/blocks/render';
+import { BlockTreeRenderer, type LanguageLink, type ShopProductCard } from '@lumio/blocks/render';
 import {
   menuAlignFromSettings,
   type BlockNode,
@@ -15,6 +15,8 @@ export interface SiteNavProps {
   blocks?: BlockNode[];
   /** Languages the page can be read in, so a switcher in the header works. */
   languages?: readonly LanguageLink[];
+  /** Live shop products for a products block that reads the catalog. */
+  shopProducts?: readonly ShopProductCard[];
   /** Path of the page being rendered, used to mark the matching menu item. */
   currentPath?: string;
 }
@@ -148,6 +150,7 @@ export const SiteHeader = ({
   blocks = [],
   languages,
   currentPath,
+  shopProducts,
 }: SiteNavProps) => {
   const height = headerHeight(site);
   const logo = logoHeight(site);
@@ -171,16 +174,33 @@ export const SiteHeader = ({
         )}
       </a>
       {menus.header.length > 0 ? (
-        <nav
-          className={`site-nav site-nav--align-${menuAlignFromSettings(site.settings, 'header')}`}
-          aria-label="เมนูหลัก"
-        >
-          <MenuList items={menus.header} currentPath={currentPath} />
-        </nav>
+        <>
+          <input
+            type="checkbox"
+            id="site-nav-toggle"
+            className="site-nav__checkbox"
+            aria-label="เมนู"
+            aria-controls="site-nav-menu"
+          />
+          <label className="site-nav__toggle" htmlFor="site-nav-toggle">
+            <span className="site-nav__toggle-bar" aria-hidden="true" />
+          </label>
+          <nav
+            id="site-nav-menu"
+            className={`site-nav site-nav--align-${menuAlignFromSettings(site.settings, 'header')}`}
+            aria-label="เมนูหลัก"
+          >
+            <MenuList items={menus.header} currentPath={currentPath} />
+          </nav>
+        </>
       ) : null}
       {blocks.length > 0 ? (
         <div className="site-header__blocks">
-          <BlockTreeRenderer blocks={blocks} {...(languages ? { languages } : {})} />
+          <BlockTreeRenderer
+            blocks={blocks}
+            {...(languages ? { languages } : {})}
+            {...(shopProducts ? { shopProducts } : {})}
+          />
         </div>
       ) : null}
       <HeaderActions site={site} {...(languages ? { languages } : {})} />

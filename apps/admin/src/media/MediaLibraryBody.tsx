@@ -291,6 +291,22 @@ export const MediaLibraryBody = ({
             {aiBusy ? t('media.aiThinking') : t('media.aiDescribeMissing')}
           </Button>
         ) : null}
+        {pickMode ? (
+          <div className="media-library__pick">
+            <Button
+              disabled={!selected || selected.status === 'processing'}
+              onClick={() => selected && onConfirmPick?.(selected)}
+              data-testid="media-pick-confirm"
+            >
+              {t('media.useImage')}
+            </Button>
+            {selected?.status === 'processing' ? (
+              <p className="media-library__hint" role="status">
+                {t('media.processingHint')}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
         <p className="media-library__hint">
           {t('media.uploadHint', { limit: UPLOAD_SIZE_LABEL })}
         </p>
@@ -551,18 +567,6 @@ export const MediaLibraryBody = ({
           </aside>
         ) : null}
       </div>
-
-      {pickMode ? (
-        <footer className="media-library__footer">
-          <Button
-            disabled={!selected}
-            onClick={() => selected && onConfirmPick?.(selected)}
-            data-testid="media-pick-confirm"
-          >
-            {t('media.useImage')}
-          </Button>
-        </footer>
-      ) : null}
 
       {compact ? null : <p className="media-library__footer-note">{t('media.footerNote')}</p>}
 

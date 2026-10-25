@@ -18,12 +18,15 @@ export const ImageBlock = ({ props, block }: BlockRenderProps<ImageProps>) => (
       height={props.image?.height}
       alt={props.image?.alt ?? ''}
       aspect={props.aspect}
+      zoom={props.zoom}
+      sizes="(min-width: 1200px) 1200px, 100vw"
     />
     <Editable
       as="figcaption"
       path="props.caption"
       value={props.caption}
       runs={block.textStyles?.['props.caption']}
+      layout={block.textLayouts?.['props.caption']}
       className="lumio-image__caption"
       label="คำบรรยายภาพ"
       placeholder="คำบรรยายภาพ (ไม่บังคับ)"

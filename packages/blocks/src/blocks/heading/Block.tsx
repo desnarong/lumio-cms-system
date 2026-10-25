@@ -8,6 +8,7 @@ export const HeadingBlock = ({ props, block }: BlockRenderProps<HeadingProps>) =
     path="props.text"
     value={props.text}
     runs={block.textStyles?.['props.text']}
+    layout={block.textLayouts?.['props.text']}
     className={`lumio-heading lumio-heading--${props.level} lumio-heading--${props.weight}`}
     style={{ textAlign: props.align }}
     label="ข้อความหัวข้อ"

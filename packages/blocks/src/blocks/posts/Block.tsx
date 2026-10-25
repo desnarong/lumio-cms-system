@@ -10,6 +10,7 @@ export const PostsBlock = ({ props, block }: BlockRenderProps<PostsProps>) => (
       path="props.heading"
       value={props.heading}
       runs={block.textStyles?.['props.heading']}
+      layout={block.textLayouts?.['props.heading']}
       className="lumio-posts__heading"
       label="หัวข้อส่วนบทความ"
     />
@@ -19,6 +20,7 @@ export const PostsBlock = ({ props, block }: BlockRenderProps<PostsProps>) => (
       path="props.subheading"
       value={props.subheading}
       runs={block.textStyles?.['props.subheading']}
+      layout={block.textLayouts?.['props.subheading']}
       className="lumio-posts__subheading"
       label="คำอธิบายส่วนบทความ"
     />
@@ -48,6 +50,7 @@ export const PostsBlock = ({ props, block }: BlockRenderProps<PostsProps>) => (
               path={`props.items.${index}.title`}
               value={item.title}
               runs={block.textStyles?.[`props.items.${index}.title`]}
+              layout={block.textLayouts?.[`props.items.${index}.title`]}
               className="lumio-posts__title"
               label="หัวข้อบทความ"
             />
@@ -58,6 +61,7 @@ export const PostsBlock = ({ props, block }: BlockRenderProps<PostsProps>) => (
                 path={`props.items.${index}.excerpt`}
                 value={item.excerpt}
                 runs={block.textStyles?.[`props.items.${index}.excerpt`]}
+                layout={block.textLayouts?.[`props.items.${index}.excerpt`]}
                 className="lumio-posts__excerpt"
                 label="เกริ่นนำบทความ"
               />

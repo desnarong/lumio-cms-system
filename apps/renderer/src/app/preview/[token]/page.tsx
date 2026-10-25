@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { PageView } from '../../../components/PageView';
+import { loadPageShopProducts } from '../../../lib/block-shop';
 import { loadPreviewOrNull } from '../../../lib/content';
 import { requestHost } from '../../../lib/request-host';
 import { buildMetadata } from '../../../seo';
@@ -34,12 +35,18 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
   const page = await loadPreviewOrNull(token);
   if (!page || !page.content) notFound();
 
+  const shopProducts = await loadPageShopProducts(page, host);
   return (
     <>
       <p className="site-locale-notice" role="note">
         ตัวอย่างฉบับร่าง — หน้านี้ยังไม่เผยแพร่ ผู้เยี่ยมชมทั่วไปเปิดไม่ได้
       </p>
-      <PageView page={page} host={host} preview />
+      <PageView
+        page={page}
+        host={host}
+        preview
+        {...(shopProducts ? { shopProducts } : {})}
+      />
     </>
   );
 }

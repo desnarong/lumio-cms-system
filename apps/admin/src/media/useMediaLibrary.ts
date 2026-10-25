@@ -3,6 +3,7 @@ import type { BulkUpdateMediaInput, FocalPoint, MediaCrop, MediaItem } from '@lu
 import { translateNow, useT, useToast } from '@lumio/ui';
 import { ApiError } from '../editor/api.js';
 import type { MediaApi } from './api.js';
+import { waitForRender } from './wait-for-render.js';
 
 export const mediaErrorMessage = (error: unknown): string =>
   error instanceof ApiError ? error.message : translateNow('common.genericError');
@@ -118,6 +119,17 @@ export const useMediaLibrary = (api: MediaApi): MediaLibraryController => {
     [reload, restore, t, toast],
   );
 
+  /** The worker re-renders the sizes after upload or crop; poll until the row is ready. */
+  const pollRender = useCallback(
+    (id: string) =>
+      waitForRender(id, {
+        get: (mediaId) => apiRef.current.get(mediaId),
+        onUpdate: (latest) =>
+          setItems((current) => current.map((entry) => (entry.id === latest.id ? latest : entry))),
+      }),
+    [],
+  );
+
   const upload = useCallback(
     async (files: readonly File[]) => {
       setUploading(true);
@@ -128,6 +140,13 @@ export const useMediaLibrary = (api: MediaApi): MediaLibraryController => {
         }
         setItems((current) => [...created, ...current]);
         if (created[0]) setSelectedId(created[0].id);
+        // The uploaded row is still being resized in the worker; keep polling so
+        // it becomes pickable without closing and reopening the dialog.
+        for (const item of created) {
+          if (item.status === 'processing' || item.status === 'pending') {
+            void pollRender(item.id);
+          }
+        }
         setFolders(await apiRef.current.folders());
         toast.push({
           tone: 'success',
@@ -142,7 +161,7 @@ export const useMediaLibrary = (api: MediaApi): MediaLibraryController => {
         setUploading(false);
       }
     },
-    [folder, t, toast],
+    [folder, pollRender, t, toast],
   );
 
   const saveAlt = useCallback(
@@ -231,6 +250,7 @@ export const useMediaLibrary = (api: MediaApi): MediaLibraryController => {
       try {
         const updated = await apiRef.current.update(item.id, { crop });
         setItems((current) => current.map((entry) => (entry.id === item.id ? updated : entry)));
+        if (updated.status === 'processing') void pollRender(updated.id);
         toast.push({
           tone: 'success',
           title: crop ? t('media.cropSaved') : t('media.cropCleared'),
@@ -239,11 +259,12 @@ export const useMediaLibrary = (api: MediaApi): MediaLibraryController => {
             onClick: () => {
               void apiRef.current
                 .update(item.id, { crop: previous })
-                .then((restored) =>
+                .then((restored) => {
                   setItems((current) =>
                     current.map((entry) => (entry.id === item.id ? restored : entry)),
-                  ),
-                );
+                  );
+                  if (restored.status === 'processing') void pollRender(restored.id);
+                });
             },
           },
         });
@@ -251,7 +272,7 @@ export const useMediaLibrary = (api: MediaApi): MediaLibraryController => {
         toast.push({ tone: 'danger', title: mediaErrorMessage(saveError) });
       }
     },
-    [t, toast],
+    [pollRender, t, toast],
   );
 
   return {

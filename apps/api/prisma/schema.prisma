@@ -430,6 +430,13 @@ model Product {
   title          String
   slug           String
   description    String   @default("")
+  /// One-line selling point shown right under the title.
+  tagline        String   @default("")
+  /// Short introduction above the buy box; `description` keeps the long copy.
+  summary        String   @default("")
+  /// Average review score from 0 to 5, typed in by the shop.
+  rating         Float?
+  ratingCount    Int      @default(0) @map("rating_count")
   price          Int
   compareAtPrice Int?     @map("compare_at_price")
   currency       String   @default("THB")

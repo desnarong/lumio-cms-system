@@ -8,6 +8,8 @@ export const heroDefaults: BlockData<HeroProps> = {
     headingSize: 'md',
     contentWidth: 'normal',
     heading: 'กาแฟคั่วสดจากดอย ส่งตรงถึงบ้านคุณ',
+    subheadingWidth: 60,
+    splitGap: 4,
     subheading: 'เลือกเมล็ดกาแฟจากสวนทางภาคเหนือ คั่วใหม่ทุกสัปดาห์ พร้อมส่งทั่วประเทศ',
     note: 'ส่งฟรีเมื่อสั่งครบ 500 บาท',
     buttons: [
@@ -15,6 +17,7 @@ export const heroDefaults: BlockData<HeroProps> = {
       { label: 'เรื่องราวของเรา', href: '/about', variant: 'ghost', external: false },
     ],
     image: null,
+    hoverImage: null,
     heightMode: 'cover',
     contentAlign: 'bottom',
     backgroundZoom: 100,

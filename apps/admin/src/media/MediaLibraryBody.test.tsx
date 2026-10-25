@@ -156,6 +156,17 @@ describe('MediaLibraryBody', () => {
     expect(render({ pickMode: true }).match(/ui-button--primary/g)).toHaveLength(1);
   });
 
+  it('keeps the pick action in the toolbar, next to the assistant', () => {
+    const html = render({ pickMode: true, ai: createDemoAiApi(), onConfirmPick: () => undefined });
+    const toolbar = html.slice(
+      html.indexOf('media-library__toolbar'),
+      html.indexOf('media-library__content'),
+    );
+
+    expect(toolbar).toContain('media-pick-confirm');
+    expect(toolbar).toContain('ใส่คำอธิบายให้รูปที่ยังไม่มี');
+  });
+
   it('uses business language instead of technical jargon', () => {
     const html = render({ pickMode: true });
     for (const jargon of ['CDN', 'Bucket', 'S3', 'MIME', 'WebP']) {
@@ -185,6 +196,29 @@ describe('MediaLibraryBody', () => {
   });
 });
 
+
+describe('pick confirm', () => {
+  it('waits until a cropped picture finishes rendering', () => {
+    const html = render({
+      pickMode: true,
+      items: [item({ status: 'processing' })],
+      onConfirmPick: () => undefined,
+    });
+    const at = html.indexOf('media-pick-confirm');
+    const button = html.slice(Math.max(0, at - 200), at + 60);
+
+    expect(html).toContain('กำลังปรับขนาดรูป รอสักครู่แล้วจึงเลือกได้');
+    expect(button).toContain('disabled');
+  });
+
+  it('lets the editor pick a ready picture', () => {
+    const html = render({ pickMode: true, onConfirmPick: () => undefined });
+    const at = html.indexOf('media-pick-confirm');
+    const button = html.slice(Math.max(0, at - 200), at + 60);
+
+    expect(button).not.toContain('disabled');
+  });
+});
 
 describe('bulk selection', () => {
   it('adds a checkbox per image only when bulk editing is available', () => {

@@ -23,7 +23,7 @@ export const ButtonPanel = ({ props, style, mode, onChange }: BlockPanelProps<Bu
       />
     </PanelSection>
 
-    <PanelSection title="หน้าตา">
+    <PanelSection title="รูปแบบปุ่ม">
       <Select
         label="รูปแบบปุ่ม"
         value={props.variant}

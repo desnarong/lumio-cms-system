@@ -88,6 +88,7 @@ export const FeaturesBlock = ({ props, block }: BlockRenderProps<FeaturesProps>)
       path="props.heading"
       value={props.heading}
       runs={block.textStyles?.['props.heading']}
+      layout={block.textLayouts?.['props.heading']}
       className="lumio-features__heading"
       label="หัวข้อส่วน"
     />
@@ -97,6 +98,7 @@ export const FeaturesBlock = ({ props, block }: BlockRenderProps<FeaturesProps>)
       path="props.subheading"
       value={props.subheading}
       runs={block.textStyles?.['props.subheading']}
+      layout={block.textLayouts?.['props.subheading']}
       className="lumio-features__subheading"
       label="คำอธิบายส่วน"
     />
@@ -138,6 +140,7 @@ export const FeaturesBlock = ({ props, block }: BlockRenderProps<FeaturesProps>)
               path={`props.items.${index}.title`}
               value={item.title}
               runs={block.textStyles?.[`props.items.${index}.title`]}
+              layout={block.textLayouts?.[`props.items.${index}.title`]}
               className="lumio-features__title"
               label="ชื่อจุดเด่น"
             />
@@ -147,6 +150,7 @@ export const FeaturesBlock = ({ props, block }: BlockRenderProps<FeaturesProps>)
               path={`props.items.${index}.description`}
               value={item.description}
               runs={block.textStyles?.[`props.items.${index}.description`]}
+              layout={block.textLayouts?.[`props.items.${index}.description`]}
               className="lumio-features__text"
               label="คำอธิบายจุดเด่น"
             />

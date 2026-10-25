@@ -10,6 +10,7 @@ import {
   redo,
   removeBlockById,
   setBlockPath,
+  setBlockTextLayout,
   setBlockTextStyles,
   setBlockVisibility,
   undo,
@@ -25,6 +26,7 @@ import type {
   BlockTree,
   ContentDetail,
   Seo,
+  TextLayout,
   TextRun,
 } from '@lumio/shared';
 import type { EditorMode, SaveState } from './types.js';
@@ -60,6 +62,7 @@ export type EditorAction =
   | { type: 'move'; from: BlockIndexPath; to: BlockIndexPath }
   | { type: 'set-block-path'; id: string; path: string; value: unknown }
   | { type: 'text-styles'; id: string; path: string; runs: TextRun[] }
+  | { type: 'text-layout'; id: string; path: string; layout: TextLayout | undefined }
   /** Applies several paths of one block as a single step, so one undo reverts them all. */
   | { type: 'apply-paths'; id: string; changes: { path: string; value: unknown }[] }
   /** SEO fields changed outside the block tree (e.g. accepted an AI suggestion). */
@@ -152,6 +155,12 @@ export const editorReducer = (state: EditorState, action: EditorAction): EditorS
       return withBlocks(
         state,
         setBlockTextStyles(state.history.present, action.id, action.path, action.runs),
+      );
+
+    case 'text-layout':
+      return withBlocks(
+        state,
+        setBlockTextLayout(state.history.present, action.id, action.path, action.layout),
       );
 
     case 'apply-paths': {

@@ -1,6 +1,6 @@
 import type { BlockNode, PublicForm } from '@lumio/shared';
 import { registry, type BlockRegistry } from '../registry.js';
-import type { AnyBlockDefinition, LanguageLink } from '../types.js';
+import type { AnyBlockDefinition, LanguageLink, ShopProductCard } from '../types.js';
 import { BlockShell } from './shell.js';
 
 export interface BlockRendererProps {
@@ -11,6 +11,8 @@ export interface BlockRendererProps {
   forms?: readonly PublicForm[];
   /** Languages the page can be read in; passed to the language-switcher block. */
   languages?: readonly LanguageLink[];
+  /** Products the shop publishes now; passed to a products block reading the catalog. */
+  shopProducts?: readonly ShopProductCard[];
 }
 
 export interface BlockTreeRendererProps extends Omit<BlockRendererProps, 'block'> {
@@ -24,11 +26,16 @@ export const UnknownBlock = ({ block }: { block: BlockNode }) => (
   </div>
 );
 
+interface SharedBlockData {
+  forms?: readonly PublicForm[];
+  languages?: readonly LanguageLink[];
+  shopProducts?: readonly ShopProductCard[];
+}
+
 const renderBlock = (
   definition: AnyBlockDefinition,
   block: BlockNode,
-  forms?: readonly PublicForm[],
-  languages?: readonly LanguageLink[],
+  shared: SharedBlockData,
 ) => {
   const parsed = definition.schema.safeParse({
     version: block.version,
@@ -48,8 +55,9 @@ const renderBlock = (
       props={data.props}
       style={data.style}
       block={block}
-      {...(forms ? { forms } : {})}
-      {...(languages ? { languages } : {})}
+      {...(shared.forms ? { forms: shared.forms } : {})}
+      {...(shared.languages ? { languages: shared.languages } : {})}
+      {...(shared.shopProducts ? { shopProducts: shared.shopProducts } : {})}
     />
   );
 };
@@ -64,23 +72,24 @@ export const BlockRenderer = ({
   blockRegistry = registry,
   forms,
   languages,
+  shopProducts,
 }: BlockRendererProps) => {
   const definition = blockRegistry.get(block.type);
+  const shared: SharedBlockData = {
+    ...(forms ? { forms } : {}),
+    ...(languages ? { languages } : {}),
+    ...(shopProducts ? { shopProducts } : {}),
+  };
   return (
     <BlockShell block={block}>
       {definition ? (
-        renderBlock(definition, block, forms, languages)
+        renderBlock(definition, block, shared)
       ) : (
         <UnknownBlock block={block} />
       )}
       {block.children.length > 0 ? (
         <div className="lumio-block__children">
-          <BlockTreeRenderer
-            blocks={block.children}
-            blockRegistry={blockRegistry}
-            {...(forms ? { forms } : {})}
-            {...(languages ? { languages } : {})}
-          />
+          <BlockTreeRenderer blocks={block.children} blockRegistry={blockRegistry} {...shared} />
         </div>
       ) : null}
     </BlockShell>

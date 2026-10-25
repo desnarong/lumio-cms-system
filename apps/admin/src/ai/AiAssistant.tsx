@@ -56,7 +56,7 @@ export const AiAssistant = ({
   onError,
 }: AiAssistantProps) => {
   const t = useT();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<AiStatus | null>(null);
   const [loadingStatus, setLoadingStatus] = useState(true);
   const [style, setStyle] = useState<AiRewriteStyle>('shorter');

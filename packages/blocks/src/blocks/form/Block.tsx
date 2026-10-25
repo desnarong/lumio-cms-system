@@ -111,6 +111,7 @@ export const FormBlock = ({ props, block, forms = [] }: BlockRenderProps<FormPro
         path="props.heading"
         value={props.heading}
         runs={block.textStyles?.['props.heading']}
+        layout={block.textLayouts?.['props.heading']}
         className="lumio-form__heading"
         label="หัวข้อฟอร์ม"
       />
@@ -121,6 +122,7 @@ export const FormBlock = ({ props, block, forms = [] }: BlockRenderProps<FormPro
           path="props.description"
           value={props.description}
           runs={block.textStyles?.['props.description']}
+          layout={block.textLayouts?.['props.description']}
           className="lumio-form__description"
           label="คำอธิบายฟอร์ม"
         />
@@ -151,6 +153,7 @@ export const FormBlock = ({ props, block, forms = [] }: BlockRenderProps<FormPro
               path="props.submitLabel"
               value={props.submitLabel}
               runs={block.textStyles?.['props.submitLabel']}
+              layout={block.textLayouts?.['props.submitLabel']}
               label="ข้อความบนปุ่ม"
             />
           </button>

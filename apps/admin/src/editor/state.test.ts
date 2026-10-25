@@ -113,6 +113,24 @@ describe('editorReducer', () => {
     expect(next.history.present[0]?.props.text).toBe('หัวข้อใหม่');
   });
 
+  it('moves one text without moving the rest of the block', () => {
+    const state = start();
+    const target = state.history.present[0];
+    const next = editorReducer(state, {
+      type: 'text-layout',
+      id: target?.id ?? '',
+      path: 'props.text',
+      layout: { x: 24, y: -8, scale: 120 },
+    });
+
+    expect(next.history.present[0]?.textLayouts?.['props.text']).toEqual({
+      x: 24,
+      y: -8,
+      scale: 120,
+    });
+    expect(next.history.present[0]?.style.offsetX).toBeUndefined();
+  });
+
   it('applies every accepted AI change of a block in a single undo step', () => {
     const state = start();
     const target = state.history.present[0];

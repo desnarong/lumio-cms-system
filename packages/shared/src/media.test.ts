@@ -15,6 +15,7 @@ import {
   pickVariant,
   presignUploadInputSchema,
   resolveVariantUrl,
+  sniffImageMime,
   updateMediaInputSchema,
   type MediaVariant,
 } from './media.js';
@@ -205,5 +206,26 @@ describe('media crop', () => {
     const crop = { x: 0, y: 0, width: 0.8, height: 0.6 };
     expect(updateMediaInputSchema.parse({ crop })).toEqual({ crop });
     expect(updateMediaInputSchema.parse({ crop: null })).toEqual({ crop: null });
+  });
+});
+describe('sniffImageMime', () => {
+  it('reads the real format from the first bytes', () => {
+    expect(sniffImageMime(Buffer.from([0xff, 0xd8, 0xff, 0xe0]))).toBe('image/jpeg');
+    expect(
+      sniffImageMime(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00])),
+    ).toBe('image/png');
+    expect(sniffImageMime(Buffer.from('GIF89a', 'latin1'))).toBe('image/gif');
+    expect(
+      sniffImageMime(Buffer.concat([Buffer.from('RIFF'), Buffer.alloc(4), Buffer.from('WEBP')])),
+    ).toBe('image/webp');
+    expect(
+      sniffImageMime(Buffer.concat([Buffer.alloc(4), Buffer.from('ftypavif')])),
+    ).toBe('image/avif');
+  });
+
+  it('returns null for anything that is not an accepted raster image', () => {
+    expect(sniffImageMime(Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"></svg>'))).toBeNull();
+    expect(sniffImageMime(Buffer.from('<!DOCTYPE html>'))).toBeNull();
+    expect(sniffImageMime(Buffer.alloc(0))).toBeNull();
   });
 });

@@ -140,6 +140,48 @@ describe('createHttpMediaApi', () => {
     expect(confirmHeaders.authorization).toBe('Bearer token-1');
   });
 
+  it('announces the format the bytes really are when a picture is renamed', async () => {
+    const bodies: Array<Record<string, unknown>> = [];
+    const fetchImpl = vi.fn(async (url: string, init: RequestInit = {}) => {
+      if (String(url).endsWith('/media/presign')) {
+        bodies.push(JSON.parse(String(init.body)) as Record<string, unknown>);
+        return jsonResponse({
+          data: {
+            mediaId: 'media-1',
+            uploadUrl: 'https://storage.example.com/signed',
+            method: 'PUT',
+            headers: { 'content-type': 'image/webp' },
+            expiresAt: '2026-10-20T00:15:00.000Z',
+            maxBytes: MEDIA_MAX_UPLOAD_BYTES,
+          },
+        });
+      }
+      if (String(url) === 'https://storage.example.com/signed') return jsonResponse({}, 200);
+      return jsonResponse({ data: mediaRow() });
+    });
+
+    // A WebP picture saved from a web page as "photo.png": the browser reports
+    // image/png, but the API sniffs the real bytes and refuses the mismatch.
+    const bytes = new Uint8Array([
+      0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50,
+    ]);
+    const mislabelled = {
+      name: 'photo.png',
+      type: 'image/png',
+      size: bytes.length,
+      slice: () => ({ arrayBuffer: async () => bytes.buffer }),
+    } as unknown as File;
+
+    const api = createHttpMediaApi({
+      baseUrl: '',
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await api.upload(mislabelled);
+
+    expect(bodies[0]).toMatchObject({ filename: 'photo.png', mime: 'image/webp' });
+  });
+
   it('refuses a file the browser labels with an unsupported type', async () => {
     const fetchImpl = vi.fn();
     const api = createHttpMediaApi({
@@ -174,6 +216,66 @@ describe('createHttpMediaApi', () => {
     });
 
     await expect(api.upload(file())).rejects.toThrow(/อัปโหลดไฟล์ไม่สำเร็จ/);
+  });
+
+  it('shows the reason the storage gave instead of a generic failure', async () => {
+    const fetchImpl = vi.fn(async (url: string) => {
+      if (String(url).endsWith('/media/presign')) {
+        return jsonResponse({
+          data: {
+            mediaId: 'media-1',
+            uploadUrl: 'https://storage.example.com/signed',
+            method: 'PUT',
+            headers: {},
+            expiresAt: '2026-10-20T00:15:00.000Z',
+            maxBytes: MEDIA_MAX_UPLOAD_BYTES,
+          },
+        });
+      }
+      return jsonResponse(
+        { error: 'validation_error', message: 'ไฟล์ใหญ่กว่าที่แจ้งไว้ กรุณาลองใหม่' },
+        400,
+      );
+    });
+
+    const api = createHttpMediaApi({
+      baseUrl: '',
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(api.upload(file())).rejects.toThrow(/ไฟล์ใหญ่กว่าที่แจ้งไว้/);
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it('retries the bytes once when storage is briefly unavailable', async () => {
+    let puts = 0;
+    const fetchImpl = vi.fn(async (url: string) => {
+      if (String(url).endsWith('/media/presign')) {
+        return jsonResponse({
+          data: {
+            mediaId: 'media-1',
+            uploadUrl: 'https://storage.example.com/signed',
+            method: 'PUT',
+            headers: {},
+            expiresAt: '2026-10-20T00:15:00.000Z',
+            maxBytes: MEDIA_MAX_UPLOAD_BYTES,
+          },
+        });
+      }
+      if (String(url) === 'https://storage.example.com/signed') {
+        puts += 1;
+        return puts === 1 ? jsonResponse({}, 503) : jsonResponse({}, 200);
+      }
+      return jsonResponse({ data: mediaRow() });
+    });
+
+    const api = createHttpMediaApi({
+      baseUrl: '',
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(api.upload(file())).resolves.toMatchObject({ id: 'media-1' });
+    expect(puts).toBe(2);
   });
 
   it('surfaces the API Thai message when listing fails', async () => {
