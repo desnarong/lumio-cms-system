@@ -68,6 +68,10 @@ docker compose --env-file .env.docker --profile app up -d --build
   `SITE_LOCALE_INLINE=false` เพื่อให้ worker ทำงานจริง
 - ตั้ง `ADMIN_API_URL`/`API_PUBLIC_URL` เป็น `https://api.<โดเมน>` และ
   `PUBLIC_ROOT_DOMAIN` เป็นโดเมนที่คุณถือจริง
+- ต้องมี DNS ของ `<โดเมน>`, `*.<โดเมน>`, `admin.<โดเมน>` **และ `api.<โดเมน>`**
+  (`Caddyfile.prod` มี server block ของ API ให้แล้ว เพราะ admin เรียก API ที่นี่)
+- ถ้าเครื่องมี Nginx เดิมยึดพอร์ต 80/443 อยู่ ให้ข้าม container `caddy`
+  และใช้ `infra/nginx/lumio-vps.conf` แทน (ดู [`DEPLOY-VPS.md`](DEPLOY-VPS.md))
 
 ## Volume ที่ต้องสำรอง
 

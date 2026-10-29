@@ -1,6 +1,6 @@
 {
   "name": "@lumio/blocks",
-  "version": "0.14.0",
+  "version": "0.20.2",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
