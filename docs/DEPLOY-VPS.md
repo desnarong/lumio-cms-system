@@ -10,8 +10,8 @@
 อินเทอร์เน็ต
    │  80/443 (Nginx เดิม + certbot)
    ├─ savvyapp.cc, www.savvyapp.cc, *.savvyapp.cc ──▶ 127.0.0.1:49200  renderer
-   ├─ api.savvyapp.cc      ──▶ 127.0.0.1:49100  api
-   └─ admin.savvyapp.cc    ──▶ 127.0.0.1:49300  admin (nginx static ใน container)
+   ├─ apilumio.savvyapp.cc ──▶ 127.0.0.1:49100  api
+   └─ admin.savvyapp.cc    ──▶ 127.0.0.1:49300  admin (nginx ใน container)
 
 Docker ภายใน (ไม่เปิดพอร์ตออกนอก): db 49432 · redis 49537 · minio 49600/49601
 worker ทำงานเบื้องหลัง ไม่มีพอร์ต
@@ -34,13 +34,13 @@ worker ทำงานเบื้องหลัง ไม่มีพอร์
 
 ## 3. DNS (ตั้งที่ผู้ให้บริการโดเมน)
 
-| ชื่อ                | ชนิด  | ค่า           |
-| ------------------- | ----- | ------------- |
-| `savvyapp.cc`       | A     | IP ของ VPS    |
-| `www.savvyapp.cc`   | CNAME | `savvyapp.cc` |
-| `api.savvyapp.cc`   | A     | IP ของ VPS    |
-| `admin.savvyapp.cc` | A     | IP ของ VPS    |
-| `*.savvyapp.cc`     | A     | IP ของ VPS    |
+| ชื่อ                   | ชนิด  | ค่า           |
+| ---------------------- | ----- | ------------- |
+| `savvyapp.cc`          | A     | IP ของ VPS    |
+| `www.savvyapp.cc`      | CNAME | `savvyapp.cc` |
+| `apilumio.savvyapp.cc` | A     | IP ของ VPS    |
+| `admin.savvyapp.cc`    | A     | IP ของ VPS    |
+| `*.savvyapp.cc`        | A     | IP ของ VPS    |
 
 `*.savvyapp.cc` จำเป็นถ้าจะใช้โดเมนฟรีของแต่ละเว็บ (`baandoi.savvyapp.cc`)
 ถ้า VPS อยู่หลัง Cloudflare ให้ตั้ง proxied ได้ แต่ต้องเปิด Full (strict) และปล่อยให้
@@ -58,15 +58,17 @@ cp .env.docker.example .env.docker
 ```ini
 LUMIO_DOMAIN=savvyapp.cc
 LUMIO_ADMIN_HOST=admin.savvyapp.cc
+# โฮสต์ของ API (ชื่ออะไรก็ได้) ต้องตรงกับ LUMIO_ADMIN_API_URL ด้านล่าง
+LUMIO_API_HOST=apilumio.savvyapp.cc
 # ที่อยู่ที่ "เบราว์เซอร์" เรียก ไม่ใช่ชื่อ container
-LUMIO_ADMIN_API_URL=https://api.savvyapp.cc
-LUMIO_API_URL=https://api.savvyapp.cc
+LUMIO_ADMIN_API_URL=https://apilumio.savvyapp.cc
+LUMIO_API_URL=https://apilumio.savvyapp.cc
 LUMIO_ENV_FILE=.env.docker
 
 NODE_ENV=production
 PUBLIC_ROOT_DOMAIN=savvyapp.cc
 ADMIN_HOST=admin.savvyapp.cc
-API_PUBLIC_URL=https://api.savvyapp.cc
+API_PUBLIC_URL=https://apilumio.savvyapp.cc
 ADMIN_ORIGIN=https://admin.savvyapp.cc
 RENDERER_ORIGIN=https://savvyapp.cc
 ACME_EMAIL=you@savvyapp.cc
@@ -94,7 +96,7 @@ SITE_LOCALE_INLINE=false
 # ทดสอบก่อน: เก็บไฟล์ใน volume ไม่ต้องตั้ง MinIO/S3 ให้ยุ่ง
 MEDIA_STORAGE=local
 MEDIA_PUBLIC_BASE_URL=
-# (เว้นว่าง = ใช้ https://api.savvyapp.cc/media ซึ่ง CSP ของ renderer อนุญาตอยู่แล้ว)
+# (เว้นว่าง = ใช้ https://apilumio.savvyapp.cc/media ซึ่ง CSP ของ renderer อนุญาตอยู่แล้ว)
 
 RENDERER_URL=http://renderer:49200
 RENDERER_PUBLIC_URL=https://savvyapp.cc
@@ -140,7 +142,7 @@ docker compose --env-file .env.docker ps
 ```bash
 nginx -t && systemctl reload nginx
 certbot --nginx -d savvyapp.cc -d www.savvyapp.cc \
-  -d api.savvyapp.cc -d admin.savvyapp.cc
+  -d apilumio.savvyapp.cc -d admin.savvyapp.cc
 ```
 
 - อย่าแตะ server block ของระบบอื่น แค่เพิ่มไฟล์ใหม่แล้ว reload
@@ -170,13 +172,13 @@ certbot --nginx -d savvyapp.cc -d www.savvyapp.cc \
 
 ```bash
 curl -fsS http://127.0.0.1:49100/api/health
-curl -I  https://api.savvyapp.cc/api/health
+curl -I  https://apilumio.savvyapp.cc/api/health
 curl -I  https://admin.savvyapp.cc
 curl -I  https://savvyapp.cc
 ```
 
 - เปิด https://admin.savvyapp.cc ล็อกอิน แล้วสร้างหน้า + กดเผยแพร่
-- อัปโหลดรูป 1 รูป แล้วตรวจว่ารูปขึ้นที่ `https://api.savvyapp.cc/media/...`
+- อัปโหลดรูป 1 รูป แล้วตรวจว่ารูปขึ้นที่ `https://apilumio.savvyapp.cc/media/...`
 - เปิด `docker compose logs -f api worker` ดู error 15 นาทีแรก
 - `ADMIN_ORIGIN`/`RENDERER_ORIGIN` ผิดจะได้ 403 "คำขอมาจากโดเมนที่ไม่อนุญาต"
 - admin เรียก API ไม่ได้ ให้ตรวจ `LUMIO_ADMIN_API_URL` ตอน build อีกครั้ง

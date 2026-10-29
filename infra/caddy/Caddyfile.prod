@@ -5,10 +5,10 @@
 #   docker compose --env-file .env.docker --profile app up -d --build
 #
 # Required environment (see .env.docker.example):
-#   PUBLIC_ROOT_DOMAIN, ADMIN_HOST, ACME_EMAIL, LUMIO_TLS_ASK_URL
+#   PUBLIC_ROOT_DOMAIN, ADMIN_HOST, API_HOST, ACME_EMAIL, LUMIO_TLS_ASK_URL
 #
 # Every hostname below needs a DNS record pointing at this server:
-#   <root domain>, *.<root domain>, <admin host>, api.<root domain>
+#   <root domain>, *.<root domain>, <admin host>, <api host>
 #
 # On a server where another stack already owns ports 80/443, do not run this
 # container: use infra/nginx/lumio-vps.conf behind the existing Nginx instead
@@ -30,7 +30,7 @@
 
 # Public API. The admin SPA is built with this address and the browser calls it
 # directly, so it must have its own certificate (not the on-demand path).
-api.{$PUBLIC_ROOT_DOMAIN} {
+{$API_HOST} {
 	encode zstd gzip
 	reverse_proxy api:49100
 }

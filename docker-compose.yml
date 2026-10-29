@@ -212,6 +212,7 @@ services:
     environment:
       PUBLIC_ROOT_DOMAIN: ${LUMIO_DOMAIN:-example.com}
       ADMIN_HOST: ${LUMIO_ADMIN_HOST:-admin.example.com}
+      API_HOST: ${LUMIO_API_HOST:-api.example.com}
       ACME_EMAIL: ${ACME_EMAIL:-}
       LUMIO_TLS_ASK_URL: ${LUMIO_TLS_ASK_URL:-http://api:49100/api/v1/public/tls/ask}
     volumes:
