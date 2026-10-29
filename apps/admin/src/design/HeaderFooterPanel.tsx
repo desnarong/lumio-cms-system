@@ -128,6 +128,33 @@ const BlocksEditor = ({ blocks, onChange }: BlocksEditorProps) => {
                   <button
                     type="button"
                     className="blocks-editor__tool"
+                    aria-label={t('headerFooter.duplicate', { name: labelOf(block, locale) })}
+                    onClick={() => onChange(duplicateBlockById(blocks, block.id))}
+                  >
+                    <Icon name="copy" size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    className="blocks-editor__tool"
+                    aria-label={
+                      block.style.visibility.desktop === false
+                        ? t('headerFooter.show', { name: labelOf(block, locale) })
+                        : t('headerFooter.hide', { name: labelOf(block, locale) })
+                    }
+                    aria-pressed={block.style.visibility.desktop === false}
+                    onClick={() => {
+                      const visible = block.style.visibility.desktop !== false;
+                      onChange(setBlockVisibility(blocks, block.id, 'desktop', !visible));
+                    }}
+                  >
+                    <Icon
+                      name={block.style.visibility.desktop === false ? 'eye-off' : 'eye'}
+                      size={16}
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    className="blocks-editor__tool"
                     aria-label={t('headerFooter.remove', { name: labelOf(block, locale) })}
                     onClick={() => {
                       onChange(removeBlockById(blocks, block.id));
@@ -166,20 +193,6 @@ const BlocksEditor = ({ blocks, onChange }: BlocksEditorProps) => {
             const indexPath = findBlockIndexPath(blocks, selected.id);
             if (!indexPath) return;
             onChange(writeBlockAt(blocks, indexPath, setBlockPath(selected, path, value)));
-          }}
-          onDuplicate={() => {
-            if (!selected) return;
-            onChange(duplicateBlockById(blocks, selected.id));
-          }}
-          onToggleVisibility={() => {
-            if (!selected) return;
-            const visible = selected.style.visibility.desktop !== false;
-            onChange(setBlockVisibility(blocks, selected.id, 'desktop', !visible));
-          }}
-          onRemove={() => {
-            if (!selected) return;
-            onChange(removeBlockById(blocks, selected.id));
-            setSelectedId(null);
           }}
         />
       </div>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import type { AppCategory, AppPermission, AppStoreEntry, ExternalAppPreview } from '@lumio/shared';
 import {
   Banner,
@@ -6,6 +6,7 @@ import {
   Card,
   EmptyState,
   Icon,
+  PageHeader,
   Skeleton,
   Switch,
   TextField,
@@ -59,6 +60,8 @@ export interface AppsViewProps {
   /** Validates a developer-hosted manifest; absent in read-only views. */
   onPreviewExternal?: (url: string) => Promise<ExternalAppPreview>;
   onInstallExternal?: (url: string) => Promise<void>;
+  /** Tab strip of the growth screens, rendered inside this screen's header. */
+  headerTabs?: ReactNode;
 }
 
 /**
@@ -85,9 +88,7 @@ const ExternalAppCard = ({
       setPreview(await onPreview(url.trim()));
     } catch (previewError) {
       setPreview(null);
-      setError(
-        previewError instanceof ApiError ? previewError.message : t('apps.externalError'),
-      );
+      setError(previewError instanceof ApiError ? previewError.message : t('apps.externalError'));
     } finally {
       setBusy(false);
     }
@@ -101,9 +102,7 @@ const ExternalAppCard = ({
       setUrl('');
       setPreview(null);
     } catch (installError) {
-      setError(
-        installError instanceof ApiError ? installError.message : t('apps.externalError'),
-      );
+      setError(installError instanceof ApiError ? installError.message : t('apps.externalError'));
     } finally {
       setBusy(false);
     }
@@ -147,7 +146,11 @@ const ExternalAppCard = ({
             {t('apps.externalInstall')}
           </Button>
         ) : (
-          <Button variant="secondary" disabled={busy || url.trim().length === 0} onClick={() => void check()}>
+          <Button
+            variant="secondary"
+            disabled={busy || url.trim().length === 0}
+            onClick={() => void check()}
+          >
             {t('apps.externalCheck')}
           </Button>
         )}
@@ -259,14 +262,17 @@ export const AppsView = ({
   onRetry,
   onPreviewExternal,
   onInstallExternal,
+  headerTabs,
 }: AppsViewProps) => {
   const t = useT();
 
   const header = (
-    <header className="growth__header">
-      <h1 className="growth__title">{t('nav.apps')}</h1>
-      <p className="growth__subtitle">{t('apps.subtitle')}</p>
-    </header>
+    <PageHeader
+      eyebrow={t('nav.section.site')}
+      title={t('nav.apps')}
+      description={t('apps.subtitle')}
+      tabs={headerTabs}
+    />
   );
 
   if (loading && entries.length === 0) {
@@ -339,9 +345,11 @@ export const AppsView = ({
 export interface AppsPageProps {
   api: AppsApi;
   canManage: boolean;
+  /** Tab strip of the growth screens. */
+  headerTabs?: ReactNode;
 }
 
-export const AppsPage = ({ api, canManage }: AppsPageProps) => {
+export const AppsPage = ({ api, canManage, headerTabs }: AppsPageProps) => {
   const t = useT();
   const { push } = useToast();
   const [entries, setEntries] = useState<AppStoreEntry[]>([]);
@@ -379,9 +387,7 @@ export const AppsPage = ({ api, canManage }: AppsPageProps) => {
       await api.setEnabled(appKey, enabled);
       await load();
     } catch (toggleError) {
-      setError(
-        toggleError instanceof ApiError ? toggleError.message : t('newsletter.toggleError'),
-      );
+      setError(toggleError instanceof ApiError ? toggleError.message : t('newsletter.toggleError'));
     }
   };
 
@@ -422,6 +428,7 @@ export const AppsPage = ({ api, canManage }: AppsPageProps) => {
           await api.installExternal(url);
           await load();
         }}
+        {...(headerTabs ? { headerTabs } : {})}
       />
 
       {sandbox ? (

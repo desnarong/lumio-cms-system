@@ -8,7 +8,7 @@
 
 ```
 อินเทอร์เน็ต
-   │  80/443 (Nginx เดิม + certbot)
+   │  80/443 (Nginx Proxy Manager)
    ├─ savvyapp.cc, www.savvyapp.cc, *.savvyapp.cc ──▶ 127.0.0.1:49200  renderer
    ├─ apilumio.savvyapp.cc ──▶ 127.0.0.1:49100  api
    └─ admin.savvyapp.cc    ──▶ 127.0.0.1:49300  admin (nginx ใน container)
@@ -134,23 +134,77 @@ docker compose --env-file .env.docker ps
   แล้ว **เปลี่ยน/ลบบัญชีทดลองทันที**
   ตามหัวข้อ 1 ของ [`OPERATIONS.md`](OPERATIONS.md)
 
-## 6. Nginx + TLS
+## 6. Reverse proxy: Nginx Proxy Manager (UI)
 
-คัดลอก `infra/nginx/lumio-vps.conf` ไปเป็น `/etc/nginx/conf.d/lumio.conf`
-(แก้ชื่อโดเมนถ้าไม่ใช่ `savvyapp.cc`) แล้ว:
+NPM ถือพอร์ต 80/443 อยู่แล้ว จึง **ไม่รัน caddy และไม่ใช้ `infra/nginx/lumio-vps.conf`**
+สร้าง Proxy Host 3 รายการที่ Hosts > Proxy Hosts > Add Proxy Host:
+
+| Domain Names                     | Scheme | Forward Hostname            | Forward Port |
+| -------------------------------- | ------ | --------------------------- | ------------ |
+| `savvyapp.cc`, `www.savvyapp.cc` | http   | `renderer` หรือ `127.0.0.1` | 49200        |
+| `apilumio.savvyapp.cc`           | http   | `api` หรือ `127.0.0.1`      | 49100        |
+| `admin.savvyapp.cc`              | http   | `admin` หรือ `127.0.0.1`    | 80           |
+
+`127.0.0.1` ใช้ได้เฉพาะเมื่อ NPM รันบน host ตรง ๆ ถ้า NPM เป็น container
+(กรณีปกติ) `127.0.0.1` คือตัว NPM เอง ไม่ใช่เครื่อง host เลือกทางใดทางหนึ่ง:
+
+**A. ให้ NPM ต่อเข้า network ของ Lumio (แนะนำ)** แล้วใช้ชื่อ service
 
 ```bash
-nginx -t && systemctl reload nginx
-certbot --nginx -d savvyapp.cc -d www.savvyapp.cc \
-  -d apilumio.savvyapp.cc -d admin.savvyapp.cc
+docker network ls                        # ชื่อ network = lumio_default
+docker network connect lumio_default <ชื่อ container ของ NPM>
 ```
 
-- อย่าแตะ server block ของระบบอื่น แค่เพิ่มไฟล์ใหม่แล้ว reload
-- certbot จะเติม `listen 443 ssl` + redirect 80->443 ให้เอง
-- โดเมนฟรี `*.savvyapp.cc` ต้องใช้ **wildcard certificate** (certbot + DNS-01
-  ของผู้ให้บริการ DNS หรือ Cloudflare proxy) ไม่งั้นโดเมนฟรียังเปิดได้แค่ HTTP
-  ซึ่งพอสำหรับทดสอบระบบหลังบ้านก่อน
-- ตอนทดสอบครั้งแรก ถ้า certbot ยังไม่ผ่าน ให้ใช้ `http://` ก่อนแล้วค่อยเปิด 443
+แล้วตั้ง Forward Hostname เป็น `renderer` / `api` / `admin`
+การ `docker network connect` จะหายเมื่อ container ของ NPM ถูกสร้างใหม่
+ถ้าเป็นไปได้ให้ประกาศ network นี้ใน compose ของ NPM แบบ external:
+
+```yaml
+networks:
+  lumio:
+    external: true
+    name: lumio_default
+```
+
+**B. NPM รันบน host (ไม่อยู่ใน Docker)** ใช้ `127.0.0.1` ตามพอร์ตที่ publish ไว้ได้เลย
+
+ตั้งค่าในแต่ละ Proxy Host:
+
+- **Details**: เปิด Block Common Exploits และ Websockets Support
+- **Advanced**: ใส่ `client_max_body_size 25m;` (อัปโหลดสื่อ)
+- **SSL**: Request a new SSL Certificate + Force SSL + HTTP/2 (ต้องมีอีเมลและกดยอมรับ TOS)
+- อย่าเปิด Access List กับ `savvyapp.cc` เพราะจะกลายเป็นเว็บที่ต้องล็อกอินก่อนเข้า
+
+โดเมนฟรี `*.savvyapp.cc`: NPM ขอ **wildcard certificate ได้เฉพาะ DNS Challenge**
+(Cloudflare หรือ Custom DNS provider) ถ้าไม่มี ให้เพิ่ม subdomain ที่ต้องใช้ทีละตัว
+หรือปล่อยให้ทดสอบผ่าน HTTP ก่อน
+
+### ถ้า NPM ขึ้น "Internal Error" ตอนเพิ่ม Proxy Host
+
+NPM จะ rollback Proxy Host ทั้งตัวเมื่อขอ certificate ไม่สำเร็จ (ไม่ใช่ปัญหา Lumio)
+
+1. สร้าง Proxy Host ด้วย **SSL = None** ก่อน ให้เว็บขึ้น HTTP ได้
+2. ตรวจว่า challenge มาถึง NPM:
+
+```bash
+curl -sS -o /dev/null -w '%{http_code}\n' http://<โดเมน>/.well-known/acme-challenge/test
+```
+
+ต้องได้ 404 จาก NPM เร็ว ๆ ถ้า timeout คือ DNS/ไฟร์วอลล์ยังไม่ถึง หรือ Cloudflare บังอยู่
+
+3. ดู error จริงของ ACME:
+
+```bash
+docker exec <container ของ NPM> tail -80 /data/logs/letsencrypt.log
+```
+
+4. ถ้าเจอ `rateLimited` ให้เปิดลิงก์ unpause ที่ Let's Encrypt แนบมาใน error
+   แล้วขอ cert **ทีละชื่อ** (อย่ากดซ้ำ เพราะกินโควตา failed validation 5 ครั้ง/ชั่วโมง)
+5. ถ้าโดเมนอยู่บน Cloudflare ใช้ **Cloudflare Origin Certificate** ที่ SSL > Custom Certificate
+   แทนการขอจาก Let's Encrypt ผ่าน NPM ได้เลย
+
+> ไม่ใช้ NPM? ใช้ `infra/nginx/lumio-vps.conf` กับ `certbot --nginx` แทนได้
+> (เลือกอย่างใดอย่างหนึ่งเท่านั้น)
 
 ## 7. ทำให้ `savvyapp.cc` แสดงเว็บได้
 
@@ -209,7 +263,7 @@ Volume ที่ห้ามหาย: `lumio_pgdata`, `lumio_lumio_data` (ค�
 - ตั้ง `COMPOSE_PROJECT_NAME` (เช่น `lumio`) เพื่อไม่ให้ชื่อ volume/network
   ชนกับ compose project อื่น
 - Lumio ไม่แตะ `/etc/nginx` เดิมและไม่แตะ container/พอร์ตของระบบอื่น
-  สิ่งเดียวที่แชร์คือ Nginx (คนละ server block) และดิสก์/RAM
+  สิ่งเดียวที่แชร์คือ Nginx Proxy Manager (คนละ Proxy Host) และดิสก์/RAM
 - จำกัดทรัพยากรได้ถ้าเครื่องแน่น โดยเพิ่มใน `docker-compose.override.yml`:
 
   ```yaml

@@ -72,7 +72,9 @@ describe('text runs', () => {
       />,
     );
     expect(html).toContain('color:#ff8800');
-    expect(html).toContain('font-size:64px');
+    // The size travels as a variable so a phone can cap it.
+    expect(html).toContain('--run-size:64px');
+    expect(html).toContain('data-run-size="true"');
     expect(textSegments('abc', [{ start: 0, end: 3, colorHex: '#fff' }])[0]?.run).toEqual({
       start: 0,
       end: 3,

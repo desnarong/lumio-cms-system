@@ -67,6 +67,8 @@ export type EditorAction =
   | { type: 'apply-paths'; id: string; changes: { path: string; value: unknown }[] }
   /** SEO fields changed outside the block tree (e.g. accepted an AI suggestion). */
   | { type: 'seo'; seo: Seo }
+  /** Cover image changed outside the block tree (a post's blog-list picture). */
+  | { type: 'cover'; coverMediaId: string | null; coverImageUrl: string | null }
   /** Swaps the whole tree for an assistant translation, as one undo step. */
   | { type: 'translate-blocks'; blocks: BlockTree }
   | { type: 'toggle-visibility'; id: string; device: BlockDevice }
@@ -173,6 +175,16 @@ export const editorReducer = (state: EditorState, action: EditorAction): EditorS
       );
       return withBlocks(state, next);
     }
+
+    case 'cover':
+      return {
+        ...state,
+        content: {
+          ...state.content,
+          coverMediaId: action.coverMediaId,
+          coverImageUrl: action.coverImageUrl,
+        },
+      };
 
     case 'seo':
       return { ...state, content: { ...state.content, seo: action.seo } };

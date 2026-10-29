@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { HOME_SLUG } from '@lumio/shared';
 import { PageView } from '../components/PageView';
 import { loadPageShopProducts } from '../lib/block-shop';
+import { loadPageLatestPosts } from '../lib/block-posts';
+import { loadPagePromotions } from '../lib/block-promotions';
 import { loadPageOrNull } from '../lib/content';
 import { applyRedirect } from '../lib/redirect';
 import { requestHost } from '../lib/request-host';
@@ -28,6 +30,18 @@ export default async function HomePage() {
   applyRedirect(page);
   if (!page.content) notFound();
 
-  const shopProducts = await loadPageShopProducts(page, host, locale);
-  return <PageView page={page} host={host} {...(shopProducts ? { shopProducts } : {})} />;
+  const [shopProducts, latestPosts, promotions] = await Promise.all([
+    loadPageShopProducts(page, host, locale),
+    loadPageLatestPosts(page, host, locale),
+    loadPagePromotions(page, host),
+  ]);
+  return (
+    <PageView
+      page={page}
+      host={host}
+      {...(shopProducts ? { shopProducts } : {})}
+      {...(latestPosts ? { latestPosts } : {})}
+      {...(promotions ? { promotions } : {})}
+    />
+  );
 }

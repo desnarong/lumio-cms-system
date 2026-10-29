@@ -58,13 +58,18 @@ export const shopCardsFromProducts = (
     soldOut: product.soldOut ?? false,
   }));
 
-/** Applies the block's category filter and limit to the live catalog. */
+/** Applies the block's category, promotion and limit filters to the live catalog. */
 export const shopProductsFor = (
-  filters: { category: string; limit: number },
+  filters: { category: string; limit: number; saleOnly?: boolean },
   products: readonly ShopProductCard[],
 ): ShopProductCard[] => {
   const category = filters.category.trim();
   const matching =
     category.length > 0 ? products.filter((product) => product.category === category) : products;
-  return matching.slice(0, filters.limit);
+  const onSale = filters.saleOnly
+    ? matching.filter(
+        (product) => product.compareAtPrice !== null && product.compareAtPrice > product.price,
+      )
+    : matching;
+  return onSale.slice(0, filters.limit);
 };

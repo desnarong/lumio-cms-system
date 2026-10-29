@@ -1,14 +1,10 @@
-import type {
-  ContentType,
-  DashboardMetric,
-  DashboardSummary,
-  SiteHealthIssue,
-} from '@lumio/shared';
+import type { DashboardMetric, DashboardSummary, SiteHealthIssue } from '@lumio/shared';
 import {
   Icon,
   Button,
   Card,
   EmptyState,
+  PageHeader,
   Skeleton,
   StatCard,
   useT,
@@ -20,8 +16,6 @@ import { useDashboard } from './useDashboard.js';
 
 export interface DashboardPageProps {
   api: DashboardApi;
-  /** Opens the shared "new page / new post" dialog. */
-  onCreate: (kind: ContentType) => void;
   onOpenEditor: (contentId: string) => void;
   onNavigate: (path: string) => void;
 }
@@ -90,21 +84,20 @@ const IssueLink = ({
 export interface DashboardViewProps {
   summary: DashboardSummary;
   error: string | null;
-  onCreate: (kind: ContentType) => void;
   onOpenEditor: (contentId: string) => void;
   onNavigate: (path: string) => void;
   onDismissChecklist: () => void;
 }
 
 /**
- * The dashboard cards (docs/design/05-admin-ia.md 5.2): shortcuts, today's numbers
- * with a trend, the site health score with three things to fix, and the onboarding
- * checklist. Every card leads somewhere.
+ * The dashboard cards (docs/design/05-admin-ia.md 5.2): today's numbers with a
+ * trend, the site health score with three things to fix, and the onboarding
+ * checklist. Every card leads somewhere, and creating something new lives in the
+ * top bar of the shell instead of being repeated here.
  */
 export const DashboardView = ({
   summary,
   error,
-  onCreate,
   onOpenEditor,
   onNavigate,
   onDismissChecklist,
@@ -115,35 +108,26 @@ export const DashboardView = ({
 
   return (
     <div className="dashboard">
-      <header className="dashboard__header">
-        <h1 className="dashboard__title">{t('dashboard.title')}</h1>
-        <p className="dashboard__subtitle">{t('dashboard.subtitleOf', { site: site.name })}</p>
-      </header>
+      <PageHeader
+        title={t('dashboard.title')}
+        description={t('dashboard.subtitleOf', { site: site.name })}
+        actions={
+          <Button
+            variant="primary"
+            disabled={!site.homeContentId}
+            onClick={() => site.homeContentId && onOpenEditor(site.homeContentId)}
+          >
+            <Icon name="pen" size={16} />
+            {t('dashboard.editSite')}
+          </Button>
+        }
+      />
 
       {error ? (
         <p className="dashboard__inline-error" role="alert">
           {error}
         </p>
       ) : null}
-
-      <div className="dashboard__shortcuts">
-        <Button
-          variant="primary"
-          disabled={!site.homeContentId}
-          onClick={() => site.homeContentId && onOpenEditor(site.homeContentId)}
-        >
-          {t('dashboard.editSite')}
-        </Button>
-        <Button variant="secondary" onClick={() => onCreate('page')}>
-          {t('dashboard.newPage')}
-        </Button>
-        <Button variant="secondary" onClick={() => onCreate('post')}>
-          {t('dashboard.newPost')}
-        </Button>
-        <a className="dashboard__view-site" href={site.url} target="_blank" rel="noreferrer">
-          {t('dashboard.viewSite')}
-        </a>
-      </div>
 
       <div className="dashboard__stats">
         <StatCard
@@ -227,7 +211,7 @@ export const DashboardView = ({
 };
 
 /** Loads the dashboard, then hands it to the view. */
-export const DashboardPage = ({ api, onCreate, onOpenEditor, onNavigate }: DashboardPageProps) => {
+export const DashboardPage = ({ api, onOpenEditor, onNavigate }: DashboardPageProps) => {
   const t = useT();
   const dashboard = useDashboard(api);
 
@@ -235,12 +219,6 @@ export const DashboardPage = ({ api, onCreate, onOpenEditor, onNavigate }: Dashb
     return (
       <div className="dashboard" aria-busy="true">
         <Skeleton shape="text" width="30%" />
-        <div className="dashboard__shortcuts">
-          <Skeleton shape="block" height={44} />
-          <Skeleton shape="block" height={44} />
-          <Skeleton shape="block" height={44} />
-          <Skeleton shape="block" height={44} />
-        </div>
         <div className="dashboard__stats">
           <Skeleton shape="block" height={104} />
           <Skeleton shape="block" height={104} />
@@ -270,7 +248,6 @@ export const DashboardPage = ({ api, onCreate, onOpenEditor, onNavigate }: Dashb
     <DashboardView
       summary={dashboard.summary}
       error={dashboard.error}
-      onCreate={onCreate}
       onOpenEditor={onOpenEditor}
       onNavigate={onNavigate}
       onDismissChecklist={() => void dashboard.dismissChecklist()}

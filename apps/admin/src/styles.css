@@ -63,98 +63,9 @@ a {
   scrollbar-color: color-mix(in srgb, var(--color-text-muted) 35%, transparent) transparent;
 }
 
-/* ── Page scaffolding ─────────────────────────────────────────────────────
-   One header pattern for every screen: title, muted subtitle and at most one
-   primary action on the right (docs/design/05-admin-ia.md, 04-ux.md). */
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xl);
-  min-width: 0;
-}
-
-.page-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-lg);
-  flex-wrap: wrap;
-}
-
-.page-header__text {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  min-width: 0;
-}
-
-.page-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  color: var(--color-primary);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.page-title {
-  font-size: var(--text-2xl);
-  font-weight: 700;
-}
-
-.page-subtitle {
-  max-width: 68ch;
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-}
-
-.page-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  flex-wrap: wrap;
-}
-
-/* ── Surfaces ─────────────────────────────────────────────────────────── */
-.panel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  padding: var(--space-xl);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
-}
-
-.panel--flush {
-  padding: 0;
-  overflow: hidden;
-}
-
-.panel__title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  font-weight: 600;
-}
-
-.panel__hint {
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-}
-
-.divider {
-  height: 1px;
-  border: 0;
-  background: var(--color-border);
-}
-
-/* ── Small accents ────────────────────────────────────────────────────── */
+/* ── Small accents ──────────────────────────────────────────────────────
+   Screen headers come from the shared PageHeader component (@lumio/ui), so the
+   only page-level primitive left here is the status chip. */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -188,68 +99,6 @@ a {
   color: color-mix(in srgb, var(--color-danger) 70%, var(--color-text));
 }
 
-.icon-tile {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
-  color: var(--color-primary);
-}
-
-.inline-note {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius-md);
-  background: var(--color-info-soft);
-  color: color-mix(in srgb, var(--color-info) 55%, var(--color-text));
-  font-size: var(--text-sm);
-}
-
-.inline-note--warning {
-  background: var(--color-warning-soft);
-  color: color-mix(in srgb, var(--color-warning) 45%, var(--color-text));
-}
-
-.inline-note--danger {
-  background: var(--color-danger-soft);
-  color: color-mix(in srgb, var(--color-danger) 60%, var(--color-text));
-}
-
-/* Legacy wrappers kept so third-party screens cannot break. */
-.app-shell {
-  display: flex;
-  min-height: 100%;
-  flex-direction: column;
-}
-
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-lg);
-  padding: var(--space-lg) var(--space-xl);
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface);
-}
-
-.app-header__brand {
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  font-weight: 700;
-}
-
-.app-main {
-  width: 100%;
-  max-width: var(--layout-content-max-width);
-  margin: 0 auto;
-  padding: var(--space-xl);
-}
-
 /* Splash while the shell works out where to send the user. */
 .admin-splash {
   display: flex;
@@ -280,7 +129,8 @@ a {
 
 /* A row that mixes a labelled field with buttons lines the buttons up with
    the bottom edge of the control instead of the middle of the field. */
-:where(div, form, section, li, article):has(> .ui-field) > :is(.ui-button, .ui-tooltip, .ui-split-button) {
+:where(div, form, section, li, article):has(> .ui-field)
+  > :is(.ui-button, .ui-tooltip, .ui-split-button) {
   align-self: end;
 }
 
@@ -311,10 +161,18 @@ a {
   cursor: pointer;
 }
 
-.editor-text-toolbar__swatch.is-inherit { background: var(--color-text); }
-.editor-text-toolbar__swatch.is-primary { background: var(--color-primary); }
-.editor-text-toolbar__swatch.is-accent { background: var(--color-accent); }
-.editor-text-toolbar__swatch.is-muted { background: var(--color-text-muted); }
+.editor-text-toolbar__swatch.is-inherit {
+  background: var(--color-text);
+}
+.editor-text-toolbar__swatch.is-primary {
+  background: var(--color-primary);
+}
+.editor-text-toolbar__swatch.is-accent {
+  background: var(--color-accent);
+}
+.editor-text-toolbar__swatch.is-muted {
+  background: var(--color-text-muted);
+}
 
 .editor-text-toolbar__size {
   border: 1px solid var(--color-border);

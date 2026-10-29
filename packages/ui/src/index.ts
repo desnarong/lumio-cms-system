@@ -26,6 +26,7 @@ export * from './popover.js';
 export * from './tooltip.js';
 export * from './tabs.js';
 export * from './breadcrumb.js';
+export * from './page-header.js';
 export * from './pagination.js';
 export * from './sidebar.js';
 export * from './table.js';

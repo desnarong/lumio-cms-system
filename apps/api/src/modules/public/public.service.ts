@@ -5,6 +5,7 @@ import {
   buildSrcSet,
   HOME_SLUG,
   isContentType,
+  isPromotionLive,
   isSupportedLocale,
   localePathFor,
   mediaUrlFor,
@@ -27,6 +28,7 @@ import {
   type PublicPage,
   type PublicPostList,
   type PublicPostSummary,
+  type PublicPromotion,
   type PublicRedirect,
   type PublicSitemap,
   type PublicSitemapUrl,
@@ -36,6 +38,7 @@ import {
 import { ApiException } from '../../common/api-error';
 import { verifyPreviewToken } from '../../common/preview-token';
 import { mediaPublicBaseUrl } from '../media/media.config';
+import { toPublicPromotion } from '../promotions/promotions.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { resolveSiteByHost } from './resolve-site';
 import { normalizeHost } from './host';
@@ -351,6 +354,21 @@ export class PublicService {
         posts: rows.map((row) => toPostSummary(row, row.coverMedia)),
       };
     });
+  }
+
+  /** Offers a visitor may see right now (docs/design/12-api.md 12.7). */
+  async promotions(host: string): Promise<PublicPromotion[]> {
+    const resolved = await this.resolveSite(host);
+    const rows = await this.db.forSite(resolved.siteId, (tx) =>
+      tx.promotion.findMany({
+        where: { active: true },
+        orderBy: [{ sort: 'asc' }, { createdAt: 'desc' }],
+      }),
+    );
+    const now = new Date();
+    return rows
+      .map(toPublicPromotion)
+      .filter((promotion) => isPromotionLive(promotion, now));
   }
 
   /** Everything the renderer needs to emit `sitemap.xml`. */

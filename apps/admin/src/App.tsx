@@ -263,7 +263,11 @@ export const AdminApp = ({
     setCreating(kind);
   };
 
-  const submitCreate = async (input: { title: string; slug: string }): Promise<void> => {
+  const submitCreate = async (input: {
+    title: string;
+    slug: string;
+    coverMediaId?: string;
+  }): Promise<void> => {
     if (!creating) return;
     setCreatingBusy(true);
     setCreateError(null);
@@ -275,6 +279,7 @@ export const AdminApp = ({
         locale: 'th',
         blocks: [],
         seo: { noindex: false },
+        ...(input.coverMediaId ? { coverMediaId: input.coverMediaId } : {}),
       });
       setCreating(null);
       go(`/editor/${created.id}`);
@@ -329,7 +334,6 @@ export const AdminApp = ({
         {effective.name === 'dashboard' ? (
           <DashboardPage
             api={clients.dashboard}
-            onCreate={openCreate}
             onOpenEditor={(contentId) => go(`/editor/${contentId}`)}
             onNavigate={go}
           />
@@ -371,6 +375,8 @@ export const AdminApp = ({
                 ? SHOP_SETTINGS_ROLES.includes(role)
                 : SHOP_ROLES.includes(role)
             }
+            role={role}
+            {...(context ? { features: context.features } : {})}
             onNavigate={go}
           />
         ) : null}
@@ -384,6 +390,8 @@ export const AdminApp = ({
               apps: clients.apps,
             }}
             canManage={GROWTH_MANAGER_ROLES.includes(role)}
+            role={role}
+            {...(context ? { features: context.features } : {})}
             onNavigate={go}
           />
         ) : null}
@@ -393,6 +401,8 @@ export const AdminApp = ({
             billing={clients.billing}
             security={clients.auth}
             tab={effective.tab}
+            role={role}
+            {...(context ? { features: context.features } : {})}
             onNavigate={go}
           />
         ) : null}
@@ -403,14 +413,16 @@ export const AdminApp = ({
   return (
     <MessagesProvider locale={locale}>
       {content}
-      <CreateContentDialog
-        open={creating !== null}
-        kind={creating ?? 'page'}
-        creating={creatingBusy}
-        error={createError}
-        onCancel={() => setCreating(null)}
-        onSubmit={(input) => void submitCreate(input)}
-      />
+      <MediaLibraryProvider api={clients.media} ai={clients.ai}>
+        <CreateContentDialog
+          open={creating !== null}
+          kind={creating ?? 'page'}
+          creating={creatingBusy}
+          error={createError}
+          onCancel={() => setCreating(null)}
+          onSubmit={(input) => void submitCreate(input)}
+        />
+      </MediaLibraryProvider>
     </MessagesProvider>
   );
 };

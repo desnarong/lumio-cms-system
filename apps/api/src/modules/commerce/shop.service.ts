@@ -13,6 +13,7 @@ import {
   MAX_SLIP_BYTES,
   cartInputSchema,
   cartTotals,
+  giftQuantityFor,
   isHoneypotFilled,
   isInStock,
   isOrderStatus,
@@ -55,6 +56,8 @@ import { bblConfigForSite } from '../banking/bbl-settings';
 import { createBblPayment } from '../banking/bbl-gateway';
 import { apiPublicUrl, mediaPublicBaseUrl } from '../media/media.config';
 import { toPublicMediaUrl } from '../media/media-url';
+import { isPromotionLive } from '@lumio/shared';
+import { toPublicPromotion } from '../promotions/promotions.service';
 import {
   MEDIA_STORAGE,
   extensionForMime,
@@ -444,6 +447,7 @@ export class ShopService {
       }
 
       const byId = new Map(products.map((row) => [row.id, row]));
+      const bundles = await this.liveBundlePromotions(tx);
       const lines = [...requested.values()].map((item) => {
         const product = byId.get(item.productId);
         if (!product) throw ApiException.conflict('สินค้าบางรายการไม่พร้อมขายแล้ว');
@@ -452,10 +456,12 @@ export class ShopService {
         if (options.length > 0 && !item.variantId) {
           throw ApiException.conflict(`กรุณาเลือกตัวเลือกของ "${product.title}"`);
         }
+        const gift = this.giftFor(bundles, item.quantity);
+        const needed = item.quantity + gift.freeQuantity;
         if (item.variantId) {
           const variant = variants.find((row) => row.id === item.variantId);
           if (!variant) throw ApiException.conflict('ตัวเลือกสินค้าถูกเปลี่ยนแล้ว กรุณาเลือกใหม่');
-          if (variant.stock !== null && variant.stock < item.quantity) {
+          if (variant.stock !== null && variant.stock < needed) {
             throw ApiException.conflict(`สินค้า "${product.title}" มีไม่พอ`);
           }
           return {
@@ -464,12 +470,10 @@ export class ShopService {
             variantLabel: variant.label,
             price: variant.price ?? product.price,
             quantity: item.quantity,
+            ...gift,
           };
         }
-        if (
-          !isInStock(product.stock) ||
-          (product.stock !== null && product.stock < item.quantity)
-        ) {
+        if (!isInStock(product.stock) || (product.stock !== null && product.stock < needed)) {
           throw ApiException.conflict(`สินค้า "${product.title}" มีไม่พอ`);
         }
         return {
@@ -478,6 +482,7 @@ export class ShopService {
           variantLabel: null,
           price: product.price,
           quantity: item.quantity,
+          ...gift,
         };
       });
 
@@ -518,29 +523,47 @@ export class ShopService {
         },
       });
 
+      // A free unit is its own line with price 0, so the receipt and the stock
+      // count both tell the truth about what the customer received.
       await tx.orderItem.createMany({
-        data: lines.map((line) => ({
-          orderId: order.id,
-          siteId,
-          productId: line.product.id,
-          variantId: line.variant?.id ?? null,
-          variantLabel: line.variantLabel,
-          title: line.product.title,
-          price: line.price,
-          quantity: line.quantity,
-          image: imageFor(line.product),
-        })),
+        data: lines.flatMap((line) => {
+          const base = {
+            orderId: order.id,
+            siteId,
+            productId: line.product.id,
+            variantId: line.variant?.id ?? null,
+            variantLabel: line.variantLabel,
+            image: imageFor(line.product),
+          };
+          const paid = {
+            ...base,
+            title: line.product.title,
+            price: line.price,
+            quantity: line.quantity,
+          };
+          if (line.freeQuantity <= 0) return [paid];
+          return [
+            paid,
+            {
+              ...base,
+              title: `${line.product.title} (ของแถม)`,
+              price: 0,
+              quantity: line.freeQuantity,
+            },
+          ];
+        }),
       });
 
       // Conditional decrement: two buyers cannot take the same last item.
       for (const line of lines) {
+        const needed = line.quantity + line.freeQuantity;
         if (line.variant) {
           const taken = await tx.productVariant.updateMany({
             where: {
               id: line.variant.id,
-              OR: [{ stock: null }, { stock: { gte: line.quantity } }],
+              OR: [{ stock: null }, { stock: { gte: needed } }],
             },
-            data: { stock: { decrement: line.quantity } },
+            data: { stock: { decrement: needed } },
           });
           if (taken.count === 0) {
             throw ApiException.conflict(`สินค้า "${line.product.title}" มีไม่พอ`);
@@ -549,9 +572,9 @@ export class ShopService {
         const updated = await tx.product.updateMany({
           where: {
             id: line.product.id,
-            OR: [{ stock: null }, { stock: { gte: line.quantity } }],
+            OR: [{ stock: null }, { stock: { gte: needed } }],
           },
-          data: { stock: { decrement: line.quantity } },
+          data: { stock: { decrement: needed } },
         });
         if (updated.count === 0) {
           throw ApiException.conflict(`สินค้า "${line.product.title}" มีไม่พอ`);
@@ -938,6 +961,49 @@ export class ShopService {
     });
   }
 
+  /** Offers that can add free units to a cart right now. */
+  private async liveBundlePromotions(
+    tx: Prisma.TransactionClient,
+  ): Promise<{ title: string; buyQty: number; getQty: number }[]> {
+    const rows = await tx.promotion.findMany({
+      where: { active: true, kind: 'bundle' },
+      orderBy: [{ sort: 'asc' }, { createdAt: 'desc' }],
+    });
+    const now = new Date();
+    return rows.flatMap((row) => {
+      const promotion = toPublicPromotion(row);
+      if (!isPromotionLive(promotion, now) || !promotion.buyQty || !promotion.getQty) return [];
+      return [{ title: promotion.title, buyQty: promotion.buyQty, getQty: promotion.getQty }];
+    });
+  }
+
+  /** Picks the offer that gives the most free units for this quantity. */
+  private giftFor(
+    bundles: readonly { title: string; buyQty: number; getQty: number }[],
+    quantity: number,
+  ): { freeQuantity: number; promotionTitle: string | null } {
+    let best: { freeQuantity: number; promotionTitle: string | null } = {
+      freeQuantity: 0,
+      promotionTitle: null,
+    };
+    for (const promotion of bundles) {
+      const free = giftQuantityFor(promotion.buyQty, promotion.getQty, quantity);
+      if (free > best.freeQuantity) best = { freeQuantity: free, promotionTitle: promotion.title };
+    }
+    return best;
+  }
+
+  private summarizeGifts(
+    lines: readonly { promotionTitle: string | null; freeQuantity: number }[],
+  ): { title: string; freeQuantity: number }[] {
+    const totals = new Map<string, number>();
+    for (const line of lines) {
+      if (!line.promotionTitle || line.freeQuantity <= 0) continue;
+      totals.set(line.promotionTitle, (totals.get(line.promotionTitle) ?? 0) + line.freeQuantity);
+    }
+    return [...totals].map(([title, freeQuantity]) => ({ title, freeQuantity }));
+  }
+
   private async priceCart(
     tx: Prisma.TransactionClient,
     items: readonly { productId: string; variantId?: string; quantity: number }[],
@@ -948,11 +1014,13 @@ export class ShopService {
       return {
         items: [],
         count: 0,
+        freeCount: 0,
         subtotal: 0,
         shippingFee: 0,
         weightGrams: 0,
         total: 0,
         currency: 'THB',
+        promotions: [],
       };
     }
 
@@ -965,6 +1033,7 @@ export class ShopService {
       throw ApiException.conflict('สินค้าบางรายการไม่พร้อมขายแล้ว กรุณาตรวจตะกร้าอีกครั้ง');
     }
 
+    const bundles = await this.liveBundlePromotions(tx);
     const media = mediaIndex(
       await tx.media.findMany({
         where: { id: { in: rows.flatMap((row) => readImageIds(row.images)) } },
@@ -977,12 +1046,14 @@ export class ShopService {
       if (product.options.length > 0 && !item.variantId) {
         throw ApiException.conflict(`กรุณาเลือกตัวเลือกของ "${product.title}"`);
       }
+      const gift = this.giftFor(bundles, item.quantity);
+      const needed = item.quantity + gift.freeQuantity;
       if (item.variantId) {
         const variant = product.variants.find((entry) => entry.id === item.variantId);
         if (!variant) {
           throw ApiException.conflict('ตัวเลือกสินค้าถูกเปลี่ยนแล้ว กรุณาเลือกใหม่');
         }
-        if (!variant.inStock || (variant.stock !== null && variant.stock < item.quantity)) {
+        if (!variant.inStock || (variant.stock !== null && variant.stock < needed)) {
           throw ApiException.conflict(`สินค้า "${product.title}" มีไม่พอ`);
         }
         return {
@@ -992,7 +1063,11 @@ export class ShopService {
           quantity: item.quantity,
           unitPrice: variant.price,
           lineTotal: variant.price * item.quantity,
+          ...gift,
         };
+      }
+      if (!isInStock(product.stock) || (product.stock !== null && product.stock < needed)) {
+        throw ApiException.conflict(`สินค้า "${product.title}" มีไม่พอ`);
       }
       return {
         product,
@@ -1001,6 +1076,7 @@ export class ShopService {
         quantity: item.quantity,
         unitPrice: product.price,
         lineTotal: product.price * item.quantity,
+        ...gift,
       };
     });
     const totals = cartTotals(
@@ -1020,10 +1096,14 @@ export class ShopService {
         variantLabel: line.variantLabel,
         quantity: line.quantity,
         lineTotal: line.lineTotal,
+        freeQuantity: line.freeQuantity,
+        promotionTitle: line.promotionTitle,
       })),
       count: lines.reduce((sum, line) => sum + line.quantity, 0),
+      freeCount: lines.reduce((sum, line) => sum + line.freeQuantity, 0),
       ...totals,
       currency: 'THB',
+      promotions: this.summarizeGifts(lines),
     };
   }
 }

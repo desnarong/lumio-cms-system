@@ -1,29 +1,10 @@
-/* Overview screen: shortcuts, four numbers, then health + checklist. */
+/* Overview screen: today's numbers, then health + checklist. Creating something
+   new lives in the shell's top bar, so the page keeps one primary button. */
 
 .dashboard {
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
-}
-
-.dashboard__header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.dashboard__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  font-weight: 700;
-}
-
-.dashboard__subtitle {
-  margin: 0;
-  max-width: 68ch;
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
 }
 
 .dashboard__inline-error {
@@ -38,44 +19,6 @@
   font-size: var(--text-sm);
 }
 
-.dashboard__shortcuts {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
-}
-
-.dashboard__shortcuts .ui-button {
-  border-radius: 10px;
-}
-
-.dashboard__view-site {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-lg);
-  border-radius: 10px;
-  color: var(--color-text);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  text-decoration: none;
-  transition: background var(--motion-duration-fast) var(--motion-ease);
-}
-
-.dashboard__view-site:hover {
-  background: var(--color-surface-hover);
-}
-
-.dashboard__view-site:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
 .dashboard__stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -84,7 +27,7 @@
 
 .dashboard__columns {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: var(--space-lg);
   align-items: start;
 }
@@ -282,10 +225,4 @@
 
 .checklist__dismiss:hover {
   color: var(--color-text);
-}
-
-@media (max-width: 1023px) {
-  .dashboard__columns {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }

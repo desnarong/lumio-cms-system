@@ -35,13 +35,18 @@ description: Use when changing the renderer, meta tags, sitemap, images, or font
 4. Critical CSS inline
 5. JSON-LD เจนจาก block + `seo` settings อัตโนมัติ (ไม่ให้ผู้ใช้เขียนเอง)
 6. หน้า publish = static HTML จาก CDN (ดู publish pipeline หัวข้อ 10.4)
+7. **มือถือ 100%**: พื้นที่กด ≥ `--layout-tap-target` (44px), เว้น `env(safe-area-inset-*)`,
+   grid เริ่มที่ 1 คอลัมน์แล้วขยายที่ 640/1024px, ตารางกว้างเลื่อนในกรอบตัวเอง,
+   เมนูพับเป็น hamburger แบบไม่ใช้ JS (ดู `docs/design/14-seo-performance.md` 14.6)
+8. **admin เป็น desktop-only** — ห้ามย้ายกติกา mobile ของ renderer ไปเพิ่ม media query ใน `apps/admin`
 
 ## ขั้นตอนแก้ renderer
 
 1. ระบุว่าเป็นหน้าที่ SEO-sensitive (หน้าแรก, บทความ, สินค้า) หรือไม่
 2. แก้ renderer + ตรวจ meta/JSON-LD
 3. ตรวจว่าไม่มี client JS เพิ่มโดยไม่จำเป็น
-4. อัปเดต sitemap/robots ถ้าเพิ่ม route ใหม่
+4. ตรวจ layout ที่ 360px (ไม่มี scroll แนวนอน, กดง่าย, ข้อความไม่ล้น)
+5. อัปเดต sitemap/robots ถ้าเพิ่ม route ใหม่
 
 ## ตรวจสอบก่อนจบ
 
@@ -53,6 +58,8 @@ npx lighthouse-ci autorun --budget-path=lighthouse-budget.json
 
 - Test: sitemap/robots/canonical/hreflang ถูกต้อง
 - Test: ไม่มี JS จาก block ที่ไม่จำเป็นใน public site
+- Test: `apps/renderer/src/mobile.test.ts` + `packages/blocks/src/responsive.test.ts` ผ่าน
+  (tap target / safe-area / overflow / grid 1 คอลัมน์บนมือถือ)
 
 ## ห้าม
 

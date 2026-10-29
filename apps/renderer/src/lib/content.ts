@@ -2,6 +2,7 @@ import type {
   PageviewInput,
   PublicPage,
   PublicPostList,
+  PublicPromotion,
   PublicSitemap,
   SubmitFormInput,
 } from '@lumio/shared';
@@ -72,6 +73,9 @@ export const loadPosts = (host: string, locale?: string): Promise<PublicPostList
   cacheFor(host, `posts:${locale ?? ''}`, () =>
     withFallback((api) => api.listPosts(host, locale)),
   );
+
+export const loadPromotions = (host: string): Promise<PublicPromotion[]> =>
+  cacheFor(host, 'promotions', () => withFallback((api) => api.listPromotions(host)));
 
 export const loadSitemap = (host: string): Promise<PublicSitemap> =>
   cacheFor(host, 'sitemap', () => withFallback((api) => api.getSitemap(host)));

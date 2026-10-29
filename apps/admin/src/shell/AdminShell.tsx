@@ -4,6 +4,7 @@ import {
   CommandPalette,
   Icon,
   IconButton,
+  SplitButton,
   UI_LOCALE_LABELS,
   useT,
   type IconName,
@@ -12,7 +13,7 @@ import {
 import { cn } from '@lumio/ui/cn';
 import { routePath, type AdminRoute } from '../route.js';
 import type { ContentCommandSource } from './commands.js';
-import { activeMenuId, visibleMenus } from './nav.js';
+import { activeDestinationId, visibleSidebar } from './nav.js';
 import { useCommands } from './useCommands.js';
 
 export interface AdminShellProps {
@@ -24,7 +25,7 @@ export interface AdminShellProps {
   features?: readonly FeatureFlagKey[];
   /** Public address of the site; the "ดูเว็บ" button opens it. */
   publicUrl?: string;
-  /** Roles that may create content see the "add page / post" palette commands. */
+  /** Roles that may create content see the "add page / post" button and commands. */
   canCreate?: boolean;
   onCreate?: (kind: ContentType) => void;
   /** Searches pages and posts for the command palette. */
@@ -55,9 +56,13 @@ const initials = (name: string): string =>
     .toUpperCase() || 'L';
 
 /**
- * Sidebar + top bar around every back-office screen (docs/design/05-admin-ia.md
- * 5.3). Icons instead of emoji, one clear active pill, and on phones the sidebar
- * becomes a bottom bar so editing still works.
+ * The back-office chrome (docs/design/05-admin-ia.md 5.3): one flat sidebar of
+ * nine destinations, a thin top bar with the four things every screen needs
+ * (search, create, view the site, language) and a single content column.
+ *
+ * The back office is built for a desktop: below 1024px it keeps the same layout
+ * and only says so, instead of turning into a second, worse product. The public
+ * site is the part that has to work on a phone.
  */
 export const AdminShell = ({
   route,
@@ -77,9 +82,8 @@ export const AdminShell = ({
 }: AdminShellProps) => {
   const t = useT();
   const [collapsed, setCollapsed] = useState(false);
-  const menus = visibleMenus(role, features);
-  const activeMenu = activeMenuId(route);
-  const currentPath = routePath(route);
+  const groups = visibleSidebar(role, features);
+  const activeId = activeDestinationId(route);
 
   const commands = useCommands({
     t,
@@ -98,6 +102,7 @@ export const AdminShell = ({
       key={key}
       className={cn('shell-link', current && 'shell-link--active')}
       href={path}
+      title={collapsed ? label : undefined}
       aria-current={current ? 'page' : undefined}
       onClick={(event) => {
         event.preventDefault();
@@ -113,115 +118,109 @@ export const AdminShell = ({
 
   return (
     <div className={cn('shell', collapsed && 'shell--collapsed')}>
+      <a className="shell-skip" href="#shell-content">
+        {t('shell.skipToContent')}
+      </a>
+
       <aside className="shell-sidebar" aria-label={t('shell.mainMenu')}>
-        <div className="shell-sidebar__brand">
+        <a
+          className="shell-brand"
+          href={routePath({ name: 'dashboard' })}
+          title={siteName || 'Lumio'}
+          onClick={(event) => {
+            event.preventDefault();
+            onNavigate(routePath({ name: 'dashboard' }));
+          }}
+        >
           <span className="shell-logo" aria-hidden="true">
             <Icon name="sparkles" size={18} />
           </span>
-          <span className="shell-sidebar__brand-text">
-            <span className="shell-sidebar__brand-name">Lumio</span>
-            <span className="shell-sidebar__brand-tagline">{t('shell.brandTagline')}</span>
+          <span className="shell-brand__text">
+            <span className="shell-brand__name">Lumio</span>
+            <span className="shell-brand__site">
+              <Icon name="globe" size={12} />
+              <span className="shell-brand__site-name">{siteName}</span>
+            </span>
           </span>
-        </div>
+        </a>
 
         <nav className="shell-nav">
-          {menus.map((menu) => {
-            const isActive = menu.id === activeMenu;
-            const single = menu.entries.length === 1;
-
-            return (
-              <div key={menu.id} className="shell-nav__group">
-                {single ? (
-                  link(
-                    routePath(menu.entries[0]!.route),
-                    t(menu.labelKey),
-                    menu.icon,
-                    isActive,
-                    `${menu.id}-root`,
-                  )
-                ) : (
-                  <p className={cn('shell-nav__title', isActive && 'shell-nav__title--active')}>
-                    <span className="shell-nav__title-icon" aria-hidden="true">
-                      <Icon name={menu.icon} size={15} />
-                    </span>
-                    <span className="shell-nav__title-text">{t(menu.labelKey)}</span>
-                  </p>
-                )}
-
-                <div className="shell-nav__sub">
-                  {single
-                    ? null
-                    : menu.entries.map((entry) =>
-                        link(
-                          routePath(entry.route),
-                          t(entry.labelKey),
-                          entry.icon,
-                          routePath(entry.route) === currentPath,
-                          `${menu.id}-${entry.id}`,
-                        ),
-                      )}
-                </div>
-              </div>
-            );
-          })}
+          {groups.map((group) => (
+            <div className="shell-nav__group" key={group.section.id}>
+              <p className="shell-nav__label" id={`shell-nav-${group.section.id}`}>
+                {t(group.section.labelKey)}
+              </p>
+              <ul className="shell-nav__list" aria-labelledby={`shell-nav-${group.section.id}`}>
+                {group.items.map((item) => (
+                  <li key={item.id}>
+                    {link(
+                      item.path,
+                      t(item.labelKey),
+                      item.icon,
+                      item.id === activeId,
+                      `nav-${item.id}`,
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </nav>
 
         <div className="shell-sidebar__footer">
-          <div className="shell-user">
-            <span className="shell-user__avatar" aria-hidden="true">
-              {initials(userName)}
-            </span>
-            <span className="shell-user__body">
-              <span className="shell-user__name">{userName}</span>
-              <span className="shell-user__role">{t(ROLE_KEYS[role])}</span>
-            </span>
-          </div>
-          <button type="button" className="shell-signout" onClick={onSignOut}>
-            <Icon name="log-out" size={18} />
-            <span className="shell-link__label">{t('shell.signOut')}</span>
-          </button>
-          <IconButton
+          <button
+            type="button"
             className="shell-collapse"
-            aria-label={t('shell.collapseMenu')}
             aria-expanded={!collapsed}
+            title={collapsed ? t('shell.expandMenu') : t('shell.collapseMenu')}
             onClick={() => setCollapsed((value) => !value)}
           >
-            <Icon name="panel-left" size={18} />
-          </IconButton>
+            <span className="shell-link__icon" aria-hidden="true">
+              <Icon name="panel-left" size={18} />
+            </span>
+            <span className="shell-link__label">
+              {collapsed ? t('shell.expandMenu') : t('shell.collapseMenu')}
+            </span>
+          </button>
         </div>
       </aside>
 
       <div className="shell-body">
         <header className="shell-topbar">
-          <div className="shell-topbar__greeting">
-            <span className="shell-topbar__hello">{t('shell.greeting', { name: userName })}</span>
-            <span className="shell-topbar__site">
-              {siteName ? (
-                <>
-                  <Icon name="globe" size={14} />
-                  {siteName}
-                </>
-              ) : null}
-            </span>
-          </div>
+          <button
+            type="button"
+            className="shell-search"
+            aria-keyshortcuts="Control+K Meta+K"
+            onClick={commands.openPalette}
+          >
+            <Icon name="search" size={16} />
+            <span className="shell-search__label">{t('shell.search')}</span>
+            <kbd className="shell-search__kbd">⌘K</kbd>
+          </button>
 
           <div className="shell-topbar__actions">
-            <button
-              type="button"
-              className="shell-topbar__search"
-              aria-keyshortcuts="Control+K Meta+K"
-              onClick={commands.openPalette}
-            >
-              <Icon name="search" size={16} />
-              <span className="shell-topbar__search-label">{t('shell.search')}</span>
-              <kbd className="shell-topbar__search-kbd">⌘K</kbd>
-            </button>
+            {canCreate && onCreate ? (
+              <SplitButton
+                className="shell-create"
+                variant="secondary"
+                actions={[
+                  { label: t('command.newPage'), onSelect: () => onCreate('page') },
+                  { label: t('command.newPost'), onSelect: () => onCreate('post') },
+                ]}
+                onClick={() => onCreate('page')}
+              >
+                <Icon name="plus" size={16} />
+                <span>{t('shell.create')}</span>
+              </SplitButton>
+            ) : null}
+
             {publicUrl ? (
               <a className="shell-topbar__view" href={publicUrl} target="_blank" rel="noreferrer">
                 <Icon name="external-link" size={16} />
                 <span>{t('shell.viewSite')}</span>
               </a>
             ) : null}
+
             {onLocaleChange ? (
               <button
                 type="button"
@@ -234,9 +233,21 @@ export const AdminShell = ({
                 <span>{locale === 'th' ? UI_LOCALE_LABELS.en : UI_LOCALE_LABELS.th}</span>
               </button>
             ) : null}
+
+            <span className="shell-user" title={`${userName} — ${t(ROLE_KEYS[role])}`}>
+              <span className="shell-user__avatar" aria-hidden="true">
+                {initials(userName)}
+              </span>
+              <span className="shell-user__body">
+                <span className="shell-user__name">{userName}</span>
+                <span className="shell-user__role">{t(ROLE_KEYS[role])}</span>
+              </span>
+            </span>
+
             <IconButton
               className="shell-topbar__signout"
               aria-label={t('shell.signOut')}
+              title={t('shell.signOut')}
               onClick={onSignOut}
             >
               <Icon name="log-out" size={18} />
@@ -244,20 +255,12 @@ export const AdminShell = ({
           </div>
         </header>
 
-        <main className="shell-content">{children}</main>
-      </div>
+        <p className="shell-narrow">{t('shell.smallScreen')}</p>
 
-      <nav className="shell-bottomnav" aria-label={t('shell.mobileMenu')}>
-        {menus.map((menu) =>
-          link(
-            routePath(menu.entries[0]!.route),
-            t(menu.labelKey),
-            menu.icon,
-            menu.id === activeMenu,
-            `bottom-${menu.id}`,
-          ),
-        )}
-      </nav>
+        <main className="shell-content" id="shell-content" tabIndex={-1}>
+          {children}
+        </main>
+      </div>
 
       <CommandPalette
         open={commands.open}

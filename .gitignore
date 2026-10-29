@@ -31,6 +31,9 @@ apps/api/prisma/migrations/dev.db*
 # media library (local storage driver)
 apps/api/.media/
 
+# database / media dumps (may contain customer data - never commit)
+backups/
+
 # auto-generated installation key (secret-box encryption)
 .lumio-data/
 

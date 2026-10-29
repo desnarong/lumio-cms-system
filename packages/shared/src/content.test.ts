@@ -44,6 +44,24 @@ describe('content schemas', () => {
     expect(parsed.seo.noindex).toBe(false);
   });
 
+  it('carries the cover image chosen for a post', () => {
+    const coverMediaId = '00000000-0000-4000-8000-0000000000f1';
+    const parsed = createContentInputSchema.parse({
+      type: 'post',
+      title: 'บทความ',
+      slug: 'post',
+      coverMediaId,
+    });
+    expect(parsed.coverMediaId).toBe(coverMediaId);
+    expect(createContentInputSchema.parse({ type: 'page', title: 'x', slug: 'x' }).coverMediaId).toBeUndefined();
+  });
+
+  it('rejects a cover that is not a media id', () => {
+    expect(() =>
+      createContentInputSchema.parse({ type: 'post', title: 'x', slug: 'x', coverMediaId: 'not-a-uuid' }),
+    ).toThrow();
+  });
+
   it('rejects a slug with uppercase or spaces', () => {
     expect(() =>
       createContentInputSchema.parse({ type: 'page', title: 'x', slug: 'หน้า แรก' }),

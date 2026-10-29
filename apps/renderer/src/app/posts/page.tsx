@@ -38,7 +38,7 @@ export default async function PostsPage() {
         currentPath={localePathFor('page', 'posts', effective, site.localeDefault)}
       />
       <main className="site-main" id="main">
-        <article className="site-article" lang={effective}>
+        <article className="site-article site-article--posts" lang={effective}>
           <h1 className="site-page-title">บทความ</h1>
           {posts.length === 0 ? (
             <p className="site-empty">ยังไม่มีบทความที่เผยแพร่</p>
@@ -47,13 +47,28 @@ export default async function PostsPage() {
               {posts.map((post) => (
                 <li className="site-post-list__item" key={post.id}>
                   <a
-                    className="site-post-list__link"
+                    className={
+                      post.coverImage
+                        ? 'site-post-list__link site-post-list__link--with-cover'
+                        : 'site-post-list__link'
+                    }
                     href={localePathFor('post', post.slug, effective, site.localeDefault)}
                   >
-                    <h2 className="site-post-list__title">{post.title}</h2>
-                    {post.excerpt ? (
-                      <p className="site-post-list__excerpt">{post.excerpt}</p>
+                    {post.coverImage ? (
+                      <img
+                        className="site-post-list__cover"
+                        src={post.coverImage}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
                     ) : null}
+                    <div className="site-post-list__body">
+                      <h2 className="site-post-list__title">{post.title}</h2>
+                      {post.excerpt ? (
+                        <p className="site-post-list__excerpt">{post.excerpt}</p>
+                      ) : null}
+                    </div>
                   </a>
                 </li>
               ))}

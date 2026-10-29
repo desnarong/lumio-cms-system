@@ -25,6 +25,7 @@ import { MenusModule } from './modules/menus/menus.module';
 import { NewsletterModule } from './modules/newsletter/newsletter.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { PublicModule } from './modules/public/public.module';
+import { PromotionsModule } from './modules/promotions/promotions.module';
 import { PublishModule } from './modules/publish/publish.module';
 import { RedirectsModule } from './modules/redirects/redirects.module';
 import { SectionTemplatesModule } from './modules/section-templates/section-templates.module';
@@ -67,6 +68,7 @@ import { RateLimitModule } from './common/rate-limit.module';
     AiModule,
     PublicModule,
     PublishModule,
+    PromotionsModule,
     MediaModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: OriginGuard }],

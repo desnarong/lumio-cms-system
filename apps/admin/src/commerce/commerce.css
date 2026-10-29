@@ -5,59 +5,6 @@
   flex-direction: column;
   gap: var(--space-lg);
 }
-
-.commerce-header__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  font-weight: 700;
-}
-
-.commerce-header__subtitle {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-}
-
-.commerce-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-  padding: var(--space-xs);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
-}
-
-.commerce-tab__link,
-.commerce-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-lg);
-  border: 0;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--color-text-muted);
-  font: inherit;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.commerce-tab__link:hover,
-.commerce-tab:hover {
-  background: var(--color-surface-hover);
-  color: var(--color-text);
-}
-
-.commerce-tab__link[aria-current='page'] {
-  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
-  color: var(--color-primary);
-}
-
 .commerce-view {
   display: flex;
   flex-direction: column;
@@ -565,4 +512,97 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
   align-items: end;
   gap: var(--space-sm);
+}
+
+/* Offer campaigns (ซื้อ 10 แถม 1, free shipping) shown on the promotion page. */
+.promotions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-lg);
+  margin: var(--space-xl) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.promotion-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.promotion-card__image {
+  display: block;
+  width: calc(100% + var(--space-lg) + var(--space-lg));
+  margin: calc(0px - var(--space-lg)) calc(0px - var(--space-lg)) 0;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--color-surface-muted);
+}
+
+.promotion-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.promotion-card__kind {
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.promotion-card__title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.promotion-card__description {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm-line-height);
+}
+
+.promotion-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.promotion-card__actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-block-start: auto;
+  padding-block-start: var(--space-sm);
+}
+
+.promotion-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.promotion-form__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.promotion-form__error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: var(--text-sm);
 }

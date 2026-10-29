@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import '@lumio/tokens/theme.css';
 import '@lumio/ui/styles.css';
@@ -15,6 +15,16 @@ import { requestLocale } from '../lib/request-locale';
  */
 export const metadata: Metadata = {
   metadataBase: undefined,
+};
+
+/**
+ * Pin the layout to the real phone width. Without an explicit scale the browser
+ * treats the page as a zoomed desktop layout and inflates text to compensate,
+ * which is why a 16px paragraph could fill the screen on a phone.
+ */
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {

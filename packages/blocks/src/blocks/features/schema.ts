@@ -65,6 +65,9 @@ export const featureItemSchema = z.object({
 export const FEATURE_TEXT_BACKGROUNDS = ['none', 'panel', 'full', 'fade'] as const;
 export type FeatureTextBackground = (typeof FEATURE_TEXT_BACKGROUNDS)[number];
 
+export const FEATURE_SOURCES = ['manual', 'promotions'] as const;
+export type FeatureSource = (typeof FEATURE_SOURCES)[number];
+
 export const featuresPropsSchema = z.object({
   heading: z.string().default('ทำไมลูกค้าถึงเลือกเรา'),
   subheading: z.string().default('สามสิ่งที่เราตั้งใจทำให้ดีที่สุดในทุกออเดอร์'),
@@ -72,6 +75,12 @@ export const featuresPropsSchema = z.object({
   subheadingWidth: z.enum(['normal', 'wide', 'full']).default('normal'),
   /** Bordered cards, or a flush image-and-text grid like a gallery. */
   cardStyle: z.enum(['card', 'plain']).default('card'),
+  /**
+   * Where the cards come from: typed here, or the live promotion list so an
+   * expired offer disappears on its own.
+   */
+  source: z.enum(FEATURE_SOURCES).default('manual'),
+  sourceLimit: z.number().int().min(1).max(FEATURES_MAX_ITEMS).default(3),
   /** Where the icon, title, description and button sit inside each card. */
   contentAlign: z.enum(['left', 'center', 'right']).default('left'),
   /** Paint the icon and text on top of the card picture. */

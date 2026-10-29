@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { PageView } from '../../../components/PageView';
 import { loadPageShopProducts } from '../../../lib/block-shop';
+import { loadPageLatestPosts } from '../../../lib/block-posts';
+import { loadPagePromotions } from '../../../lib/block-promotions';
 import { loadPreviewOrNull } from '../../../lib/content';
 import { requestHost } from '../../../lib/request-host';
 import { buildMetadata } from '../../../seo';
@@ -35,7 +37,11 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
   const page = await loadPreviewOrNull(token);
   if (!page || !page.content) notFound();
 
-  const shopProducts = await loadPageShopProducts(page, host);
+  const [shopProducts, latestPosts, promotions] = await Promise.all([
+    loadPageShopProducts(page, host),
+    loadPageLatestPosts(page, host),
+    loadPagePromotions(page, host),
+  ]);
   return (
     <>
       <p className="site-locale-notice" role="note">
@@ -46,6 +52,9 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
         host={host}
         preview
         {...(shopProducts ? { shopProducts } : {})}
+        {...(latestPosts ? { latestPosts } : {})}
+        {...(promotions ? { promotions } : {})}
+      {...(promotions ? { promotions } : {})}
       />
     </>
   );

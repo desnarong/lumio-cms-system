@@ -62,7 +62,13 @@ const saveLabel = (saveState: SaveState, t: Translate): string => {
   return t('editor.save.idle');
 };
 
-/** Floating toolbar from the editor wireframe (docs/design/06-design-system.md 6.7). */
+/**
+ * The editor's one bar (docs/design/04-ux.md 4.2), in the order people work:
+ * which page and its status, then fixing mistakes, then choosing how to edit,
+ * then how it looks on each screen, then shipping it. The two modes are real:
+ * "แก้เนื้อหา" keeps the page quiet for writing, "จัดหน้าตา" brings out the
+ * handles that move and resize things.
+ */
 export const EditorToolbar = ({
   title,
   status,
@@ -93,28 +99,15 @@ export const EditorToolbar = ({
             <Icon name="arrow-left" size={16} />
           </IconButton>
         ) : null}
-        <span className="editor-toolbar__title">{title}</span>
+        <span className="editor-toolbar__title" title={title}>
+          {title}
+        </span>
         <span className={cn('editor-status', `editor-status--${status}`)}>
           {t(STATUS_LABELS[status] ?? 'editor.status.draft')}
         </span>
         {status === 'published' && hasUnpublishedChanges ? (
           <span className="editor-status__hint">{t('editor.status.pendingChanges')}</span>
         ) : null}
-      </div>
-
-      <div className="editor-toolbar__group" role="group" aria-label={t('editor.toolbar.viewport')}>
-        {EDITOR_DEVICES.map((item) => (
-          <IconButton
-            key={item.id}
-            aria-label={t('editor.toolbar.viewAs', { device: t(DEVICE_LABEL_KEYS[item.id]) })}
-            title={t(DEVICE_LABEL_KEYS[item.id])}
-            aria-pressed={device === item.id}
-            variant={device === item.id ? 'secondary' : 'ghost'}
-            onClick={() => onDeviceChange(item.id)}
-          >
-            <Icon name={DEVICE_ICONS[item.id]} size={16} />
-          </IconButton>
-        ))}
       </div>
 
       <div
@@ -149,18 +142,37 @@ export const EditorToolbar = ({
           size="sm"
           variant={mode === 'edit' ? 'secondary' : 'ghost'}
           aria-pressed={mode === 'edit'}
+          title={t('editor.mode.editHint')}
           onClick={() => onModeChange('edit')}
         >
+          <Icon name="pen" size={14} />
           {t('editor.mode.edit')}
         </Button>
         <Button
           size="sm"
           variant={mode === 'design' ? 'secondary' : 'ghost'}
           aria-pressed={mode === 'design'}
+          title={t('editor.mode.designHint')}
           onClick={() => onModeChange('design')}
         >
+          <Icon name="layout" size={14} />
           {t('editor.mode.design')}
         </Button>
+      </div>
+
+      <div className="editor-toolbar__group" role="group" aria-label={t('editor.toolbar.viewport')}>
+        {EDITOR_DEVICES.map((item) => (
+          <IconButton
+            key={item.id}
+            aria-label={t('editor.toolbar.viewAs', { device: t(DEVICE_LABEL_KEYS[item.id]) })}
+            title={t(DEVICE_LABEL_KEYS[item.id])}
+            aria-pressed={device === item.id}
+            variant={device === item.id ? 'secondary' : 'ghost'}
+            onClick={() => onDeviceChange(item.id)}
+          >
+            <Icon name={DEVICE_ICONS[item.id]} size={16} />
+          </IconButton>
+        ))}
       </div>
 
       <div className="editor-toolbar__group editor-toolbar__group--end">
@@ -168,12 +180,18 @@ export const EditorToolbar = ({
           {saveLabel(saveState, t)}
         </span>
         {onOpenHistory ? (
-          <Button variant="ghost" size="sm" onClick={onOpenHistory}>
+          <Button
+            variant="ghost"
+            size="sm"
+            title={t('editor.toolbar.history')}
+            onClick={onOpenHistory}
+          >
             {t('editor.toolbar.history')}
           </Button>
         ) : null}
         {onPreview ? (
-          <Button variant="ghost" size="sm" onClick={onPreview}>
+          <Button variant="ghost" size="sm" title={t('editor.toolbar.preview')} onClick={onPreview}>
+            <Icon name="external-link" size={14} />
             {t('editor.toolbar.preview')}
           </Button>
         ) : null}

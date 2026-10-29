@@ -156,11 +156,21 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
                   <span>
                     {line.product.title}
                     {line.variantLabel ? ` (${line.variantLabel})` : ''} × {line.quantity}
+                    {line.freeQuantity > 0 ? ` + แถม ${line.freeQuantity}` : ''}
                   </span>
                   <span>{formatBaht(line.lineTotal)}</span>
                 </li>
               ))}
             </ul>
+            {cart.cart.promotions.length > 0 ? (
+              <ul className="shop-promos" aria-label="โปรโมชั่นที่ใช้ได้">
+                {cart.cart.promotions.map((promotion) => (
+                  <li key={promotion.title}>
+                    🎁 {promotion.title} — แถม {promotion.freeQuantity} ชิ้น
+                  </li>
+                ))}
+              </ul>
+            ) : null}
             <dl className="shop-summary__list">
               <div>
                 <dt>ยอดสินค้า</dt>

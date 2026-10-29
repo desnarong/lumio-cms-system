@@ -29,6 +29,7 @@ export * from './theme-command.js';
 export * from './brand-palette.js';
 export * from './i18n.js';
 export * from './commerce.js';
+export * from './promotion.js';
 export * from './banking.js';
 export * from './receipt.js';
 export * from './redirect.js';

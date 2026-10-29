@@ -12,6 +12,8 @@ import {
   type OrderWebhookView,
   type ProductListQuery,
   type ProductSummary,
+  type Promotion,
+  type PromotionInput,
   type RefundOrderInput,
   type ReviewSlipInput,
   type UpdateCommerceSettingsInput,
@@ -229,6 +231,43 @@ const maskedAccount = (value: string | null): string | null =>
 export const createDemoCommerceApi = (): CommerceApi => {
   let products = demoProducts();
   let orders = [demoOrder(), demoPaidOrder()];
+  let promotions: Promotion[] = [
+    {
+      id: 'demo-promo-bundle',
+      title: 'ซื้อ 10 แถม 1',
+      description: 'สำหรับหลอด LED ขั้ว E27 ทุกขนาด',
+      kind: 'bundle',
+      badge: '',
+      imageUrl: null,
+      imageAlt: '',
+      buyQty: 10,
+      getQty: 1,
+      startsAt: null,
+      endsAt: null,
+      active: true,
+      sort: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: 'demo-promo-shipping',
+      title: 'ส่งฟรีทั่วประเทศ',
+      description: 'เมื่อสั่งซื้อครบ 5,000 บาท',
+      kind: 'shipping',
+      badge: '',
+      imageUrl: null,
+      imageAlt: '',
+      buyQty: null,
+      getQty: null,
+      startsAt: null,
+      endsAt: null,
+      active: true,
+      sort: 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+  ];
+  let promotionCounter = promotions.length;
   let settings: CommerceSettings = commerceSettingsSchema.parse({
     promptPayId: '0812345678',
     shippingFee: 5_000,
@@ -320,6 +359,48 @@ export const createDemoCommerceApi = (): CommerceApi => {
       products = products.map((item) => (item.id === productId ? updated : item));
       return updated;
     },
+    listPromotions: async () => promotions,
+    createPromotion: async (input: PromotionInput) => {
+      promotionCounter += 1;
+      const now = new Date().toISOString();
+      const created: Promotion = {
+        ...input,
+        description: input.description ?? '',
+        badge: input.badge ?? '',
+        imageUrl: input.imageUrl ?? null,
+        imageAlt: input.imageAlt ?? '',
+        buyQty: input.buyQty ?? null,
+        getQty: input.getQty ?? null,
+        startsAt: input.startsAt ?? null,
+        endsAt: input.endsAt ?? null,
+        id: `demo-promo-${promotionCounter}`,
+        createdAt: now,
+        updatedAt: now,
+      };
+      promotions = [...promotions, created];
+      return created;
+    },
+    updatePromotion: async (promotionId: string, input: Partial<PromotionInput>) => {
+      const found = promotions.find((item) => item.id === promotionId);
+      if (!found) throw new ApiError('not_found', 'ไม่พบโปรโมชั่นนี้', 404);
+      const updated: Promotion = {
+        ...found,
+        ...input,
+        imageUrl: input.imageUrl === undefined ? found.imageUrl : input.imageUrl,
+        imageAlt: input.imageAlt === undefined ? found.imageAlt : input.imageAlt,
+        buyQty: input.buyQty === undefined ? found.buyQty : input.buyQty,
+        getQty: input.getQty === undefined ? found.getQty : input.getQty,
+        startsAt: input.startsAt === undefined ? found.startsAt : input.startsAt,
+        endsAt: input.endsAt === undefined ? found.endsAt : input.endsAt,
+        updatedAt: new Date().toISOString(),
+      };
+      promotions = promotions.map((item) => (item.id === promotionId ? updated : item));
+      return updated;
+    },
+    removePromotion: async (promotionId: string) => {
+      promotions = promotions.filter((item) => item.id !== promotionId);
+    },
+
     archiveProduct: async (productId: string) => {
       findProduct(productId);
       products = products.map((item) =>

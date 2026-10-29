@@ -1,10 +1,16 @@
-import { useCallback, useEffect, useState } from 'react';
-import type {
-  AnalyticsRange,
-  AnalyticsRow,
-  AnalyticsSummary,
-} from '@lumio/shared';
-import { Button, Card, EmptyState, Skeleton, StatCard, Tabs, useT, type MessageKey } from '@lumio/ui';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import type { AnalyticsRange, AnalyticsRow, AnalyticsSummary } from '@lumio/shared';
+import {
+  Button,
+  Card,
+  EmptyState,
+  PageHeader,
+  Skeleton,
+  StatCard,
+  Tabs,
+  useT,
+  type MessageKey,
+} from '@lumio/ui';
 import { ApiError } from '../api-error.js';
 import type { AnalyticsApi } from './api.js';
 
@@ -24,6 +30,8 @@ export interface AnalyticsViewProps {
   error: string | null;
   onRangeChange: (range: AnalyticsRange) => void;
   onRetry: () => void;
+  /** Tab strip of the growth screens, rendered inside this screen's header. */
+  headerTabs?: ReactNode;
 }
 
 const TrendChart = ({ summary }: { summary: AnalyticsSummary }) => {
@@ -91,14 +99,17 @@ export const AnalyticsView = ({
   error,
   onRangeChange,
   onRetry,
+  headerTabs,
 }: AnalyticsViewProps) => {
   const t = useT();
 
   const header = (
-    <header className="growth__header">
-      <h1 className="growth__title">{t('nav.analytics')}</h1>
-      <p className="growth__subtitle">{t('analytics.subtitle')}</p>
-    </header>
+    <PageHeader
+      eyebrow={t('nav.section.site')}
+      title={t('nav.analytics')}
+      description={t('analytics.subtitle')}
+      tabs={headerTabs}
+    />
   );
 
   const rangeTabs = (
@@ -164,10 +175,7 @@ export const AnalyticsView = ({
           trend={trend}
           delta={delta}
         />
-        <StatCard
-          label={t('analytics.pageviews')}
-          value={numberFormat.format(summary.pageviews)}
-        />
+        <StatCard label={t('analytics.pageviews')} value={numberFormat.format(summary.pageviews)} />
       </div>
 
       <Card className="analytics-panel">
@@ -186,9 +194,11 @@ export const AnalyticsView = ({
 
 export interface AnalyticsPageProps {
   api: AnalyticsApi;
+  /** Tab strip of the growth screens. */
+  headerTabs?: ReactNode;
 }
 
-export const AnalyticsPage = ({ api }: AnalyticsPageProps) => {
+export const AnalyticsPage = ({ api, headerTabs }: AnalyticsPageProps) => {
   const t = useT();
   const [range, setRange] = useState<AnalyticsRange>('7d');
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
@@ -219,6 +229,7 @@ export const AnalyticsPage = ({ api }: AnalyticsPageProps) => {
       error={error}
       onRangeChange={setRange}
       onRetry={() => void load()}
+      {...(headerTabs ? { headerTabs } : {})}
     />
   );
 };

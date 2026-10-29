@@ -8,6 +8,7 @@ import {
   type BankConnection,
   type CommerceSettings,
   type ConnectStatus,
+  type FeatureFlagKey,
   type OrderDetail,
   type OrderSummary,
   type OrderStatus,
@@ -18,6 +19,7 @@ import {
   type ProductSummary,
   type ProductVariantInput,
   type ReviewSlipInput,
+  type Role,
 } from '@lumio/shared';
 import {
   Icon,
@@ -27,10 +29,12 @@ import {
   EmptyState,
   ImagePicker,
   Modal,
+  PageHeader,
   Select,
   Skeleton,
   translateNow,
   Switch,
+  Tabs,
   TextField,
   Textarea,
   useT,
@@ -41,7 +45,9 @@ import { useMediaPicker } from '@lumio/blocks';
 import { ApiError } from '../api-error.js';
 import { ACCEPTED_UPLOAD_TYPES, type MediaApi } from '../media/api.js';
 import type { CommerceApi } from './api.js';
-import type { CommerceTab } from '../route.js';
+import { COMMERCE_TABS, type CommerceTab } from '../route.js';
+import { PromotionsTab } from './PromotionsTab.js';
+import { allowedTabs } from '../shell/nav.js';
 import {
   combinationKey,
   combinationLabel,
@@ -255,7 +261,12 @@ export const ProductEditor = ({
       const url = urls[index];
       const targetId = ids[target];
       const targetUrl = urls[target];
-      if (id === undefined || url === undefined || targetId === undefined || targetUrl === undefined) {
+      if (
+        id === undefined ||
+        url === undefined ||
+        targetId === undefined ||
+        targetUrl === undefined
+      ) {
         return current;
       }
       ids[index] = targetId;
@@ -319,9 +330,7 @@ export const ProductEditor = ({
         );
       }
     } catch (caught) {
-      setImageError(
-        caught instanceof ApiError ? caught.message : t('common.genericError'),
-      );
+      setImageError(caught instanceof ApiError ? caught.message : t('common.genericError'));
     } finally {
       setUploading(false);
     }
@@ -1933,48 +1942,57 @@ export const ShopSettingsTab = ({ api, canManage }: ShopSettingsTabProps) => {
   );
 };
 
-
 export interface CommercePageProps {
   api: CommerceApi;
   media?: MediaApi;
   tab: CommerceTab;
   canManage: boolean;
   onNavigate: (path: string) => void;
+  /** Who is signed in: shop settings stay hidden from roles that cannot open them. */
+  role: Role;
+  /** Add-ons the site still offers. */
+  features?: readonly FeatureFlagKey[];
 }
 
-export const CommercePage = ({ api, media, tab, canManage, onNavigate }: CommercePageProps) => {
+const TAB_LABELS: Record<CommerceTab, MessageKey> = {
+  products: 'nav.products',
+  promotions: 'commerce.promotions',
+  orders: 'nav.orders',
+  settings: 'commerce.settings',
+};
+
+export const CommercePage = ({
+  api,
+  media,
+  tab,
+  canManage,
+  onNavigate,
+  role,
+  features,
+}: CommercePageProps) => {
   const t = useT();
+  const mediaPicker = useMediaPicker();
+  const openTabs = allowedTabs('commerce', COMMERCE_TABS, role, features);
 
   return (
     <div className="commerce-page">
-      <header className="commerce-header">
-        <div>
-          <h1 className="commerce-header__title">{t('nav.shop')}</h1>
-          <p className="commerce-header__subtitle">{t('commerce.subtitle')}</p>
-        </div>
-      </header>
-
-      <nav className="commerce-tabs" aria-label={t('nav.shop')}>
-        {(['products', 'orders', 'settings'] as CommerceTab[]).map((entry) => (
-          <button
-            key={entry}
-            type="button"
-            className="commerce-tab__link"
-            aria-current={entry === tab ? 'page' : undefined}
-            onClick={() => onNavigate(`/commerce/${entry}`)}
-          >
-            {t(
-              entry === 'products'
-                ? 'nav.products'
-                : entry === 'orders'
-                  ? 'nav.orders'
-                  : 'commerce.settings',
-            )}
-          </button>
-        ))}
-      </nav>
+      <PageHeader
+        eyebrow={t('nav.section.shop')}
+        title={t('nav.shop')}
+        description={t('commerce.subtitle')}
+        tabs={
+          <Tabs
+            items={openTabs.map((entry) => ({ id: entry, label: t(TAB_LABELS[entry]) }))}
+            value={tab}
+            onChange={(id) => onNavigate(`/commerce/${id}`)}
+          />
+        }
+      />
 
       {tab === 'products' ? <ProductsTab api={api} media={media} canManage={canManage} /> : null}
+      {tab === 'promotions' ? (
+        <PromotionsTab api={api} canManage={canManage} mediaPicker={mediaPicker} />
+      ) : null}
       {tab === 'orders' ? <OrdersTab api={api} canManage={canManage} /> : null}
       {tab === 'settings' ? <ShopSettingsTab api={api} canManage={canManage} /> : null}
     </div>

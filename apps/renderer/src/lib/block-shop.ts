@@ -3,7 +3,8 @@ import { shopCardsFromProducts, type ShopProductCard } from '@lumio/blocks/rende
 import { loadShop } from './shop';
 
 /** True when this block grid reads the catalog instead of the saved cards. */
-const readsCatalog = (props: Record<string, unknown>): boolean => props.source === 'shop';
+const readsCatalog = (props: Record<string, unknown>): boolean =>
+  props.source === 'shop' || props.source === 'sale';
 
 const treeReadsCatalog = (blocks: readonly BlockNode[]): boolean =>
   blocks.some(

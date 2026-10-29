@@ -4,6 +4,8 @@ import type { FeaturesProps } from './schema.js';
 export const featuresDefaults: BlockData<FeaturesProps> = {
   version: 1,
   props: {
+    source: 'manual',
+    sourceLimit: 3,
     heading: 'ทำไมลูกค้าถึงเลือกเรา',
     subheading: 'สามสิ่งที่เราตั้งใจทำให้ดีที่สุดในทุกออเดอร์',
     subheadingWidth: 'normal',

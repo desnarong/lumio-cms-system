@@ -45,6 +45,33 @@ export interface ShopProductCard {
   soldOut: boolean;
 }
 
+/** One live offer, prepared for a promotion card. */
+export interface PromotionCard {
+  id: string;
+  /** Emoji shown in the icon circle. */
+  icon: string;
+  title: string;
+  description: string;
+  /** Picture chosen in the admin; null keeps the icon-only card. */
+  imageUrl: string | null;
+  imageAlt: string;
+}
+
+/**
+ * One published post prepared for a post card. Text and date come from the post
+ * itself, so a "latest posts" block never shows a card for deleted content.
+ */
+export interface LatestPostCard {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  /** Display date already formatted for the page language; empty when unknown. */
+  date: string;
+  image: string | null;
+  link: string;
+}
+
 /** Props handed to a block renderer. `style` is already parsed by the shared schema. */
 export interface BlockRenderProps<P> {
   props: P;
@@ -66,6 +93,14 @@ export interface BlockRenderProps<P> {
    * lets an offline preview fall back to the saved items.
    */
   shopProducts?: readonly ShopProductCard[];
+  /**
+   * Published posts for a posts block that follows the blog instead of hand-typed
+   * cards. `undefined` means "not loaded", which lets the editor preview fall
+   * back to the saved items.
+   */
+  latestPosts?: readonly LatestPostCard[];
+  /** Offers a feature grid may show instead of hand-typed cards. */
+  promotions?: readonly PromotionCard[];
 }
 
 /**

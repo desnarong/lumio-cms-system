@@ -4,10 +4,17 @@ import type { AdminRoute } from '../route.js';
 import { MessagesProvider, type UiLocale } from '@lumio/ui';
 import { AdminShell } from './AdminShell.js';
 
+interface RenderOptions {
+  locale?: UiLocale;
+  onLocaleChange?: () => void;
+  canCreate?: boolean;
+  features?: readonly ('ai' | 'analytics' | 'newsletter' | 'apps' | 'commerce')[];
+}
+
 const render = (
-  role: 'owner' | 'editor' | 'viewer' = 'owner',
+  role: 'owner' | 'admin' | 'editor' | 'viewer' = 'owner',
   route: AdminRoute = { name: 'dashboard' },
-  options: { locale?: UiLocale; onLocaleChange?: () => void } = {},
+  options: RenderOptions = {},
 ) =>
   renderToStaticMarkup(
     <MessagesProvider locale={options.locale ?? 'th'}>
@@ -18,7 +25,10 @@ const render = (
         role={role}
         publicUrl="https://baandoi.example.com"
         locale={options.locale ?? 'th'}
+        {...(options.features ? { features: options.features } : {})}
+        {...(options.canCreate === undefined ? {} : { canCreate: options.canCreate })}
         {...(options.onLocaleChange ? { onLocaleChange: options.onLocaleChange } : {})}
+        onCreate={vi.fn()}
         onNavigate={vi.fn()}
         onSignOut={vi.fn()}
       >
@@ -27,64 +37,117 @@ const render = (
     </MessagesProvider>,
   );
 
-describe('AdminShell', () => {
-  it('renders the five-menu structure with Thai business labels', () => {
+describe('AdminShell sidebar', () => {
+  it('lists nine flat destinations under three business labels', () => {
     const html = render();
 
-    for (const label of ['ภาพรวม', 'เนื้อหา', 'ดีไซน์', 'ตั้งค่า']) {
+    for (const label of [
+      'งานประจำวัน',
+      'ร้านค้า',
+      'เว็บไซต์',
+      'ภาพรวม',
+      'หน้าเว็บ',
+      'บทความ',
+      'ไฟล์สื่อ',
+      'ดีไซน์',
+      'เติบโต',
+      'ตั้งค่า',
+    ]) {
       expect(html).toContain(label);
     }
-    expect(html).toContain('หน้าเว็บ');
-    expect(html).toContain('บทความ');
-    expect(html).toContain('เปลี่ยน Template');
   });
 
-  it('hides menus the role cannot open', () => {
+  it('never lists a tab in the sidebar, so no choice is offered twice', () => {
+    const html = render();
+
+    for (const tab of ['เมนูนำทาง', 'เปลี่ยน Template', 'ทีมงาน & สิทธิ์', 'สถิติผู้เข้าชม']) {
+      expect(html).not.toContain(tab);
+    }
+  });
+
+  it('hides the doors a viewer cannot open', () => {
     const viewer = render('viewer');
-    expect(viewer).not.toContain('เปลี่ยน Template');
-    expect(viewer).not.toContain('ทีมงาน');
+
+    expect(viewer).not.toContain('ดีไซน์');
+    expect(viewer).not.toContain('เติบโต');
+    expect(viewer).not.toContain('ตั้งค่า');
+    expect(viewer).not.toContain('ร้านค้า');
+    expect(viewer).toContain('หน้าเว็บ');
   });
 
-  it('marks the current screen and keeps one navigation landmark per layout', () => {
-    const html = render('owner', { name: 'design', tab: 'style' });
-    expect(html).toContain('aria-current="page"');
+  it('hides the shop when the site closed the commerce add-on', () => {
+    const html = render(
+      'owner',
+      { name: 'dashboard' },
+      {
+        features: ['ai', 'analytics', 'newsletter', 'apps'],
+      },
+    );
+
+    expect(html).not.toContain('/commerce/products');
     expect(html).toContain('/design/style');
+  });
+
+  it('marks the open screen once and keeps a single navigation landmark', () => {
+    const html = render('owner', { name: 'design', tab: 'menus' });
+
+    expect(html.match(/aria-current="page"/g)).toHaveLength(1);
+    expect(html).toContain('href="/design/style"');
     expect(html.match(/aria-label="เมนูหลัก"/g)).toHaveLength(1);
-    expect(html.match(/aria-label="เมนูหลักบนมือถือ"/g)).toHaveLength(1);
+    expect(html).not.toContain('เมนูหลักบนมือถือ');
   });
 
-  it('greets the user, names the site and offers the public site', () => {
+  it('links the brand back to the overview', () => {
     const html = render();
-    expect(html).toContain('สวัสดี คุณสมชาย');
+
+    expect(html).toContain('shell-brand');
+    expect(html).toContain('href="/dashboard"');
     expect(html).toContain('กาแฟบ้านดอย');
-    expect(html).toContain('https://baandoi.example.com');
-    expect(html).toContain('ออกจากระบบ');
   });
 
-  it('offers the command palette shortcut in the top bar', () => {
+  it('folds the sidebar with a button that says what it does', () => {
     const html = render();
-    expect(html).toContain('shell-topbar__search');
+
+    expect(html).toContain('shell-collapse');
+    expect(html).toContain('aria-expanded="true"');
+    expect(html).toContain('ย่อเมนู');
+  });
+});
+
+describe('AdminShell top bar', () => {
+  it('opens the command palette from the search field, with its shortcut', () => {
+    const html = render();
+
+    expect(html).toContain('shell-search');
     expect(html).toContain('aria-keyshortcuts="Control+K Meta+K"');
     expect(html).toContain('⌘K');
     // The palette itself only renders once opened.
     expect(html).not.toContain('ui-command');
   });
 
-  it('renders the screen inside the shell', () => {
-    expect(render()).toContain('เนื้อหาหน้าจอ');
+  it('offers create, view site, language and sign out, and each one acts', () => {
+    const html = render('owner', { name: 'dashboard' }, { onLocaleChange: vi.fn() });
+
+    expect(html).toContain('shell-create');
+    expect(html).toContain('สร้างใหม่');
+    expect(html).toContain('aria-label="ตัวเลือกเพิ่มเติม"');
+    expect(html).toContain('href="https://baandoi.example.com"');
+    expect(html).toContain('shell-topbar__language');
+    expect(html).toContain('aria-label="ออกจากระบบ"');
   });
 
-  it('renders the whole chrome in English when the language is English', () => {
-    const html = render('owner', { name: 'dashboard' }, { locale: 'en' });
+  it('leaves the create button out when the role may not create', () => {
+    expect(render('viewer', { name: 'dashboard' }, { canCreate: false })).not.toContain(
+      'shell-create',
+    );
+  });
 
-    for (const label of ['Overview', 'Content', 'Design', 'Settings', 'Pages']) {
-      expect(html).toContain(label);
-    }
-    expect(html).toContain('Hello สมชาย');
-    expect(html).toContain('Sign out');
-    // Thai wording must not leak next to the English one.
-    expect(html).not.toContain('ภาพรวม');
-    expect(html).not.toContain('ออกจากระบบ');
+  it('names the signed-in user and their role', () => {
+    const html = render();
+
+    expect(html).toContain('สมชาย');
+    expect(html).toContain('เจ้าของเว็บ');
+    expect(html).toContain('shell-user__avatar');
   });
 
   it('offers the language switcher only when the screen can change it', () => {
@@ -94,10 +157,41 @@ describe('AdminShell', () => {
     expect(render()).not.toContain('shell-topbar__language');
   });
 
-  it('names the language button so it is reachable by screen reader', () => {
+  it('names the language button so a screen reader can reach it', () => {
     const html = render('owner', { name: 'dashboard' }, { locale: 'en', onLocaleChange: vi.fn() });
 
     expect(html).toContain('aria-label="Language"');
     expect(html).toContain('ไทย');
+  });
+});
+
+describe('AdminShell content', () => {
+  it('renders the screen inside a landmark keyboard users can jump to', () => {
+    const html = render();
+
+    expect(html).toContain('เนื้อหาหน้าจอ');
+    expect(html).toContain('shell-skip');
+    expect(html).toContain('href="#shell-content"');
+    expect(html).toContain('id="shell-content"');
+  });
+
+  it('says the back office wants a desktop window', () => {
+    const html = render();
+
+    expect(html).toContain('shell-narrow');
+    expect(html).toContain('จอคอมพิวเตอร์');
+  });
+
+  it('renders the whole chrome in English when the language is English', () => {
+    const html = render('owner', { name: 'dashboard' }, { locale: 'en' });
+
+    for (const label of ['Overview', 'Pages', 'Design', 'Settings', 'Everyday work']) {
+      expect(html).toContain(label);
+    }
+    expect(html).toContain('Sign out');
+    expect(html).toContain('Create');
+    // Thai wording must not leak next to the English one.
+    expect(html).not.toContain('ภาพรวม');
+    expect(html).not.toContain('ออกจากระบบ');
   });
 });

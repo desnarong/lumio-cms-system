@@ -86,6 +86,54 @@ describe('starter blocks', () => {
     ]);
   });
 
+  it('shows live offers when a feature grid follows the promotion list', () => {
+    const html = renderToStaticMarkup(
+      <BlockRenderer
+        block={nodeFor('features', { source: 'promotions', sourceLimit: 3 })}
+        promotions={[
+          {
+            id: 'promo-1',
+            icon: '🎁',
+            title: 'ซื้อ 10 แถม 1',
+            description: 'สำหรับหลอด LED ขั้ว E27',
+          },
+        ]}
+      />,
+    );
+
+    expect(html).toContain('ซื้อ 10 แถม 1');
+    expect(html).toContain('สำหรับหลอด LED ขั้ว E27');
+    expect(html).not.toContain('คั่วสดทุกสัปดาห์');
+  });
+
+  it('accepts a catalog block with no hand-typed cards', () => {
+    expect(() => dataFor('products', { source: 'shop', items: [] })).not.toThrow();
+    expect(() => dataFor('posts', { source: 'latest', items: [] })).not.toThrow();
+  });
+
+  it('shows only the published posts when the block follows the blog', () => {
+    const html = renderToStaticMarkup(
+      <BlockRenderer
+        block={nodeFor('posts', { source: 'latest', sourceLimit: 2 })}
+        latestPosts={[
+          {
+            id: 'p1',
+            title: 'บทความใหม่',
+            slug: 'new-post',
+            excerpt: 'เกริ่นนำ',
+            date: '28/10/2026',
+            image: null,
+            link: '/posts/new-post',
+          },
+        ]}
+      />,
+    );
+
+    expect(html).toContain('บทความใหม่');
+    expect(html).toContain('href="/posts/new-post"');
+    expect(html).not.toContain('คั่วอ่อน คั่วกลาง');
+  });
+
   it('applies a width and minimum height set by dragging in the editor', () => {
     const node = nodeFor('paragraph');
     const html = renderToStaticMarkup(

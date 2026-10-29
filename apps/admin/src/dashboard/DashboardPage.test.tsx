@@ -54,7 +54,6 @@ const summary = (overrides: Partial<DashboardSummary> = {}): DashboardSummary =>
 const props = (overrides: Partial<DashboardViewProps> = {}): DashboardViewProps => ({
   summary: summary(),
   error: null,
-  onCreate: vi.fn(),
   onOpenEditor: vi.fn(),
   onNavigate: vi.fn(),
   onDismissChecklist: vi.fn(),
@@ -78,7 +77,7 @@ describe('DashboardView languages', () => {
     expect(html).toContain('Overview of กาแฟบ้านดอย');
     expect(html).toContain('Visitors today');
     expect(html).toContain('Site health');
-    expect(html).toContain('New page');
+    expect(html).toContain('Edit site');
     // Nothing may stay in Thai on a translated screen.
     expect(html).not.toContain('ผู้เข้าชมวันนี้');
     expect(html).not.toContain('สุขภาพเว็บ');
@@ -138,12 +137,14 @@ describe('DashboardView', () => {
     expect(render().match(/ui-button--primary/g)).toHaveLength(1);
   });
 
-  it('offers the four shortcuts and the public site', () => {
+  it('keeps one primary action and leaves creating to the top bar', () => {
     const html = render();
+
     expect(html).toContain('แก้เว็บ');
-    expect(html).toContain('หน้าใหม่');
-    expect(html).toContain('เขียนบทความ');
-    expect(html).toContain('https://baandoi.example.com');
+    // Creating and viewing the site live in the shell, not on every screen.
+    expect(html).not.toContain('หน้าใหม่');
+    expect(html).not.toContain('เขียนบทความ');
+    expect(html).not.toContain('dashboard__shortcuts');
   });
 
   it('surfaces a failed reload without hiding the numbers', () => {

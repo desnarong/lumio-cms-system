@@ -70,6 +70,7 @@ model Site {
   paymentSlips     PaymentSlip[]
   backups          SiteBackup[]
   notFound         NotFound[]
+  promotions       Promotion[]
 
   @@index([stripeSubscriptionId])
   @@map("sites")
@@ -631,4 +632,38 @@ model AuditLog {
 
   @@index([siteId, createdAt(sort: Desc)])
   @@map("audit_logs")
+}
+
+
+/// A marketing offer such as "ซื้อ 10 แถม 1" or free shipping. The promotion
+/// page lists these automatically, and dates decide when they are shown.
+model Promotion {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId      String    @map("site_id") @db.Uuid
+  title       String
+  description String    @default("")
+  /// bundle | discount | shipping | gift | install | other
+  kind        String    @default("other")
+  /// Small ribbon such as "เฉพาะเดือนนี้"; empty hides it.
+  badge       String    @default("")
+  /// Picture shown on the promotion card; empty keeps the icon only.
+  imageUrl    String?   @map("image_url")
+  /// Alt text for the picture; empty falls back to the title.
+  imageAlt    String    @default("") @map("image_alt")
+  /// "buy 10 get 1": how many units the customer buys …
+  buyQty      Int?      @map("buy_qty")
+  /// … and how many they get free.
+  getQty      Int?      @map("get_qty")
+  startsAt    DateTime? @map("starts_at") @db.Timestamptz(6)
+  endsAt      DateTime? @map("ends_at") @db.Timestamptz(6)
+  active      Boolean   @default(true)
+  sort        Int       @default(0)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, active, startsAt, endsAt])
+  @@index([siteId, sort])
+  @@map("promotions")
 }

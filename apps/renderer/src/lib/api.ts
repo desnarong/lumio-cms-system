@@ -9,10 +9,12 @@ import {
   slipSubmissionSchema,
   publicPageSchema,
   publicPostListSchema,
+  publicPromotionListSchema,
   publicSitemapSchema,
   type PageviewInput,
   type PublicPage,
   type PublicPostList,
+  type PublicPromotion,
   type PublicSitemap,
   type CartInput,
   type CreateOrderInput,
@@ -64,6 +66,8 @@ export interface PublicApi {
   getPage(host: string, slug: string, locale?: string): Promise<PublicPage>;
   getPost(host: string, slug: string, locale?: string): Promise<PublicPage>;
   listPosts(host: string, locale?: string): Promise<PublicPostList>;
+  /** Offers the shop is running right now, for the promotion page. */
+  listPromotions(host: string): Promise<PublicPromotion[]>;
   getSitemap(host: string): Promise<PublicSitemap>;
   /** Draft preview by signed token; always fetched fresh, never cached (design 10.4). */
   getPreview(token: string): Promise<PublicPage>;
@@ -164,6 +168,10 @@ export const createPublicApi = (options: PublicApiOptions): PublicApi => {
     listPosts: (host, locale) =>
       request(`${encodeURIComponent(host)}/posts${localeQuery(locale)}`, (value) =>
         publicPostListSchema.parse(value),
+      ),
+    listPromotions: (host) =>
+      request(`${encodeURIComponent(host)}/promotions`, (value) =>
+        publicPromotionListSchema.parse(value),
       ),
     getSitemap: (host) =>
       request(`${encodeURIComponent(host)}/sitemap`, (value) => publicSitemapSchema.parse(value)),

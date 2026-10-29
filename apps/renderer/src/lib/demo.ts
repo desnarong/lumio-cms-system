@@ -14,6 +14,7 @@ import {
   type PublicGlobalBlocks,
   type PublicPage,
   type PublicPostList,
+  type PublicPromotion,
   type PublicSite,
   type PublicSitemap,
   type PublicTranslation,
@@ -167,6 +168,8 @@ const pricedCart = (
       variantLabel: null,
       quantity: item.quantity,
       lineTotal: product.price * item.quantity,
+      freeQuantity: 0,
+      promotionTitle: null,
     }];
   });
   const totals = cartTotals(
@@ -176,8 +179,10 @@ const pricedCart = (
   return {
     items: lines,
     count: lines.reduce((sum, line) => sum + line.quantity, 0),
+    freeCount: 0,
     ...totals,
     currency: 'THB',
+    promotions: [],
   };
 };
 
@@ -373,6 +378,35 @@ const pageOf = (content: PublicContent, requested: string): PublicPage => ({
   redirect: null,
 });
 
+const demoPromotions: PublicPromotion[] = [
+  {
+    id: 'demo-promo-bundle',
+    title: 'ซื้อ 10 แถม 1',
+    description: 'สำหรับหลอด LED ขั้ว E27 ทุกขนาด',
+    kind: 'bundle',
+    badge: '',
+    imageUrl: null,
+    imageAlt: '',
+    buyQty: 10,
+    getQty: 1,
+    startsAt: null,
+    endsAt: null,
+  },
+  {
+    id: 'demo-promo-shipping',
+    title: 'ส่งฟรีทั่วประเทศ',
+    description: 'เมื่อสั่งซื้อครบ 5,000 บาท',
+    kind: 'shipping',
+    badge: '',
+    imageUrl: null,
+    imageAlt: '',
+    buyQty: null,
+    getQty: null,
+    startsAt: null,
+    endsAt: null,
+  },
+];
+
 const summaryOf = (content: PublicContent) => ({
   id: content.id,
   title: content.title,
@@ -404,6 +438,9 @@ export const createDemoPublicApi = (): PublicApi => ({
     const content = findContent('post', slug, requested);
     if (!content) throw new ContentNotFoundError();
     return pageOf(content, requested);
+  },
+  async listPromotions(): Promise<PublicPromotion[]> {
+    return demoPromotions;
   },
   async listPosts(_host: string, locale?: string): Promise<PublicPostList> {
     const requested = requestedLocale(locale);

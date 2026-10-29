@@ -6,7 +6,7 @@ import {
   type SeoGrade,
   type SeoHealth,
 } from '@lumio/shared';
-import { Icon, Button, Card, Skeleton, useT, type MessageKey } from '@lumio/ui';
+import { Icon, Button, Card, PageHeader, Skeleton, useT, type MessageKey } from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import { ApiError } from '../api-error.js';
 import { HealthRing } from '../dashboard/DashboardPage.js';
@@ -29,6 +29,8 @@ export interface SeoViewProps {
   metaAssistant?: ReactNode;
   /** Addresses visitors tried in the last 30 days that no page answered. */
   brokenLinks?: NotFoundList | null;
+  /** Tab strip of the growth screens, rendered inside this screen's header. */
+  headerTabs?: ReactNode;
 }
 
 const CheckRow = ({
@@ -83,12 +85,22 @@ export const SeoView = ({
   onNavigate,
   metaAssistant,
   brokenLinks,
+  headerTabs,
 }: SeoViewProps) => {
   const t = useT();
+  const header = (
+    <PageHeader
+      eyebrow={t('nav.section.site')}
+      title={t('nav.seo')}
+      description={t('seo.subtitle')}
+      tabs={headerTabs}
+    />
+  );
 
   if (loading && !health) {
     return (
       <div className="growth">
+        {header}
         <Skeleton shape="block" height={120} />
         <Skeleton shape="text" lines={5} />
       </div>
@@ -98,6 +110,7 @@ export const SeoView = ({
   if (!health) {
     return (
       <div className="growth">
+        {header}
         <p className="growth__inline-error" role="alert">
           {error ?? t('seo.loadError')}
         </p>
@@ -112,10 +125,7 @@ export const SeoView = ({
 
   return (
     <div className="growth">
-      <header className="growth__header">
-        <h1 className="growth__title">{t('nav.seo')}</h1>
-        <p className="growth__subtitle">{t('seo.subtitle')}</p>
-      </header>
+      {header}
 
       {error ? (
         <p className="growth__inline-error" role="alert">
@@ -184,9 +194,11 @@ export interface SeoPageProps {
   onNavigate: (path: string) => void;
   /** Writing meta text needs a content-write role. */
   canManage?: boolean;
+  /** Tab strip of the growth screens. */
+  headerTabs?: ReactNode;
 }
 
-export const SeoPage = ({ api, onNavigate, canManage = true }: SeoPageProps) => {
+export const SeoPage = ({ api, onNavigate, canManage = true, headerTabs }: SeoPageProps) => {
   const t = useT();
   const [health, setHealth] = useState<SeoHealth | null>(null);
   const [loading, setLoading] = useState(true);
@@ -222,6 +234,7 @@ export const SeoPage = ({ api, onNavigate, canManage = true }: SeoPageProps) => 
       onRetry={() => void load()}
       onNavigate={onNavigate}
       brokenLinks={brokenLinks}
+      {...(headerTabs ? { headerTabs } : {})}
       metaAssistant={
         health ? (
           <SeoMetaAssistant

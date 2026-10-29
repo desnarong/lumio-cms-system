@@ -1,5 +1,5 @@
 import type { DesignTab } from '../route.js';
-import { Tabs, useT, type MessageKey } from '@lumio/ui';
+import { PageHeader, Tabs, useT, type MessageKey } from '@lumio/ui';
 import type { DesignApi } from './api.js';
 import { HeaderFooterPanel } from './HeaderFooterPanel.js';
 import { useDesignTokens } from './hooks.js';
@@ -25,9 +25,10 @@ const TABS: { id: DesignTab; labelKey: MessageKey }[] = [
 ];
 
 /**
- * Design menu (docs/design/05-admin-ia.md 5.1): style, navigation, header/footer,
- * template switching and the saved sections library. Every tab has its own URL, so
- * links from the dashboard land directly on the right tab.
+ * Design screens (docs/design/05-admin-ia.md 5.1): style, navigation,
+ * header/footer, template switching and the saved sections library. The sidebar
+ * has one door for all of them, so the tabs here are the only sub-navigation.
+ * Every tab has its own URL, so links from the dashboard land directly on it.
  */
 export const DesignPage = ({ api, tab, onNavigate, locales = [] }: DesignPageProps) => {
   const t = useT();
@@ -35,15 +36,17 @@ export const DesignPage = ({ api, tab, onNavigate, locales = [] }: DesignPagePro
 
   return (
     <div className="design-page">
-      <header className="design-page__header">
-        <h1 className="design-page__title">{t('design.title')}</h1>
-        <p className="design-page__subtitle">{t('design.subtitle')}</p>
-      </header>
-
-      <Tabs
-        items={TABS.map((item) => ({ id: item.id, label: t(item.labelKey) }))}
-        value={tab}
-        onChange={(id) => onNavigate(`/design/${id}`)}
+      <PageHeader
+        eyebrow={t('nav.section.site')}
+        title={t('design.title')}
+        description={t('design.subtitle')}
+        tabs={
+          <Tabs
+            items={TABS.map((item) => ({ id: item.id, label: t(item.labelKey) }))}
+            value={tab}
+            onChange={(id) => onNavigate(`/design/${id}`)}
+          />
+        }
       />
 
       {tab === 'style' ? <StylePanel design={design} /> : null}

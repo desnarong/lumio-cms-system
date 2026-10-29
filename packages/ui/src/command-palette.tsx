@@ -61,6 +61,11 @@ export const CommandPalette = ({
   useEffect(() => {
     if (!open || !canUseDOM) return undefined;
     inputRef.current?.focus();
+    return undefined;
+  }, [open]);
+
+  useEffect(() => {
+    if (!open || !canUseDOM) return undefined;
 
     const handleKeyDown = (event: KeyboardEvent): void => {
       if (event.key === 'Escape') {

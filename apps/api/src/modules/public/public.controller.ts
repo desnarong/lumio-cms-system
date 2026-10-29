@@ -103,6 +103,13 @@ export class PublicController {
     return ok(await this.publicContent.locales(host));
   }
 
+  @Get('promotions')
+  @RateLimit({ limit: 300, windowMs: 60_000 })
+  @UseInterceptors(PAGE_CACHE)
+  async promotions(@Param('host') host: string) {
+    return ok(await this.publicContent.promotions(host));
+  }
+
   @Get('posts')
   @RateLimit({ limit: 300, windowMs: 60_000 })
   @UseInterceptors(PAGE_CACHE)

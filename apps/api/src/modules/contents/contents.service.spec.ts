@@ -11,6 +11,7 @@ const SITE_ID = '00000000-0000-4000-8000-0000000000a1';
 const CONTENT_ID = '00000000-0000-4000-8000-0000000000c1';
 const USER_ID = '00000000-0000-4000-8000-000000000001';
 const VERSION_ID = '00000000-0000-4000-8000-0000000000e1';
+const MEDIA_ID = '00000000-0000-4000-8000-0000000000f1';
 
 const blocks: BlockNode[] = [
   {
@@ -132,6 +133,22 @@ describe('ContentsService.get', () => {
     await expect(contents.get(SITE_ID, CONTENT_ID)).rejects.toMatchObject({ code: 'not_found' });
   });
 
+  it('returns the cover image URL for a post', async () => {
+    const contents = service({
+      content: {
+        findUnique: vi.fn().mockResolvedValue({
+          ...contentRow({ type: 'post', coverMediaId: MEDIA_ID }),
+          coverMedia: { storageKey: 'baandoi/posts/cover.jpg', variants: [], status: 'ready' },
+        }),
+      },
+    });
+
+    const detail = await contents.get(SITE_ID, CONTENT_ID);
+
+    expect(detail.coverMediaId).toBe(MEDIA_ID);
+    expect(detail.coverImageUrl).toContain('baandoi/posts/cover.jpg');
+  });
+
   it('falls back to empty blocks when stored data is not a block tree', async () => {
     const contents = service({
       content: { findUnique: vi.fn().mockResolvedValue(contentRow({ blocksDraft: 'broken' })) },
@@ -213,6 +230,57 @@ describe('ContentsService.create', () => {
       }),
     );
     expect(audit.log).toHaveBeenCalledWith(expect.objectContaining({ action: 'content.create' }));
+  });
+
+  it('stores the cover image chosen for a post', async () => {
+    const create = vi.fn().mockResolvedValue(contentRow({ type: 'post', revision: 1, coverMediaId: MEDIA_ID }));
+    const contents = service({
+      content: { findFirst: vi.fn().mockResolvedValue(null), create },
+      media: { findUnique: vi.fn().mockResolvedValue({ id: MEDIA_ID }) },
+    });
+
+    await contents.create(
+      SITE_ID,
+      {
+        type: 'post',
+        title: 'บทความ',
+        slug: 'post',
+        locale: 'th',
+        blocks: [],
+        seo: { noindex: false },
+        coverMediaId: MEDIA_ID,
+      },
+      USER_ID,
+    );
+
+    expect(create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ coverMediaId: MEDIA_ID }),
+      }),
+    );
+  });
+
+  it('refuses a cover image the site does not own', async () => {
+    const contents = service({
+      content: { findFirst: vi.fn().mockResolvedValue(null) },
+      media: { findUnique: vi.fn().mockResolvedValue(null) },
+    });
+
+    await expect(
+      contents.create(
+        SITE_ID,
+        {
+          type: 'post',
+          title: 'บทความ',
+          slug: 'post',
+          locale: 'th',
+          blocks: [],
+          seo: { noindex: false },
+          coverMediaId: MEDIA_ID,
+        },
+        USER_ID,
+      ),
+    ).rejects.toMatchObject({ code: 'validation_error' });
   });
 
   it('rejects a slug that already exists in the same site, locale and type', async () => {

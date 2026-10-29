@@ -1,6 +1,12 @@
 import type { BlockNode, PublicForm } from '@lumio/shared';
 import { registry, type BlockRegistry } from '../registry.js';
-import type { AnyBlockDefinition, LanguageLink, ShopProductCard } from '../types.js';
+import type {
+  AnyBlockDefinition,
+  LanguageLink,
+  LatestPostCard,
+  PromotionCard,
+  ShopProductCard,
+} from '../types.js';
 import { BlockShell } from './shell.js';
 
 export interface BlockRendererProps {
@@ -13,6 +19,10 @@ export interface BlockRendererProps {
   languages?: readonly LanguageLink[];
   /** Products the shop publishes now; passed to a products block reading the catalog. */
   shopProducts?: readonly ShopProductCard[];
+  /** Published posts; passed to a posts block reading the blog. */
+  latestPosts?: readonly LatestPostCard[];
+  /** Live offers; passed to a feature grid that follows the promotion list. */
+  promotions?: readonly PromotionCard[];
 }
 
 export interface BlockTreeRendererProps extends Omit<BlockRendererProps, 'block'> {
@@ -30,6 +40,8 @@ interface SharedBlockData {
   forms?: readonly PublicForm[];
   languages?: readonly LanguageLink[];
   shopProducts?: readonly ShopProductCard[];
+  latestPosts?: readonly LatestPostCard[];
+  promotions?: readonly PromotionCard[];
 }
 
 const renderBlock = (
@@ -58,6 +70,8 @@ const renderBlock = (
       {...(shared.forms ? { forms: shared.forms } : {})}
       {...(shared.languages ? { languages: shared.languages } : {})}
       {...(shared.shopProducts ? { shopProducts: shared.shopProducts } : {})}
+      {...(shared.latestPosts ? { latestPosts: shared.latestPosts } : {})}
+      {...(shared.promotions ? { promotions: shared.promotions } : {})}
     />
   );
 };
@@ -73,12 +87,16 @@ export const BlockRenderer = ({
   forms,
   languages,
   shopProducts,
+  latestPosts,
+  promotions,
 }: BlockRendererProps) => {
   const definition = blockRegistry.get(block.type);
   const shared: SharedBlockData = {
     ...(forms ? { forms } : {}),
     ...(languages ? { languages } : {}),
     ...(shopProducts ? { shopProducts } : {}),
+    ...(latestPosts ? { latestPosts } : {}),
+    ...(promotions ? { promotions } : {}),
   };
   return (
     <BlockShell block={block}>

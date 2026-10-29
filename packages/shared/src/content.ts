@@ -91,6 +91,8 @@ export const createContentInputSchema = z.object({
   slug: slugSchema,
   locale: z.string().min(2).max(10).default('th'),
   excerpt: z.string().max(300).optional(),
+  /** Cover image from the media library; shown on post cards and the post page. */
+  coverMediaId: z.string().uuid().nullable().optional(),
   blocks: blockTreeSchema.default([]),
   seo: seoSchema.default({}),
 });
@@ -139,6 +141,8 @@ export interface ContentSummary {
   publishedAt: string | null;
   /** Set when the page is in the trash; drives the restore/purge actions. */
   archivedAt: string | null;
+  /** Public URL of the chosen cover image, when the list loaded it. */
+  coverImageUrl?: string | null;
 }
 
 export interface ContentDetail extends ContentSummary {
@@ -147,6 +151,10 @@ export interface ContentDetail extends ContentSummary {
   publishedBlocks: BlockTree | null;
   seo: Seo;
   createdAt: string;
+  /** Cover image picked in the media library; posts show it in the blog list. */
+  coverMediaId?: string | null;
+  /** Public URL of the cover, so the editor can show the current picture. */
+  coverImageUrl?: string | null;
 }
 
 export interface ContentVersionSummary {

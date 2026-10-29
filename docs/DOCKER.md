@@ -71,8 +71,9 @@ docker compose --env-file .env.docker --profile app up -d --build
 - ต้องมี DNS ของ `<โดเมน>`, `*.<โดเมน>`, `admin.<โดเมน>` **และโฮสต์ของ API**
   (`LUMIO_API_HOST` ตั้งชื่ออะไรก็ได้ เช่น `apilumio.example.com`; `Caddyfile.prod`
   มี server block ของ API ให้แล้ว เพราะ admin เรียก API ที่นี่)
-- ถ้าเครื่องมี Nginx เดิมยึดพอร์ต 80/443 อยู่ ให้ข้าม container `caddy`
-  และใช้ `infra/nginx/lumio-vps.conf` แทน (ดู [`DEPLOY-VPS.md`](DEPLOY-VPS.md))
+- ถ้าเครื่องมี reverse proxy เดิม (Nginx หรือ Nginx Proxy Manager) ยึดพอร์ต 80/443
+  ให้ข้าม container `caddy` และตั้ง Proxy Host ตาม [`DEPLOY-VPS.md`](DEPLOY-VPS.md)
+  (Nginx เปล่า ๆ ใช้ `infra/nginx/lumio-vps.conf` เป็นตัวอย่างได้)
 
 ## Volume ที่ต้องสำรอง
 

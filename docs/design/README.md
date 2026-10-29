@@ -35,6 +35,7 @@
 | 22 | [22-why-easier.md](22-why-easier.md) | Checklist "ทำไมง่ายกว่า WordPress" |
 | 23 | [23-security-review.md](23-security-review.md) | ผลตรวจความปลอดภัยเฟส 1 (blocker / ควรแก้ / ข้อสังเกต) |
 | 24 | [24-community-licensing.md](24-community-licensing.md) | Community edition, รูปแบบไลเซนส์, API ตรวจลายเซ็น |
+| 25 | [25-admin-redesign.md](25-admin-redesign.md) | Redesign layout ของ admin (sidebar แบน 9 ประตู, PageHeader, desktop-only) และ Phone pass ของเว็บสาธารณะ |
 
 ## เอกสารที่เกี่ยวข้อง
 

@@ -133,6 +133,16 @@ export const FeaturesPanel = ({ props, style, mode, onChange }: BlockPanelProps<
           onChange={(event) => onChange('props.subheadingWidth', event.target.value)}
         />
         <Select
+          label="แหล่งเนื้อหา"
+          hint="เลือกโปรโมชั่นเพื่อให้รายการอัปเดตเองตามวันที่และสถานะเปิด/ปิด"
+          value={props.source}
+          options={[
+            { value: 'manual', label: 'เขียนการ์ดเอง' },
+            { value: 'promotions', label: 'โปรโมชั่นที่กำลังเปิด' },
+          ]}
+          onChange={(event) => onChange('props.source', event.target.value)}
+        />
+        <Select
           label="จำนวนคอลัมน์"
           value={props.columns}
           options={FEATURE_COLUMNS.map((column) => ({
@@ -143,6 +153,29 @@ export const FeaturesPanel = ({ props, style, mode, onChange }: BlockPanelProps<
         />
       </PanelSection>
 
+      {props.source === 'promotions' ? (
+        <PanelSection title="โปรโมชั่นที่แสดง">
+          <p className="lumio-panel-hint">
+            การ์ดจะมาจากโปรโมชั่นที่เปิดอยู่และยังไม่หมดอายุ จัดการรายการได้ที่ ร้านค้า › โปรโมชั่น
+          </p>
+          <TextField
+            label="จำนวนที่แสดง"
+            type="number"
+            min={1}
+            max={FEATURES_MAX_ITEMS}
+            value={String(props.sourceLimit)}
+            onChange={(event) =>
+              onChange(
+                'props.sourceLimit',
+                Math.min(
+                  FEATURES_MAX_ITEMS,
+                  Math.max(1, Math.round(Number(event.target.value) || 3)),
+                ),
+              )
+            }
+          />
+        </PanelSection>
+      ) : (
       <PanelSection title="จุดเด่น">
         <PanelItemList
           items={props.items}
@@ -334,6 +367,7 @@ export const FeaturesPanel = ({ props, style, mode, onChange }: BlockPanelProps<
           }}
         </PanelItemList>
       </PanelSection>
+      )}
 
       <PanelSection title="การ์ด">
         <Select

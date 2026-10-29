@@ -7,6 +7,10 @@ export type PostColumns = (typeof POST_COLUMNS)[number];
 
 export const POSTS_MAX_ITEMS = 12;
 
+/** Where the cards come from: the editor's own list, or the site's published posts. */
+export const POST_SOURCES = ['manual', 'latest'] as const;
+export type PostSource = (typeof POST_SOURCES)[number];
+
 /** One article card shown on the page. */
 export const postCardSchema = z.object({
   image: imageValueSchema.nullable().default(null),
@@ -25,12 +29,18 @@ export const postsPropsSchema = z.object({
   heading: z.string().default('บทความล่าสุด'),
   subheading: z.string().default('เรื่องราวและความรู้ที่เราอยากแบ่งปัน'),
   columns: z.enum(POST_COLUMNS).default('3'),
+  /**
+   * "latest" follows the blog: a new post appears here on its own and a deleted
+   * one disappears, so this block never shows stale cards.
+   */
+  source: z.enum(POST_SOURCES).default('manual'),
+  /** How many published posts a "latest" block shows. */
+  sourceLimit: z.number().int().min(1).max(POSTS_MAX_ITEMS).default(3),
   showImage: z.boolean().default(true),
   showExcerpt: z.boolean().default(true),
   showDate: z.boolean().default(true),
   items: z
     .array(postCardSchema)
-    .min(1)
     .max(POSTS_MAX_ITEMS)
     .default(() => [
       {

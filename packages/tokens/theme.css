@@ -50,6 +50,10 @@
   --layout-sidebar-collapsed-width: 72px;
   --layout-content-max-width: 1200px;
   --layout-wide-max-width: 1728px;
+  --layout-admin-min-width: 1024px;
+  --layout-admin-max-width: 1440px;
+  --layout-topbar-height: 64px;
+  --layout-tap-target: 44px;
   --layout-control-height-sm: 32px;
   --layout-control-height-md: 40px;
   --layout-control-height-lg: 48px;

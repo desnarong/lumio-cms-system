@@ -11,6 +11,8 @@ import type {
   ProductList,
   ProductListQuery,
   ProductSummary,
+  Promotion,
+  PromotionInput,
   RefundOrderInput,
   ReviewSlipInput,
   UpdateBankSettingsInput,
@@ -31,6 +33,11 @@ export interface CommerceApi {
   updateProduct(productId: string, input: UpdateProductInput): Promise<ProductSummary>;
   /** Soft delete: the product leaves the shop but old orders keep their receipt. */
   archiveProduct(productId: string): Promise<void>;
+  /** Offer campaigns shown on the promotion page (e.g. "ซื้อ 10 แถม 1"). */
+  listPromotions(): Promise<Promotion[]>;
+  createPromotion(input: PromotionInput): Promise<Promotion>;
+  updatePromotion(promotionId: string, input: Partial<PromotionInput>): Promise<Promotion>;
+  removePromotion(promotionId: string): Promise<void>;
   listOrders(query?: OrderListQuery): Promise<OrderList>;
   getOrder(orderId: string): Promise<OrderDetail>;
   updateOrderStatus(orderId: string, input: UpdateOrderStatusInput): Promise<OrderDetail>;
@@ -151,6 +158,18 @@ export const createHttpCommerceApi = ({
       }),
     archiveProduct: async (productId) => {
       await request<{ success: boolean }>(`/products/${productId}`, { method: 'DELETE' });
+    },
+
+    listPromotions: () => request<Promotion[]>('/promotions'),
+    createPromotion: (input) =>
+      request<Promotion>('/promotions', { method: 'POST', body: JSON.stringify(input) }),
+    updatePromotion: (promotionId, input) =>
+      request<Promotion>(`/promotions/${promotionId}`, {
+        method: 'PATCH',
+        body: JSON.stringify(input),
+      }),
+    removePromotion: async (promotionId) => {
+      await request<{ success: boolean }>(`/promotions/${promotionId}`, { method: 'DELETE' });
     },
 
     listOrders: async (query: OrderListQuery = { limit: 100 }) => {

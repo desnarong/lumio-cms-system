@@ -5,26 +5,6 @@
   flex-direction: column;
   gap: var(--space-lg);
 }
-
-.settings-page__header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.settings-page__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  font-weight: 700;
-}
-
-.settings-page__subtitle {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-}
-
 .settings-panel {
   display: flex;
   flex-direction: column;

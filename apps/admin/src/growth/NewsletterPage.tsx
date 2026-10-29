@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import type { Subscriber, SubscriberList, SubscriberStatus } from '@lumio/shared';
 import {
   Button,
   Card,
   DataTable,
+  PageHeader,
   Select,
   TextField,
   useT,
@@ -43,6 +44,8 @@ export interface NewsletterViewProps {
   onToggle: (subscriber: Subscriber) => void;
   onRemove: (subscriber: Subscriber) => void;
   onRetry: () => void;
+  /** Tab strip of the growth screens, rendered inside this screen's header. */
+  headerTabs?: ReactNode;
 }
 
 const AddSubscriberForm = ({
@@ -104,6 +107,7 @@ export const NewsletterView = ({
   onToggle,
   onRemove,
   onRetry,
+  headerTabs,
 }: NewsletterViewProps) => {
   const t = useT();
 
@@ -157,17 +161,22 @@ export const NewsletterView = ({
 
   return (
     <div className="growth">
-      <header className="growth__header">
-        <h1 className="growth__title">{t('nav.newsletter')}</h1>
-        <p className="growth__subtitle">
-          {list
-            ? t('newsletter.count', {
+      <PageHeader
+        eyebrow={t('nav.section.site')}
+        title={t('nav.newsletter')}
+        description={t('newsletter.subtitle')}
+        tabs={headerTabs}
+        meta={
+          list ? (
+            <span className="chip chip--primary">
+              {t('newsletter.count', {
                 active: numberFormat.format(list.activeCount),
                 total: numberFormat.format(list.total),
-              })
-            : t('newsletter.subtitle')}
-        </p>
-      </header>
+              })}
+            </span>
+          ) : undefined
+        }
+      />
 
       <Card className="newsletter">
         {canManage ? <AddSubscriberForm adding={adding} error={addError} onAdd={onAdd} /> : null}
@@ -211,9 +220,11 @@ export const NewsletterView = ({
 export interface NewsletterPageProps {
   api: NewsletterApi;
   canManage: boolean;
+  /** Tab strip of the growth screens. */
+  headerTabs?: ReactNode;
 }
 
-export const NewsletterPage = ({ api, canManage }: NewsletterPageProps) => {
+export const NewsletterPage = ({ api, canManage, headerTabs }: NewsletterPageProps) => {
   const t = useT();
   const { push } = useToast();
   const [list, setList] = useState<SubscriberList | null>(null);
@@ -252,9 +263,7 @@ export const NewsletterPage = ({ api, canManage }: NewsletterPageProps) => {
       await api.add({ email: email.trim().toLowerCase() });
       await load();
     } catch (addFailure) {
-      setAddError(
-        addFailure instanceof ApiError ? addFailure.message : t('newsletter.addError'),
-      );
+      setAddError(addFailure instanceof ApiError ? addFailure.message : t('newsletter.addError'));
     } finally {
       setAdding(false);
     }
@@ -275,9 +284,7 @@ export const NewsletterPage = ({ api, canManage }: NewsletterPageProps) => {
         },
       });
     } catch (toggleError) {
-      setError(
-        toggleError instanceof ApiError ? toggleError.message : t('newsletter.toggleError'),
-      );
+      setError(toggleError instanceof ApiError ? toggleError.message : t('newsletter.toggleError'));
     }
   };
 
@@ -295,9 +302,7 @@ export const NewsletterPage = ({ api, canManage }: NewsletterPageProps) => {
         },
       });
     } catch (removeError) {
-      setError(
-        removeError instanceof ApiError ? removeError.message : t('newsletter.removeError'),
-      );
+      setError(removeError instanceof ApiError ? removeError.message : t('newsletter.removeError'));
     }
   };
 
@@ -312,9 +317,7 @@ export const NewsletterPage = ({ api, canManage }: NewsletterPageProps) => {
       link.click();
       URL.revokeObjectURL(url);
     } catch (exportError) {
-      setError(
-        exportError instanceof ApiError ? exportError.message : t('newsletter.exportError'),
-      );
+      setError(exportError instanceof ApiError ? exportError.message : t('newsletter.exportError'));
     }
   };
 
@@ -335,6 +338,7 @@ export const NewsletterPage = ({ api, canManage }: NewsletterPageProps) => {
       onToggle={(subscriber) => void toggle(subscriber)}
       onRemove={(subscriber) => void remove(subscriber)}
       onRetry={() => void load()}
+      {...(headerTabs ? { headerTabs } : {})}
     />
   );
 };

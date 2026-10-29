@@ -93,6 +93,7 @@ node scripts/prune-crush-cache.mjs --apply --path page.test.tsx     # บัง�
 | หลักการ/วิสัยทัศน์ | `docs/design/01-vision.md` |
 | UX / Editor | `docs/design/04-ux.md` |
 | Admin IA | `docs/design/05-admin-ia.md` |
+| Admin redesign (layout ใหม่) | `docs/design/25-admin-redesign.md` |
 | Design System | `docs/design/06-design-system.md` |
 | Blocks | `docs/design/07-blocks.md` |
 | Architecture | `docs/design/10-architecture.md` |

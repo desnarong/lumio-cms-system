@@ -134,6 +134,12 @@ export const layout = {
   sidebarCollapsedWidth: '72px',
   contentMaxWidth: '1200px',
   wideMaxWidth: '1728px',
+  /** Back office: desktop-only floor and the width its content column grows to. */
+  adminMinWidth: '1024px',
+  adminMaxWidth: '1440px',
+  topbarHeight: '64px',
+  /** Smallest comfortable touch target on the public site (WCAG 2.5.5). */
+  tapTarget: '44px',
   controlHeightSm: '32px',
   controlHeightMd: '40px',
   controlHeightLg: '48px',

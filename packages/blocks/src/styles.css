@@ -164,6 +164,13 @@
   line-height: var(--text-xl-line-height);
 }
 
+/* A size typed by hand in the editor arrives as `--run-size`. It is the
+   desktop size; the phone stylesheet below caps it. */
+.lumio-run[data-run-size='true'] {
+  font-size: var(--run-size);
+  line-height: 1.2;
+}
+
 /* Inline text editing */
 .lumio-editable {
   outline: none;
@@ -381,18 +388,6 @@
 .lumio-hero[data-heading-size='xl'] .lumio-hero__heading {
   font-size: calc(var(--text-5xl) * var(--block-text-scale, 1));
   line-height: calc(var(--text-5xl-line-height) * var(--block-text-scale, 1));
-}
-
-@media (max-width: 640px) {
-  .lumio-hero[data-heading-size='lg'] .lumio-hero__heading {
-    font-size: calc(var(--text-3xl) * var(--block-text-scale, 1));
-    line-height: calc(var(--text-3xl-line-height) * var(--block-text-scale, 1));
-  }
-
-  .lumio-hero[data-heading-size='xl'] .lumio-hero__heading {
-    font-size: calc(var(--text-4xl) * var(--block-text-scale, 1));
-    line-height: calc(var(--text-4xl-line-height) * var(--block-text-scale, 1));
-  }
 }
 
 .lumio-hero__subheading {
@@ -1429,6 +1424,9 @@
   overflow: hidden;
   border-radius: var(--radius-lg);
   background: var(--color-surface);
+  /* A card sits on a brand band in many designs; its own surface is light, so
+     the text inside must inherit the page ink, not the band's white. */
+  color: var(--color-text);
 }
 
 .lumio-products[data-card-style='card'] .lumio-products__card {
@@ -1450,6 +1448,14 @@
 .lumio-products__media .lumio-img,
 .lumio-posts__media .lumio-img {
   width: 100%;
+}
+
+/* A product with no photo would otherwise reserve a full square of empty
+   space and push the price off the card's first screen. */
+.lumio-products__media .lumio-img--placeholder,
+.lumio-posts__media .lumio-img--placeholder {
+  aspect-ratio: auto;
+  min-height: var(--space-4xl);
 }
 
 .lumio-products__badge {
@@ -1530,6 +1536,12 @@
   text-transform: uppercase;
 }
 
+.lumio-posts__empty {
+  margin: var(--space-lg) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+}
+
 .lumio-posts__meta {
   display: flex;
   flex-wrap: wrap;
@@ -1550,11 +1562,62 @@
 }
 
 @media (max-width: 767px) {
-  /* The column count set in the editor is a desktop value; a phone always
-     shows one card per row, even when the editor picked 2, 3 or 4. */
+  /* The column count picked in the editor is a desktop value: a phone always
+     shows one card per row. The gutter, the smaller type and the image cap
+     below are what keep that single card from filling the whole screen. */
+  .lumio-products,
+  .lumio-posts {
+    padding-inline: max(0px, calc(var(--space-lg) - var(--block-padding-x, 0px)));
+  }
+
   .lumio-products[data-columns] .lumio-products__grid,
   .lumio-posts[data-columns] .lumio-posts__grid {
     grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-md);
+  }
+
+  .lumio-products__card,
+  .lumio-posts__card {
+    border-radius: var(--radius-md);
+  }
+
+  .lumio-products__body,
+  .lumio-posts__body {
+    padding: var(--space-md);
+  }
+
+  /* A Thai product name is long; two lines and an ellipsis keep both cards
+     the same height without hiding the price. */
+  .lumio-products__name,
+  .lumio-posts__title {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: var(--text-base);
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .lumio-products__description,
+  .lumio-posts__excerpt {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .lumio-products__price {
+    flex-wrap: wrap;
+    font-size: var(--text-base);
+  }
+
+  .lumio-products__button.ui-button {
+    align-self: stretch;
+    width: 100%;
+    font-size: var(--text-sm);
+    min-height: var(--layout-tap-target);
   }
 }
 
@@ -1581,3 +1644,84 @@
 }
 
 
+
+/* ── Phone type scale ─────────────────────────────────────────────────────
+   Heading sizes are set for a desktop column (h1 = 40px, an xl hero = 72px).
+   On a phone those fixed pixels wrap into several lines and read as shouting.
+   The rules below let a headline grow with the screen instead, keep the copy at
+   a comfortable 16px, and cap the editor's text-size slider at 150% so a
+   desktop setting cannot turn one paragraph into a wall of words on a phone. */
+@media (max-width: 767px) {
+  .lumio-heading--h1,
+  .lumio-hero__heading,
+  .lumio-hero[data-heading-size='md'] .lumio-hero__heading,
+  .lumio-hero[data-heading-size='lg'] .lumio-hero__heading,
+  .lumio-hero[data-heading-size='xl'] .lumio-hero__heading {
+    font-size: calc(
+      clamp(var(--text-2xl), 9vw, var(--text-3xl)) * min(var(--block-text-scale, 1), 1.5)
+    );
+    line-height: 1.25;
+  }
+
+  .lumio-hero[data-heading-size='sm'] .lumio-hero__heading,
+  .lumio-heading--h2 {
+    font-size: calc(
+      clamp(var(--text-xl), 7vw, var(--text-2xl)) * min(var(--block-text-scale, 1), 1.5)
+    );
+    line-height: 1.3;
+  }
+
+  .lumio-heading--h3 {
+    font-size: calc(
+      clamp(var(--text-lg), 6vw, var(--text-xl)) * min(var(--block-text-scale, 1), 1.5)
+    );
+    line-height: 1.35;
+  }
+
+  .lumio-heading--h4 {
+    font-size: calc(
+      clamp(var(--text-base), 5vw, var(--text-lg)) * min(var(--block-text-scale, 1), 1.5)
+    );
+    line-height: 1.45;
+  }
+
+  .lumio-paragraph--base,
+  .lumio-paragraph--lg,
+  .lumio-hero__subheading,
+  .lumio-hero__note {
+    font-size: calc(var(--text-base) * min(var(--block-text-scale, 1), 1.5));
+    line-height: var(--text-base-line-height);
+  }
+
+  /* A hand-typed run size is a desktop value: on a phone it shrinks with the
+     screen but never grows past what the editor set. */
+  .lumio-run[data-run-size='true'] {
+    font-size: min(max(var(--text-base), 4.5vw), var(--run-size, var(--text-base)));
+  }
+
+  .lumio-hero__heading .lumio-run[data-run-size='true'],
+  .lumio-heading--h1 .lumio-run[data-run-size='true'] {
+    font-size: min(max(var(--text-2xl), 9vw), var(--run-size, var(--text-3xl)));
+  }
+
+  .lumio-heading--h2 .lumio-run[data-run-size='true'] {
+    font-size: min(max(var(--text-xl), 7vw), var(--run-size, var(--text-2xl)));
+  }
+
+  .lumio-heading--h3 .lumio-run[data-run-size='true'],
+  .lumio-heading--h4 .lumio-run[data-run-size='true'] {
+    font-size: min(max(var(--text-lg), 6vw), var(--run-size, var(--text-xl)));
+  }
+
+  .lumio-hero__subheading .lumio-run[data-run-size='true'],
+  .lumio-paragraph--lg .lumio-run[data-run-size='true'] {
+    font-size: min(max(var(--text-base), 5vw), var(--run-size, var(--text-lg)));
+  }
+
+  /* A scale pressed for the desktop must not stretch a small label either. */
+  .lumio-run--size-lg,
+  .lumio-run--size-xl {
+    font-size: var(--text-base);
+    line-height: var(--text-base-line-height);
+  }
+}

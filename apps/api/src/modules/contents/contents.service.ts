@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import { Prisma, type Content } from '@prisma/client';
+import { Prisma, type Content, type Media } from '@prisma/client';
 import {
   AI_LOCALES,
   applyBlockTranslations,
@@ -44,6 +44,7 @@ import { AiService } from '../ai/ai.service';
 import { AuditService } from '../audit/audit.service';
 import { QuotaService } from '../billing/quota.service';
 import { publicSiteUrl } from '../commerce/order-notifier';
+import { toPublicMediaUrl } from '../media/media-url';
 import { PrismaService } from '../prisma/prisma.service';
 import { PublishService } from '../publish/publish.service';
 
@@ -91,7 +92,7 @@ const mergeSeo = (current: unknown, patch: SeoPatch): Seo => ({
   ...(patch.noindex === undefined ? {} : { noindex: patch.noindex }),
 });
 
-const toSummary = (row: Content): ContentSummary => ({
+const toSummary = (row: ContentWithCover): ContentSummary => ({
   id: row.id,
   type: isContentType(row.type) ? row.type : 'page',
   title: row.title,
@@ -106,14 +107,19 @@ const toSummary = (row: Content): ContentSummary => ({
   updatedAt: row.updatedAt.toISOString(),
   publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
   archivedAt: row.archivedAt ? row.archivedAt.toISOString() : null,
+  ...(row.coverMedia === undefined ? {} : { coverImageUrl: toPublicMediaUrl(row.coverMedia) }),
 });
 
-const toDetail = (row: Content): ContentDetail => ({
+type ContentWithCover = Content & { coverMedia?: Media | null };
+
+const toDetail = (row: ContentWithCover): ContentDetail => ({
   ...toSummary(row),
   blocks: readBlocks(row.blocksDraft),
   publishedBlocks: row.blocksPublished === null ? null : readBlocks(row.blocksPublished),
   seo: readSeo(row.seo),
   createdAt: row.createdAt.toISOString(),
+  coverMediaId: row.coverMediaId,
+  ...(row.coverMedia === undefined ? {} : { coverImageUrl: toPublicMediaUrl(row.coverMedia) }),
 });
 
 const asJson = (value: unknown): Prisma.InputJsonValue => value as Prisma.InputJsonValue;
@@ -129,6 +135,19 @@ const toVersionSummary = (row: VersionRow): ContentVersionSummary => ({
 
 const isUniqueViolation = (error: unknown): boolean =>
   error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002';
+
+/**
+ * A cover has to be an image the site owns. The lookup runs inside the site
+ * transaction, so RLS already hides another tenant's media.
+ */
+const assertCoverMedia = async (
+  tx: Prisma.TransactionClient,
+  mediaId: string | null | undefined,
+): Promise<void> => {
+  if (!mediaId) return;
+  const media = await tx.media.findUnique({ where: { id: mediaId }, select: { id: true } });
+  if (!media) throw ApiException.validation('ไม่พบรูปภาพที่เลือก');
+};
 
 /** Copies a block tree with fresh ids, so translated pages never share block ids. */
 const cloneBlockTree = (blocks: BlockNode[]): BlockNode[] =>
@@ -162,6 +181,7 @@ export class ContentsService {
           ...(filters.locale ? { locale: filters.locale } : {}),
           ...(filters.q ? { title: { contains: filters.q, mode: 'insensitive' } } : {}),
         },
+        include: { coverMedia: true },
         orderBy: [{ updatedAt: 'desc' }, { id: 'asc' }],
         take: page.limit + 1,
         ...(page.cursor ? { cursor: { id: page.cursor }, skip: 1 } : {}),
@@ -174,7 +194,7 @@ export class ContentsService {
 
   async get(siteId: string, contentId: string): Promise<ContentDetail> {
     const row = await this.db.forSite(siteId, (tx) =>
-      tx.content.findUnique({ where: { id: contentId } }),
+      tx.content.findUnique({ where: { id: contentId }, include: { coverMedia: true } }),
     );
     if (!row) throw ApiException.notFound('ไม่พบหน้านี้');
     return toDetail(row);
@@ -246,8 +266,9 @@ export class ContentsService {
     await this.assertSlugFree(siteId, input);
 
     try {
-      const row = await this.db.forSite(siteId, (tx) =>
-        tx.content.create({
+      const row = await this.db.forSite(siteId, async (tx) => {
+        await assertCoverMedia(tx, input.coverMediaId);
+        return tx.content.create({
           data: {
             siteId,
             type: input.type,
@@ -255,13 +276,14 @@ export class ContentsService {
             slug: input.slug,
             locale: input.locale,
             excerpt: input.excerpt ?? null,
+            coverMediaId: input.coverMediaId ?? null,
             blocksDraft: asJson(input.blocks),
             seo: asJson(input.seo),
             authorId: actorId,
             revision: 1,
           },
-        }),
-      );
+        });
+      });
 
       await this.audit.log({
         siteId,
@@ -284,9 +306,10 @@ export class ContentsService {
     input: UpdateContentInput,
     actorId: string,
   ): Promise<ContentDetail> {
-    const { row, wasPublished } = await this.db.forSite(siteId, async (tx) => {
+    const { row, wasPublished, coverChanged } = await this.db.forSite(siteId, async (tx) => {
       const current = await tx.content.findUnique({ where: { id: contentId } });
       if (!current) throw ApiException.notFound('ไม่พบหน้านี้');
+      await assertCoverMedia(tx, input.coverMediaId);
 
       if (input.slug || input.type || input.locale) {
         await this.assertSlugFree(
@@ -312,12 +335,15 @@ export class ContentsService {
       const nextBlocks = input.blocks === undefined ? null : asJson(input.blocks);
       const updated = await tx.content.update({
         where: { id: contentId },
+        include: { coverMedia: true },
         data: {
           title: input.title ?? undefined,
           slug: input.slug ?? undefined,
           type: input.type ?? undefined,
           locale: input.locale ?? undefined,
           excerpt: input.excerpt ?? undefined,
+          coverMediaId:
+            input.coverMediaId === undefined ? undefined : input.coverMediaId,
           seo: input.seo === undefined ? undefined : asJson(input.seo),
           status: input.status ?? undefined,
           ...(archivedAt === undefined ? {} : { archivedAt }),
@@ -340,12 +366,15 @@ export class ContentsService {
       return {
         row: updated,
         wasPublished: current.status === 'published' && input.status === 'archived',
+        // A cover is shown by the blog list, not by the page's block tree, so a
+        // published post must be rebuilt for the new picture to reach visitors.
+        coverChanged: input.coverMediaId !== undefined && current.status === 'published',
       };
     });
 
     // A page that was live must disappear from the public site as soon as it is
     // trashed, so the renderer rebuilds the path it used to occupy.
-    if (wasPublished) {
+    if (wasPublished || coverChanged) {
       await this.publishJobs.enqueuePage({
         siteId,
         type: isContentType(row.type) ? row.type : 'page',

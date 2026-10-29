@@ -13,6 +13,7 @@ import {
   Button,
   EmptyState,
   Modal,
+  PageHeader,
   Select,
   Skeleton,
   useT,
@@ -161,21 +162,23 @@ export const FormsView = ({
 
   return (
     <div className="forms-page">
-      <header className="forms-header">
-        <div>
-          <h1 className="forms-header__title">{t('forms.title')}</h1>
-          <p className="forms-header__subtitle">
-            {loading
-              ? t('forms.loading')
-              : t('forms.summary', { forms: summaries.length, new: newTotal })}
-          </p>
-        </div>
-        {canManage ? (
-          <Button variant="primary" onClick={onCreate}>
-            {t('forms.create')}
-          </Button>
-        ) : null}
-      </header>
+      <PageHeader
+        eyebrow={t('nav.section.work')}
+        title={t('forms.title')}
+        description={
+          loading
+            ? t('forms.loading')
+            : t('forms.summary', { forms: summaries.length, new: newTotal })
+        }
+        actions={
+          canManage ? (
+            <Button variant="primary" onClick={onCreate}>
+              <Icon name="plus" size={16} />
+              {t('forms.create')}
+            </Button>
+          ) : null
+        }
+      />
 
       {loading ? (
         <div className="forms-layout" aria-busy="true">

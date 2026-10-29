@@ -3,6 +3,7 @@ import {
   canRefundOrder,
   refundOrderInputSchema,
   cartTotals,
+  giftQuantityFor,
   commerceSettingsSchema,
   crc16,
   formatBaht,
@@ -23,6 +24,21 @@ import {
 } from '../src/commerce.js';
 
 const settings = commerceSettingsSchema.parse({});
+
+describe('giftQuantityFor', () => {
+  it('adds one free unit for every full bundle', () => {
+    expect(giftQuantityFor(10, 1, 9)).toBe(0);
+    expect(giftQuantityFor(10, 1, 10)).toBe(1);
+    expect(giftQuantityFor(10, 1, 25)).toBe(2);
+    expect(giftQuantityFor(2, 1, 3)).toBe(1);
+  });
+
+  it('never gives away more than the customer buys', () => {
+    expect(giftQuantityFor(1, 5, 1)).toBe(1);
+    expect(giftQuantityFor(null, 1, 20)).toBe(0);
+    expect(giftQuantityFor(10, null, 20)).toBe(0);
+  });
+});
 
 describe('money', () => {
   it('shows satang as grouped baht', () => {

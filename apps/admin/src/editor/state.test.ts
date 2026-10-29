@@ -34,6 +34,21 @@ const start = () => initialEditorState(content());
 
 const run = (actions: EditorAction[]) => actions.reduce(editorReducer, start());
 
+describe('editor cover', () => {
+  it('stores the chosen cover without touching the block tree', () => {
+    const before = initialEditorState(content());
+    const after = editorReducer(before, {
+      type: 'cover',
+      coverMediaId: 'm1',
+      coverImageUrl: 'https://cdn.example.com/cover.jpg',
+    });
+
+    expect(after.content.coverMediaId).toBe('m1');
+    expect(after.content.coverImageUrl).toBe('https://cdn.example.com/cover.jpg');
+    expect(after.history.present).toBe(before.history.present);
+  });
+});
+
 describe('editorReducer', () => {
   it('starts on desktop in edit mode with nothing selected', () => {
     const state = start();

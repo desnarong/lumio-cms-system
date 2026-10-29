@@ -34,6 +34,8 @@ export const Modal = ({
 }: ModalProps) => {
   const t = useT();
   const panelRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (!open || !canUseDOM) {
@@ -41,13 +43,13 @@ export const Modal = ({
     }
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onClose?.();
+        onCloseRef.current?.();
       }
     };
     document.addEventListener('keydown', handleKeyDown);
     panelRef.current?.focus();
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) {
     return null;

@@ -1,4 +1,4 @@
-import { useT } from '@lumio/ui';
+import { PageHeader, useT } from '@lumio/ui';
 import { MediaLibraryBody } from './MediaLibraryBody.js';
 import type { AiApi } from '../ai/api.js';
 import type { MediaApi } from './api.js';
@@ -20,16 +20,13 @@ export const MediaLibraryPage = ({ api, ai }: MediaLibraryPageProps) => {
 
   return (
     <div className="media-page">
-      <header className="media-page__header">
-        <div>
-          <h1 className="media-page__title">{t('media.title')}</h1>
-          <p className="media-page__subtitle">
-            {library.loading
-              ? t('media.loading')
-              : t('media.summary', { count: library.items.length })}
-          </p>
-        </div>
-      </header>
+      <PageHeader
+        eyebrow={t('nav.section.work')}
+        title={t('media.title')}
+        description={
+          library.loading ? t('media.loading') : t('media.summary', { count: library.items.length })
+        }
+      />
 
       <MediaLibraryBody
         items={library.items}

@@ -95,6 +95,8 @@ describe('admin screens in English', () => {
     expect(html).toContain('Publish');
     expect(html).toContain('Add a section');
     expect(html).toContain('Page editing area');
+    expect(html).toContain('How to edit this page');
+    expect(html).toContain('Arrange layout');
   });
 
   it('shows the version history drawer in English', () => {

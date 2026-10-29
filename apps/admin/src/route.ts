@@ -15,7 +15,7 @@ export type SettingsTab =
   | 'features'
   | 'billing';
 export type GrowthTab = 'seo' | 'analytics' | 'newsletter' | 'apps';
-export type CommerceTab = 'products' | 'orders' | 'settings';
+export type CommerceTab = 'products' | 'promotions' | 'orders' | 'settings';
 
 export const DESIGN_TABS: DesignTab[] = ['style', 'menus', 'header-footer', 'template', 'sections'];
 export const SETTINGS_TABS: SettingsTab[] = [
@@ -31,7 +31,7 @@ export const SETTINGS_TABS: SettingsTab[] = [
   'billing',
 ];
 export const GROWTH_TABS: GrowthTab[] = ['seo', 'analytics', 'newsletter', 'apps'];
-export const COMMERCE_TABS: CommerceTab[] = ['products', 'orders', 'settings'];
+export const COMMERCE_TABS: CommerceTab[] = ['products', 'promotions', 'orders', 'settings'];
 
 /**
  * One entry per screen. Routes are site-relative: the current site lives in the

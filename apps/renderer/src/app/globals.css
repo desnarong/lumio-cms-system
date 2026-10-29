@@ -365,7 +365,8 @@ body {
 
 /* A block with a background fills the viewport edge to edge, while its own
    inner column keeps the text aligned with the rest of the page. */
-.site-article > .lumio-block[data-background]:not([data-background='none']):not([data-background-full='false']),
+.site-article
+  > .lumio-block[data-background]:not([data-background='none']):not([data-background-full='false']),
 .site-article > .lumio-block[data-custom-background='true']:not([data-background-full='false']) {
   width: 100vw;
   max-width: 100vw;
@@ -388,6 +389,13 @@ body {
   line-height: var(--text-3xl-line-height);
 }
 
+/* The blog list is a normal reading column, so it keeps the same gutter as the
+   site header instead of running into the screen edges on a phone. */
+.site-article--posts {
+  padding-inline: clamp(var(--space-lg), 4vw, calc(var(--space-xl) * 3));
+  padding-block-end: var(--space-3xl);
+}
+
 .site-post-list {
   display: grid;
   gap: var(--space-lg);
@@ -405,6 +413,28 @@ body {
   box-shadow: var(--shadow-sm);
   color: inherit;
   text-decoration: none;
+}
+
+/* A post with a cover reads as a card: the picture sits beside the copy on a
+   wide screen and above it on a phone. */
+.site-post-list__link--with-cover {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+.site-post-list__cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-hover);
+}
+
+.site-post-list__body {
+  min-width: 0;
 }
 
 .site-post-list__link:hover {
@@ -551,7 +581,9 @@ body {
     height: 2px;
     border-radius: var(--radius-full);
     background: currentColor;
-    box-shadow: 0 -6px 0 currentColor, 0 6px 0 currentColor;
+    box-shadow:
+      0 -6px 0 currentColor,
+      0 6px 0 currentColor;
     transition: background var(--motion-duration-fast) var(--motion-ease);
   }
 
@@ -637,5 +669,86 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .site-nav__toggle-bar {
     transition: none;
+  }
+}
+
+/* ── Phone pass ───────────────────────────────────────────────────────────
+   The public site is the half of Lumio that has to work on every phone
+   (docs/design/14-seo-performance.md). These rules only add: they raise tap
+   targets, keep clear of the notch and the home indicator, and let wide content
+   scroll inside its own box instead of widening the page. */
+
+/* A thumb needs 44px to hit something reliably (WCAG 2.5.5). */
+.site-header .site-nav__link,
+.site-header__action,
+.site-footer .site-nav__link,
+.site-footer__legal-link,
+.site-post-list__link,
+.site-main .ui-button {
+  min-height: var(--layout-tap-target);
+}
+
+.site-header__action,
+.site-footer__legal-link {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* A long title shrinks with the screen instead of overflowing it. */
+.site-page-title {
+  font-size: clamp(var(--text-2xl), 8vw, var(--text-3xl));
+  overflow-wrap: anywhere;
+}
+
+/* A wide table scrolls inside its own box; the page itself never scrolls
+   sideways. */
+.site-main table,
+.site-main pre {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Notched phones keep their text away from the rounded corners. */
+@supports (padding-inline: env(safe-area-inset-left)) {
+  .site-header,
+  .site-footer {
+    padding-inline: calc(
+      clamp(var(--space-lg), 4vw, calc(var(--space-xl) * 3)) + env(safe-area-inset-left)
+    );
+  }
+}
+
+@media (max-width: 767px) {
+  /* The menu panel stays clear of the home indicator. */
+  .site-header .site-nav {
+    padding-bottom: max(var(--space-lg), env(safe-area-inset-bottom, var(--space-lg)));
+  }
+
+  /* A floating circle covers whatever sits under it, usually a price or a buy
+     button, so on a phone it joins the footer flow instead. */
+  .site-footer > .site-back-to-top {
+    position: static;
+    align-self: center;
+    margin-block-start: var(--space-lg);
+  }
+
+  /* One thumb-wide call to action beats two small ones. */
+  .lumio-form__submit,
+  .site-main .ui-button--lg {
+    width: 100%;
+  }
+
+  .site-post-list__link {
+    padding: var(--space-lg);
+  }
+
+  .site-post-list__link--with-cover {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-md);
+  }
+
+  .site-post-list__cover {
+    aspect-ratio: 16 / 10;
   }
 }

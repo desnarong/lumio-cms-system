@@ -26,6 +26,7 @@ const COLUMN_LABELS: Record<ProductColumns, string> = {
 const SOURCE_LABELS: Record<ProductSource, string> = {
   manual: 'ตั้งสินค้าเองในหน้านี้',
   shop: 'ดึงจากร้านค้า (อัปเดตอัตโนมัติ)',
+  sale: 'สินค้าลดราคา (มีราคาก่อนลด)',
 };
 
 const SOURCE_LIMIT_LABELS: Record<ProductSourceLimit, string> = {
@@ -101,7 +102,7 @@ export const ProductsPanel = ({ props, style, mode, onChange }: BlockPanelProps<
         />
       </PanelSection>
 
-      {props.source === 'shop' ? (
+      {props.source !== 'manual' ? (
         <PanelSection title="สินค้าจากร้านค้า">
           <p className="lumio-panel-hint">
             สินค้าที่เผยแพร่ในร้านจะขึ้นตรงนี้อัตโนมัติ สินค้าที่ลบหรือเก็บเข้าคลังจะไม่แสดง

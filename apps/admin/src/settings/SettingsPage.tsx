@@ -11,6 +11,7 @@ import {
   type BackupSnapshot,
   type ContentSummary,
   type DomainSummary,
+  type FeatureFlagKey,
   type MemberSummary,
   type Role,
   type SiteImportInput,
@@ -25,6 +26,7 @@ import {
   EmptyState,
   ImagePicker,
   Modal,
+  PageHeader,
   Select,
   Skeleton,
   Switch,
@@ -37,7 +39,8 @@ import {
 } from '@lumio/ui';
 import { useMediaPicker } from '@lumio/blocks';
 import { ApiError } from '../api-error.js';
-import type { SettingsTab } from '../route.js';
+import { SETTINGS_TABS, type SettingsTab } from '../route.js';
+import { allowedTabs } from '../shell/nav.js';
 import type { SettingsApi } from './api.js';
 import { BillingPanel } from './BillingPanel.js';
 import type { AuthApi } from '../auth/api.js';
@@ -53,6 +56,10 @@ export interface SettingsPageProps {
   billing: BillingApi;
   tab: SettingsTab;
   onNavigate: (path: string) => void;
+  /** Who is signed in: tabs the role cannot open are not offered at all. */
+  role: Role;
+  /** Add-ons the site still offers; closed ones lose their tab. */
+  features?: readonly FeatureFlagKey[];
   /** The signed-in account's API, for two-factor settings. */
   security?: AuthApi;
 }
@@ -78,15 +85,16 @@ const downloadFile = (filename: string, content: string): void => {
   URL.revokeObjectURL(url);
 };
 
+/** Ordered by how often the owner needs them, not by the schema. */
 const TABS: { id: SettingsTab; labelKey: MessageKey }[] = [
   { id: 'general', labelKey: 'nav.general' },
-  { id: 'language', labelKey: 'settings.tabLanguage' },
   { id: 'domain', labelKey: 'nav.domain' },
-  { id: 'redirects', labelKey: 'settings.tabRedirects' },
   { id: 'team', labelKey: 'nav.team' },
   { id: 'backup', labelKey: 'nav.backup' },
+  { id: 'language', labelKey: 'settings.tabLanguage' },
   { id: 'email', labelKey: 'settings.tabEmail' },
   { id: 'publish', labelKey: 'settings.tabPublish' },
+  { id: 'redirects', labelKey: 'settings.tabRedirects' },
   { id: 'features', labelKey: 'settings.tabFeatures' },
   { id: 'billing', labelKey: 'nav.billing' },
 ];
@@ -130,10 +138,7 @@ export const GeneralView = ({
   onRemoveFavicon,
 }: GeneralViewProps) => {
   const t = useT();
-  const dirty =
-    name.trim() !== site.name ||
-    subdomain.trim() !== site.subdomain ||
-    brandDirty;
+  const dirty = name.trim() !== site.name || subdomain.trim() !== site.subdomain || brandDirty;
 
   return (
     <div className="settings-panel">
@@ -1074,11 +1079,7 @@ export const BackupView = ({
               <p className="settings-backup-action__title">{t('settings.backup.import')}</p>
               <p className="settings-backup-action__hint">{t('settings.backup.importHint')}</p>
             </div>
-            <Button
-              variant="secondary"
-              disabled={busy}
-              onClick={() => fileInput.current?.click()}
-            >
+            <Button variant="secondary" disabled={busy} onClick={() => fileInput.current?.click()}>
               {busy ? t('settings.backup.importing') : t('settings.backup.chooseFile')}
             </Button>
             <input
@@ -1384,22 +1385,39 @@ const BackupTab = ({ api }: { api: SettingsApi }) => {
   );
 };
 
-/** Settings menu (05-admin-ia.md 5.1): general, domain, team, backup and billing. */
-export const SettingsPage = ({ api, billing, tab, onNavigate, security }: SettingsPageProps) => {
+/**
+ * Settings (05-admin-ia.md 5.1): one door in the sidebar, the tabs here are the
+ * only sub-navigation, and only the tabs this role may open are offered.
+ */
+export const SettingsPage = ({
+  api,
+  billing,
+  tab,
+  onNavigate,
+  role,
+  features,
+  security,
+}: SettingsPageProps) => {
   const t = useT();
+  const openTabs = allowedTabs('settings', SETTINGS_TABS, role, features);
 
   return (
     <div className="settings-page">
-      <header className="settings-page__header">
-        <h1 className="settings-page__title">{t('nav.settings')}</h1>
-        <p className="settings-page__subtitle">{t('settings.subtitle')}</p>
-      </header>
-
-      <Tabs
-        className="settings-tabs"
-        items={TABS.map((item) => ({ id: item.id, label: t(item.labelKey) }))}
-        value={tab}
-        onChange={(id) => onNavigate(`/settings/${id}`)}
+      <PageHeader
+        eyebrow={t('nav.section.site')}
+        title={t('nav.settings')}
+        description={t('settings.subtitle')}
+        tabs={
+          <Tabs
+            className="settings-tabs"
+            items={TABS.filter((item) => openTabs.includes(item.id)).map((item) => ({
+              id: item.id,
+              label: t(item.labelKey),
+            }))}
+            value={tab}
+            onChange={(id) => onNavigate(`/settings/${id}`)}
+          />
+        }
       />
 
       {tab === 'general' ? (

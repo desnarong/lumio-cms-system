@@ -6,7 +6,17 @@ import {
   type ContentSummary,
   type ContentType,
 } from '@lumio/shared';
-import { Icon, Button, EmptyState, Modal, Select, Skeleton, TextField, useT } from '@lumio/ui';
+import {
+  Icon,
+  Button,
+  EmptyState,
+  Modal,
+  PageHeader,
+  Select,
+  Skeleton,
+  TextField,
+  useT,
+} from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import { useState } from 'react';
 import type { ContentApi } from '../editor/api.js';
@@ -119,19 +129,21 @@ export const ContentView = ({
 
   return (
     <div className="content-list">
-      <header className="content-list__header">
-        <div>
-          <h1 className="content-list__title">{t(HEADING[kind])}</h1>
-          <p className="content-list__subtitle">
-            {loading
-              ? t('common.loading')
-              : t(cursor ? 'content.countMore' : 'content.countAll', { count: items.length })}
-          </p>
-        </div>
-        <Button variant="primary" onClick={() => onCreate(kind)}>
-          {t(ADD_LABEL[kind])}
-        </Button>
-      </header>
+      <PageHeader
+        eyebrow={t('nav.section.work')}
+        title={t(HEADING[kind])}
+        description={
+          loading
+            ? t('common.loading')
+            : t(cursor ? 'content.countMore' : 'content.countAll', { count: items.length })
+        }
+        actions={
+          <Button variant="primary" onClick={() => onCreate(kind)}>
+            <Icon name="plus" size={16} />
+            {t(ADD_LABEL[kind])}
+          </Button>
+        }
+      />
 
       <div className="content-list__filters">
         <TextField

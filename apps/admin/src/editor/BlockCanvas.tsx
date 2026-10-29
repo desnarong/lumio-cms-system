@@ -21,6 +21,8 @@ import {
   resolveDropIndex,
   type BlockIndexPath,
   type EditorDevice,
+  type LatestPostCard,
+  type PromotionCard,
   type ShopProductCard,
 } from '@lumio/blocks';
 import type { BlockNode, BlockTree, PublicForm, SectionTemplate, TextRun } from '@lumio/shared';
@@ -57,6 +59,10 @@ export interface BlockCanvasProps {
   forms?: readonly PublicForm[];
   /** Live shop products, so a products block previews the real catalog. */
   shopProducts?: readonly ShopProductCard[];
+  /** Published posts, so a posts block previews the real blog. */
+  latestPosts?: readonly LatestPostCard[];
+  /** Live offers, so a feature grid previews the real promotion list. */
+  promotions?: readonly PromotionCard[];
   onMove: (from: BlockIndexPath, to: BlockIndexPath) => void;
   onDragStart: (id: string) => void;
   onDropIndex: (index: number | null) => void;
@@ -70,6 +76,11 @@ export interface BlockCanvasProps {
   onFields?: (blockId: string, fields: EditorTextField[]) => void;
   /** Site theme tokens, so the preview matches the published page. */
   theme?: { style: CSSProperties; attributes: Record<string, string> } | null;
+  /**
+   * "จัดหน้าตา" mode: the move/resize handles appear only here, so the default
+   * mode stays quiet for writing (docs/design/04-ux.md 4.2).
+   */
+  layoutMode?: boolean;
 }
 
 interface BlockRegionProps {
@@ -79,6 +90,8 @@ interface BlockRegionProps {
   selected: boolean;
   dragging: boolean;
   previewScale: number;
+  /** "จัดหน้าตา" mode: show the handles that move and resize this block. */
+  layoutMode: boolean;
   onSelect: () => void;
   onTextChange: (path: string, value: unknown) => void;
   onTextStyle: (path: string, runs: TextRun[]) => void;
@@ -92,6 +105,8 @@ interface BlockRegionProps {
   onResize?: (size: { widthPx?: number; heightPx?: number; marginTopPx?: number }) => void;
   forms?: readonly PublicForm[];
   shopProducts?: readonly ShopProductCard[];
+  latestPosts?: readonly LatestPostCard[];
+  promotions?: readonly PromotionCard[];
 }
 
 interface ForegroundDrag {
@@ -131,6 +146,7 @@ const BlockRegion = ({
   selected,
   dragging,
   previewScale,
+  layoutMode,
   onSelect,
   onTextChange,
   onTextStyle,
@@ -144,6 +160,8 @@ const BlockRegion = ({
   onResize,
   forms,
   shopProducts,
+  latestPosts,
+  promotions,
 }: BlockRegionProps) => {
   const t = useT();
   const contentRef = useRef<HTMLDivElement>(null);
@@ -920,7 +938,7 @@ const BlockRegion = ({
         >
           <Icon name="grip" size={14} />
         </span>
-        {onTextOffset ? (
+        {layoutMode && onTextOffset ? (
           <button
             type="button"
             className="editor-block__handle editor-block__move"
@@ -934,7 +952,7 @@ const BlockRegion = ({
             <Icon name="move" size={14} />
           </button>
         ) : null}
-        {onResize ? (
+        {layoutMode && onResize ? (
           <button
             type="button"
             className="editor-block__handle editor-block__move"
@@ -997,10 +1015,12 @@ const BlockRegion = ({
           block={previewBlock}
           {...(forms ? { forms } : {})}
           {...(shopProducts ? { shopProducts } : {})}
+          {...(latestPosts ? { latestPosts } : {})}
+          {...(promotions ? { promotions } : {})}
         />
       </div>
 
-      {selected && onResize ? (
+      {selected && layoutMode && onResize ? (
         <>
           <button
             type="button"
@@ -1088,6 +1108,8 @@ export const BlockCanvas = ({
   onInsertSection,
   forms,
   shopProducts,
+  latestPosts,
+  promotions,
   onMove,
   onDragStart,
   onDropIndex,
@@ -1095,6 +1117,7 @@ export const BlockCanvas = ({
   onResize,
   onFields,
   theme,
+  layoutMode = false,
 }: BlockCanvasProps) => {
   const t = useT();
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -1288,6 +1311,7 @@ export const BlockCanvas = ({
                   selected={block.id === selectedId}
                   dragging={block.id === draggingId}
                   previewScale={preview.scale}
+                  layoutMode={layoutMode}
                   onSelect={() => onSelect(block.id)}
                   onTextChange={(path, value) => onTextChange(block.id, path, value)}
                   onTextStyle={(path, runs) => onTextStyle(block.id, path, runs)}
@@ -1301,6 +1325,8 @@ export const BlockCanvas = ({
                   {...(onResize ? { onResize: (size) => onResize(block.id, size) } : {})}
                   {...(forms ? { forms } : {})}
                   {...(shopProducts ? { shopProducts } : {})}
+                  {...(latestPosts ? { latestPosts } : {})}
+                  {...(promotions ? { promotions } : {})}
                   onDragStart={() => {
                     dragFromRef.current = index;
                     onDragStart(block.id);

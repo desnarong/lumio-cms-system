@@ -58,6 +58,18 @@ describe('shopProductsFor', () => {
     expect(shopProductsFor({ category: '  ', limit: 12 }, cards)).toHaveLength(3);
   });
 
+  it('shows only products with an old price on a promotion page', () => {
+    const mixed = shopCardsFromProducts([
+      product,
+      { ...product, id: 'p2', compareAtPrice: null },
+      { ...product, id: 'p3', price: 40_000, compareAtPrice: 30_000 },
+    ]);
+
+    expect(
+      shopProductsFor({ category: '', limit: 12, saleOnly: true }, mixed).map((card) => card.id),
+    ).toEqual(['p1']);
+  });
+
   it("stops at the block limit", () => {
     expect(shopProductsFor({ category: '', limit: 2 }, cards)).toHaveLength(2);
   });

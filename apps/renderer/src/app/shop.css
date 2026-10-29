@@ -842,7 +842,6 @@
   }
 }
 
-
 .shop-specs {
   margin-top: var(--space-2xl);
   padding-top: var(--space-xl);
@@ -871,4 +870,83 @@
 
 .shop-specs__row dd {
   margin: 0;
+}
+
+/* ── Phone pass ───────────────────────────────────────────────────────────
+   Shopping on a phone: thumb-sized controls, one column of facts, and no
+   sideways scroll anywhere in the basket or the checkout. */
+
+.shop-chip,
+.shop-link-button,
+.shop-stepper__button,
+.shop-cart__actions .shop-button {
+  min-height: var(--layout-tap-target);
+}
+
+.shop-chip {
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 480px) {
+  /* Name and value stack, so a long spec never squeezes into two columns. */
+  .shop-specs__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-xs);
+  }
+
+  .shop-cart__thumb {
+    width: 88px;
+  }
+
+  .shop-buy__quantity-row {
+    flex-wrap: wrap;
+  }
+
+  .shop-summary__items {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+}
+
+/* Headlines are set for a desktop column; on a phone they follow the screen so
+   a long product name does not take four lines at 40px. */
+@media (max-width: 767px) {
+  .shop-hero__title {
+    font-size: clamp(var(--text-2xl), 8vw, var(--text-3xl));
+    line-height: 1.2;
+  }
+
+  .shop-product__title {
+    font-size: clamp(var(--text-xl), 7vw, var(--text-2xl));
+    line-height: 1.25;
+  }
+
+  .shop-product__price {
+    font-size: var(--text-lg);
+  }
+}
+
+/* Promotion gifts: the cart says what is free and why, and the order stores a
+   zero-price line so the receipt matches what the customer received. */
+.shop-promos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: 0 0 var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--color-success-soft);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm-line-height);
+  list-style: none;
+}
+
+.shop-cart__gift {
+  margin: 0;
+  color: var(--color-success);
+  font-size: var(--text-sm);
+  font-weight: 600;
 }

@@ -1,14 +1,22 @@
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
-import { FormsCatalogProvider, registry, type ShopProductCard } from '@lumio/blocks';
+import {
+  FormsCatalogProvider,
+  registry,
+  useMediaPicker,
+  type LatestPostCard,
+  type PromotionCard,
+  type ShopProductCard,
+} from '@lumio/blocks';
 import {
   themeCssVariables,
+  promotionCardViews,
   themeDataAttributes,
   type AiSiteCommandProposal,
   type ContentDetail,
   type Form,
   type ThemeTokens,
 } from '@lumio/shared';
-import { Banner, Button, EmptyState, Modal, Skeleton, TextField, useT, useToast } from '@lumio/ui';
+import { Banner, Button, EmptyState, ImagePicker, Modal, Skeleton, TextField, useT, useToast } from '@lumio/ui';
 import { AiAssistant } from '../ai/AiAssistant.js';
 import type { AiApi } from '../ai/api.js';
 import type { CommerceApi } from '../commerce/api.js';
@@ -25,6 +33,14 @@ import type { EditorTextField } from './types.js';
 import { shopCardsFromSummaries } from './shop-products.js';
 import { VersionHistoryPanel } from './VersionHistoryPanel.js';
 import { CONFLICT_MESSAGE_KEY, useEditor } from './useEditor.js';
+
+/** `2026-10-20T09:00:00.000Z` → `20/10/2026` (stable across ICU builds). */
+const postDate = (iso: string | null): string => {
+  if (!iso) return '';
+  const [date] = iso.split('T');
+  const [year, month, day] = (date ?? '').split('-');
+  return year && month && day ? `${day}/${month}/${year}` : '';
+};
 
 export interface EditorPageProps {
   api: ContentApi;
@@ -76,6 +92,8 @@ export const EditorPage = ({
   const [templateName, setTemplateName] = useState('');
   const [forms, setForms] = useState<Form[]>([]);
   const [shopProducts, setShopProducts] = useState<ShopProductCard[]>([]);
+  const [latestPosts, setLatestPosts] = useState<LatestPostCard[]>([]);
+  const [promotions, setPromotions] = useState<PromotionCard[]>([]);
   const [aiFields, setAiFields] = useState<EditorTextField[]>([]);
   const [previewTokens, setPreviewTokens] = useState<ThemeTokens | null>(null);
 
@@ -103,6 +121,50 @@ export const EditorPage = ({
       .listProducts({ limit: 12, status: 'active' })
       .then((page) => {
         if (active) setShopProducts(shopCardsFromSummaries(page.items));
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [commerceApi]);
+
+  // A posts block set to follow the blog previews the real published posts, so the
+  // editor never shows a card for an article that was deleted.
+  useEffect(() => {
+    let active = true;
+    void api
+      .list({ type: 'post', limit: 6 })
+      .then((page) => {
+        if (!active) return;
+        setLatestPosts(
+          page.items
+            .filter((post) => post.status === 'published')
+            .map((post) => ({
+              id: post.id,
+              title: post.title,
+              slug: post.slug,
+              excerpt: post.excerpt ?? '',
+              date: postDate(post.publishedAt),
+              image: post.coverImageUrl ?? null,
+              link: `/posts/${post.slug}`,
+            })),
+        );
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [api]);
+
+  // A feature grid set to the live promotion list previews today's offers, with
+  // the same cards the public page renders.
+  useEffect(() => {
+    if (!commerceApi) return undefined;
+    let active = true;
+    void commerceApi
+      .listPromotions()
+      .then((list) => {
+        if (active) setPromotions(promotionCardViews(list));
       })
       .catch(() => undefined);
     return () => {
@@ -204,6 +266,51 @@ export const EditorPage = ({
       });
     });
   };
+
+  const mediaPicker = useMediaPicker();
+
+  /**
+   * A post's cover is page-level, so it lives in the panel shown while no block is
+   * selected. Saving is immediate and offers undo, like every other edit.
+   */
+  const applyCoverImage = (mediaId: string | null, url: string | null): void => {
+    const previous = {
+      mediaId: state.content.coverMediaId ?? null,
+      url: state.content.coverImageUrl ?? null,
+    };
+    void editor.applyCover(mediaId, url).then((saved) => {
+      if (!saved) return;
+      toast.push({
+        tone: 'success',
+        title: mediaId ? t('editor.coverSaved') : t('editor.coverRemoved'),
+        undo: {
+          label: t('common.undo'),
+          onClick: () => void editor.applyCover(previous.mediaId, previous.url),
+        },
+      });
+    });
+  };
+
+  const coverPanel =
+    state.content.type === 'post' ? (
+      <ImagePicker
+        label={t('content.coverLabel')}
+        hint={t('content.coverHint')}
+        aspect="wide"
+        value={state.content.coverImageUrl ?? null}
+        alt={state.content.title}
+        {...(mediaPicker
+          ? {
+              onPick: () => {
+                void mediaPicker.pick({ aspect: 'wide' }).then((picked) => {
+                  if (picked) applyCoverImage(picked.mediaId ?? null, picked.url);
+                });
+              },
+            }
+          : {})}
+        onChange={() => applyCoverImage(null, null)}
+      />
+    ) : undefined;
 
   /**
    * Applies a whole-site design command through the same design API the Design
@@ -327,6 +434,7 @@ export const EditorPage = ({
                 blocks={editor.blocks}
                 selectedId={state.selectedId}
                 device={state.device}
+                layoutMode={state.mode === 'design'}
                 theme={previewTheme}
                 draggingId={state.draggingId}
                 dropIndex={state.dropIndex}
@@ -377,6 +485,8 @@ export const EditorPage = ({
                 onDragEnd={editor.endDrag}
                 {...(forms.length > 0 ? { forms } : {})}
                 {...(shopProducts.length > 0 ? { shopProducts } : {})}
+                {...(latestPosts.length > 0 ? { latestPosts } : {})}
+                {...(promotions.length > 0 ? { promotions } : {})}
                 onFields={handleAiFields}
               />
             )}
@@ -424,13 +534,9 @@ export const EditorPage = ({
             device={state.device}
             panelMode={state.panelMode}
             onPanelModeChange={editor.setPanelMode}
+            layoutMode={state.mode === 'design'}
             onChange={(path, value) =>
               state.selectedId ? editor.setBlockPath(state.selectedId, path, value) : undefined
-            }
-            onDuplicate={() => state.selectedId && editor.duplicateBlock(state.selectedId)}
-            onRemove={() => state.selectedId && editor.removeBlock(state.selectedId)}
-            onToggleVisibility={() =>
-              state.selectedId && editor.toggleVisibility(state.selectedId, state.device)
             }
             fields={aiFields}
             onTextLayoutChange={(path, layout) =>
@@ -453,6 +559,7 @@ export const EditorPage = ({
                   ),
                 }
               : {})}
+            {...(coverPanel ? { metaPanel: coverPanel } : {})}
           />
         </FormsCatalogProvider>
       </div>

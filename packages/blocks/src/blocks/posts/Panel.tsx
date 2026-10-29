@@ -8,10 +8,17 @@ import { imageFromPick, imageFromUrl } from '../common.js';
 import {
   POSTS_MAX_ITEMS,
   POST_COLUMNS,
+  POST_SOURCES,
   type PostCard,
   type PostColumns,
+  type PostSource,
   type PostsProps,
 } from './schema.js';
+
+const SOURCE_LABELS: Record<PostSource, string> = {
+  manual: 'เขียนการ์ดเอง',
+  latest: 'บทความล่าสุดจากเว็บ',
+};
 
 const COLUMN_LABELS: Record<PostColumns, string> = {
   '1': '1 คอลัมน์',
@@ -55,6 +62,16 @@ export const PostsPanel = ({ props, style, mode, onChange }: BlockPanelProps<Pos
           onChange={(event) => onChange('props.subheading', event.target.value)}
         />
         <Select
+          label="แหล่งบทความ"
+          hint="เลือกดึงบทความล่าสุดเพื่อให้บทความใหม่ขึ้นเอง และบทความที่ลบแล้วหายไปเอง"
+          value={props.source}
+          options={POST_SOURCES.map((source) => ({
+            value: source,
+            label: SOURCE_LABELS[source],
+          }))}
+          onChange={(event) => onChange('props.source', event.target.value)}
+        />
+        <Select
           label="จำนวนคอลัมน์"
           value={props.columns}
           options={POST_COLUMNS.map((column) => ({
@@ -80,7 +97,27 @@ export const PostsPanel = ({ props, style, mode, onChange }: BlockPanelProps<Pos
         />
       </PanelSection>
 
-      <PanelSection title={`บทความ (${props.items.length}/${POSTS_MAX_ITEMS})`}>
+      {props.source === 'latest' ? (
+        <PanelSection title="บทความล่าสุดจากเว็บ">
+          <p className="lumio-panel-hint">
+            บทความที่เผยแพร่จะขึ้นตรงนี้อัตโนมัติ บทความที่ย้ายไปถังขยะหรือลบแล้วจะไม่แสดง
+          </p>
+          <TextField
+            label="จำนวนบทความที่แสดง"
+            type="number"
+            min={1}
+            max={POSTS_MAX_ITEMS}
+            value={String(props.sourceLimit)}
+            onChange={(event) =>
+              onChange(
+                'props.sourceLimit',
+                Math.min(POSTS_MAX_ITEMS, Math.max(1, Math.round(Number(event.target.value) || 3))),
+              )
+            }
+          />
+        </PanelSection>
+      ) : (
+            <PanelSection title={`บทความ (${props.items.length}/${POSTS_MAX_ITEMS})`}>
         <PanelItemList
           items={props.items}
           addLabel="เพิ่มบทความ"
@@ -154,6 +191,7 @@ export const PostsPanel = ({ props, style, mode, onChange }: BlockPanelProps<Pos
           }}
         </PanelItemList>
       </PanelSection>
+      )}
 
       <CommonStylePanel style={style} mode={mode} onChange={onChange} />
     </>

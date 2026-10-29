@@ -10,8 +10,11 @@ export const PRODUCTS_MAX_ITEMS = 12;
 export const PRODUCT_CARD_STYLES = ['card', 'plain'] as const;
 export type ProductCardStyle = (typeof PRODUCT_CARD_STYLES)[number];
 
-/** Where the cards come from: typed by hand, or read from the shop catalog. */
-export const PRODUCT_SOURCES = ['manual', 'shop'] as const;
+/**
+ * Where the cards come from: typed by hand, the whole shop catalog, or only the
+ * products with a compare-at price (the promotion page).
+ */
+export const PRODUCT_SOURCES = ['manual', 'shop', 'sale'] as const;
 export type ProductSource = (typeof PRODUCT_SOURCES)[number];
 
 /** How many shop products a card grid may show. */
@@ -50,7 +53,6 @@ export const productsPropsSchema = z.object({
   sourceCategory: z.string().max(60).default(''),
   items: z
     .array(productCardSchema)
-    .min(1)
     .max(PRODUCTS_MAX_ITEMS)
     .default(() => [
       {

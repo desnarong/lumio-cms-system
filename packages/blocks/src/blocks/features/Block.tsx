@@ -3,7 +3,7 @@ import { Icon } from '@lumio/ui/icon';
 import { Editable } from '../../engine/editable.js';
 import { Img } from '../../engine/img.js';
 import type { BlockRenderProps } from '../../types.js';
-import type { FeatureItem, FeaturesProps } from './schema.js';
+import { featureItemSchema, type FeatureItem, type FeaturesProps } from './schema.js';
 
 const iconStyle = (item: FeatureItem): CSSProperties =>
   ({ '--feature-icon-size': `${item.iconSize ?? 48}px` }) as CSSProperties;
@@ -56,7 +56,28 @@ const FeatureIcon = ({ item }: { item: FeatureItem }) => {
   return null;
 };
 
-export const FeaturesBlock = ({ props, block }: BlockRenderProps<FeaturesProps>) => {
+export const FeaturesBlock = ({ props, block, promotions }: BlockRenderProps<FeaturesProps>) => {
+  const live = props.source === 'promotions' && promotions !== undefined;
+  const items: FeatureItem[] = live
+    ? (promotions ?? []).slice(0, props.sourceLimit).map((promotion) => ({
+        ...featureItemSchema.parse({}),
+        icon: promotion.icon,
+        iconName: '',
+        iconImage: null,
+        title: promotion.title,
+        description: promotion.description,
+        image: promotion.imageUrl
+          ? {
+              mediaId: '',
+              alt: promotion.imageAlt || promotion.title,
+              src: promotion.imageUrl,
+            }
+          : null,
+        hoverImage: null,
+        link: '',
+        buttonLabel: '',
+      }) as FeatureItem)
+    : props.items;
   const backgroundMode =
     props.textBackground === true
       ? 'panel'
@@ -103,7 +124,7 @@ export const FeaturesBlock = ({ props, block }: BlockRenderProps<FeaturesProps>)
       label="คำอธิบายส่วน"
     />
     <ul className="lumio-features__grid" data-columns={props.columns}>
-      {props.items.map((item, index) => (
+      {items.map((item, index) => (
         <li className="lumio-features__item" key={index}>
           {item.image ? (
             <div className="lumio-features__media" data-fit={item.mediaFit ?? 'cover'}>
@@ -135,25 +156,33 @@ export const FeaturesBlock = ({ props, block }: BlockRenderProps<FeaturesProps>)
           ) : null}
           <div className="lumio-features__body">
             <FeatureIcon item={item} />
-            <Editable
-              as="h3"
-              path={`props.items.${index}.title`}
-              value={item.title}
-              runs={block.textStyles?.[`props.items.${index}.title`]}
-              layout={block.textLayouts?.[`props.items.${index}.title`]}
-              className="lumio-features__title"
-              label="ชื่อจุดเด่น"
-            />
-            <Editable
-              as="p"
-              multiline
-              path={`props.items.${index}.description`}
-              value={item.description}
-              runs={block.textStyles?.[`props.items.${index}.description`]}
-              layout={block.textLayouts?.[`props.items.${index}.description`]}
-              className="lumio-features__text"
-              label="คำอธิบายจุดเด่น"
-            />
+            {live ? (
+              <h3 className="lumio-features__title">{item.title}</h3>
+            ) : (
+              <Editable
+                as="h3"
+                path={`props.items.${index}.title`}
+                value={item.title}
+                runs={block.textStyles?.[`props.items.${index}.title`]}
+                layout={block.textLayouts?.[`props.items.${index}.title`]}
+                className="lumio-features__title"
+                label="ชื่อจุดเด่น"
+              />
+            )}
+            {live ? (
+              <p className="lumio-features__text">{item.description}</p>
+            ) : (
+              <Editable
+                as="p"
+                multiline
+                path={`props.items.${index}.description`}
+                value={item.description}
+                runs={block.textStyles?.[`props.items.${index}.description`]}
+                layout={block.textLayouts?.[`props.items.${index}.description`]}
+                className="lumio-features__text"
+                label="คำอธิบายจุดเด่น"
+              />
+            )}
             {item.link.length > 0 && item.buttonLabel.length > 0 ? (
               <a
                 className="ui-button ui-button--secondary ui-button--md lumio-features__button"

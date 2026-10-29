@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
-import { slugify, type ContentType } from '@lumio/shared';
-import { Button, Modal, TextField, useT } from '@lumio/ui';
+import { useMediaPicker, type PickedImage } from '@lumio/blocks';
+import type { ContentType } from '@lumio/shared';
+import { Button, ImagePicker, Modal, TextField, useT } from '@lumio/ui';
+import { suggestSlug } from './create-slug.js';
 
 export interface CreateContentInput {
   title: string;
   slug: string;
+  /** Cover image for a post; a page has no cover. */
+  coverMediaId?: string;
 }
 
 export interface CreateContentDialogProps {
@@ -19,7 +23,8 @@ export interface CreateContentDialogProps {
 /**
  * Asks for a name and a link before creating a page or a post, because the editor
  * itself has no rename field yet. The link follows the name until the user edits
- * it (docs/design/04-ux.md 4.5: "ชื่อลิงก์", never "slug").
+ * it (docs/design/04-ux.md 4.5: "ชื่อลิงก์", never "slug"). A post also picks its
+ * cover here, since that is the image the blog list shows.
  */
 export const CreateContentDialog = ({
   open,
@@ -30,21 +35,24 @@ export const CreateContentDialog = ({
   onSubmit,
 }: CreateContentDialogProps) => {
   const t = useT();
+  const picker = useMediaPicker();
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [slugTouched, setSlugTouched] = useState(false);
+  const [cover, setCover] = useState<PickedImage | null>(null);
 
   useEffect(() => {
     if (!open) {
       setTitle('');
       setSlug('');
       setSlugTouched(false);
+      setCover(null);
     }
   }, [open]);
 
   const onTitleChange = (value: string): void => {
     setTitle(value);
-    if (!slugTouched) setSlug(slugify(value, ''));
+    if (!slugTouched) setSlug(suggestSlug(value, kind));
   };
 
   const canSubmit = title.trim().length > 0 && slug.trim().length > 0 && !creating;
@@ -63,7 +71,13 @@ export const CreateContentDialog = ({
           <Button
             variant="primary"
             disabled={!canSubmit}
-            onClick={() => onSubmit({ title: title.trim(), slug: slug.trim() })}
+            onClick={() =>
+              onSubmit({
+                title: title.trim(),
+                slug: slug.trim(),
+                ...(cover?.mediaId ? { coverMediaId: cover.mediaId } : {}),
+              })
+            }
           >
             {creating ? t('common.loading') : t('content.createAndEdit')}
           </Button>
@@ -89,6 +103,25 @@ export const CreateContentDialog = ({
             setSlug(event.target.value);
           }}
         />
+        {kind === 'post' ? (
+          <ImagePicker
+            label={t('content.coverLabel')}
+            hint={t('content.coverHint')}
+            aspect="wide"
+            value={cover?.url ?? null}
+            alt={cover?.alt ?? title}
+            {...(picker
+              ? {
+                  onPick: () => {
+                    void picker.pick({ aspect: 'wide' }).then((picked) => {
+                      if (picked) setCover(picked);
+                    });
+                  },
+                }
+              : {})}
+            onChange={() => setCover(null)}
+          />
+        ) : null}
         {error ? (
           <p className="create-dialog__error" role="alert">
             {error}

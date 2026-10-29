@@ -85,13 +85,25 @@ Scale: 12 / 14 / 16 / 20 / 24 / 32 / 40 px — line-height 1.5
 ## 6.4 Spacing & Layout
 
 - Grid 8px (4, 8, 12, 16, 24, 32, 48, 64)
-- Sidebar กว้าง 240px (ย่อได้ 72px) / Content max-width 1200px
-- Breakpoints: 640 / 768 / 1024 / 1280 / 1536
+- Breakpoints: 640 / 768 / 1024 / 1280 / 1536 (ใช้กับเว็บสาธารณะ)
+
+| Token | ค่า | ใช้ที่ไหน |
+|---|---|---|
+| `--layout-sidebar-width` | 240px | sidebar ของ admin |
+| `--layout-sidebar-collapsed-width` | 72px | sidebar ตอนย่อ / หน้าต่างแคบ |
+| `--layout-topbar-height` | 64px | top bar ของ admin |
+| `--layout-admin-max-width` | 1440px | คอลัมน์เนื้อหาของ admin |
+| `--layout-admin-min-width` | 1024px | ขอบล่างของ admin (desktop-only) |
+| `--layout-content-max-width` | 1200px | คอลัมน์เนื้อหาเว็บสาธารณะ |
+| `--layout-wide-max-width` | 1728px | หน้ากว้างพิเศษ (editor canvas) |
+| `--layout-tap-target` | 44px | ขนาดกดขั้นต่ำบนมือถือ (WCAG 2.5.5) |
+| `--layout-control-height-sm/md/lg` | 32/40/48px | ความสูงปุ่มและช่องกรอก |
 
 ## 6.5 Component Library
 
 | กลุ่ม | Components |
 |---|---|
+| Layout | **PageHeader** (eyebrow / title / description / meta / actions / tabs) |
 | Actions | Button (Primary/Secondary/Ghost/Danger), IconButton, Split button |
 | Inputs | Text, Textarea, Select, Switch, Slider, ColorPicker, ImagePicker, LinkPicker |
 | Feedback | Toast, Banner, Skeleton loader, Progress, Empty state |
@@ -99,6 +111,15 @@ Scale: 12 / 14 / 16 / 20 / 24 / 32 / 40 px — line-height 1.5
 | Navigation | Sidebar, Tabs, Breadcrumb, Pagination |
 | Data | Table (เรียง/ค้นหา/กรอง), Card, Stat card, Chart |
 | Editor | Block toolbar, Inline toolbar, Slash menu, Block inserter |
+
+### PageHeader — หัวหน้าแบบเดียวของ admin
+
+ทุกหน้าจอใน admin ใช้ `PageHeader` แทนการเขียน `<header>` เอง
+(รายละเอียดแต่ละช่อง ดู [05-admin-ia.md 5.3](05-admin-ia.md))
+
+- `title` เป็น `h1` เสมอ (หรือ `as="h2"` เมื่ออยู่ใน dialog)
+- `actions` ใส่ปุ่มของหน้าจอนั้น และต้องมี **Primary ไม่เกิน 1 ปุ่ม**
+- `tabs` คือที่วางแท็บของหน้าจอ — sidebar จะไม่โชว์แท็บซ้ำอีก
 
 ### Button variants
 
@@ -158,19 +179,21 @@ Scale: 12 / 14 / 16 / 20 / 24 / 32 / 40 px — line-height 1.5
 └────────────────────────────────────────────────────────────────────┘
 ```
 
-## 6.8 Wireframe: Dashboard
+## 6.8 Wireframe: Shell + Dashboard ของ admin
 
-ดู [05-admin-ia.md](05-admin-ia.md#52-dashboard)
+ดู [05-admin-ia.md](05-admin-ia.md)
 
 ## 6.9 Checklist ก่อนส่งงาน UI
 
 - [ ] ใช้ token ทั้งหมด ไม่มีสี/ขนาด hard-code
 - [ ] ครบ 4 สถานะ (loading/empty/error/success)
-- [ ] ตรวจที่ 375 / 768 / 1280px
+- [ ] ทุกปุ่ม/แท็บกดแล้วเกิด action จริง (ไม่มีปุ่มตาย)
+- [ ] มีไม่เกิน 1 ปุ่ม Primary ต่อหน้า
+- [ ] **admin**: ตรวจที่ 1024 / 1280 / 1600px (ไม่ต้องทำ layout มือถือ)
+- [ ] **เว็บสาธารณะ**: ตรวจที่ 360 / 768 / 1280px + พื้นที่กด ≥ 44px + ไม่มี scroll แนวนอน
 - [ ] ตรวจ Dark mode
 - [ ] contrast ≥ 4.5:1, ใช้คีย์บอร์ดได้
 - [ ] animation ≤ 250ms + เคารพ reduced-motion
-- [ ] มีไม่เกิน 1 ปุ่ม Primary
 
 ---
 

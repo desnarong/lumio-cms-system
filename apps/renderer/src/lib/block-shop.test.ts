@@ -37,6 +37,7 @@ describe('pageReadsShopCatalog', () => {
   it('is true only when a products block reads the catalog', () => {
     expect(pageReadsShopCatalog(pageWith([block('products', { source: 'shop' })]))).toBe(true);
     expect(pageReadsShopCatalog(pageWith([block('products', { source: 'manual' })]))).toBe(false);
+    expect(pageReadsShopCatalog(pageWith([block('products', { source: 'sale' })]))).toBe(true);
   });
 
   it('looks inside nested blocks too', () => {

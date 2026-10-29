@@ -130,11 +130,29 @@ const chrome = (
   locale: 'th',
 });
 
+const bundlePromotion = {
+  id: 'promo-1',
+  siteId: SITE_ID,
+  title: 'ซื้อ 10 แถม 1',
+  description: '',
+  kind: 'bundle',
+  badge: '',
+  buyQty: 10,
+  getQty: 1,
+  startsAt: null,
+  endsAt: null,
+  active: true,
+  sort: 0,
+  createdAt: new Date('2026-10-01T00:00:00Z'),
+  updatedAt: new Date('2026-10-01T00:00:00Z'),
+};
+
 const stubs = (
   options: {
     products?: unknown[];
     product?: unknown;
     order?: unknown;
+    promotions?: unknown[];
     stockUpdateCount?: number;
     chrome?: ReturnType<typeof chrome>;
   } = {},
@@ -156,6 +174,7 @@ const stubs = (
       updateMany: productUpdateMany,
     },
     media: { findMany: vi.fn().mockResolvedValue([mediaRow]) },
+    promotion: { findMany: vi.fn().mockResolvedValue(options.promotions ?? []) },
     order: {
       create: orderCreate,
       findUnique: vi
@@ -225,6 +244,36 @@ describe('ShopService catalog', () => {
 });
 
 describe('ShopService cart', () => {
+  it('adds a free unit when the cart reaches a "ซื้อ 10 แถม 1" offer', async () => {
+    const all = stubs({
+      products: [productRow({ price: 30_000, stock: 50 })],
+      promotions: [bundlePromotion],
+    });
+
+    const { cart } = await service(all).cart('baandoi.example.com', {
+      items: [{ productId: PRODUCT_ID, quantity: 10 }],
+    });
+
+    expect(cart.items[0]).toMatchObject({ quantity: 10, freeQuantity: 1 });
+    expect(cart.freeCount).toBe(1);
+    // The gift is not charged: ten units are paid for.
+    expect(cart.total).toBe(300_000);
+    expect(cart.promotions).toEqual([{ title: 'ซื้อ 10 แถม 1', freeQuantity: 1 }]);
+  });
+
+  it('refuses a quantity whose gift would exceed the stock', async () => {
+    const all = stubs({
+      products: [productRow({ price: 30_000, stock: 10 })],
+      promotions: [bundlePromotion],
+    });
+
+    await expect(
+      service(all).cart('baandoi.example.com', {
+        items: [{ productId: PRODUCT_ID, quantity: 10 }],
+      }),
+    ).rejects.toMatchObject({ code: 'conflict' });
+  });
+
   it('prices lines from the database and applies free shipping', async () => {
     const all = stubs({ products: [productRow({ price: 30_000 })] });
     const { cart } = await service(all).cart('baandoi.example.com', {
@@ -298,6 +347,26 @@ describe('ShopService cart', () => {
 });
 
 describe('ShopService checkout', () => {
+  it('writes the gift as a zero-price line and takes it from stock', async () => {
+    const all = stubs({
+      products: [productRow({ price: 30_000, stock: 50 })],
+      promotions: [bundlePromotion],
+    });
+
+    await service(all).createOrder('baandoi.example.com', {
+      ...orderInput,
+      items: [{ productId: PRODUCT_ID, quantity: 10 }],
+    });
+
+    const createMany = (all.tx as { orderItem: { createMany: Mock } }).orderItem.createMany;
+    const data = (createMany.mock.calls[0]?.[0] as { data: Record<string, unknown>[] }).data;
+    expect(data).toHaveLength(2);
+    expect(data[1]).toMatchObject({ price: 0, quantity: 1 });
+    expect(all.productUpdateMany).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { stock: { decrement: 11 } } }),
+    );
+  });
+
   it('ignores a filled honeypot', async () => {
     const all = stubs();
     await expect(

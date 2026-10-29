@@ -7,6 +7,8 @@ export const postsDefaults: BlockData<PostsProps> = {
     heading: 'บทความล่าสุด',
     subheading: 'เรื่องราวและความรู้ที่เราอยากแบ่งปัน',
     columns: '3',
+    source: 'manual',
+    sourceLimit: 3,
     showImage: true,
     showExcerpt: true,
     showDate: true,

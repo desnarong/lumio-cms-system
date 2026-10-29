@@ -4,13 +4,14 @@ import { Button, Icon, Slider, Switch, TextField, useT, type MessageKey } from '
 import type { ReactNode } from 'react';
 import type { EditorTextField } from './types.js';
 
-const DEVICE_LABEL_KEYS: Record<EditorDevice, MessageKey> = {
-  mobile: 'editor.device.mobile',
-  tablet: 'editor.device.tablet',
-  desktop: 'editor.device.desktop',
-};
-
 const DEFAULT_LAYOUT: TextLayout = { x: 0, y: 0, scale: 100 };
+
+const HELP_KEYS: MessageKey[] = [
+  'editor.helpClick',
+  'editor.helpDrag',
+  'editor.helpInsert',
+  'editor.helpDesign',
+];
 
 interface TextLayoutControlsProps {
   field: EditorTextField;
@@ -123,20 +124,26 @@ export interface BlockInspectorProps {
   panelMode: BlockEditorMode;
   onPanelModeChange: (panelMode: BlockEditorMode) => void;
   onChange: (path: string, value: unknown) => void;
-  onDuplicate: () => void;
-  onRemove: () => void;
-  onToggleVisibility: () => void;
+  /**
+   * "จัดหน้าตา" mode: the per-text move controls belong to layout work, so they
+   * only appear here while that mode is on.
+   */
+  layoutMode?: boolean;
   /** Editable texts of the selected block, used for per-text move controls. */
   fields?: readonly EditorTextField[];
   /** Stores one text's own position/size. */
   onTextLayoutChange?: (path: string, layout: TextLayout | undefined) => void;
   /** The AI assistant, rendered above the block's own controls. */
   aiPanel?: ReactNode;
+  /** Page-level settings (a post's cover) shown while no block is selected. */
+  metaPanel?: ReactNode;
 }
 
 /**
  * Side panel from the wireframe: the selected block's own controls. It renders
  * the block's `Panel` from the registry, so a new block gets its editor for free.
+ * Duplicating, hiding and deleting live on the block itself (one place per
+ * action), so this panel only holds settings.
  */
 export const BlockInspector = ({
   block,
@@ -144,19 +151,26 @@ export const BlockInspector = ({
   panelMode,
   onPanelModeChange,
   onChange,
-  onDuplicate,
-  onRemove,
-  onToggleVisibility,
+  layoutMode = false,
   fields = [],
   onTextLayoutChange,
   aiPanel,
+  metaPanel,
 }: BlockInspectorProps) => {
   const t = useT();
 
   if (!block) {
     return (
       <aside className="editor-inspector" aria-label={t('editor.inspectorLabel')}>
-        <p className="editor-inspector__hint">{t('editor.inspectorHint')}</p>
+        {metaPanel ? <div className="editor-inspector__meta">{metaPanel}</div> : null}
+        <div className="editor-inspector__help">
+          <h2 className="editor-inspector__title">{t('editor.helpTitle')}</h2>
+          <ul className="editor-inspector__help-list">
+            {HELP_KEYS.map((key) => (
+              <li key={key}>{t(key)}</li>
+            ))}
+          </ul>
+        </div>
         {aiPanel ? <div className="editor-inspector__ai">{aiPanel}</div> : null}
       </aside>
     );
@@ -165,30 +179,17 @@ export const BlockInspector = ({
   const definition = registry.get(block.type);
   const Panel = definition?.Panel;
   const hidden = block.style.visibility[device] === false;
-  const deviceLabel = t(DEVICE_LABEL_KEYS[device]);
 
   return (
     <aside className="editor-inspector" aria-label={t('editor.inspectorLabel')}>
       <header className="editor-inspector__header">
         <h2 className="editor-inspector__title">{definition?.label ?? block.type}</h2>
-        <div className="editor-inspector__actions">
-          <Button size="sm" variant="ghost" onClick={onDuplicate}>
-            {t('editor.duplicate')}
-          </Button>
-          <Button size="sm" variant="ghost" onClick={onToggleVisibility}>
-            {hidden
-              ? t('editor.showOnDevice', { device: deviceLabel })
-              : t('editor.hideOnDevice', { device: deviceLabel })}
-          </Button>
-          <Button size="sm" variant="danger" onClick={onRemove}>
-            {t('common.delete')}
-          </Button>
-        </div>
+        {hidden ? <span className="chip chip--warning">{t('editor.hiddenBadge')}</span> : null}
       </header>
 
       <div className="editor-inspector__body">
         {aiPanel ? <div className="editor-inspector__ai">{aiPanel}</div> : null}
-        {onTextLayoutChange && fields.length > 0 ? (
+        {layoutMode && onTextLayoutChange && fields.length > 0 ? (
           <TextLayoutSection block={block} fields={fields} onChange={onTextLayoutChange} />
         ) : null}
         {Panel ? (

@@ -63,6 +63,29 @@
 - **Lighthouse CI** รันทุก PR (budget ตาม 14.2) — ถ้าเกินงบให้ fail
 - Test sitemap/robots/canonical/hreflang ว่าถูกต้อง
 - Test ว่าไม่มี JS จาก block ที่ไม่จำเป็นใน public site
+- Test สัญญามือถือ: `apps/renderer/src/mobile.test.ts` (tap target, safe-area, overflow,
+  hamburger, ไม่มี width ตายตัวเกิน 360px) และ `packages/blocks/src/responsive.test.ts`
+  (grid ของ block ยุบเหลือคอลัมน์เดียว)
+
+## 14.6 มือถือคือจอหลักของเว็บสาธารณะ
+
+คนอ่านเว็บมากกว่าครึ่งเปิดบนมือถือ Google จึงจัดอันดับแบบ mobile-first
+กติกาของ Lumio จึงแบ่งครึ่งชัด ๆ (ดู [25-admin-redesign.md](25-admin-redesign.md)):
+
+| ส่วน | กติกา |
+|---|---|
+| `apps/renderer` + `packages/blocks` | รองรับมือถือ **100%** — ตรวจทุกครั้งที่แก้ |
+| `apps/admin` | เป็นเครื่องมือเดสก์ท็อป (≥ 1024px) ไม่ทำ layout มือถือ |
+
+สิ่งที่ต้องมีเสมอในหน้าสาธารณะ:
+
+1. **พื้นที่กด ≥ 44px** (`--layout-tap-target`) สำหรับลิงก์เมนู ปุ่ม และ chip ต่าง ๆ
+2. **safe-area** (`env(safe-area-inset-*)`) ให้ header, footer, แผงเมนู และปุ่มกลับขึ้นบน
+3. **ไม่มี scroll แนวนอน** — ตาราง/โค้ดที่กว้างให้เลื่อนในกรอบตัวเอง (`.site { overflow-x: clip }`)
+4. **grid เริ่มที่ 1 คอลัมน์** แล้วค่อยขยายที่ 640 / 1024px (mobile-first)
+5. **เมนูพับเป็น hamburger ได้โดยไม่ต้องใช้ JS** (checkbox + label) เพื่อไม่กระทบงบ JS
+6. **ตัวอักษรในช่องกรอก ≥ 16px** กัน iOS ซูมตอนโฟกัส
+7. รูป hero มี `width`/`height` เสมอ (กัน CLS) และไม่ lazy-load ใบแรก (กัน LCP)
 
 ---
 

@@ -5,28 +5,6 @@
   flex-direction: column;
   gap: var(--space-lg);
 }
-
-.forms-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-lg);
-  flex-wrap: wrap;
-}
-
-.forms-header__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  font-weight: 700;
-}
-
-.forms-header__subtitle {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-}
-
 .forms-layout {
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);

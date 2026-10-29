@@ -6,12 +6,15 @@ test.describe('back office', () => {
     await signIn(page);
 
     await expect(page.locator('.shell-nav')).toBeVisible();
-    await expect(page.locator('.shell-topbar__site')).toContainText('กาแฟบ้านดอย');
+    await expect(page.locator('.shell-brand__site-name')).toContainText('กาแฟบ้านดอย');
+    // The sidebar is flat: nine doors, and the tabs of a screen stay inside it.
+    await expect(page.getByRole('link', { name: 'ตั้งค่า' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'ทีมงาน & สิทธิ์' })).toHaveCount(0);
   });
 
   test('settings › add-ons closes a capability and says so', async ({ page }) => {
     await signIn(page);
-    await page.getByRole('link', { name: 'ทั่วไป' }).click();
+    await page.getByRole('link', { name: 'ตั้งค่า' }).click();
     await page.getByRole('tab', { name: 'ส่วนเสริม' }).click();
 
     await expect(page.getByText('ส่วนที่เปิดให้ใช้บนเว็บนี้')).toBeVisible();
@@ -29,7 +32,8 @@ test.describe('back office', () => {
 
   test('the owner refunds a paid order in one flow', async ({ page }) => {
     await signIn(page);
-    await page.getByRole('link', { name: 'คำสั่งซื้อ' }).click();
+    await page.getByRole('link', { name: 'ร้านค้า' }).click();
+    await page.getByRole('tab', { name: 'คำสั่งซื้อ' }).click();
 
     await page.getByRole('button', { name: /LM-261020-CD34/ }).click();
     await page.getByRole('button', { name: 'คืนเงินลูกค้า' }).click();

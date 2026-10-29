@@ -118,11 +118,16 @@ const ManualCard = ({ item, index, block, showDescription, showPrice }: ManualCa
 );
 
 export const ProductsBlock = ({ props, block, shopProducts }: BlockRenderProps<ProductsProps>) => {
-  const live = props.source === 'shop';
+  const live = props.source !== 'manual';
   const cards =
     live && shopProducts !== undefined
       ? shopProductsFor(
-          { category: props.sourceCategory, limit: props.sourceLimit },
+          {
+            category: props.sourceCategory,
+            limit: props.sourceLimit,
+            // The promotion page lists only products that carry an old price.
+            saleOnly: props.source === 'sale',
+          },
           shopProducts,
         )
       : null;

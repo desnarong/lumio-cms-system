@@ -1,4 +1,10 @@
-import { BlockTreeRenderer, registerRenderBlocks, type ShopProductCard } from '@lumio/blocks/render';
+import {
+  BlockTreeRenderer,
+  registerRenderBlocks,
+  type LatestPostCard,
+  type PromotionCard,
+  type ShopProductCard,
+} from '@lumio/blocks/render';
 import { buildJsonLd, localeLabel, localePathFor, type BlockNode, type PublicPage } from '@lumio/shared';
 import { siteOrigin } from '../lib/host';
 import { languageLinks } from '../lib/languages';
@@ -19,6 +25,10 @@ export interface PageViewProps {
   preview?: boolean;
   /** Live shop products for a products block that reads the catalog. */
   shopProducts?: readonly ShopProductCard[];
+  /** Published posts for a posts block that follows the blog. */
+  latestPosts?: readonly LatestPostCard[];
+  /** Live offers for a feature grid that follows the promotion list. */
+  promotions?: readonly PromotionCard[];
 }
 
 /**
@@ -26,7 +36,14 @@ export interface PageViewProps {
  * generated from them. It is a plain server component, so the output is static
  * HTML with no client JavaScript from the blocks.
  */
-export const PageView = ({ page, host, preview = false, shopProducts }: PageViewProps) => {
+export const PageView = ({
+  page,
+  host,
+  preview = false,
+  shopProducts,
+  latestPosts,
+  promotions,
+}: PageViewProps) => {
   const { site, content, menus, globalBlocks } = page;
   if (!content) return null;
 
@@ -88,6 +105,8 @@ export const PageView = ({ page, host, preview = false, shopProducts }: PageView
             forms={page.forms}
             languages={languages}
             {...(shopProducts ? { shopProducts } : {})}
+            {...(latestPosts ? { latestPosts } : {})}
+            {...(promotions ? { promotions } : {})}
           />
         </article>
       </main>

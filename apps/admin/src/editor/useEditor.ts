@@ -68,6 +68,8 @@ export interface EditorController {
   applyBlockChanges: (id: string, changes: { path: string; value: unknown }[]) => void;
   /** Stores an accepted SEO suggestion for this page; false when saving failed. */
   applySeo: (seo: Seo) => Promise<boolean>;
+  /** Sets or clears a post's cover image; false when saving failed. */
+  applyCover: (mediaId: string | null, url: string | null) => Promise<boolean>;
   /** Swaps the tree for the assistant's translation, as a single undo step. */
   replaceBlocks: (blocks: BlockTree) => void;
   toggleVisibility: (id: string, device: BlockDevice) => void;
@@ -429,6 +431,21 @@ export const useEditor = ({
         } catch (error) {
           errorRef.current?.(
             error instanceof Error ? error.message : t('editor.seoError'),
+          );
+          return false;
+        }
+      },
+      [api, contentId, t],
+    ),
+    applyCover: useCallback(
+      async (mediaId: string | null, url: string | null) => {
+        try {
+          await api.update(contentId, { coverMediaId: mediaId });
+          dispatch({ type: 'cover', coverMediaId: mediaId, coverImageUrl: url });
+          return true;
+        } catch (error) {
+          errorRef.current?.(
+            error instanceof ApiError ? error.message : t('editor.coverError'),
           );
           return false;
         }

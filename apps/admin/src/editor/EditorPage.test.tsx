@@ -1,7 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { ToastProvider } from '@lumio/ui';
 import { createDemoAiApi } from '../ai/demo.js';
+import { BlockCanvas } from './BlockCanvas.js';
 import { EditorPage } from './EditorPage.js';
 import { DEMO_CONTENT_ID, createDemoContent, createDemoContentApi } from './demo.js';
 import { createDemoSectionTemplateApi } from './sections.js';
@@ -40,9 +41,53 @@ describe('EditorPage', () => {
     expect(html).toContain('ดูแบบเดสก์ท็อป');
     expect(html).toContain('เลิกทำ');
     expect(html).toContain('ทำซ้ำ');
-    expect(html).toContain('แก้ไข');
-    expect(html).toContain('ดีไซน์');
+    expect(html).toContain('แก้เนื้อหา');
+    expect(html).toContain('จัดหน้าตา');
     expect(html).toContain('เผยแพร่');
+  });
+
+  it('teaches the three ways to edit while nothing is selected', () => {
+    const html = render();
+    expect(html).toContain('วิธีแก้หน้านี้');
+    expect(html).toContain('คลิกข้อความบนหน้าแล้วพิมพ์แก้ได้เลย');
+    expect(html).toContain('ลากจุดจับ ⋮⋮ ที่มุมส่วนเพื่อย้ายลำดับ');
+  });
+
+  it('keeps the layout handles for the arrange mode only', () => {
+    const blocks = createDemoContent().blocks;
+    const selected = blocks[0]?.id ?? 'b1';
+
+    const canvas = (layoutMode: boolean): string =>
+      renderToStaticMarkup(
+        <BlockCanvas
+          blocks={blocks}
+          selectedId={selected}
+          device="desktop"
+          layoutMode={layoutMode}
+          draggingId={null}
+          dropIndex={null}
+          onSelect={vi.fn()}
+          onTextChange={vi.fn()}
+          onTextStyle={vi.fn()}
+          onTextOffset={vi.fn()}
+          onInsert={vi.fn()}
+          onDuplicate={vi.fn()}
+          onRemove={vi.fn()}
+          onToggleVisibility={vi.fn()}
+          onMove={vi.fn()}
+          onDragStart={vi.fn()}
+          onDropIndex={vi.fn()}
+          onDragEnd={vi.fn()}
+          onResize={vi.fn()}
+        />,
+      );
+
+    expect(canvas(false)).not.toContain('editor-block__resize');
+    expect(canvas(false)).not.toContain('editor-block__move');
+    expect(canvas(true)).toContain('editor-block__resize');
+    expect(canvas(true)).toContain('editor-block__move');
+    // Reordering stays available in both modes.
+    expect(canvas(false)).toContain('editor-block__handle');
   });
 
   it('shows the draft status and renders the page blocks', () => {

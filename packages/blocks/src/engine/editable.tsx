@@ -81,14 +81,18 @@ export const Editable = ({
                 {
                   key: index,
                   className: runClassName(segment.run),
+                  // A hand-typed size ships as a variable instead of an inline
+                  // `font-size`, so the phone stylesheet can cap it. An inline
+                  // pixel value would win over every responsive rule.
+                  'data-run-size': segment.run.sizePx ? 'true' : undefined,
                   style:
                     segment.run.colorHex || segment.run.sizePx
-                      ? {
+                      ? ({
                           ...(segment.run.colorHex ? { color: segment.run.colorHex } : {}),
                           ...(segment.run.sizePx
-                            ? { fontSize: `${segment.run.sizePx}px`, lineHeight: 1.2 }
+                            ? { '--run-size': `${segment.run.sizePx}px`, lineHeight: 1.2 }
                             : {}),
-                        }
+                        } as CSSProperties)
                       : undefined,
                 },
                 segment.text,

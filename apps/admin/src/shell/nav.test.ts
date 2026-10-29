@@ -1,94 +1,173 @@
 import { describe, expect, it } from 'vitest';
-import { activeMenuId, featureForRoute, NAV_MENUS, visibleMenus } from './nav.js';
+import { routePath } from '../route.js';
+import {
+  activeDestinationId,
+  destinationForRoute,
+  featureForRoute,
+  NAV_DESTINATIONS,
+  NAV_SCREENS,
+  NAV_SECTIONS,
+  screenForPath,
+  visibleScreens,
+  visibleSidebar,
+} from './nav.js';
 
-const ids = (role: Parameters<typeof visibleMenus>[0]): string[] =>
-  visibleMenus(role).map((menu) => menu.id);
+const doorIds = (
+  role: Parameters<typeof visibleSidebar>[0],
+  features?: Parameters<typeof visibleSidebar>[1],
+): string[] =>
+  visibleSidebar(role, features).flatMap((group) => group.items.map((item) => item.id));
 
-describe('visibleMenus', () => {
-  it('shows every menu to an owner', () => {
-    expect(ids('owner')).toEqual(['dashboard', 'content', 'design', 'growth', 'settings']);
+const screenPaths = (
+  role: Parameters<typeof visibleScreens>[0],
+  features?: Parameters<typeof visibleScreens>[1],
+): string[] => visibleScreens(role, features).map((screen) => routePath(screen.route));
+
+describe('visibleSidebar', () => {
+  it('offers an owner nine doors, and never a tenth', () => {
+    expect(doorIds('owner')).toEqual([
+      'dashboard',
+      'pages',
+      'posts',
+      'media',
+      'forms',
+      'shop',
+      'design',
+      'growth',
+      'settings',
+    ]);
+    expect(NAV_DESTINATIONS.length).toBeLessThanOrEqual(9);
   });
 
-  it('hides design, growth and settings from a viewer', () => {
-    expect(ids('viewer')).toEqual(['dashboard', 'content']);
+  it('keeps three groups at most, so nothing has to be expanded first', () => {
+    expect(NAV_SECTIONS.length).toBe(3);
+    expect(visibleSidebar('owner').map((group) => group.section.id)).toEqual([
+      'work',
+      'shop',
+      'site',
+    ]);
+  });
+
+  it('hides the shop, design, growth and settings doors from a viewer', () => {
+    expect(doorIds('viewer')).toEqual(['dashboard', 'pages', 'posts', 'media', 'forms']);
+    expect(visibleSidebar('viewer').map((group) => group.section.id)).toEqual(['work']);
   });
 
   it('hides settings from an editor but keeps design and growth', () => {
-    expect(ids('editor')).toEqual(['dashboard', 'content', 'design', 'growth']);
+    expect(doorIds('editor')).toEqual([
+      'dashboard',
+      'pages',
+      'posts',
+      'media',
+      'forms',
+      'shop',
+      'design',
+      'growth',
+    ]);
   });
 
-  it('never adds a sixth main menu', () => {
-    expect(NAV_MENUS.length).toBeLessThanOrEqual(5);
+  it('drops the shop door when the site closed the commerce add-on', () => {
+    const open = ['ai', 'analytics', 'newsletter', 'apps'] as const;
+
+    expect(doorIds('owner', [...open])).not.toContain('shop');
+    expect(visibleSidebar('owner', [...open]).map((group) => group.section.id)).toEqual([
+      'work',
+      'site',
+    ]);
   });
 
-  it('gives every entry a screen of its own', () => {
-    for (const menu of NAV_MENUS) {
-      expect(menu.entries.length).toBeGreaterThan(0);
+  it('removes a group with nothing left in it', () => {
+    expect(visibleSidebar('owner', ['ai']).map((group) => group.section.id)).toEqual([
+      'work',
+      'site',
+    ]);
+  });
+
+  it('opens every door on a screen that exists', () => {
+    const paths = new Set(NAV_SCREENS.map((screen) => routePath(screen.route)));
+
+    for (const door of NAV_DESTINATIONS) {
+      expect(paths.has(door.path)).toBe(true);
+    }
+  });
+});
+
+describe('visibleScreens', () => {
+  it('names one screen per address, so the palette never repeats itself', () => {
+    const paths = screenPaths('owner');
+
+    expect(new Set(paths).size).toBe(paths.length);
+  });
+
+  it('reaches the tabs behind a door, which the sidebar no longer lists', () => {
+    const paths = screenPaths('owner');
+
+    for (const path of [
+      '/design/menus',
+      '/settings/language',
+      '/growth/apps',
+      '/commerce/orders',
+    ]) {
+      expect(paths).toContain(path);
     }
   });
 
-  it('offers the forms inbox inside the content menu', () => {
-    const content = NAV_MENUS.find((menu) => menu.id === 'content');
-    expect(content?.entries.map((entry) => entry.id)).toContain('forms');
+  it('drops the screens of a closed add-on', () => {
+    const paths = screenPaths('owner', ['ai', 'analytics', 'newsletter', 'apps']);
+
+    expect(paths).not.toContain('/commerce/products');
+    expect(paths).toContain('/growth/analytics');
   });
 
-  it('keeps App installs out of an editor\u2019s growth menu', () => {
-    const growthForEditor = visibleMenus('editor').find((menu) => menu.id === 'growth');
-    expect(growthForEditor?.entries.map((entry) => entry.id)).toEqual([
-      'seo',
-      'analytics',
-      'newsletter',
-    ]);
+  it('keeps App installs out of the growth screens of an editor', () => {
+    expect(screenPaths('editor')).toContain('/growth/seo');
+    expect(screenPaths('editor')).not.toContain('/growth/apps');
+    expect(screenPaths('owner')).toContain('/growth/apps');
+  });
 
-    const growthForOwner = visibleMenus('owner').find((menu) => menu.id === 'growth');
-    expect(growthForOwner?.entries.map((entry) => entry.id)).toContain('apps');
+  it('keeps billing for the owner alone', () => {
+    expect(screenPaths('admin')).not.toContain('/settings/billing');
+    expect(screenPaths('owner')).toContain('/settings/billing');
+  });
+});
+
+describe('activeDestinationId', () => {
+  it('highlights one door per screen', () => {
+    expect(activeDestinationId({ name: 'dashboard' })).toBe('dashboard');
+    expect(activeDestinationId({ name: 'content', kind: 'page' })).toBe('pages');
+    expect(activeDestinationId({ name: 'content', kind: 'post' })).toBe('posts');
+    expect(activeDestinationId({ name: 'editor', contentId: 'c1' })).toBe('pages');
+    expect(activeDestinationId({ name: 'media' })).toBe('media');
+    expect(activeDestinationId({ name: 'forms' })).toBe('forms');
+  });
+
+  it('highlights the door a tab belongs to', () => {
+    expect(activeDestinationId({ name: 'commerce', tab: 'orders' })).toBe('shop');
+    expect(activeDestinationId({ name: 'design', tab: 'menus' })).toBe('design');
+    expect(activeDestinationId({ name: 'growth', tab: 'apps' })).toBe('growth');
+    expect(activeDestinationId({ name: 'settings', tab: 'team' })).toBe('settings');
+  });
+});
+
+describe('breadcrumb lookups', () => {
+  it('names the screen behind an address', () => {
+    expect(screenForPath('/settings/team')?.labelKey).toBe('nav.team');
+    expect(screenForPath('/design/style')?.labelKey).toBe('nav.style');
+    expect(screenForPath('/nope')).toBeUndefined();
+  });
+
+  it('names the door behind a screen', () => {
+    expect(destinationForRoute({ name: 'settings', tab: 'team' })?.id).toBe('settings');
+    expect(destinationForRoute({ name: 'commerce', tab: 'orders' })?.id).toBe('shop');
   });
 });
 
 describe('feature gating', () => {
-  it('drops the screens of a closed add-on', () => {
-    const menus = visibleMenus('owner', ['ai', 'analytics', 'newsletter', 'apps']);
-    const content = menus.find((menu) => menu.id === 'content');
-    const growth = menus.find((menu) => menu.id === 'growth');
-
-    expect(content?.entries.map((entry) => entry.id)).not.toContain('products');
-    expect(content?.entries.map((entry) => entry.id)).not.toContain('orders');
-    expect(growth?.entries.map((entry) => entry.id)).toEqual(['seo', 'analytics', 'newsletter', 'apps']);
-  });
-
-  it('removes a whole menu when nothing is left in it', () => {
-    const menus = visibleMenus('owner', ['ai']);
-
-    expect(menus.map((menu) => menu.id)).toEqual(['dashboard', 'content', 'design', 'growth', 'settings']);
-    expect(menus.find((menu) => menu.id === 'growth')?.entries.map((entry) => entry.id)).toEqual([
-      'seo',
-    ]);
-    expect(menus.find((menu) => menu.id === 'settings')?.entries.map((entry) => entry.id)).not.toContain(
-      'shop-settings',
-    );
-  });
-
   it('sends a deep link of a closed add-on to the dashboard', () => {
     expect(featureForRoute({ name: 'commerce', tab: 'orders' })).toBe('commerce');
     expect(featureForRoute({ name: 'growth', tab: 'analytics' })).toBe('analytics');
     expect(featureForRoute({ name: 'growth', tab: 'apps' })).toBe('apps');
     expect(featureForRoute({ name: 'growth', tab: 'seo' })).toBeUndefined();
     expect(featureForRoute({ name: 'settings', tab: 'features' })).toBeUndefined();
-  });
-});
-
-describe('activeMenuId', () => {
-  it('highlights content for the editor and the media library', () => {
-    expect(activeMenuId({ name: 'editor', contentId: 'c1' })).toBe('content');
-    expect(activeMenuId({ name: 'media' })).toBe('content');
-    expect(activeMenuId({ name: 'content', kind: 'post' })).toBe('content');
-    expect(activeMenuId({ name: 'forms' })).toBe('content');
-  });
-
-  it('highlights design, growth and settings on their own screens', () => {
-    expect(activeMenuId({ name: 'design', tab: 'menus' })).toBe('design');
-    expect(activeMenuId({ name: 'growth', tab: 'seo' })).toBe('growth');
-    expect(activeMenuId({ name: 'settings', tab: 'team' })).toBe('settings');
-    expect(activeMenuId({ name: 'dashboard' })).toBe('dashboard');
   });
 });

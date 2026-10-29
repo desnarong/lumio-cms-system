@@ -30,7 +30,11 @@ export default async function CartPage() {
       <header className="shop-hero">
         <h1 className="shop-hero__title">ตะกร้าสินค้า</h1>
         <p className="shop-hero__subtitle">
-          {cart ? `${cart.cart.count} ชิ้นในตะกร้า` : 'ยังไม่มีสินค้าในตะกร้า'}
+          {cart
+            ? `${cart.cart.count} ชิ้นในตะกร้า${
+                cart.cart.freeCount > 0 ? ` · แถมอีก ${cart.cart.freeCount} ชิ้น` : ''
+              }`
+            : 'ยังไม่มีสินค้าในตะกร้า'}
         </p>
       </header>
 
@@ -45,7 +49,17 @@ export default async function CartPage() {
         </div>
       ) : (
         <div className="shop-cart">
-          <ul className="shop-cart__lines">
+          <>
+            {cart.cart.promotions.length > 0 ? (
+              <ul className="shop-promos" aria-label="โปรโมชั่นที่ใช้ได้">
+                {cart.cart.promotions.map((promotion) => (
+                  <li key={promotion.title}>
+                    🎁 {promotion.title} — แถม {promotion.freeQuantity} ชิ้น
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <ul className="shop-cart__lines">
             {cart.cart.items.map((line) => (
               <li
                 className="shop-cart__line"
@@ -77,6 +91,12 @@ export default async function CartPage() {
                     )}{' '}
                     บาท / ชิ้น
                   </p>
+                  {line.freeQuantity > 0 ? (
+                    <p className="shop-cart__gift">
+                      🎁 แถม {line.freeQuantity} ชิ้น
+                      {line.promotionTitle ? ` · ${line.promotionTitle}` : ''}
+                    </p>
+                  ) : null}
                   <form className="shop-cart__actions" action="/cart/update" method="post">
                     <input type="hidden" name="productId" value={line.product.id} />
                     {line.variantId ? (
@@ -116,7 +136,8 @@ export default async function CartPage() {
                 <p className="shop-cart__line-total">{formatBaht(line.lineTotal)} บาท</p>
               </li>
             ))}
-          </ul>
+            </ul>
+          </>
 
           <aside className="shop-summary" aria-label="สรุปยอด">
             <dl className="shop-summary__list">

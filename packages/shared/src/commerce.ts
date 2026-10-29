@@ -553,22 +553,38 @@ export const cartInputSchema = z.object({
 });
 export type CartInput = z.infer<typeof cartInputSchema>;
 
+/** One offer that added free units to the cart. */
+export interface CartPromotion {
+  title: string;
+  freeQuantity: number;
+}
+
 export interface CartLine {
   product: ShopProduct;
   variantId: string | null;
   variantLabel: string | null;
+  /** Units the customer pays for. */
   quantity: number;
   lineTotal: number;
+  /** Units the shop adds free, from a "ซื้อ X แถม Y" promotion. */
+  freeQuantity: number;
+  /** Title of the offer that added them, for the cart line. */
+  promotionTitle: string | null;
 }
 
 export interface ShopCart {
   items: CartLine[];
+  /** Units the customer pays for. */
   count: number;
+  /** Everything the cart adds for free (sum of the lines' free units). */
+  freeCount: number;
   subtotal: number;
   shippingFee: number;
   weightGrams: number;
   total: number;
   currency: string;
+  /** Offers applied to this cart, for the summary banner. */
+  promotions: CartPromotion[];
 }
 
 /** Province names are compared loosely: "จ.เชียงใหม่" matches "เชียงใหม่". */
@@ -600,6 +616,19 @@ export const shippingFeeFor = (
   const weightGrams = context.weightGrams ?? 0;
   const kilograms = weightGrams > 0 ? Math.ceil(weightGrams / 1000) : 0;
   return base + kilograms * settings.shippingPerKgFee;
+};
+
+/**
+ * How many units a "ซื้อ X แถม Y" offer gives for this quantity. The gift never
+ * exceeds what the customer pays for, so a stray setting cannot make it negative.
+ */
+export const giftQuantityFor = (
+  buyQty: number | null | undefined,
+  getQty: number | null | undefined,
+  quantity: number,
+): number => {
+  if (!buyQty || !getQty || buyQty < 1 || getQty < 1 || quantity < buyQty) return 0;
+  return Math.min(Math.floor(quantity / buyQty) * getQty, quantity);
 };
 
 export const cartTotals = (
@@ -985,22 +1014,31 @@ export const shopProductResponseSchema = shopChromeSchema.extend({
 });
 export type ShopProductResponse = z.infer<typeof shopProductResponseSchema>;
 
+export const cartPromotionSchema = z.object({
+  title: z.string(),
+  freeQuantity: z.number().int(),
+});
+
 export const cartLineSchema = z.object({
   product: shopProductSchema,
   variantId: z.string().nullable().default(null),
   variantLabel: z.string().nullable().default(null),
   quantity: z.number().int(),
   lineTotal: z.number().int(),
+  freeQuantity: z.number().int().default(0),
+  promotionTitle: z.string().nullable().default(null),
 });
 
 export const shopCartSchema = z.object({
   items: z.array(cartLineSchema),
   count: z.number().int(),
+  freeCount: z.number().int().default(0),
   subtotal: z.number().int(),
   shippingFee: z.number().int(),
   weightGrams: z.number().int().default(0),
   total: z.number().int(),
   currency: z.string(),
+  promotions: z.array(cartPromotionSchema).default([]),
 });
 
 export const shopCartResponseSchema = shopChromeSchema.extend({

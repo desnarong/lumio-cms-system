@@ -8,17 +8,20 @@ import {
 } from '@lumio/shared';
 import type { CommandPaletteSection, Translate } from '@lumio/ui';
 import { routePath } from '../route.js';
-import { visibleMenus } from './nav.js';
+import { destinationForRoute, NAV_SECTIONS, visibleScreens, type NavSectionId } from './nav.js';
 
 /**
  * Builds the searchable list behind the command palette (docs/design/04-ux.md
- * 4.3). Navigation comes from the same menus the sidebar renders, so the palette
- * can never offer a screen the role cannot open.
+ * 4.3). Navigation comes from the same screen list the sidebar and the tabs are
+ * built from, so the palette can never offer a screen the role cannot open.
  */
 
 const NAV_PREFIX = 'nav:';
 const ACTION_PREFIX = 'action:';
 const CONTENT_PREFIX = 'content:';
+
+const sectionLabelKey = (section: NavSectionId) =>
+  NAV_SECTIONS.find((entry) => entry.id === section)?.labelKey ?? 'nav.section.work';
 
 /** Every screen the role may open, as "go to" commands, in one language. */
 export const navigationCommands = (
@@ -26,14 +29,22 @@ export const navigationCommands = (
   t: Translate,
   features?: readonly FeatureFlagKey[],
 ): CommandItem[] =>
-  visibleMenus(role, features).flatMap((menu) =>
-    menu.entries.map((entry) => ({
-      id: `${NAV_PREFIX}${routePath(entry.route)}`,
-      label: t(entry.labelKey),
+  visibleScreens(role, features).map((screen) => {
+    // A tab is also found by the name of the door it sits behind, so searching
+    // for "ตั้งค่า" still reaches the settings screens.
+    const destination = destinationForRoute(screen.route);
+    const keywords = [
+      t(sectionLabelKey(screen.section)),
+      ...(destination && destination.labelKey !== screen.labelKey ? [t(destination.labelKey)] : []),
+    ];
+
+    return {
+      id: `${NAV_PREFIX}${routePath(screen.route)}`,
+      label: t(screen.labelKey),
       group: 'goto' as const,
-      keywords: [t(menu.labelKey)],
-    })),
-  );
+      keywords,
+    };
+  });
 
 export interface ActionCommandOptions {
   publicUrl?: string;
@@ -53,8 +64,18 @@ export const actionCommands = ({
 
   if (canCreate) {
     items.push(
-      { id: `${ACTION_PREFIX}new-page`, label: t('command.newPage'), group: 'action', keywords: ['page', 'new'] },
-      { id: `${ACTION_PREFIX}new-post`, label: t('command.newPost'), group: 'action', keywords: ['post', 'new'] },
+      {
+        id: `${ACTION_PREFIX}new-page`,
+        label: t('command.newPage'),
+        group: 'action',
+        keywords: ['page', 'new'],
+      },
+      {
+        id: `${ACTION_PREFIX}new-post`,
+        label: t('command.newPost'),
+        group: 'action',
+        keywords: ['post', 'new'],
+      },
     );
   }
   if (publicUrl) {
