@@ -1465,6 +1465,7 @@ export const TH_MESSAGES = {
   'updates.notes': 'ดูรายละเอียดเวอร์ชันใหม่',
   'updates.unavailable': 'ยังตรวจหาอัปเดตไม่ได้',
 
+  'shell.credit': 'ขับเคลื่อนด้วย Lumio',
   'nav.booking': 'การจองคิว',
   'settings.tabApiKeys': 'กุญแจ API',
   'settings.tabBranding': 'แบรนด์องค์กร',
@@ -3015,6 +3016,7 @@ export const EN_MESSAGES: Partial<Record<MessageKey, string>> = {
   'updates.notes': 'See what changed',
   'updates.unavailable': 'Update check is unavailable',
 
+  'shell.credit': 'Powered by Lumio',
   'nav.booking': 'Bookings',
   'settings.tabApiKeys': 'API keys',
   'settings.tabBranding': 'Agency brand',

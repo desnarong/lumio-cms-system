@@ -3,9 +3,11 @@ import {
   FEATURE_FLAG_KEYS,
   HOME_SLUG,
   type ContentType,
+  type AgencyView,
   type FeatureFlagKey,
   type Role,
 } from '@lumio/shared';
+import { brandNameOf } from '@lumio/shared';
 import {
   MessagesProvider,
   Skeleton,
@@ -160,6 +162,7 @@ export const AdminApp = ({ clients, sessionExpired = false, onSignedIn }: AdminA
   const [ready, setReady] = useState(() => clients.session.read() === null);
   const [context, setContext] = useState<ShellContext | null>(null);
   const [locale, setLocale] = useState<UiLocale>(() => readAdminLocale());
+  const [branding, setBranding] = useState<AgencyView | null>(null);
 
   /** Language of the back office chrome; remembered per browser. */
   const changeLocale = (next: UiLocale): void => {
@@ -199,6 +202,26 @@ export const AdminApp = ({ clients, sessionExpired = false, onSignedIn }: AdminA
       active = false;
     };
   }, [clients]);
+
+  // White-label brand of this installation; a failure keeps the Lumio default.
+  useEffect(() => {
+    let active = true;
+    void clients.agency
+      .get()
+      .then((loaded) => {
+        if (active) setBranding(loaded);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [clients]);
+
+  useEffect(() => {
+    if (!branding) return;
+    const brand = brandNameOf(branding);
+    document.title = context?.siteName ? `${brand} — ${context.siteName}` : brand;
+  }, [branding, context?.siteName]);
 
   const go = (path: string): void => navigate(path);
 
@@ -325,6 +348,7 @@ export const AdminApp = ({ clients, sessionExpired = false, onSignedIn }: AdminA
           locale={locale}
           onLocaleChange={changeLocale}
           updates={clients.updates}
+          branding={branding}
           {...(context?.publicUrl ? { publicUrl: context.publicUrl } : {})}
           canCreate={role !== 'viewer'}
           onCreate={openCreate}

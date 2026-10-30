@@ -15,11 +15,13 @@ Lumio คือ CMS แบบ multi-tenant (pnpm workspaces + Turborepo) ที�
 - หน้าเว็บ/บทความ/หมวดหมู่/เมนู, คลังสื่อ (crop, WebP/AVIF, srcset), ฟอร์ม + อีเมล/LINE
 - SEO (meta, sitemap, JSON-LD, OG image), i18n `/en/...`, analytics ในตัว
 - ร้านค้า (สินค้า/ตัวเลือก/ตะกร้า/พร้อมเพย์/บัตร Stripe/ใบเสร็จ), ฟีเจอร์ AI (local หรือ OpenAI-compatible)
+- ระบบจองคิวออนไลน์ (บริการ/เวลาทำการ/หน้าจองที่ไม่ใช้ JS), กุญแจ API สำหรับอ่านเนื้อหาที่เผยแพร่
 - ทีม + RBAC, 2FA, audit log, แบ็กอัปอัตโนมัติ, redirect manager, custom domain + SSL
 - ทุกอย่างตรวจสอบได้ด้วย `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`
 
-**ต้องมีไลเซนส์:** Membership/Paywall (สร้างแล้วในซอร์สนี้ เปิดเมื่อไลเซนส์ระบุ `membership`) และ
-Block Marketplace (ยังไม่สร้าง) — ดู [`docs/PROGRESS.md`](docs/PROGRESS.md)
+**ต้องมีไลเซนส์:** Membership/Paywall (`membership`), Block Marketplace (`marketplace`)
+และ Agency/White-label (`whitelabel`) — ฟีเจอร์เหล่านี้อยู่ในซอร์สนี้และเปิดตามไลเซนส์
+ดู [`docs/PROGRESS.md`](docs/PROGRESS.md)
 
 ## โครงสร้าง
 

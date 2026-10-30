@@ -618,3 +618,22 @@
     transition: none;
   }
 }
+
+/* White-label logo: the image keeps the same box as the default mark. */
+.shell-logo--image {
+  object-fit: contain;
+  padding: var(--space-xs);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: none;
+}
+
+.shell-credit {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+.shell--collapsed .shell-credit {
+  display: none;
+}

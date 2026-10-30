@@ -17,6 +17,7 @@ import {
   type SiteImportInput,
   type SiteImportResult,
   type SiteSummary,
+  type AgencyView,
 } from '@lumio/shared';
 import {
   Icon,
@@ -72,6 +73,8 @@ export interface SettingsPageProps {
   agency?: AgencyApi;
   /** True when every client is in-memory. */
   demo?: boolean;
+  /** Called after the brand is saved so the shell updates without a reload. */
+  onBrandingSaved?: (branding: AgencyView) => void;
 }
 
 const ROLE_LABEL_KEYS: Record<Role, MessageKey> = {
@@ -1412,6 +1415,7 @@ export const SettingsPage = ({
   apiKeys,
   agency,
   demo = false,
+  onBrandingSaved,
 }: SettingsPageProps) => {
   const t = useT();
   const openTabs = allowedTabs('settings', SETTINGS_TABS, role, features);
@@ -1454,7 +1458,11 @@ export const SettingsPage = ({
         <ApiKeysPanel api={apiKeys} canManage={role === 'owner' || role === 'admin'} demo={demo} />
       ) : null}
       {tab === 'branding' && agency ? (
-        <BrandingPanel api={agency} canManage={role === 'owner'} />
+        <BrandingPanel
+          api={agency}
+          canManage={role === 'owner'}
+          {...(onBrandingSaved ? { onSaved: onBrandingSaved } : {})}
+        />
       ) : null}
     </div>
   );

@@ -30,15 +30,15 @@
 - หลายภาษา (i18n)
 - Analytics ในตัว (ไม่ต้องใช้ Google Analytics)
 - Newsletter / Email subscribers
-- Booking / นัดหมาย (app)
+- Booking / นัดหมาย — ทำแล้วในก้อนที่ 65 (ปฏิทินต่อเว็บ + หน้าจองสาธารณะ ไม่ใช้ JS)
 - Block Marketplace — ทำแล้วในก้อนที่ 61 (ชุดส่วนที่ลงลายเซ็น, เปิดด้วยไลเซนส์ `marketplace`)
 
 ## 3.3 เฟส 3
 
 - E-commerce (สินค้า, ตะกร้า, PromptPay/Stripe)
 - Membership / Paywall — ทำแล้วในก้อนที่ 60 (เปิดด้วยไลเซนส์ `membership`)
-- Multi-site / Agency dashboard, White-label
-- Public API + Webhooks
+- Multi-site / Agency dashboard, White-label — แบรนด์ระดับการติดตั้งทำแล้วในก้อนที่ 66 (ไลเซนส์ `whitelabel`); แดชบอร์ดหลายเว็บยังไม่ทำ
+- Public API — ทำแล้วในก้อนที่ 67 (กุญแจ `content:read` อ่านเฉพาะที่เผยแพร่); webhook แบบสมัครรับยังไม่ทำ
 - Developer SDK (สร้าง custom block/app)
 
 ## 3.4 สิ่งที่ "ไม่ทำ" โดยตั้งใจ (Non-goals)

@@ -1,6 +1,6 @@
 {
   "name": "lumio",
-  "version": "0.25.0",
+  "version": "0.25.1",
   "private": true,
   "description": "Lumio CMS — multi-tenant website builder monorepo",
   "license": "UNLICENSED",

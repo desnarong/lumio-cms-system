@@ -20,6 +20,8 @@ export interface BrandingPanelProps {
   api: AgencyApi;
   /** Only an owner may change the brand of the whole installation. */
   canManage: boolean;
+  /** Lets the shell pick up the new brand without a reload. */
+  onSaved?: (branding: AgencyView) => void;
 }
 
 const messageOf = (error: unknown, fallback: string): string =>
@@ -30,7 +32,7 @@ const messageOf = (error: unknown, fallback: string): string =>
  * paid capability: without a licence the screen explains what is missing and
  * keeps every field read-only instead of hiding the feature entirely.
  */
-export const BrandingPanel = ({ api, canManage }: BrandingPanelProps) => {
+export const BrandingPanel = ({ api, canManage, onSaved }: BrandingPanelProps) => {
   const t = useT();
   const toast = useToast();
   const picker = useMediaPicker();
@@ -94,6 +96,7 @@ export const BrandingPanel = ({ api, canManage }: BrandingPanelProps) => {
         accentColor: accentColor.trim().length > 0 ? accentColor.trim() : null,
       });
       apply(updated);
+      onSaved?.(updated);
       toast.push({ tone: 'success', title: t('branding.saved') });
     } catch (saveError) {
       setError(messageOf(saveError, t('common.genericError')));

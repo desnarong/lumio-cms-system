@@ -1,5 +1,6 @@
-import { useState, type ReactNode } from 'react';
-import type { ContentType, FeatureFlagKey, Role } from '@lumio/shared';
+import { useState, type CSSProperties, type ReactNode } from 'react';
+import type { AgencyBranding, ContentType, FeatureFlagKey, Role } from '@lumio/shared';
+import { brandNameOf } from '@lumio/shared';
 import {
   CommandPalette,
   Icon,
@@ -39,6 +40,8 @@ export interface AdminShellProps {
   onLocaleChange?: (locale: UiLocale) => void;
   /** Version badge and update notice; omitted by the chrome-only tests. */
   updates?: UpdatesApi;
+  /** White-label brand of this installation (docs/PROGRESS.md batch 66). */
+  branding?: AgencyBranding | null;
   children: ReactNode;
 }
 
@@ -83,10 +86,12 @@ export const AdminShell = ({
   locale = 'th',
   onLocaleChange,
   updates,
+  branding,
   children,
 }: AdminShellProps) => {
   const t = useT();
   const [collapsed, setCollapsed] = useState(false);
+  const brand = brandNameOf(branding ?? { brandName: 'Lumio' });
   const groups = visibleSidebar(role, features);
   const activeId = activeDestinationId(route);
 
@@ -122,7 +127,14 @@ export const AdminShell = ({
   );
 
   return (
-    <div className={cn('shell', collapsed && 'shell--collapsed')}>
+    <div
+      className={cn('shell', collapsed && 'shell--collapsed')}
+      style={
+        branding?.accentColor
+          ? ({ '--color-primary': branding.accentColor } as CSSProperties)
+          : undefined
+      }
+    >
       <a className="shell-skip" href="#shell-content">
         {t('shell.skipToContent')}
       </a>
@@ -131,17 +143,21 @@ export const AdminShell = ({
         <a
           className="shell-brand"
           href={routePath({ name: 'dashboard' })}
-          title={siteName || 'Lumio'}
+          title={brand}
           onClick={(event) => {
             event.preventDefault();
             onNavigate(routePath({ name: 'dashboard' }));
           }}
         >
-          <span className="shell-logo" aria-hidden="true">
-            <Icon name="sparkles" size={18} />
-          </span>
+          {branding?.logoUrl ? (
+            <img className="shell-logo shell-logo--image" src={branding.logoUrl} alt="" />
+          ) : (
+            <span className="shell-logo" aria-hidden="true">
+              <Icon name="sparkles" size={18} />
+            </span>
+          )}
           <span className="shell-brand__text">
-            <span className="shell-brand__name">Lumio</span>
+            <span className="shell-brand__name">{brand}</span>
             <span className="shell-brand__site">
               <Icon name="globe" size={12} />
               <span className="shell-brand__site-name">{siteName}</span>
@@ -174,6 +190,9 @@ export const AdminShell = ({
 
         <div className="shell-sidebar__footer">
           {updates ? <VersionPanel api={updates} /> : null}
+          {branding?.hideBranding ? null : (
+            <span className="shell-credit">{t('shell.credit')}</span>
+          )}
           <button
             type="button"
             className="shell-collapse"
