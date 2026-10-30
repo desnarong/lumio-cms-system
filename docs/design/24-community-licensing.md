@@ -8,7 +8,7 @@
 | รุ่น | ได้อะไร | ต้องมี |
 |---|---|---|
 | **Community** | ทุกอย่างใน MVP (เว็บ, เอดิเตอร์, บล็อก, คลังรูป, ฟอร์ม, SEO, ร้านค้า, สำรองข้อมูล, i18n, AI local) | ไม่ต้องมีอะไร |
-| **Pro** | Community + Membership/Paywall + Block Marketplace | ไลเซนส์ที่ลงลายเซ็น (ระบุฟีเจอร์ที่ต้องการ) |
+| **Pro** | Community + Membership/Paywall + Block Marketplace + Agency/White-label | ไลเซนส์ที่ลงลายเซ็น (ระบุฟีเจอร์ที่ต้องการ) |
 
 - ซอร์สของทั้งสองรุ่นอยู่ในรีโปนี้; ฟีเจอร์ที่ยังไม่สร้างจะขึ้นเป็น “ต้องมีไลเซนส์” ในหน้าตั้งค่า › ส่วนเสริม
 - การตรวจไลเซนส์เป็น **ออฟไลน์** — ไม่มี telemetry ไม่มีการเรียกกลับเซิร์ฟเวอร์เรา
@@ -28,7 +28,7 @@ lumio_lic_v1.<base64url(payload JSON)>.<base64url(Ed25519 signature)>
   "v": 1,
   "sub": "บริษัท ตัวอย่าง จำกัด",
   "plan": "pro",
-  "features": ["membership", "marketplace"],
+  "features": ["membership", "marketplace", "whitelabel"],
   "seats": 5,
   "iat": 1760000000,
   "exp": 2000000000
@@ -40,7 +40,7 @@ lumio_lic_v1.<base64url(payload JSON)>.<base64url(Ed25519 signature)>
 | `v` | เวอร์ชันรูปแบบ (ปัจจุบัน 1) |
 | `sub` | ชื่อผู้ถือไลเซนส์ (แสดงในแอดมิน) |
 | `plan` | `pro` หรือ `business` |
-| `features` | ฟีเจอร์ที่ปลดล็อก: `membership`, `marketplace` |
+| `features` | ฟีเจอร์ที่ปลดล็อก: `membership`, `marketplace`, `whitelabel` |
 | `seats` | จำนวนเว็บที่ครอบคลุม; `null` = ไม่จำกัด |
 | `iat` / `exp` | เวลาออก/หมดอายุ (Unix วินาที); `exp: null` = ตลอดชีพ |
 
@@ -96,6 +96,9 @@ POST /api/v1/public/license/verify
 ## 24.5 ผลต่อ feature flags
 
 - `membership` และ `marketplace` เป็นฟีเจอร์ที่ `requiresLicense: true` และ **ปิดเป็นค่าเริ่มต้น**
+- `booking` (ระบบจองคิว) เป็นฟีเจอร์ฟรี เปิดเป็นค่าเริ่มต้น แต่ปิดได้รายเว็บผ่าน `settings.flags`
+- `whitelabel` ไม่ใช่ feature flag ของเว็บ แต่เป็นสิทธิ์ระดับการติดตั้ง: `PATCH /v1/agency` ตอบ 403
+  เมื่อไลเซนส์ไม่ได้ระบุ `whitelabel` (หน้าจอตั้งค่า › แบรนด์องค์กรยังเปิดดูได้และอธิบายสิ่งที่ขาด)
 - `GET/PATCH /v1/features` จะคืน `lockedByLicense: true` จนกว่าไลเซนส์จะระบุฟีเจอร์นั้น
 - พยายามเปิดฟีเจอร์ที่ยังไม่ได้รับสิทธิ์ → `409` พร้อมข้อความภาษาคน
 - เมื่อซื้อไลเซนส์แล้ว ผู้ดูแลเว็บยังต้องเปิดสวิตช์ใน ตั้งค่า › ส่วนเสริม อีกครั้ง (ค่าเริ่มต้นคือปิด)
@@ -167,8 +170,9 @@ app.post('/lumio-webhook', async (req, res) => {
 
 ## 24.8 สิ่งที่ยังไม่ทำ
 
-- Membership/Paywall สร้างแล้ว (ก้อนที่ 60 ใน `docs/PROGRESS.md`) และเปิดได้เฉพาะเมื่อไลเซนส์ระบุ `membership`;
-  Block Marketplace ยังไม่ถูกสร้าง
+- Membership/Paywall (ก้อนที่ 60) และ Block Marketplace (ก้อนที่ 61) เปิดได้เฉพาะเมื่อไลเซนส์ระบุ
+- Agency/White-label (ก้อนที่ 66) เปิดเมื่อไลเซนส์ระบุ `whitelabel`; ระบบจองคิว (ก้อนที่ 65) เป็นฟีเจอร์ฟรี
+- ยังไม่มีหน้าจอแอดมินสำหรับวางไลเซนส์ (ติดตั้งผ่าน env ก่อน)
 - ยังไม่มีหน้าจอแอดมินสำหรับวางไลเซนส์ (ติดตั้งผ่าน env ก่อน) — ถ้าต้องการ ให้เพิ่มหน้าตั้งค่า › ไลเซนส์
   พร้อม `GET/PATCH /v1/license` แบบเขียนไฟล์ใน `.lumio-data/`
 

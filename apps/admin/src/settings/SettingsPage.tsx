@@ -50,6 +50,10 @@ import { RedirectsTab } from './RedirectsPanel.js';
 import { EmailPanel } from './EmailPanel.js';
 import { PublishPanel } from './PublishPanel.js';
 import { FeaturesPanel } from './FeaturesPanel.js';
+import { ApiKeysPanel } from './ApiKeysPanel.js';
+import { BrandingPanel } from './BrandingPanel.js';
+import type { ApiKeysApi } from './api-keys.js';
+import type { AgencyApi } from './branding.js';
 
 export interface SettingsPageProps {
   api: SettingsApi;
@@ -62,6 +66,12 @@ export interface SettingsPageProps {
   features?: readonly FeatureFlagKey[];
   /** The signed-in account's API, for two-factor settings. */
   security?: AuthApi;
+  /** Public API keys of this site. */
+  apiKeys?: ApiKeysApi;
+  /** White-label branding of the installation. */
+  agency?: AgencyApi;
+  /** True when every client is in-memory. */
+  demo?: boolean;
 }
 
 const ROLE_LABEL_KEYS: Record<Role, MessageKey> = {
@@ -96,6 +106,8 @@ const TABS: { id: SettingsTab; labelKey: MessageKey }[] = [
   { id: 'publish', labelKey: 'settings.tabPublish' },
   { id: 'redirects', labelKey: 'settings.tabRedirects' },
   { id: 'features', labelKey: 'settings.tabFeatures' },
+  { id: 'api-keys', labelKey: 'settings.tabApiKeys' },
+  { id: 'branding', labelKey: 'settings.tabBranding' },
   { id: 'billing', labelKey: 'nav.billing' },
 ];
 
@@ -1397,6 +1409,9 @@ export const SettingsPage = ({
   role,
   features,
   security,
+  apiKeys,
+  agency,
+  demo = false,
 }: SettingsPageProps) => {
   const t = useT();
   const openTabs = allowedTabs('settings', SETTINGS_TABS, role, features);
@@ -1435,6 +1450,12 @@ export const SettingsPage = ({
       {tab === 'publish' ? <PublishPanel api={api} /> : null}
       {tab === 'features' ? <FeaturesPanel api={api} /> : null}
       {tab === 'billing' ? <BillingPanel api={billing} /> : null}
+      {tab === 'api-keys' && apiKeys ? (
+        <ApiKeysPanel api={apiKeys} canManage={role === 'owner' || role === 'admin'} demo={demo} />
+      ) : null}
+      {tab === 'branding' && agency ? (
+        <BrandingPanel api={agency} canManage={role === 'owner'} />
+      ) : null}
     </div>
   );
 };

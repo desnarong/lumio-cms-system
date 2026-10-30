@@ -7,7 +7,7 @@ import { z } from 'zod';
  * token the vendor issues; the private key never leaves the vendor, so a build
  * cannot mint its own paid features. Verification is offline: no call home.
  */
-export const LICENSE_FEATURES = ['membership', 'marketplace'] as const;
+export const LICENSE_FEATURES = ['membership', 'marketplace', 'whitelabel'] as const;
 export type LicenseFeature = (typeof LICENSE_FEATURES)[number];
 
 export const isLicenseFeature = (value: unknown): value is LicenseFeature =>

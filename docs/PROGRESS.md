@@ -3,7 +3,7 @@
 > ติดตามงานย่อยตาม [`docs/design/19-roadmap.md`](design/19-roadmap.md) หัวข้อ 19.3
 > อัปเดตสถานะทุกครั้งที่จบงานหนึ่งก้อน
 
-อัปเดตล่าสุด: 2026-10-30 (ก้อนที่ 64 เสร็จ)
+อัปเดตล่าสุด: 2026-10-30 (ก้อนที่ 67 เสร็จ)
 
 ## สถานะงาน (Roadmap 19.3)
 
@@ -75,6 +75,9 @@
 | 62 | Integration test ที่ยิง Stripe จริง (test account) | ✅ เสร็จ | 7 เคสยิง Stripe จริง (Checkout payment/subscription, คูปอง, ร้านค้า, สมาชิก, charge+refund) ด้วย `sk_test_` จาก env/.env ที่ไม่ถูก commit, ปฏิเสธ live key, ข้ามเมื่อไม่มีคีย์ — ระหว่างทางพบและแก้บั๊กบัญชี Stripe ใหม่ไม่รับ `payment_method_types` และปิดช่องสมาชิก aktif ก่อนเงินเข้า (unpaid/async) |
 | 63 | ป้ายเวอร์ชัน + ตรวจรุ่นใหม่ + อัปเดตตัวเองบน host | ✅ เสร็จ | แอดมินแสดงเวอร์ชันที่ footer ทุกหน้าและเตือนเมื่อมีรุ่นใหม่ (`GET /v1/updates`, cache 6 ชม., ตรวจใหม่ 10/นาที), `scripts/update.mjs` (`--check`/`--auto`) ทำ checkout tag → rebuild compose → รอ health → ย้อนกลับอัตโนมัติถ้าไม่ขึ้น, systemd timer 6 ชม., ปฏิเสธเมื่อ working tree ไม่สะอาด, ปล่อยเป็น 0.24.0 |
 | 64 | ตรวจหาอัปเดตจาก release feed แบบ private | ✅ เสร็จ | repo เป็น private ทำให้ GitHub ตอบ 404 ให้คำขอไม่ระบุตัวตน → API และสคริปต์อ่าน `LUMIO_UPDATE_TOKEN`/`GITHUB_TOKEN` แบบ read-only ส่งเป็น Bearer เฉพาะเมื่อมีค่า, token อยู่ฝั่งเซิร์ฟเวอร์ไม่ส่งไปเบราว์เซอร์, ปล่อยเป็น 0.24.1 |
+| 65 | ระบบจองคิว (งานนอก MVP) | ✅ เสร็จ | ตาราง `booking_services`/`bookings` + RLS, ตั้งค่าเวลาทำการ/รอบจองต่อเว็บ, หน้าจอ เติบโต › การจองคิว (บริการ/ตาราง/รายการนัด + ยืนยัน/เสร็จสิ้น/ยกเลิก + audit), หน้า `/booking` สาธารณะที่ไม่ใช้ JS พร้อมลิงก์ยืนยัน/ยกเลิกด้วยโทเคน และอีเมลแจ้งเจ้าของเว็บ, feature flag `booking` ฟรี |
+| 66 | Agency / White-label (งานนอก MVP) | ✅ เสร็จ | ตารางระดับแพลตฟอร์ม `agency_branding` (ไม่มี site_id/RLS), `GET/PATCH /v1/agency`, หน้าตั้งค่า › แบรนด์องค์กร (ชื่อ/โลโก้/อีเมลช่วยเหลือ/สีเน้น/ซ่อนเครดิต), ต้องมีไลเซนส์ `whitelabel` จึงบันทึกได้ |
+| 67 | Public API keys (งานนอก MVP) | ✅ เสร็จ | ตาราง `api_keys` + RLS, กุญแจ `lum_<site>.<secret>` เก็บเฉพาะ SHA-256 แสดงจริงครั้งเดียว, `GET/POST /v1/api-keys` + `DELETE` (audit), `GET /v1/public-api/pages|posts` ด้วย `X-Api-Key` (เฉพาะที่เผยแพร่และไม่ใช่ members), หน้าตั้งค่า › กุญแจ API, rate limit 240/นาที |
 
 | สัญลักษณ์: ✅ เสร็จ · 🔄 กำลังทำ · ⏳ ยังไม่เริ่ม · ⚠️ ติดปัญหา
 
@@ -2892,4 +2895,89 @@ GitHub จึงตอบ **404** ให้คำขอ release ที่ไม�
 pnpm --filter api test src/modules/updates
 pnpm --filter admin test src/updates
 pnpm lint && pnpm typecheck
+```
+
+
+## ก้อนที่ 65 — ระบบจองคิว (งานนอก MVP)
+
+ปิดรายการ “ระบบจองคิวจริง” ที่ค้างมาตั้งแต่ก้อนที่ 44 ด้วยปฏิทินชุดเดียวต่อเว็บ
+และหน้าจองสาธารณะที่ไม่ต้องใช้ JavaScript
+
+- **Shared** — `packages/shared/src/booking.ts`
+  - `bookingSettingsSchema` (วันเปิด/เวลา/ความยาวรอบ/จำนวนต่อรอบ/จองล่วงหน้า/เปิดปฏิทินกี่วัน)
+  - `bookingServiceInputSchema`, `bookingInputSchema` (+honeypot), `bookingStatusInputSchema`, view types
+  - เวลาเป็นเวลาท้องถิ่นไทย (UTC+7) แต่เก็บเป็น instant: `bookingStart`, `siteDateOf`, `siteTimeOf`,
+    `bookingRangeLabel`; `slotTimesForDay`, `slotsForDate`, `bookableDates`, `isSlotBookable`
+- **ฐานข้อมูล** — `booking_services` และ `bookings` (มี `site_id`, FORCE RLS, index วัน/สถานะ,
+  CHECK สถานะ, `cancel_hash` UNIQUE, เก็บชื่อบริการไว้แม้ลบบริการ)
+- **API** — `apps/api/src/modules/booking`
+  - ผู้ดูแล: `GET/PUT /booking/settings`, CRUD `/booking/services`, `GET /booking/bookings`,
+    `PATCH /booking/bookings/:id`; ทุก write เขียน audit และใช้ `@RequireFeature('booking')`
+  - สาธารณะ: `GET/POST /public/:host/booking` (rate limit 300/นาที สำหรับอ่าน และ 10/นาที สำหรับสร้าง + honeypot + lead time),
+    `GET /public/:host/booking/bookings/:token`, `POST .../cancel`
+  - ตรวจช่องว่างด้วยการทับช่วงเวลาจริงตามความยาวบริการ และกันการจองซ้ำภายใน transaction
+  - แจ้งเจ้าของเว็บทางอีเมล (`EmailService.sendForSite`), ล้มเหลวไม่ทำให้การจองหาย
+- **แอดมิน** — เติบโต › การจองคิว: ตั้งค่าเปิดรับจอง/ข้อความ/รอบเวลา/วันเปิดทำการ, บริการ
+  (เพิ่ม/แก้/ลบด้วย modal), รายการนัดกรองวัน/สถานะ + ยืนยัน/เสร็จสิ้น/ยกเลิก
+- **เว็บสาธารณะ** — `/booking` ฟอร์ม HTML ธรรมดา (เลือกวันและเวลาด้วย `optgroup` ไม่ใช้ JS),
+  หน้า `/booking/:token` แสดงนัดและยกเลิกได้, `noindex` ที่หน้ายืนยัน
+- **เทสต์** — shared 8, API 6, admin 4 (demo client), renderer 5 (parsing + สถานะ)
+- **หมายเหตุ** — feature `booking` เปิดเป็นค่าเริ่มต้นและปิดรายเว็บได้; ไม่มีไลเซนส์ผูก
+
+```bash
+pnpm --filter @lumio/shared test booking
+pnpm --filter api test src/modules/booking
+pnpm --filter admin test src/booking
+pnpm --filter renderer test src/booking.test.tsx
+pnpm lint && pnpm typecheck && pnpm test
+```
+
+## ก้อนที่ 66 — Agency / White-label (งานนอก MVP)
+
+ให้ผู้ติดตั้งที่ขายต่อสามารถใช้แบรนด์ของตัวเองในหลังบ้านได้ ภายใต้ไลเซนส์ที่ระบุ `whitelabel`
+
+- **Shared** — `packages/shared/src/agency.ts`: `agencyBrandingSchema` (ชื่อ/โลโก้/อีเมลช่วยเหลือ/
+  ซ่อนเครดิต/สีเน้น), `agencyViewSchema` (+ `licensed`), `mergeAgencyBranding`, `brandNameOf`
+  และเพิ่ม `whitelabel` ใน `LICENSE_FEATURES`
+- **ฐานข้อมูล** — `agency_branding` แถวเดียว (`id = 'default'`) ระดับแพลตฟอร์ม ไม่มี `site_id`/RLS
+- **API** — `GET /v1/agency` (owner/admin ดูได้) และ `PATCH /v1/agency` (owner และต้องมีไลเซนส์
+  `whitelabel`) — เขียน audit ผ่านเว็บที่ผู้ใช้กำลังทำงานอยู่
+- **แอดมิน** — ตั้งค่า › แบรนด์องค์กร: ฟอร์มชื่อ/โลโก้/อีเมล/สีเน้น/สวิตช์ซ่อนเครดิต;
+  เมื่อไม่มีไลเซนส์จะขึ้นคำอธิบายและปิดช่องกรอก (ไม่ซ่อนฟีเจอร์)
+- **เทสต์** — shared 3, API 4 (Community ปฏิเสธ, Pro รวมค่าเดิม)
+- **เอกสาร** — `24-community-licensing.md` (features + 24.8), `13-rbac.md`, `12-api.md`
+
+```bash
+pnpm --filter @lumio/shared test agency
+pnpm --filter api test src/modules/agency
+pnpm lint && pnpm typecheck
+```
+
+## ก้อนที่ 67 — Public API keys (งานนอก MVP)
+
+เปิดให้ระบบภายนอกอ่านเนื้อหาที่เผยแพร่แล้วโดยไม่ต้องใช้บัญชีทีมงาน และไม่เพิ่มพื้นผิวโจมตี
+
+- **Shared** — `packages/shared/src/api-key.ts`
+  - กุญแจ `lum_<site id แบบไม่มีขีด>.<random 32>` — ส่วน site ใช้เลือกขอบเขต RLS ก่อนตรวจ hash
+  - `apiKeyInputSchema` (ชื่อ + scope), view types, `apiKeyCreatedSchema` (มี `secret` ครั้งเดียว)
+  - `publicApiDocumentSchema/ListSchema` สำหรับ endpoint อ่าน
+- **ฐานข้อมูล** — `api_keys`: เก็บ SHA-256 (`key_hash` UNIQUE), `hint`, `scopes`, `last_used_at`,
+  `revoked_at`; FORCE RLS + index `(site_id, revoked_at)`
+- **API** — `apps/api/src/modules/api-keys`
+  - `GET/POST /v1/api-keys` (owner/admin สร้าง), `DELETE /v1/api-keys/:keyId` เพิกถอน (audit)
+  - `GET /v1/public-api/pages|posts` และ `/:slug` รับ `X-Api-Key`, rate limit 240/นาที,
+    ตรวจ scope `content:read`, ตอบเฉพาะ `status = published`, `access = public` และไม่อยู่ถังขยะ
+  - กุญแจผิด/ถูกเพิกถอน/รูปแบบผิด → 401 เดียวกัน (ไม่บอกว่าใกล้เคียงหรือไม่)
+- **แอดมิน** — ตั้งค่า › กุญแจ API: สร้าง (แสดง secret ใน modal + ปุ่มคัดลอก), รายการพร้อมรหัสย่อ/
+  ใช้ล่าสุด, เพิกถอนพร้อมคำยืนยัน, โหมดเดโมในหน่วยความจำ
+- **ความปลอดภัย** — เทียบ hash ด้วย `timingSafeEqual`, token ไม่อยู่ใน log/response อื่น,
+  ไม่มีทางอ่านหน้า `members` หรือเนื้อหาที่ยังไม่เผยแพร่
+- **เทสต์** — shared 3, API 6, admin 5 (demo + HTTP headers/error)
+- **เอกสาร** — `12-api.md` 12.10, `11-data-model.md` 11.6, `13-rbac.md` 13.7, `OPERATIONS.md`
+
+```bash
+pnpm --filter @lumio/shared test api-key
+pnpm --filter api test src/modules/api-keys
+pnpm --filter admin test src/settings/api-keys.test.ts
+pnpm lint && pnpm typecheck && pnpm test
 ```

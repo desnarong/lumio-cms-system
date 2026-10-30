@@ -18,6 +18,9 @@ import {
 } from './growth/demo.js';
 import { createDemoMediaApi } from './media/demo.js';
 import { createDemoMarketplaceApi } from './marketplace/api.js';
+import { createDemoBookingApi } from './booking/api.js';
+import { createDemoApiKeysApi } from './settings/api-keys.js';
+import { createDemoAgencyApi } from './settings/branding.js';
 import { createDemoSettingsApi } from './settings/demo.js';
 import { createDemoBillingApi } from './settings/billing.js';
 import { createDemoWizardApi } from './wizard/demo.js';
@@ -54,6 +57,9 @@ const clients = ({ demo = true, listSites, listPages }: Options = {}): AdminClie
     newsletter: createDemoNewsletterApi(),
     apps: createDemoAppsApi(),
     marketplace: createDemoMarketplaceApi(),
+    booking: createDemoBookingApi(),
+    apiKeys: createDemoApiKeysApi(),
+    agency: createDemoAgencyApi(),
     updates: createDemoUpdatesApi(),
   };
 };

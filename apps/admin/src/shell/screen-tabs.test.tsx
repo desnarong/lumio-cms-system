@@ -5,6 +5,7 @@ import { createDemoAiApi } from '../ai/demo.js';
 import { CommercePage } from '../commerce/CommercePage.js';
 import { createDemoCommerceApi } from '../commerce/demo.js';
 import { createDemoMembershipApi } from '../membership/demo.js';
+import { createDemoBookingApi } from '../booking/api.js';
 import { createDemoMarketplaceApi } from '../marketplace/api.js';
 import { GrowthPage } from '../growth/GrowthPage.js';
 import {
@@ -65,6 +66,7 @@ const growth = (role: Role, features?: readonly ('ai' | 'analytics' | 'newslette
         apps: createDemoAppsApi(),
         membership: createDemoMembershipApi(),
         marketplace: createDemoMarketplaceApi(),
+        booking: createDemoBookingApi(),
       }}
       canManage={role !== 'viewer'}
       role={role}

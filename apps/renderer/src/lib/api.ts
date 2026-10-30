@@ -3,6 +3,10 @@ import {
   orderCreatedSchema,
   orderLookupInputSchema,
   pageviewInputSchema,
+  bookingInputSchema,
+  bookingSchema,
+  publicBookingCreatedSchema,
+  publicBookingSchema,
   publicOrderSchema,
   shopCartResponseSchema,
   shopHomeResponseSchema,
@@ -24,7 +28,11 @@ import {
   readerResetPasswordInputSchema,
   readerVerifyEmailInputSchema,
   type MembershipCheckout,
+  type Booking,
+  type BookingInput,
   type PageviewInput,
+  type PublicBooking,
+  type PublicBookingCreated,
   type PublicMembershipPlan,
   type ReaderLoginInput,
   type ReaderRegisterInput,
@@ -142,6 +150,11 @@ export interface PublicApi {
     password: string,
   ): Promise<void>;
   verifyReaderEmail(host: string, token: string): Promise<ReaderSession>;
+  /** Appointment booking (docs/PROGRESS.md "งานนอก MVP"). */
+  getBooking(host: string): Promise<PublicBooking>;
+  createBooking(host: string, input: BookingInput): Promise<PublicBookingCreated>;
+  bookingByToken(host: string, token: string): Promise<Booking>;
+  cancelBooking(host: string, token: string): Promise<Booking>;
 }
 
 export interface PublicApiOptions {
@@ -388,5 +401,24 @@ export const createPublicApi = (options: PublicApiOptions): PublicApi => {
         void error;
       }
     },
+    getBooking: (host) =>
+      request(`${encodeURIComponent(host)}/booking`, (value) => publicBookingSchema.parse(value)),
+    createBooking: (host, input) =>
+      postJson(
+        `${encodeURIComponent(host)}/booking`,
+        bookingInputSchema.parse(input),
+        (value) => publicBookingCreatedSchema.parse(value),
+      ),
+    bookingByToken: (host, token) =>
+      request(
+        `${encodeURIComponent(host)}/booking/bookings/${encodeURIComponent(token)}`,
+        (value) => bookingSchema.parse(value),
+      ),
+    cancelBooking: (host, token) =>
+      postJson(
+        `${encodeURIComponent(host)}/booking/bookings/${encodeURIComponent(token)}/cancel`,
+        {},
+        (value) => bookingSchema.parse(value),
+      )
   };
 };

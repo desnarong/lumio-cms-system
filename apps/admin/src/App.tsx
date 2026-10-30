@@ -399,7 +399,9 @@ export const AdminApp = ({ clients, sessionExpired = false, onSignedIn }: AdminA
                 apps: clients.apps,
                 membership: clients.membership,
                 marketplace: clients.marketplace,
+                booking: clients.booking,
               }}
+              demo={clients.demo}
               canManage={GROWTH_MANAGER_ROLES.includes(role)}
               role={role}
               {...(context ? { features: context.features } : {})}

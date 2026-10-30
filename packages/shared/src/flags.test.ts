@@ -23,7 +23,7 @@ describe('normalizeFeatureFlags', () => {
 
 describe('parseDisabledFeatures', () => {
   it('reads a comma or space separated list and ignores unknown names', () => {
-    expect(parseDisabledFeatures('commerce, booking\nai')).toEqual(['commerce', 'ai']);
+    expect(parseDisabledFeatures('commerce, watch\nai')).toEqual(['commerce', 'ai']);
   });
 
   it('answers nothing when the switch is empty', () => {

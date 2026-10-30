@@ -33,6 +33,10 @@ import {
   type ReaderRegisterInput,
   type ReaderSession,
   type ReaderSessionResponse,
+  type Booking,
+  type BookingInput,
+  type PublicBooking,
+  type PublicBookingCreated,
   type SubmitFormInput,
 } from '@lumio/shared';
 import { ContentNotFoundError, type PublicApi } from './api';
@@ -741,5 +745,89 @@ export const createDemoPublicApi = (): PublicApi => ({
   },
   async collectPageview(): Promise<void> {
     // Demo mode has no analytics store; the beacon is a no-op.
+  },
+  async getBooking(): Promise<PublicBooking> {
+    const today = new Date();
+    const day = (offset: number): string => {
+      const date = new Date(today.getTime() + offset * 86_400_000);
+      return date.toISOString().slice(0, 10);
+    };
+    return {
+      enabled: true,
+      intro: 'เลือกบริการและเวลาที่สะดวก แล้วรอการยืนยันจากเรา',
+      successMessage: 'ได้รับคำขอจองแล้ว เราจะติดต่อกลับเพื่อยืนยัน',
+      services: [
+        {
+          id: 'demo-service-1',
+          name: 'ตรวจทั่วไป',
+          description: 'ปรึกษาและตรวจเบื้องต้น 30 นาที',
+          durationMinutes: 30,
+          price: 0,
+          currency: 'THB',
+        },
+        {
+          id: 'demo-service-2',
+          name: 'นวดแผนไทย',
+          description: 'นวดคลายกล้ามเนื้อ 60 นาที',
+          durationMinutes: 60,
+          price: 90000,
+          currency: 'THB',
+        },
+      ],
+      days: [
+        {
+          date: day(1),
+          label: 'พรุ่งนี้',
+          slots: [
+            { time: '09:00', available: true },
+            { time: '10:00', available: true },
+            { time: '13:00', available: false },
+          ],
+        },
+        {
+          date: day(2),
+          label: 'มะรืนนี้',
+          slots: [
+            { time: '09:00', available: true },
+            { time: '10:00', available: true },
+          ],
+        },
+      ],
+    };
+  },
+  async createBooking(_host: string, input: BookingInput): Promise<PublicBookingCreated> {
+    const startsAt = new Date(`${input.date}T${input.time}:00+07:00`);
+    return {
+      token: 'demo-booking-token',
+      booking: {
+        id: 'demo-booking-new',
+        serviceName: 'ตรวจทั่วไป',
+        customerName: input.name,
+        startsAt: startsAt.toISOString(),
+        endsAt: new Date(startsAt.getTime() + 1_800_000).toISOString(),
+        status: 'pending',
+      },
+    };
+  },
+  async bookingByToken(): Promise<Booking> {
+    const startsAt = new Date(Date.now() + 86_400_000);
+    return {
+      id: 'demo-booking-new',
+      serviceId: 'demo-service-1',
+      serviceName: 'ตรวจทั่วไป',
+      customerName: 'ลูกค้าตัวอย่าง',
+      customerEmail: null,
+      customerPhone: '0812345678',
+      note: '',
+      startsAt: startsAt.toISOString(),
+      endsAt: new Date(startsAt.getTime() + 1_800_000).toISOString(),
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+  },
+  async cancelBooking(): Promise<Booking> {
+    const booking = await this.bookingByToken('', '');
+    return { ...booking, status: 'cancelled' };
   },
 });

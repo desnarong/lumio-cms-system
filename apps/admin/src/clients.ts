@@ -40,6 +40,12 @@ import {
 import type { MembershipApi } from './membership/api.js';
 import { createHttpMembershipApi } from './membership/api.js';
 import { createDemoMembershipApi } from './membership/demo.js';
+import type { ApiKeysApi } from './settings/api-keys.js';
+import { createDemoApiKeysApi, createHttpApiKeysApi } from './settings/api-keys.js';
+import type { AgencyApi } from './settings/branding.js';
+import { createDemoAgencyApi, createHttpAgencyApi } from './settings/branding.js';
+import type { BookingApi } from './booking/api.js';
+import { createDemoBookingApi, createHttpBookingApi } from './booking/api.js';
 import type { MarketplaceApi } from './marketplace/api.js';
 import { createDemoMarketplaceApi, createHttpMarketplaceApi } from './marketplace/api.js';
 import type { MediaApi } from './media/api.js';
@@ -81,6 +87,12 @@ export interface AdminClients {
   membership: MembershipApi;
   /** Section packs from the block marketplace (docs/PROGRESS.md batch B). */
   marketplace: MarketplaceApi;
+  /** Appointment booking (docs/PROGRESS.md "งานนอก MVP"). */
+  booking: BookingApi;
+  /** Public API keys of this site. */
+  apiKeys: ApiKeysApi;
+  /** White-label branding of the installation. */
+  agency: AgencyApi;
   design: DesignApi;
   settings: SettingsApi;
   billing: BillingApi;
@@ -138,6 +150,9 @@ export const createAdminClients = ({
       commerce: createDemoCommerceApi(),
       membership: createDemoMembershipApi(),
       marketplace: createDemoMarketplaceApi(),
+      booking: createDemoBookingApi(),
+      apiKeys: createDemoApiKeysApi(),
+      agency: createDemoAgencyApi(),
       design: createDemoDesignApi(),
       settings: createDemoSettingsApi({ media }),
       billing: createDemoBillingApi(),
@@ -178,6 +193,9 @@ export const createAdminClients = ({
     commerce: createHttpCommerceApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     membership: createHttpMembershipApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     marketplace: createHttpMarketplaceApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    booking: createHttpBookingApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    apiKeys: createHttpApiKeysApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    agency: createHttpAgencyApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     design: createHttpDesignApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     settings: createHttpSettingsApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     billing: createHttpBillingApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),

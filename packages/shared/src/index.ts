@@ -42,3 +42,6 @@ export * from './membership.js';
 export * from './marketplace.js';
 export * from './version.js';
 export * from './updates.js';
+export * from './api-key.js';
+export * from './agency.js';
+export * from './booking.js';

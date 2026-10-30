@@ -75,6 +75,9 @@ model Site {
   membershipPlans     MembershipPlan[]
   readerSubscriptions ReaderSubscription[]
   blockPacks          SiteBlockPack[]
+  apiKeys             ApiKey[]
+  bookingServices     BookingService[]
+  bookings            Booking[]
 
   @@index([stripeSubscriptionId])
   @@map("sites")
@@ -764,4 +767,90 @@ model SiteBlockPack {
   @@id([siteId, packKey])
   @@index([siteId, enabled])
   @@map("site_block_packs")
+}
+
+
+/// Public API keys of one site (docs/PROGRESS.md "งานนอก MVP").
+/// Only the SHA-256 hash is stored; the plaintext is shown once at creation.
+model ApiKey {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId     String    @map("site_id") @db.Uuid
+  name       String
+  /// First characters of the key, so an owner can tell two keys apart.
+  hint       String
+  keyHash    String    @unique @map("key_hash")
+  scopes     String[]  @default(["content:read"])
+  lastUsedAt DateTime? @map("last_used_at") @db.Timestamptz(6)
+  revokedAt  DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdBy  String?   @map("created_by") @db.Uuid
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, revokedAt])
+  @@map("api_keys")
+}
+
+/// A service a visitor can book (docs/PROGRESS.md "งานนอก MVP").
+model BookingService {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId          String   @map("site_id") @db.Uuid
+  name            String
+  description     String   @default("")
+  durationMinutes Int      @map("duration_minutes") @default(60)
+  /// Price in satang; 0 means free.
+  price           Int      @default(0)
+  currency        String   @default("THB")
+  active          Boolean  @default(true)
+  sort            Int      @default(0)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site     Site      @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  @@index([siteId, active, sort])
+  @@map("booking_services")
+}
+
+/// One booked slot. The service name is captured here so deleting a service
+/// never erases history.
+model Booking {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId        String   @map("site_id") @db.Uuid
+  serviceId     String?  @map("service_id") @db.Uuid
+  serviceName   String   @map("service_name")
+  customerName  String   @map("customer_name")
+  customerEmail String?  @map("customer_email")
+  customerPhone String?  @map("customer_phone")
+  note          String   @default("")
+  startsAt      DateTime @map("starts_at") @db.Timestamptz(6)
+  endsAt        DateTime @map("ends_at") @db.Timestamptz(6)
+  /// pending | confirmed | completed | cancelled | no_show
+  status        String   @default("pending")
+  /// Hash of the token the confirmation page carries; never the token itself.
+  cancelHash    String?  @unique @map("cancel_hash")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site    Site            @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  service BookingService? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+
+  @@index([siteId, startsAt])
+  @@index([siteId, status, startsAt])
+  @@map("bookings")
+}
+
+/// White-label branding of this installation (platform level, no site id).
+model AgencyBranding {
+  id            String   @id @default("default")
+  brandName     String   @default("Lumio") @map("brand_name")
+  logoUrl       String?  @map("logo_url")
+  supportEmail  String?  @map("support_email")
+  hideBranding  Boolean  @default(false) @map("hide_branding")
+  accentColor   String?  @map("accent_color")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("agency_branding")
 }

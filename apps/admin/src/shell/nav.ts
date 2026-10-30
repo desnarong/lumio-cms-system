@@ -184,6 +184,15 @@ export const NAV_SCREENS: NavScreen[] = [
     route: { name: 'growth', tab: 'apps' },
   },
   {
+    id: 'bookings',
+    labelKey: 'nav.booking',
+    icon: 'calendar',
+    section: 'site',
+    roles: GROWTH_ROLES,
+    feature: 'booking',
+    route: { name: 'growth', tab: 'bookings' },
+  },
+  {
     id: 'marketplace',
     labelKey: 'nav.marketplace',
     icon: 'layers',
@@ -265,6 +274,22 @@ export const NAV_SCREENS: NavScreen[] = [
     section: 'site',
     roles: SETTINGS_ROLES,
     route: { name: 'settings', tab: 'features' },
+  },
+  {
+    id: 'api-keys',
+    labelKey: 'settings.tabApiKeys',
+    icon: 'zap',
+    section: 'site',
+    roles: SETTINGS_ROLES,
+    route: { name: 'settings', tab: 'api-keys' },
+  },
+  {
+    id: 'branding',
+    labelKey: 'settings.tabBranding',
+    icon: 'palette',
+    section: 'site',
+    roles: ['owner'],
+    route: { name: 'settings', tab: 'branding' },
   },
   {
     id: 'billing',
@@ -425,6 +450,7 @@ export const featureForRoute = (route: AdminRoute): FeatureFlagKey | undefined =
     if (route.tab === 'membership') return 'membership';
     if (route.tab === 'apps') return 'apps';
     if (route.tab === 'marketplace') return 'marketplace';
+    if (route.tab === 'bookings') return 'booking';
   }
   return undefined;
 };

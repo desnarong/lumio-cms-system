@@ -2,6 +2,8 @@ import type { FeatureFlagKey, Role } from '@lumio/shared';
 import { Tabs, useT, type MessageKey } from '@lumio/ui';
 import { GROWTH_TABS, type GrowthTab } from '../route.js';
 import { allowedTabs } from '../shell/nav.js';
+import { BookingsPage } from '../booking/BookingsPage.js';
+import type { BookingApi } from '../booking/api.js';
 import { MembershipPage } from '../membership/MembershipPage.js';
 import { AnalyticsPage } from './AnalyticsPage.js';
 import { AppsPage } from './AppsPage.js';
@@ -19,6 +21,7 @@ export interface GrowthApis {
   apps: AppsApi;
   membership: MembershipApi;
   marketplace: MarketplaceApi;
+  booking: BookingApi;
 }
 
 export interface GrowthPageProps {
@@ -31,6 +34,8 @@ export interface GrowthPageProps {
   role: Role;
   /** Add-ons the site still offers; a closed one loses its tab. */
   features?: readonly FeatureFlagKey[];
+  /** True when every client is in-memory. */
+  demo?: boolean;
 }
 
 const TAB_LABELS: Record<GrowthTab, MessageKey> = {
@@ -40,6 +45,7 @@ const TAB_LABELS: Record<GrowthTab, MessageKey> = {
   membership: 'nav.membership',
   apps: 'nav.apps',
   marketplace: 'nav.marketplace',
+  bookings: 'nav.booking',
 };
 
 /**
@@ -54,6 +60,7 @@ export const GrowthPage = ({
   onNavigate,
   role,
   features,
+  demo = false,
 }: GrowthPageProps) => {
   const t = useT();
   const openTabs = allowedTabs('growth', GROWTH_TABS, role, features);
@@ -91,6 +98,15 @@ export const GrowthPage = ({
       );
     case 'apps':
       return <AppsPage api={apis.apps} canManage={canManage} headerTabs={headerTabs} />;
+    case 'bookings':
+      return (
+        <BookingsPage
+          api={apis.booking}
+          canManage={canManage}
+          headerTabs={headerTabs}
+          demo={demo}
+        />
+      );
     case 'marketplace':
       return (
         <MarketplacePage

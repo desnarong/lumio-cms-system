@@ -255,6 +255,44 @@ Static publish ไม่มี endpoint ฝั่งผู้ใช้: `Publish
 `STATIC_PUBLISH_URL` พร้อมลายเซ็น `x-lumio-signature: sha256=<hmac>` ของ
 `<timestamp>.<body>`; ไม่ตั้งค่า = ข้าม
 
+## 12.10 กุญแจ API, การจองคิว และแบรนด์องค์กร (ก้อนที่ 65–67)
+
+### กุญแจ API สาธารณะ
+| Endpoint | ใช้ทำอะไร |
+|---|---|
+| `GET /api-keys` | รายการกุญแจของเว็บ (ทุก role อ่านได้; ไม่มี secret) |
+| `POST /api-keys` | สร้างกุญแจ (owner/admin) — ตอบ `secret` ครั้งเดียวเท่านั้น |
+| `DELETE /api-keys/:keyId` | เพิกถอนกุญแจ (owner/admin, audit) |
+| `GET /public-api/pages`, `GET /public-api/pages/:slug` | อ่านหน้าที่เผยแพร่แล้วด้วย `X-Api-Key` |
+| `GET /public-api/posts`, `GET /public-api/posts/:slug` | อ่านบทความที่เผยแพร่แล้วด้วย `X-Api-Key` |
+
+- กุญแจรูปแบบ `lum_<site>\.<secret>`; ส่วน site ใช้เลือกขอบเขต RLS ก่อนตรวจ hash
+- ต้องมี scope `content:read`; หน้าที่ `access = members` และหน้าที่อยู่ในถังขยะไม่ถูกส่งออก
+- ผิด/ถูกเพิกถอน/รูปแบบไม่ถูกต้อง → 401 เดียวกัน และจำกัด 240 คำขอ/นาที/ไอพี
+
+### การจองคิว
+| Endpoint | ใช้ทำอะไร |
+|---|---|
+| `GET/PUT /booking/settings` | เวลาทำการ รอบจอง และข้อความหน้าเว็บ (feature `booking`) |
+| `GET/POST /booking/services` | บริการที่เปิดให้จอง |
+| `PATCH/DELETE /booking/services/:id` | แก้/ลบบริการ (ประวัติการจองยังอยู่) |
+| `GET /booking/bookings?date=&status=&limit=` | รายการนัด + ตัวกรองวัน/สถานะ |
+| `PATCH /booking/bookings/:id` | เปลี่ยนสถานะ `pending` → `confirmed` → `completed` / `cancelled` / `no_show` |
+| `GET /public/:host/booking` | บริการ + ช่องเวลาว่าง 14 วัน (ไม่ต้อง login, rate limit 300/นาที) |
+| `POST /public/:host/booking` | สร้างนัด (rate limit 10/นาที + honeypot) |
+| `GET /public/:host/booking/bookings/:token` | ดูนัดของตัวเองด้วยโทเคน |
+| `POST /public/:host/booking/bookings/:token/cancel` | ยกเลิกนัดด้วยโทเคน |
+
+- เวลาเป็นเวลาท้องถิ่นไทย (UTC+7) แต่เก็บเป็น instant จึงอ่านกลับมาเป็นช่องเดิมเสมอ
+- ปฏิทินเป็นชุดเดียวต่อเว็บ; ช่องจะว่างเมื่อไม่มีการนัดที่ทับช่วงเวลา (นับตามความยาวบริการ)
+- สถานะที่ยังกันช่องอยู่: `pending`, `confirmed`, `completed`
+
+### แบรนด์องค์กร (white-label)
+| Endpoint | ใช้ทำอะไร |
+|---|---|
+| `GET /agency` | ชื่อ/โลโก้/อีเมลช่วยเหลือ/ซ่อนเครดิต + `licensed` |
+| `PATCH /agency` | แก้แบรนด์ (owner และต้องมีไลเซนส์ `whitelabel`) |
+
 ---
 
 [← Data Model](11-data-model.md) · [ถัดไป: RBAC →](13-rbac.md)

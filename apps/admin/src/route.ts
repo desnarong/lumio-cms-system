@@ -13,8 +13,17 @@ export type SettingsTab =
   | 'email'
   | 'publish'
   | 'features'
-  | 'billing';
-export type GrowthTab = 'seo' | 'analytics' | 'newsletter' | 'membership' | 'apps' | 'marketplace';
+  | 'billing'
+  | 'api-keys'
+  | 'branding';
+export type GrowthTab =
+  | 'seo'
+  | 'analytics'
+  | 'newsletter'
+  | 'membership'
+  | 'apps'
+  | 'marketplace'
+  | 'bookings';
 export type CommerceTab = 'products' | 'promotions' | 'orders' | 'settings';
 
 export const DESIGN_TABS: DesignTab[] = ['style', 'menus', 'header-footer', 'template', 'sections'];
@@ -29,6 +38,8 @@ export const SETTINGS_TABS: SettingsTab[] = [
   'publish',
   'features',
   'billing',
+  'api-keys',
+  'branding',
 ];
 export const GROWTH_TABS: GrowthTab[] = [
   'seo',
@@ -37,6 +48,7 @@ export const GROWTH_TABS: GrowthTab[] = [
   'membership',
   'apps',
   'marketplace',
+  'bookings',
 ];
 export const COMMERCE_TABS: CommerceTab[] = ['products', 'promotions', 'orders', 'settings'];
 
@@ -80,7 +92,10 @@ export const isRouteAllowed = (route: AdminRoute, role: Role): boolean => {
     return route.tab === 'settings' ? SHOP_SETTINGS_ROLES.includes(role) : SHOP_ROLES.includes(role);
   }
   if (route.name === 'settings') {
-    return route.tab === 'billing' ? BILLING_ROLES.includes(role) : SETTINGS_ROLES.includes(role);
+    if (route.tab === 'billing') return BILLING_ROLES.includes(role);
+    // White-labelling changes the whole installation, so it stays with the owner.
+    if (route.tab === 'branding') return role === 'owner';
+    return SETTINGS_ROLES.includes(role);
   }
   return true;
 };

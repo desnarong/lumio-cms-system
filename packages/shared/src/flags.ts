@@ -16,6 +16,7 @@ export const FEATURE_FLAG_KEYS = [
   'commerce',
   'membership',
   'marketplace',
+  'booking',
 ] as const;
 export type FeatureFlagKey = (typeof FEATURE_FLAG_KEYS)[number];
 
@@ -98,6 +99,15 @@ export const FEATURE_FLAG_META: Record<FeatureFlagKey, FeatureFlagMeta> = {
     phase: 2,
     requiresLicense: true,
   },
+  booking: {
+    key: 'booking',
+    label: 'ระบบจองคิว',
+    labelEn: 'Appointment booking',
+    description: 'เปิดให้ลูกค้าจองคิวออนไลน์และจัดการตารางนัด',
+    descriptionEn: 'Lets customers book appointments online',
+    phase: 3,
+    requiresLicense: false,
+  },
 };
 
 /** Only the flags a site actually turned off are stored. */
@@ -112,6 +122,7 @@ export const DEFAULT_FEATURE_FLAGS: Record<FeatureFlagKey, boolean> = {
   /** Paid capabilities start off and an unlicensed build ignores the switch. */
   membership: false,
   marketplace: false,
+  booking: true,
 };
 
 /** Drops unknown keys and non-boolean values from a stored settings blob. */

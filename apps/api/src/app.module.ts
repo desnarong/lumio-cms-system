@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
+import { AgencyModule } from './modules/agency/agency.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { AiModule } from './modules/ai/ai.module';
 import { AppsModule } from './modules/apps/apps.module';
+import { ApiKeysModule } from './modules/api-keys/api-keys.module';
 import { AuditModule } from './modules/audit/audit.module';
+import { BookingModule } from './modules/booking/booking.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BackupModule } from './modules/backup/backup.module';
 import { BankingModule } from './modules/banking/banking.module';
@@ -76,6 +79,9 @@ import { RateLimitModule } from './common/rate-limit.module';
     PromotionsModule,
     MediaModule,
     UpdatesModule,
+    ApiKeysModule,
+    AgencyModule,
+    BookingModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: OriginGuard }],
 })

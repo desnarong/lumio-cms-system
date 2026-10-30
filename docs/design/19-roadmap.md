@@ -33,6 +33,9 @@ Block engine + Editor → Renderer → Media → Design tokens → Publish pipel
 | 9 | Wizard + Templates | `ใช้สกิล lumio-template-pack ทำ onboarding wizard 5 ขั้นตอน และ template 3 แบบแรก` |
 | 10 | Review | `ใช้สกิล lumio-security-review ตรวจโค้ดทั้งหมดของเฟส 1 แล้วสรุปสิ่งที่ต้องแก้` |
 | 11 | Block Marketplace | `ใช้สกิล lumio-api-endpoint และ lumio-db-migration ทำตลาดบล็อกตามหัวข้อ 16.8 (manifest ลงลายเซ็น, ติดตั้ง/ถอน/อัปเดตต่อเว็บ, license gate)` |
+| 12 | ระบบจองคิว | `ใช้สกิล lumio-api-endpoint, lumio-db-migration และ lumio-design-system ทำบริการ/เวลาทำการ/ช่องเวลา + หน้าจองสาธารณะที่ไม่ใช้ JS` |
+| 13 | Agency / White-label | `ใช้สกิล lumio-api-endpoint ทำแบรนด์ระดับการติดตั้ง (ชื่อ/โลโก้/ซ่อนเครดิต) ภายใต้ไลเซนส์ whitelabel` |
+| 14 | Public API keys | `ใช้สกิล lumio-security-review ทำกุญแจ API อ่านเฉพาะที่เผยแพร่ พร้อม scope, hash และ rate limit` |
 
 ## 19.4 Definition of Done ระดับโปรเจกต์ (MVP)
 

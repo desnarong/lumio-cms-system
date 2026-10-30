@@ -58,10 +58,10 @@ describe('FeaturesService', () => {
   it('starts every free capability on, so an existing site loses no screen', async () => {
     const list = await service(stubs()).list(SITE_ID);
 
-    expect(list.items).toHaveLength(7);
+    expect(list.items).toHaveLength(8);
     expect(
       list.items.filter((item) => !item.lockedByLicense).map((item) => item.enabled),
-    ).toEqual([true, true, true, true, true]);
+    ).toEqual([true, true, true, true, true, true]);
     expect(list.items.every((item) => !item.lockedByPlatform)).toBe(true);
   });
 

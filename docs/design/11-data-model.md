@@ -228,7 +228,20 @@ CREATE POLICY site_isolation ON contents
 - ตารางระดับแพลตฟอร์ม (users) ไม่ใช้ RLS แต่กรองด้วย logic
 - Test บังคับ: ผู้ใช้ site A อ่านข้อมูล site B ไม่ได้
 
-## 11.6 Index ที่สำคัญ
+## 11.6 ตารางของงานนอก MVP (ก้อนที่ 65–67)
+
+| ตาราง | คอลัมน์สำคัญ | หมายเหตุ |
+|---|---|---|
+| `api_keys` | `site_id`, `name`, `hint`, `key_hash` UNIQUE, `scopes`, `last_used_at`, `revoked_at` | เก็บเฉพาะ SHA-256 ของกุญแจ; แสดงข้อความจริงครั้งเดียวตอนสร้าง |
+| `booking_services` | `site_id`, `name`, `duration_minutes`, `price`, `active`, `sort` | บริการที่ลูกค้าเลือกจองได้ |
+| `bookings` | `site_id`, `service_id` (SET NULL), `service_name`, `starts_at`, `ends_at`, `status`, `cancel_hash` UNIQUE | เก็บชื่อบริการไว้ด้วยเพื่อให้ลบบริการแล้วประวัติยังอยู่ |
+| `agency_branding` | `id = 'default'`, `brand_name`, `logo_url`, `support_email`, `hide_branding`, `accent_color` | ตารางระดับแพลตฟอร์ม ไม่มี `site_id` และไม่มี RLS |
+
+- ตารางที่เป็นข้อมูลของเว็บทั้งสามยังใช้ `ENABLE/FORCE ROW LEVEL SECURITY` + policy `site_isolation`
+- ตารางระดับแพลตฟอร์ม (`agency_branding`) ยกเว้นตามกฎในหัวข้อ 11.4
+- `bookings` มี CHECK ให้ `status` อยู่ในชุดที่กำหนด และ index `(site_id, starts_at)`, `(site_id, status, starts_at)`
+
+## 11.7 Index ที่สำคัญ
 
 | ตาราง | Index | เหตุผล |
 |---|---|---|
@@ -240,6 +253,8 @@ CREATE POLICY site_isolation ON contents
 | media | `(site_id, folder)` | จัดกลุ่มไฟล์ |
 | form_submissions | `(form_id, created_at DESC)` | ดูข้อความล่าสุด |
 | pageviews | partition by `ts` | query ช่วงเวลาเร็ว |
+| api_keys | `key_hash` UNIQUE, `(site_id, revoked_at)` | ตรวจกุญแจเร็ว + ซ่อนกุญแจที่เพิกถอนแล้ว |
+| bookings | `(site_id, starts_at)`, `(site_id, status, starts_at)`, `cancel_hash` UNIQUE | ปฏิทินรายวัน + ตรวจสิทธิ์ยกเลิก |
 
 ---
 
