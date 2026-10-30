@@ -13,12 +13,14 @@ import {
   MAX_SLIP_BYTES,
   cartInputSchema,
   cartTotals,
+  contactMatchesOrder,
   giftQuantityFor,
   isHoneypotFilled,
   isInStock,
   isOrderStatus,
   isPaymentSlipStatus,
   isShopPaymentMethod,
+  orderLookupInputSchema,
   orderNumberFor,
   paymentSlipInputSchema,
   promptPayPayload,
@@ -39,6 +41,7 @@ import {
   type CreateOrderInput,
   type OrderCreatedResponse,
   type OrderLine,
+  type OrderLookupInput,
   type PaymentSlipInput,
   type PaymentSlipStatus,
   type PublicOrder,
@@ -723,6 +726,34 @@ export class ShopService {
       payment: paymentInfo(row, settings),
       settings,
     };
+  }
+
+  /**
+   * A buyer who lost their order link opens it again with the number on the
+   * receipt plus the phone or email they used at checkout. The same message is
+   * returned for an unknown number and a wrong contact, so guessing a number
+   * never reveals whether an order exists.
+   */
+  async lookupOrder(host: string, input: OrderLookupInput): Promise<PublicOrder> {
+    const parsed = orderLookupInputSchema.parse(input);
+    if (isHoneypotFilled(parsed.honeypot)) {
+      throw ApiException.validation('ไม่สามารถค้นหาคำสั่งซื้อได้ กรุณาลองใหม่');
+    }
+
+    const { siteId, site } = await this.publicContent.chrome(host);
+    this.assertShopOpen(site.settings);
+
+    const row = await this.db.forSite(siteId, (tx) =>
+      tx.order.findFirst({
+        where: { number: parsed.number },
+        include: { items: true, slips: { orderBy: { createdAt: 'desc' }, take: 1 } },
+      }),
+    );
+    if (!row || !contactMatchesOrder(asRecord(row.customer), parsed.contact)) {
+      throw ApiException.notFound('ไม่พบคำสั่งซื้อที่ตรงกับเลขคำสั่งซื้อและข้อมูลติดต่อนี้');
+    }
+
+    return toPublicOrder(row);
   }
 
   /**

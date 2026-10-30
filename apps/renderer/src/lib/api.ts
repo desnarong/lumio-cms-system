@@ -1,7 +1,9 @@
 import {
   cartInputSchema,
   orderCreatedSchema,
+  orderLookupInputSchema,
   pageviewInputSchema,
+  publicOrderSchema,
   shopCartResponseSchema,
   shopHomeResponseSchema,
   shopOrderResponseSchema,
@@ -13,12 +15,14 @@ import {
   publicSitemapSchema,
   type PageviewInput,
   type PublicPage,
+  type PublicOrder,
   type PublicPostList,
   type PublicPromotion,
   type PublicSitemap,
   type CartInput,
   type CreateOrderInput,
   type OrderCreatedResponse,
+  type OrderLookupInput,
   type ShopCartResponse,
   type ShopHomeResponse,
   type ShopOrderResponse,
@@ -87,6 +91,8 @@ export interface PublicApi {
   priceCart(host: string, items: CartInput['items'], locale?: string): Promise<ShopCartResponse>;
   createOrder(host: string, input: CreateOrderInput, locale?: string): Promise<OrderCreatedResponse>;
   getOrder(host: string, token: string, locale?: string): Promise<ShopOrderResponse>;
+  /** Reopens an order from its number plus the phone or email used at checkout. */
+  lookupOrder(host: string, input: OrderLookupInput): Promise<PublicOrder>;
   /** Uploads a PromptPay slip; an exact amount confirms the order automatically. */
   submitSlip(
     host: string,
@@ -237,6 +243,12 @@ export const createPublicApi = (options: PublicApiOptions): PublicApi => {
       request(
         `${encodeURIComponent(host)}/shop/orders/${encodeURIComponent(token)}${localeQuery(locale)}`,
         (value) => shopOrderResponseSchema.parse(value),
+      ),
+    lookupOrder: (host, input) =>
+      postJson(
+        `${encodeURIComponent(host)}/shop/orders/lookup`,
+        orderLookupInputSchema.parse(input),
+        (value) => publicOrderSchema.parse(value),
       ),
     submitSlip: (host, token, input, locale) =>
       postJson(

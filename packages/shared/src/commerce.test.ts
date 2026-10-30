@@ -3,14 +3,17 @@ import {
   canRefundOrder,
   refundOrderInputSchema,
   cartTotals,
+  contactMatchesOrder,
   giftQuantityFor,
   commerceSettingsSchema,
   crc16,
   formatBaht,
   isPromptPayId,
+  orderLookupInputSchema,
   orderNumberFor,
   parseBaht,
   parseCartCookie,
+  phoneDigits,
   promptPayPayload,
   promptPayTarget,
   serializeCartCookie,
@@ -236,5 +239,37 @@ describe('orders', () => {
 
   it('formats the order number with the Bangkok-day suffix', () => {
     expect(orderNumberFor(new Date('2026-10-22T03:00:00Z'), 'ab12cd')).toBe('LM-261022-AB12CD');
+  });
+});
+
+describe('order lookup', () => {
+  it('accepts the number in any case and normalises it', () => {
+    const parsed = orderLookupInputSchema.parse({
+      number: ' lm-261022-ab12cd ',
+      contact: '0891234567',
+      honeypot: '',
+    });
+    expect(parsed.number).toBe('LM-261022-AB12CD');
+  });
+
+  it('refuses a number that is not an order number', () => {
+    expect(
+      orderLookupInputSchema.safeParse({ number: '1234', contact: '0891234567' }).success,
+    ).toBe(false);
+  });
+
+  it('matches the phone even when it was typed with dashes', () => {
+    expect(phoneDigits('081-234-5678')).toBe('0812345678');
+    expect(contactMatchesOrder({ phone: '0812345678' }, '081-234-5678')).toBe(true);
+    expect(contactMatchesOrder({ phone: '0812345678' }, '+66812345678')).toBe(true);
+  });
+
+  it('matches the email the order was placed with', () => {
+    expect(contactMatchesOrder({ email: 'Somchai@Example.com' }, 'somchai@example.com')).toBe(true);
+    expect(contactMatchesOrder({ email: null }, 'somchai@example.com')).toBe(false);
+  });
+
+  it('rejects a phone that belongs to somebody else', () => {
+    expect(contactMatchesOrder({ phone: '0899999999' }, '0812345678')).toBe(false);
   });
 });

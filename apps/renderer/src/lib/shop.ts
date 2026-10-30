@@ -8,7 +8,9 @@ import {
   type CartItemInput,
   type CreateOrderInput,
   type OrderCreatedResponse,
+  type OrderLookupInput,
   type PaymentSlipInput,
+  type PublicOrder,
   type SlipSubmission,
   type ShopCartResponse,
   type ShopHomeResponse,
@@ -77,6 +79,10 @@ export const createOrder = (
   input: CreateOrderInput,
   locale?: string,
 ): Promise<OrderCreatedResponse> => api().createOrder(host, input, locale);
+
+/** Sign-in never falls back to demo orders, or a stranger could open one. */
+export const lookupOrder = (host: string, input: OrderLookupInput): Promise<PublicOrder> =>
+  api().lookupOrder(host, input);
 
 export const loadShopProductOrNull = async (
   host: string,

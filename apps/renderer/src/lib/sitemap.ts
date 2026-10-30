@@ -57,7 +57,7 @@ export const robotsPolicy = (host: string): RobotsPolicy => ({
     {
       userAgent: '*',
       allow: '/',
-      disallow: ['/preview/', '/api/', '/cart', '/checkout', '/order/'],
+      disallow: ['/preview/', '/api/', '/cart', '/checkout', '/order/', '/signin'],
     },
   ],
   sitemap: `${siteOrigin(host)}/sitemap.xml`,

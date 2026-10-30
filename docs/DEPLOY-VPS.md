@@ -1,4 +1,4 @@
-# ขึ้น VPS จริง (ตัวอย่าง: https://savvyapp.cc บนเครื่องที่มีระบบอื่นอยู่แล้ว)
+# ขึ้น VPS จริง (ตัวอย่าง: https://example.com บนเครื่องที่มีระบบอื่นอยู่แล้ว)
 
 > กรณีนี้คือ VPS ที่ **Nginx เดิมยึดพอร์ต 80/443 ไว้ให้ระบบอื่น** จึงไม่ใช้ Caddy
 > ของ Lumio แต่ให้ Nginx เดิมเป็น reverse proxy ไปยัง container ที่ผูก `127.0.0.1`
@@ -9,9 +9,9 @@
 ```
 อินเทอร์เน็ต
    │  80/443 (Nginx Proxy Manager)
-   ├─ savvyapp.cc, www.savvyapp.cc, *.savvyapp.cc ──▶ 127.0.0.1:49200  renderer
-   ├─ apilumio.savvyapp.cc ──▶ 127.0.0.1:49100  api
-   └─ admin.savvyapp.cc    ──▶ 127.0.0.1:49300  admin (nginx ใน container)
+   ├─ example.com, www.example.com, *.example.com ──▶ 127.0.0.1:49200  renderer
+   ├─ apilumio.example.com ──▶ 127.0.0.1:49100  api
+   └─ admin.example.com    ──▶ 127.0.0.1:49300  admin (nginx ใน container)
 
 Docker ภายใน (ไม่เปิดพอร์ตออกนอก): db 49432 · redis 49537 · minio 49600/49601
 worker ทำงานเบื้องหลัง ไม่มีพอร์ต
@@ -36,13 +36,13 @@ worker ทำงานเบื้องหลัง ไม่มีพอร์
 
 | ชื่อ                   | ชนิด  | ค่า           |
 | ---------------------- | ----- | ------------- |
-| `savvyapp.cc`          | A     | IP ของ VPS    |
-| `www.savvyapp.cc`      | CNAME | `savvyapp.cc` |
-| `apilumio.savvyapp.cc` | A     | IP ของ VPS    |
-| `admin.savvyapp.cc`    | A     | IP ของ VPS    |
-| `*.savvyapp.cc`        | A     | IP ของ VPS    |
+| `example.com`          | A     | IP ของ VPS    |
+| `www.example.com`      | CNAME | `example.com` |
+| `apilumio.example.com` | A     | IP ของ VPS    |
+| `admin.example.com`    | A     | IP ของ VPS    |
+| `*.example.com`        | A     | IP ของ VPS    |
 
-`*.savvyapp.cc` จำเป็นถ้าจะใช้โดเมนฟรีของแต่ละเว็บ (`baandoi.savvyapp.cc`)
+`*.example.com` จำเป็นถ้าจะใช้โดเมนฟรีของแต่ละเว็บ (`baandoi.example.com`)
 ถ้า VPS อยู่หลัง Cloudflare ให้ตั้ง proxied ได้ แต่ต้องเปิด Full (strict) และปล่อยให้
 Cloudflare จัดการ TLS แทน certbot
 
@@ -53,25 +53,25 @@ cp .env.docker.example .env.docker
 # เติมค่าจริง แล้วตั้งสิทธิ์  chmod 600 .env.docker
 ```
 
-ค่าที่ต้องเปลี่ยนสำหรับ `savvyapp.cc` (นอกนั้นใช้ค่าจากตัวอย่างได้):
+ค่าที่ต้องเปลี่ยนสำหรับ `example.com` (นอกนั้นใช้ค่าจากตัวอย่างได้):
 
 ```ini
-LUMIO_DOMAIN=savvyapp.cc
-LUMIO_ADMIN_HOST=admin.savvyapp.cc
+LUMIO_DOMAIN=example.com
+LUMIO_ADMIN_HOST=admin.example.com
 # โฮสต์ของ API (ชื่ออะไรก็ได้) ต้องตรงกับ LUMIO_ADMIN_API_URL ด้านล่าง
-LUMIO_API_HOST=apilumio.savvyapp.cc
+LUMIO_API_HOST=apilumio.example.com
 # ที่อยู่ที่ "เบราว์เซอร์" เรียก ไม่ใช่ชื่อ container
-LUMIO_ADMIN_API_URL=https://apilumio.savvyapp.cc
-LUMIO_API_URL=https://apilumio.savvyapp.cc
+LUMIO_ADMIN_API_URL=https://apilumio.example.com
+LUMIO_API_URL=https://apilumio.example.com
 LUMIO_ENV_FILE=.env.docker
 
 NODE_ENV=production
-PUBLIC_ROOT_DOMAIN=savvyapp.cc
-ADMIN_HOST=admin.savvyapp.cc
-API_PUBLIC_URL=https://apilumio.savvyapp.cc
-ADMIN_ORIGIN=https://admin.savvyapp.cc
-RENDERER_ORIGIN=https://savvyapp.cc
-ACME_EMAIL=you@savvyapp.cc
+PUBLIC_ROOT_DOMAIN=example.com
+ADMIN_HOST=admin.example.com
+API_PUBLIC_URL=https://apilumio.example.com
+ADMIN_ORIGIN=https://admin.example.com
+RENDERER_ORIGIN=https://example.com
+ACME_EMAIL=you@example.com
 
 # ไม่ใช้ Caddy: ไม่ต้องตั้ง CADDYFILE / CADDY_HTTP_PORT / CADDY_HTTPS_PORT
 
@@ -96,18 +96,18 @@ SITE_LOCALE_INLINE=false
 # ทดสอบก่อน: เก็บไฟล์ใน volume ไม่ต้องตั้ง MinIO/S3 ให้ยุ่ง
 MEDIA_STORAGE=local
 MEDIA_PUBLIC_BASE_URL=
-# (เว้นว่าง = ใช้ https://apilumio.savvyapp.cc/media ซึ่ง CSP ของ renderer อนุญาตอยู่แล้ว)
+# (เว้นว่าง = ใช้ https://apilumio.example.com/media ซึ่ง CSP ของ renderer อนุญาตอยู่แล้ว)
 
 RENDERER_URL=http://renderer:49200
-RENDERER_PUBLIC_URL=https://savvyapp.cc
+RENDERER_PUBLIC_URL=https://example.com
 PUBLIC_DEFAULT_SITE=
 
 # อีเมล/Stripe ยังไม่ต้องใช้ตอนทดสอบ เว้นว่างไว้ได้
 RESEND_API_KEY=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
-BILLING_RETURN_URL=https://admin.savvyapp.cc/settings/billing
-EMAIL_FROM=Lumio <no-reply@savvyapp.cc>
+BILLING_RETURN_URL=https://admin.example.com/settings/billing
+EMAIL_FROM=Lumio <no-reply@example.com>
 ```
 
 > `VITE_API_URL` ของ admin ถูกฝังตอน build: ถ้าเปลี่ยน `LUMIO_ADMIN_API_URL`
@@ -141,9 +141,9 @@ NPM ถือพอร์ต 80/443 อยู่แล้ว จึง **ไม�
 
 | Domain Names                     | Scheme | Forward Hostname            | Forward Port |
 | -------------------------------- | ------ | --------------------------- | ------------ |
-| `savvyapp.cc`, `www.savvyapp.cc` | http   | `renderer` หรือ `127.0.0.1` | 49200        |
-| `apilumio.savvyapp.cc`           | http   | `api` หรือ `127.0.0.1`      | 49100        |
-| `admin.savvyapp.cc`              | http   | `admin` หรือ `127.0.0.1`    | 80           |
+| `example.com`, `www.example.com` | http   | `renderer` หรือ `127.0.0.1` | 49200        |
+| `apilumio.example.com`           | http   | `api` หรือ `127.0.0.1`      | 49100        |
+| `admin.example.com`              | http   | `admin` หรือ `127.0.0.1`    | 80           |
 
 `127.0.0.1` ใช้ได้เฉพาะเมื่อ NPM รันบน host ตรง ๆ ถ้า NPM เป็น container
 (กรณีปกติ) `127.0.0.1` คือตัว NPM เอง ไม่ใช่เครื่อง host เลือกทางใดทางหนึ่ง:
@@ -173,11 +173,35 @@ networks:
 - **Details**: เปิด Block Common Exploits และ Websockets Support
 - **Advanced**: ใส่ `client_max_body_size 25m;` (อัปโหลดสื่อ)
 - **SSL**: Request a new SSL Certificate + Force SSL + HTTP/2 (ต้องมีอีเมลและกดยอมรับ TOS)
-- อย่าเปิด Access List กับ `savvyapp.cc` เพราะจะกลายเป็นเว็บที่ต้องล็อกอินก่อนเข้า
+- อย่าเปิด Access List กับ `example.com` เพราะจะกลายเป็นเว็บที่ต้องล็อกอินก่อนเข้า
 
-โดเมนฟรี `*.savvyapp.cc`: NPM ขอ **wildcard certificate ได้เฉพาะ DNS Challenge**
+โดเมนฟรี `*.example.com`: NPM ขอ **wildcard certificate ได้เฉพาะ DNS Challenge**
 (Cloudflare หรือ Custom DNS provider) ถ้าไม่มี ให้เพิ่ม subdomain ที่ต้องใช้ทีละตัว
 หรือปล่อยให้ทดสอบผ่าน HTTP ก่อน
+
+### ใช้ Cloudflare หน้า Lumio (โดเมนอยู่บน Cloudflare)
+
+เมื่อ Cloudflare proxy อยู่หน้า NPM ไม่ต้องขอ certificate จาก Let's Encrypt เลย:
+เบราว์เซอร์ได้ cert จาก Cloudflare ส่วน NPM ใช้ Cloudflare Origin Certificate
+
+1. Cloudflare > SSL/TLS > Origin Server > Create Certificate
+   - Hostnames: `example.com, *.example.com` (ครอบ admin/api/โดเมนฟรีทุกตัว)
+   - Validity 15 ปี, key type RSA 2048
+   - คัดลอกทั้ง Certificate และ Private Key เก็บไว้ (แสดงครั้งเดียว)
+2. NPM > SSL Certificates > Add SSL Certificate > Custom
+   - Certificate = origin cert, Certificate Key = private key, Intermediate = ว่าง
+3. NPM > Proxy Host ทุกตัว > SSL: เลือก cert นี้ + Force SSL + HTTP/2 (ปิด LE ที่ค้างอยู่)
+4. Cloudflare > SSL/TLS > Overview = **Full (strict)** (ตั้งหลังแนบ cert แล้ว ไม่งั้นได้ 526)
+   และ Edge Certificates > เปิด Always Use HTTPS, Minimum TLS 1.2
+
+ตรวจผล:
+
+```bash
+curl -4 -sSI https://baandoi.example.com | head -3   # ต้องได้ HTTP/2 200 + server: cloudflare
+```
+
+ข้อควรระวัง: origin cert ครอบแค่ `example.com` และ `*.example.com` (ระดับเดียว)
+custom domain ของลูกค้ายังต้องขอ cert แยกตามเดิม และต้องต่ออายุ origin cert ก่อนหมดอายุ
 
 ### ถ้า NPM ขึ้น "Internal Error" ตอนเพิ่ม Proxy Host
 
@@ -206,15 +230,15 @@ docker exec <container ของ NPM> tail -80 /data/logs/letsencrypt.log
 > ไม่ใช้ NPM? ใช้ `infra/nginx/lumio-vps.conf` กับ `certbot --nginx` แทนได้
 > (เลือกอย่างใดอย่างหนึ่งเท่านั้น)
 
-## 7. ทำให้ `savvyapp.cc` แสดงเว็บได้
+## 7. ทำให้ `example.com` แสดงเว็บได้
 
-`https://savvyapp.cc` เป็น **โดเมนเชื่อมของเว็บ** ไม่ใช่ subdomain ฟรี
+`https://example.com` เป็น **โดเมนเชื่อมของเว็บ** ไม่ใช่ subdomain ฟรี
 จึงต้องมีข้อมูลในฐานข้อมูล:
 
-1. สร้างเว็บ (Site) 1 เว็บ ซึ่งจะได้ที่อยู่ฟรี `<subdomain>.savvyapp.cc`
-   (เช่น `mysite.savvyapp.cc`)
-2. ในหน้า ตั้งค่า > โดเมน เพิ่ม `savvyapp.cc` (และ `www.savvyapp.cc` ถ้าต้องการ)
-3. ถ้า A record ของ `savvyapp.cc` ชี้ IP เดียวกับ `mysite.savvyapp.cc`
+1. สร้างเว็บ (Site) 1 เว็บ ซึ่งจะได้ที่อยู่ฟรี `<subdomain>.example.com`
+   (เช่น `mysite.example.com`)
+2. ในหน้า ตั้งค่า > โดเมน เพิ่ม `example.com` (และ `www.example.com` ถ้าต้องการ)
+3. ถ้า A record ของ `example.com` ชี้ IP เดียวกับ `mysite.example.com`
    ระบบจะยืนยันโดเมนให้เองภายใน ~5 นาที (`DomainsVerifier`) หรือกด
    "ตรวจสอบอีกครั้ง" ในหน้าโดเมน
 4. เมื่อ `ssl_status = active` แล้ว renderer จะเสิร์ฟเว็บนั้นที่ root domain
@@ -226,13 +250,13 @@ docker exec <container ของ NPM> tail -80 /data/logs/letsencrypt.log
 
 ```bash
 curl -fsS http://127.0.0.1:49100/api/health
-curl -I  https://apilumio.savvyapp.cc/api/health
-curl -I  https://admin.savvyapp.cc
-curl -I  https://savvyapp.cc
+curl -I  https://apilumio.example.com/api/health
+curl -I  https://admin.example.com
+curl -I  https://example.com
 ```
 
-- เปิด https://admin.savvyapp.cc ล็อกอิน แล้วสร้างหน้า + กดเผยแพร่
-- อัปโหลดรูป 1 รูป แล้วตรวจว่ารูปขึ้นที่ `https://apilumio.savvyapp.cc/media/...`
+- เปิด https://admin.example.com ล็อกอิน แล้วสร้างหน้า + กดเผยแพร่
+- อัปโหลดรูป 1 รูป แล้วตรวจว่ารูปขึ้นที่ `https://apilumio.example.com/media/...`
 - เปิด `docker compose logs -f api worker` ดู error 15 นาทีแรก
 - `ADMIN_ORIGIN`/`RENDERER_ORIGIN` ผิดจะได้ 403 "คำขอมาจากโดเมนที่ไม่อนุญาต"
 - admin เรียก API ไม่ได้ ให้ตรวจ `LUMIO_ADMIN_API_URL` ตอน build อีกครั้ง

@@ -134,6 +134,7 @@ refresh ─▶ ออก access token ใหม่
 | `POST /public/:host/shop/cart` | คิดราคาตะกร้าจากฐานข้อมูล (ไม่เขียนข้อมูล) |
 | `POST /public/:host/shop/orders` | สร้างคำสั่งซื้อ; ตรวจสต็อกและราคาที่เซิร์ฟเวอร์เสมอ |
 | `GET /public/:host/shop/orders/:token` | ดูคำสั่งซื้อด้วยโทเคนที่เดาไม่ได้ (ไม่ cache) |
+| `POST /public/:host/shop/orders/lookup` | เปิดคำสั่งซื้อด้วยเลขคำสั่งซื้อ + เบอร์โทร/อีเมลที่ใช้สั่ง (rate limit 10/นาที, ตอบ 404 เดียวกันทั้งเลขผิดและข้อมูลติดต่อผิด) |
 | `POST /public/:host/shop/orders/:token/slip` | อัปโหลดสลิปพร้อมเพย์ (ตรวจชนิด/ขนาด/ไวรัส) |
 | `GET /public/:host/shop/orders/:token/receipt` | ใบเสร็จ HTML (ไม่ cache) |
 | `GET /public/:host/shop/orders/:token/receipt.pdf` | ใบเสร็จ PDF จากข้อมูลชุดเดียวกัน |

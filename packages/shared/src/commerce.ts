@@ -958,6 +958,45 @@ export const orderNumberFor = (date: Date, suffix: string): string => {
 
 export const ORDER_NUMBER_PATTERN = /^LM-\d{6}-[A-Z0-9]{4,6}$/;
 
+/** Digits of a phone number, so "081-234-5678" and "0812345678" are the same. */
+export const phoneDigits = (value: string): string => value.replace(/\D/g, '');
+
+/**
+ * True when the phone or email a visitor typed is the one the order was placed
+ * with. Only the digits are compared so dashes, spaces and a country code do not
+ * stop a buyer from opening their own receipt.
+ */
+export const contactMatchesOrder = (
+  customer: { phone?: unknown; email?: unknown },
+  contact: string,
+): boolean => {
+  const typed = contact.trim();
+  if (typed.includes('@')) {
+    const email = typeof customer.email === 'string' ? customer.email.trim().toLowerCase() : '';
+    return email.length > 0 && email === typed.toLowerCase();
+  }
+  const digits = phoneDigits(typed);
+  const phone = typeof customer.phone === 'string' ? phoneDigits(customer.phone) : '';
+  const local = phone.startsWith('66') ? `0${phone.slice(2)}` : phone;
+  const typedLocal = digits.startsWith('66') && digits.length > 9 ? `0${digits.slice(2)}` : digits;
+  return typedLocal.length >= 9 && local === typedLocal;
+};
+
+/**
+ * Lets a buyer open an order they already placed, without an account: the
+ * number printed on the receipt plus the phone or email used at checkout.
+ */
+export const orderLookupInputSchema = z.object({
+  number: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(ORDER_NUMBER_PATTERN, 'เลขคำสั่งซื้อต้องอยู่ในรูปแบบ LM-261022-7K4Q'),
+  contact: z.string().trim().min(6, 'กรุณากรอกเบอร์โทรหรืออีเมลที่ใช้สั่งซื้อ').max(200),
+  honeypot: z.string().max(200).optional(),
+});
+export type OrderLookupInput = z.infer<typeof orderLookupInputSchema>;
+
 /* ------------------------------------------------------------------ payloads */
 
 export const shopVariantSchema = z.object({

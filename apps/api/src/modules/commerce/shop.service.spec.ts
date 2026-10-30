@@ -182,6 +182,11 @@ const stubs = (
         .mockResolvedValue(
           'order' in options ? options.order : orderRow({ ...orderItems, items: undefined }),
         ),
+      findFirst: vi
+        .fn()
+        .mockResolvedValue(
+          'order' in options ? options.order : orderRow({ ...orderItems, items: undefined }),
+        ),
     },
     orderItem: {
       createMany: vi.fn().mockResolvedValue({ count: 1 }),
@@ -446,6 +451,69 @@ describe('ShopService order lookup', () => {
     await expect(service(all).order('baandoi.example.com', 'nope')).rejects.toMatchObject({
       code: 'not_found',
     });
+  });
+
+  it('reopens an order from its number and the phone used at checkout', async () => {
+    const all = stubs({ order: orderRow({ items: orderItems }) });
+    const found = await service(all).lookupOrder('baandoi.example.com', {
+      number: 'lm-261022-ab12',
+      contact: '089-123-4567',
+    });
+    const orderFirst = (all.tx.order as { findFirst: Mock }).findFirst;
+
+    expect(found.number).toBe('LM-261022-AB12');
+    expect(found.customerPhone).toBe('08xxxxx567');
+    expect(orderFirst).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { number: 'LM-261022-AB12' } }),
+    );
+  });
+
+  it('reopens an order from the email used at checkout', async () => {
+    const all = stubs({
+      order: orderRow({
+        items: orderItems,
+        customer: { ...customer, email: 'arunee@example.com' },
+      }),
+    });
+    const found = await service(all).lookupOrder('baandoi.example.com', {
+      number: 'LM-261022-AB12',
+      contact: 'Arunee@Example.com',
+    });
+
+    expect(found.number).toBe('LM-261022-AB12');
+  });
+
+  it('hides an order when the contact belongs to somebody else', async () => {
+    const all = stubs({ order: orderRow({ items: orderItems }) });
+    await expect(
+      service(all).lookupOrder('baandoi.example.com', {
+        number: 'LM-261022-AB12',
+        contact: '0899999999',
+      }),
+    ).rejects.toMatchObject({ code: 'not_found' });
+    expect((all.tx.order as { findFirst: Mock }).findFirst).toHaveBeenCalled();
+  });
+
+  it('answers the same 404 for a number that does not exist', async () => {
+    const all = stubs({ order: null });
+    await expect(
+      service(all).lookupOrder('baandoi.example.com', {
+        number: 'LM-261022-ZZ99',
+        contact: '0891234567',
+      }),
+    ).rejects.toMatchObject({ code: 'not_found' });
+  });
+
+  it('refuses a lookup with the honeypot filled and never touches the database', async () => {
+    const all = stubs({ order: orderRow({ items: orderItems }) });
+    await expect(
+      service(all).lookupOrder('baandoi.example.com', {
+        number: 'LM-261022-AB12',
+        contact: '0891234567',
+        honeypot: 'spam',
+      }),
+    ).rejects.toMatchObject({ code: 'validation_error' });
+    expect((all.tx.order as { findFirst: Mock }).findFirst).not.toHaveBeenCalled();
   });
 });
 

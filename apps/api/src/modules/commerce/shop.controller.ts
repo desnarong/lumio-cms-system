@@ -14,6 +14,7 @@ import type { Response } from 'express';
 import {
   cartInputSchema,
   createOrderInputSchema,
+  orderLookupInputSchema,
   paymentSlipInputSchema,
   receiptFileName,
   renderReceiptHtml,
@@ -95,6 +96,15 @@ export class ShopController {
     @Query('locale') locale: unknown,
   ) {
     return ok(await this.shop.order(host, token.slice(0, 100), safeLocale(locale)));
+  }
+
+  /** Reopens an order from its number plus the phone or email used at checkout. */
+  @Post('orders/lookup')
+  @RateLimit({ limit: 10, windowMs: 60_000 })
+  @Header('cache-control', 'no-store')
+  async lookupOrder(@Param('host') host: string, @Body() body: unknown) {
+    const input = orderLookupInputSchema.parse(body);
+    return ok(await this.shop.lookupOrder(host, input));
   }
 
   /** Buyer uploads a PromptPay slip; an exact amount confirms the order at once. */

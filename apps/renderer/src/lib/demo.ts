@@ -4,6 +4,7 @@ import {
   HOME_SLUG,
   cartTotals,
   commerceSettingsSchema,
+  contactMatchesOrder,
   localePathFor,
   orderNumberFor,
   promptPayPayload,
@@ -12,6 +13,7 @@ import {
   type PublicContent,
   type PublicForm,
   type PublicGlobalBlocks,
+  type PublicOrder,
   type PublicPage,
   type PublicPostList,
   type PublicPromotion,
@@ -602,6 +604,16 @@ export const createDemoPublicApi = (): PublicApi => ({
       },
       settings: demoSettings,
     };
+  },
+  async lookupOrder(_host: string, input): Promise<PublicOrder> {
+    const number = input.number.trim().toUpperCase();
+    const order = [...demoOrders.values()].find(
+      (entry) =>
+        entry.number === number &&
+        contactMatchesOrder({ phone: entry.customerPhone }, input.contact),
+    );
+    if (!order) throw new ContentNotFoundError('ไม่พบคำสั่งซื้อที่ตรงกับข้อมูลนี้');
+    return order;
   },
   async submitSlip(_host: string, token: string, input): Promise<{ status: 'pending_review' | 'verified' | 'rejected'; autoVerified: boolean; message: string }> {
     const order = demoOrders.get(token);
