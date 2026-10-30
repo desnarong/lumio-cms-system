@@ -154,6 +154,28 @@ refresh ─▶ ออก access token ใหม่
 - ลูกค้าจ่ายผ่าน Payment Gateway ของธนาคารกรุงเทพได้ด้วยวิธี `bbl` (บัตร/QR) และออเดอร์ปิดด้วย callback ที่เซ็นลายเซ็น (หัวข้อ 12.10)
 - เมื่อร้านผูกบัญชีและเปิดตรวจอัตโนมัติ สลิปพร้อมเพย์จะถูกตรวจกับ API ธนาคารก่อนปิดออเดอร์
 
+### 12.7.2 Membership / Paywall (ต้องมีไลเซนส์)
+
+| Endpoint | ใช้ทำอะไร |
+|---|---|
+| `GET /public/:host/membership/plans` | แพ็กเกจที่เปิดขายของเว็บนั้น (cacheable) |
+| `POST /public/:host/membership/readers` | สมัครบัญชีผู้อ่าน (rate limit 10/นาที + honeypot) แล้วได้โทเคนเซสชัน |
+| `POST /public/:host/membership/readers/login` | เข้าสู่ระบบด้วยอีเมล/รหัสผ่าน (10/นาที) |
+| `POST /public/:host/membership/readers/forgot` | ขอลิงก์ตั้งรหัสผ่านใหม่ — ตอบเหมือนกันทุกกรณีเพื่อไม่ให้เดาว่ามีบัญชีหรือไม่ |
+| `POST /public/:host/membership/readers/reset` | ตั้งรหัสผ่านใหม่ด้วยโทเคนในอีเมล (ใช้ได้ 1 ชั่วโมง) |
+| `POST /public/:host/membership/readers/verify` | ยืนยันอีเมลจากลิงก์ต้อนรับ (ใช้ได้ 24 ชั่วโมง) |
+| `GET /public/:host/membership/readers/me` | โปรไฟล์ผู้อ่าน + สถานะสมาชิก (ต้องส่ง `Authorization: Bearer <reader token>`) |
+| `POST /public/:host/membership/checkout` | เริ่ม Stripe Subscription ของแพ็กเกจที่เลือก (แพ็กเกจฟรีเปิดให้ทันที) |
+| `POST /public/membership/webhook` | Stripe webhook ของการเป็นสมาชิก (ตรวจลายเซ็นจาก raw body; เว็บมาจาก `metadata.siteId`) |
+
+- หน้า/บทความมีฟิลด์ `access: 'public' | 'members'`; หน้าที่ยังไม่ปลดล็อกจะได้ `blocks: []`
+  พร้อม `paywall: { locked: true, plans: [...] }` และถูกบังคับ `noindex`
+- `GET /public/:host/pages/:slug` และ `/posts/:slug` รับ `Authorization: Bearer` ของผู้อ่านได้
+  เพื่อปลดล็อกเฉพาะคนนั้น; คำตอบที่มี Authorization จะเป็น `private, no-store` เสมอ (ไม่ลง CDN)
+- แอดมิน: `GET/POST /membership/plans`, `PATCH/DELETE /membership/plans/:id`,
+  `GET /membership/readers`, `GET /membership/summary`, `POST /membership/readers/:id/cancel`
+  (ทั้งชุดเปิดด้วย `@RequireFeature('membership')` จึงต้องมีไลเซนส์ที่ระบุ `membership`)
+
 ## 12.8 Versioning
 
 - API ใช้ path version (`/api/v1`)
@@ -168,6 +190,7 @@ refresh ─▶ ออก access token ใหม่
 | Auth (login/register) | 10/นาที/IP             |
 | Public form submit    | 20/นาที/IP + Turnstile |
 | Public checkout       | 20/นาที/IP + honeypot |
+| Reader sign-in        | 10/นาที/IP            |
 | AI endpoints          | ตาม quota แพ็กเกจ      |
 | ทั่วไป (auth แล้ว)    | 300/นาที/ผู้ใช้        |
 

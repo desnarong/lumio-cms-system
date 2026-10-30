@@ -1020,3 +1020,90 @@
     min-height: var(--layout-tap-target);
   }
 }
+
+/* Members-only pages and the join screen (docs/PROGRESS.md batch A). */
+
+.paywall {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.paywall__badge {
+  align-self: flex-start;
+  margin: 0;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-hover);
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.paywall__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+}
+
+.paywall__text {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.paywall__plans {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.paywall__plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-hover);
+}
+
+.paywall__plan-name {
+  font-weight: 600;
+}
+
+.paywall__plan-price {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-primary);
+}
+
+.paywall__plan-interval,
+.paywall__plan-note {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.paywall__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.paywall__hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.site-article__excerpt {
+  margin: 0 0 var(--space-md);
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+}

@@ -14,6 +14,7 @@ const blocks = (): BlockTree => [
 const content = (): ContentDetail => ({
   id: 'c1',
   type: 'page',
+  access: 'public',
   title: 'หน้าแรก',
   slug: 'home',
   status: 'draft',

@@ -37,6 +37,9 @@ import {
   createDemoNewsletterApi,
   createDemoSeoApi,
 } from './growth/demo.js';
+import type { MembershipApi } from './membership/api.js';
+import { createHttpMembershipApi } from './membership/api.js';
+import { createDemoMembershipApi } from './membership/demo.js';
 import type { MediaApi } from './media/api.js';
 import { createHttpMediaApi } from './media/api.js';
 import { createDemoMediaApi } from './media/demo.js';
@@ -69,6 +72,8 @@ export interface AdminClients {
   media: MediaApi;
   dashboard: DashboardApi;
   commerce: CommerceApi;
+  /** Reader accounts and paid memberships (docs/PROGRESS.md batch A). */
+  membership: MembershipApi;
   design: DesignApi;
   settings: SettingsApi;
   billing: BillingApi;
@@ -122,6 +127,7 @@ export const createAdminClients = ({
       media,
       dashboard: createDemoDashboardApi(),
       commerce: createDemoCommerceApi(),
+      membership: createDemoMembershipApi(),
       design: createDemoDesignApi(),
       settings: createDemoSettingsApi({ media }),
       billing: createDemoBillingApi(),
@@ -159,6 +165,7 @@ export const createAdminClients = ({
     media,
     dashboard: createHttpDashboardApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     commerce: createHttpCommerceApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    membership: createHttpMembershipApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     design: createHttpDesignApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     settings: createHttpSettingsApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     billing: createHttpBillingApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),

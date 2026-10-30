@@ -102,7 +102,15 @@ RENDERER_URL=http://renderer:49200
 RENDERER_PUBLIC_URL=https://example.com
 PUBLIC_DEFAULT_SITE=
 
+# เซสชันของผู้อ่าน/สมาชิก (Membership) — ต้องตั้ง ไม่งั้นสร้างเซสชันผู้อ่านไม่ได้
+#   openssl rand -base64 32
+READER_SECRET=
+
+# ไลเซนส์ Pro (Membership/Paywall) — เว้นว่าง = Community
+# LUMIO_LICENSE=lumio_lic_v1....
+
 # อีเมล/Stripe ยังไม่ต้องใช้ตอนทดสอบ เว้นว่างไว้ได้
+# Stripe webhook ของสมาชิกผู้อ่าน: https://apilumio.example.com/api/v1/public/membership/webhook
 RESEND_API_KEY=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=

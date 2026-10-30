@@ -30,7 +30,8 @@ const pageOf = (slug: string, type: 'page' | 'post' = 'page', locale = 'th'): Pu
     locale: content.locale,
     isFallback: false,
     translations,
-    redirect: null,
+    paywall: null,
+  redirect: null,
   };
 };
 

@@ -12,6 +12,7 @@ import {
   promotionCardViews,
   themeDataAttributes,
   type AiSiteCommandProposal,
+  type ContentAccess,
   type ContentDetail,
   type Form,
   type ThemeTokens,
@@ -291,6 +292,55 @@ export const EditorPage = ({
     });
   };
 
+  /**
+   * Who may read this page (docs/PROGRESS.md batch A). Saving is immediate and
+   * offers undo, like every other page-level setting.
+   */
+  const applyAccess = (access: ContentAccess): void => {
+    const previous = state.content.access;
+    if (previous === access) return;
+    void editor.applyAccess(access).then((saved) => {
+      if (!saved) return;
+      toast.push({
+        tone: 'success',
+        title: t('editor.accessSaved'),
+        undo: {
+          label: t('common.undo'),
+          onClick: () => void editor.applyAccess(previous),
+        },
+      });
+    });
+  };
+
+  const accessPanel = (
+    <section className="editor-access" aria-labelledby="editor-access-title">
+      <h3 className="editor-inspector__title" id="editor-access-title">
+        {t('editor.accessTitle')}
+      </h3>
+      <p className="editor-inspector__hint">{t('editor.accessHint')}</p>
+      <div className="editor-access__options" role="radiogroup" aria-labelledby="editor-access-title">
+        <label className="editor-access__option">
+          <input
+            type="radio"
+            name="content-access"
+            checked={state.content.access === 'public'}
+            onChange={() => applyAccess('public')}
+          />
+          <span>{t('editor.accessPublic')}</span>
+        </label>
+        <label className="editor-access__option">
+          <input
+            type="radio"
+            name="content-access"
+            checked={state.content.access === 'members'}
+            onChange={() => applyAccess('members')}
+          />
+          <span>{t('editor.accessMembers')}</span>
+        </label>
+      </div>
+    </section>
+  );
+
   const coverPanel =
     state.content.type === 'post' ? (
       <ImagePicker
@@ -559,7 +609,12 @@ export const EditorPage = ({
                   ),
                 }
               : {})}
-            {...(coverPanel ? { metaPanel: coverPanel } : {})}
+            metaPanel={
+              <>
+                {accessPanel}
+                {coverPanel}
+              </>
+            }
           />
         </FormsCatalogProvider>
       </div>

@@ -17,6 +17,7 @@ const page = (overrides: Partial<ContentSummary> = {}): ContentSummary => ({
   updatedAt: '2026-10-20T09:00:00.000Z',
   publishedAt: '2026-10-20T09:00:00.000Z',
   archivedAt: null,
+  access: 'public',
   ...overrides,
 });
 

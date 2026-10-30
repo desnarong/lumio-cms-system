@@ -2,10 +2,12 @@ import type { FeatureFlagKey, Role } from '@lumio/shared';
 import { Tabs, useT, type MessageKey } from '@lumio/ui';
 import { GROWTH_TABS, type GrowthTab } from '../route.js';
 import { allowedTabs } from '../shell/nav.js';
+import { MembershipPage } from '../membership/MembershipPage.js';
 import { AnalyticsPage } from './AnalyticsPage.js';
 import { AppsPage } from './AppsPage.js';
 import { NewsletterPage } from './NewsletterPage.js';
 import { SeoPage } from './SeoPage.js';
+import type { MembershipApi } from '../membership/api.js';
 import type { AnalyticsApi, AppsApi, NewsletterApi, SeoApi } from './api.js';
 
 export interface GrowthApis {
@@ -13,6 +15,7 @@ export interface GrowthApis {
   analytics: AnalyticsApi;
   newsletter: NewsletterApi;
   apps: AppsApi;
+  membership: MembershipApi;
 }
 
 export interface GrowthPageProps {
@@ -31,6 +34,7 @@ const TAB_LABELS: Record<GrowthTab, MessageKey> = {
   seo: 'nav.seo',
   analytics: 'nav.analytics',
   newsletter: 'nav.newsletter',
+  membership: 'nav.membership',
   apps: 'nav.apps',
 };
 
@@ -73,6 +77,14 @@ export const GrowthPage = ({
       return <AnalyticsPage api={apis.analytics} headerTabs={headerTabs} />;
     case 'newsletter':
       return <NewsletterPage api={apis.newsletter} canManage={canManage} headerTabs={headerTabs} />;
+    case 'membership':
+      return (
+        <MembershipPage
+          api={apis.membership}
+          canManage={canManage}
+          headerTabs={headerTabs}
+        />
+      );
     case 'apps':
       return <AppsPage api={apis.apps} canManage={canManage} headerTabs={headerTabs} />;
   }

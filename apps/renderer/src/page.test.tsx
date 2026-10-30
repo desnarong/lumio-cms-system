@@ -32,6 +32,7 @@ const pageOf = (slug: string, locale = 'th'): PublicPage => {
     isFallback: false,
     translations,
     redirect: null,
+    paywall: null,
   };
 };
 
@@ -197,7 +198,8 @@ describe('PageView', () => {
           locale: 'th',
           isFallback: false,
           translations: [],
-          redirect: { to: '/about', code: 301 },
+          paywall: null,
+  redirect: { to: '/about', code: 301 },
         }}
         host={HOST}
       />,

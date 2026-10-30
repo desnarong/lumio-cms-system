@@ -3,6 +3,7 @@ import { createDemoAiApi } from './ai/demo.js';
 import { createMemoryStorage, createSessionStore } from './auth/session.js';
 import { createDemoAuthApi } from './auth/demo.js';
 import { createDemoCommerceApi } from './commerce/demo.js';
+import { createDemoMembershipApi } from './membership/demo.js';
 import type { AdminClients } from './clients.js';
 import { createDemoDashboardApi } from './dashboard/demo.js';
 import { createDemoDesignApi } from './design/demo.js';
@@ -42,6 +43,7 @@ const clients = ({ demo = true, listSites, listPages }: Options = {}): AdminClie
     media: createDemoMediaApi(),
     dashboard: createDemoDashboardApi(),
     commerce: createDemoCommerceApi(),
+    membership: createDemoMembershipApi(),
     design: createDemoDesignApi(),
     settings: createDemoSettingsApi(),
     billing: createDemoBillingApi(),

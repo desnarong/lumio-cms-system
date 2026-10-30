@@ -5,7 +5,9 @@ import {
   buildSrcSet,
   HOME_SLUG,
   isContentType,
+  isPaywalled,
   isPromotionLive,
+  isSubscriptionActive,
   isSupportedLocale,
   localePathFor,
   mediaUrlFor,
@@ -24,6 +26,7 @@ import {
   type PublicForm,
   type PublicGlobalBlocks,
   type PublicLocales,
+  type PublicMembershipPlan,
   type PublicMenus,
   type PublicPage,
   type PublicPostList,
@@ -37,6 +40,7 @@ import {
 } from '@lumio/shared';
 import { ApiException } from '../../common/api-error';
 import { verifyPreviewToken } from '../../common/preview-token';
+import type { ReaderClaim } from '../../common/reader-token';
 import { mediaPublicBaseUrl } from '../media/media.config';
 import { toPublicPromotion } from '../promotions/promotions.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -190,6 +194,7 @@ const toPublicContent = (row: Content, cover: Media | null): PublicContent => ({
   publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
   updatedAt: row.updatedAt.toISOString(),
   coverImage: toMediaUrl(cover),
+  access: row.access === 'members' ? 'members' : 'public',
 });
 
 const toPostSummary = (row: Content, cover: Media | null): PublicPostSummary => ({
@@ -264,12 +269,12 @@ export class PublicService {
     });
   }
 
-  async getPage(host: string, slug: string, locale?: string): Promise<PublicPage> {
-    return this.getContent(host, 'page', slug, locale);
+  async getPage(host: string, slug: string, locale?: string, reader?: ReaderClaim): Promise<PublicPage> {
+    return this.getContent(host, 'page', slug, locale, reader);
   }
 
-  async getPost(host: string, slug: string, locale?: string): Promise<PublicPage> {
-    return this.getContent(host, 'post', slug, locale);
+  async getPost(host: string, slug: string, locale?: string, reader?: ReaderClaim): Promise<PublicPage> {
+    return this.getContent(host, 'post', slug, locale, reader);
   }
 
   /**
@@ -318,6 +323,8 @@ export class PublicService {
         isFallback: false,
         translations: [],
         redirect: null,
+        // The editor's own preview never hides the body it is editing.
+        paywall: null,
       };
     });
   }
@@ -469,6 +476,7 @@ export class PublicService {
     type: ContentType,
     slug: string,
     locale?: string,
+    reader?: ReaderClaim,
   ): Promise<PublicPage> {
     const resolved = await this.resolveSite(host);
 
@@ -496,6 +504,33 @@ export class PublicService {
 
       if (row) {
         const published = toPublicContent(row, row.coverMedia);
+        // A members-only page is only opened for a reader of this same site who
+        // holds a live paid period; anything else gets the teaser (docs 15-security).
+        const entitled =
+          reader && reader.siteId === resolved.siteId
+            ? await this.hasMembership(tx, reader.readerId)
+            : false;
+        const locked = isPaywalled(published.access, entitled);
+        const paywall =
+          published.access === 'members'
+            ? { locked, plans: locked ? await this.activePlans(tx) : [] }
+            : null;
+
+        if (locked) {
+          return {
+            site,
+            content: { ...published, blocks: [], seo: { ...published.seo, noindex: true } },
+            menus,
+            globalBlocks,
+            forms: [],
+            locale: row.locale,
+            isFallback,
+            translations: await this.buildTranslations(tx, row, site),
+            redirect: null,
+            paywall,
+          };
+        }
+
         const images = await this.refreshBlockImages(tx, published.blocks, globalBlocks);
         const content = { ...published, blocks: images.blocks };
         return {
@@ -508,6 +543,7 @@ export class PublicService {
           isFallback,
           translations: await this.buildTranslations(tx, row, site),
           redirect: null,
+          paywall,
         };
       }
 
@@ -523,11 +559,39 @@ export class PublicService {
           isFallback: false,
           translations: [],
           redirect,
+          paywall: null,
         };
       }
 
       throw ApiException.notFound('ไม่พบหน้านี้');
     });
+  }
+
+  /** True while this reader holds a live paid period on the site. */
+  private async hasMembership(tx: Prisma.TransactionClient, readerId: string): Promise<boolean> {
+    const subscription = await tx.readerSubscription.findFirst({
+      where: { readerId },
+      orderBy: { createdAt: 'desc' },
+      select: { status: true, currentPeriodEnd: true },
+    });
+    return isSubscriptionActive(subscription);
+  }
+
+  /** Plans a locked page may offer, so the teaser can show the join button. */
+  private async activePlans(tx: Prisma.TransactionClient): Promise<PublicMembershipPlan[]> {
+    const rows = await tx.membershipPlan.findMany({
+      where: { status: 'active' },
+      orderBy: [{ interval: 'asc' }, { price: 'asc' }],
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        interval: true,
+        price: true,
+        currency: true,
+      },
+    });
+    return rows.map((row) => ({ ...row, interval: row.interval === 'year' ? 'year' : 'month' }));
   }
 
   /**

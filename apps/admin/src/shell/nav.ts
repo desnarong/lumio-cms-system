@@ -413,6 +413,7 @@ export const featureForRoute = (route: AdminRoute): FeatureFlagKey | undefined =
   if (route.name === 'growth') {
     if (route.tab === 'analytics') return 'analytics';
     if (route.tab === 'newsletter') return 'newsletter';
+    if (route.tab === 'membership') return 'membership';
     if (route.tab === 'apps') return 'apps';
   }
   return undefined;

@@ -69,6 +69,30 @@ export const loadPost = (host: string, slug: string, locale?: string): Promise<P
     withFallback((api) => api.getPost(host, slug, locale)),
   );
 
+/**
+ * Same as {@link loadPage} but for a signed-in reader: the body of a members-only
+ * page is only complete with their token, and the answer must not be shared.
+ */
+export const loadPageForReader = (
+  host: string,
+  slug: string,
+  locale: string | undefined,
+  readerToken: string | null,
+): Promise<PublicPage> =>
+  readerToken
+    ? withFallback((api) => api.getPage(host, slug, locale, readerToken))
+    : loadPage(host, slug, locale);
+
+export const loadPostForReader = (
+  host: string,
+  slug: string,
+  locale: string | undefined,
+  readerToken: string | null,
+): Promise<PublicPage> =>
+  readerToken
+    ? withFallback((api) => api.getPost(host, slug, locale, readerToken))
+    : loadPost(host, slug, locale);
+
 export const loadPosts = (host: string, locale?: string): Promise<PublicPostList> =>
   cacheFor(host, `posts:${locale ?? ''}`, () =>
     withFallback((api) => api.listPosts(host, locale)),

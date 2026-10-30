@@ -21,6 +21,7 @@ import { HealthModule } from './modules/health/health.module';
 import { LicenseModule } from './modules/license/license.module';
 import { MediaModule } from './modules/media/media.module';
 import { MembersModule } from './modules/members/members.module';
+import { MembershipModule } from './modules/membership/membership.module';
 import { MenusModule } from './modules/menus/menus.module';
 import { NewsletterModule } from './modules/newsletter/newsletter.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
@@ -46,6 +47,7 @@ import { RateLimitModule } from './common/rate-limit.module';
     HealthModule,
     SitesModule,
     MembersModule,
+    MembershipModule,
     ContentsModule,
     CommerceModule,
     DashboardModule,

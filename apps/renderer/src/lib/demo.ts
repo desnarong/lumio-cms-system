@@ -17,6 +17,8 @@ import {
   type PublicPage,
   type PublicPostList,
   type PublicPromotion,
+  type MembershipCheckout,
+  type PublicMembershipPlan,
   type PublicSite,
   type PublicSitemap,
   type PublicTranslation,
@@ -27,6 +29,10 @@ import {
   type ShopOrderResponse,
   type ShopProduct,
   type ShopProductResponse,
+  type ReaderLoginInput,
+  type ReaderRegisterInput,
+  type ReaderSession,
+  type ReaderSessionResponse,
   type SubmitFormInput,
 } from '@lumio/shared';
 import { ContentNotFoundError, type PublicApi } from './api';
@@ -241,6 +247,7 @@ export const demoGlobalBlocks: PublicGlobalBlocks = {
 };
 
 const demoHome: PublicContent = {
+  access: 'public',
   id: '00000000-0000-4000-8000-0000000000c1',
   type: 'page',
   title: 'หน้าแรก',
@@ -266,6 +273,7 @@ const demoHome: PublicContent = {
 const demoAbout: PublicContent = {
   id: '00000000-0000-4000-8000-0000000000c2',
   type: 'page',
+  access: 'public',
   title: 'เกี่ยวกับเรา',
   slug: 'about',
   locale: 'th',
@@ -288,6 +296,7 @@ const demoAbout: PublicContent = {
 const demoPost: PublicContent = {
   id: '00000000-0000-4000-8000-0000000000c3',
   type: 'post',
+  access: 'public',
   title: '3 วิธีเลือกเมล็ดกาแฟให้ถูกปาก',
   slug: 'how-to-pick-beans',
   locale: 'th',
@@ -328,6 +337,7 @@ const demoHomeEn: PublicContent = {
 const demoAboutEn: PublicContent = {
   id: '00000000-0000-4000-8000-0000000000c5',
   type: 'page',
+  access: 'public',
   title: 'About',
   slug: 'about',
   locale: 'en',
@@ -378,6 +388,7 @@ const pageOf = (content: PublicContent, requested: string): PublicPage => ({
   isFallback: requested !== content.locale,
   translations: translationsFor(content),
   redirect: null,
+  paywall: null,
 });
 
 const demoPromotions: PublicPromotion[] = [
@@ -641,6 +652,91 @@ export const createDemoPublicApi = (): PublicApi => ({
       message: autoVerified
         ? 'ได้รับสลิปแล้ว ยอดเงินตรงกับคำสั่งซื้อ ระบบยืนยันการชำระเงินให้ทันที'
         : 'ได้รับสลิปแล้ว ร้านจะตรวจสอบและยืนยันการชำระเงินให้เร็วที่สุด',
+    };
+  },
+  async listMembershipPlans(): Promise<PublicMembershipPlan[]> {
+    return [
+      {
+        id: 'demo-plan-month',
+        name: 'สมาชิกตอบแทน',
+        description: 'อ่านทุกบทความของเว็บนี้ ไม่จำกัดจำนวน',
+        interval: 'month',
+        price: 19900,
+        currency: 'THB',
+      },
+      {
+        id: 'demo-plan-year',
+        name: 'สมาชิกตอบแทน รายปี',
+        description: 'อ่านได้ทั้งปี ประหยัดสองเดือน',
+        interval: 'year',
+        price: 199000,
+        currency: 'THB',
+      },
+    ];
+  },
+  async registerReader(_host: string, input: ReaderRegisterInput): Promise<ReaderSessionResponse> {
+    return {
+      token: 'demo-reader-token',
+      reader: {
+        id: 'demo-reader',
+        email: input.email,
+        name: input.name ?? null,
+        emailVerified: false,
+        subscription: null,
+      },
+    };
+  },
+  async loginReader(_host: string, input: ReaderLoginInput): Promise<ReaderSessionResponse> {
+    return {
+      token: 'demo-reader-token',
+      reader: {
+        id: 'demo-reader',
+        email: input.email,
+        name: 'สมาชิกตัวอย่าง',
+        emailVerified: true,
+        subscription: {
+          planId: 'demo-plan-month',
+          planName: 'สมาชิกตอบแทน',
+          interval: 'month',
+          status: 'active',
+          currentPeriodEnd: new Date(Date.now() + 20 * 86_400_000).toISOString(),
+          cancelAtPeriodEnd: false,
+        },
+      },
+    };
+  },
+  async readerProfile(): Promise<ReaderSession> {
+    return {
+      id: 'demo-reader',
+      email: 'reader@example.com',
+      name: 'สมาชิกตัวอย่าง',
+      emailVerified: true,
+      subscription: {
+        planId: 'demo-plan-month',
+        planName: 'สมาชิกตอบแทน',
+        interval: 'month',
+        status: 'active',
+        currentPeriodEnd: new Date(Date.now() + 20 * 86_400_000).toISOString(),
+        cancelAtPeriodEnd: false,
+      },
+    };
+  },
+  async readerCheckout(): Promise<MembershipCheckout | null> {
+    return null;
+  },
+  async forgotReaderPassword(): Promise<void> {
+    // Demo mode has no mailbox; the screen still says the mail was sent.
+  },
+  async resetReaderPassword(): Promise<void> {
+    // Demo mode has no stored password to change.
+  },
+  async verifyReaderEmail(): Promise<ReaderSession> {
+    return {
+      id: 'demo-reader',
+      email: 'reader@example.com',
+      name: 'สมาชิกตัวอย่าง',
+      emailVerified: true,
+      subscription: null,
     };
   },
   async collectPageview(): Promise<void> {

@@ -30,6 +30,7 @@ const pageWith = (blocks: BlockNode[]): PublicPage => {
     isFallback: false,
     translations: [],
     redirect: null,
+  paywall: null,
   };
 };
 

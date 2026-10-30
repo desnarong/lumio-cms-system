@@ -197,7 +197,7 @@ CREATE POLICY site_isolation ON contents
 |---|---|---|
 | `translations` / `translation_group_id` | 2 | เชื่อมหน้าแต่ละภาษา (ดู [17](17-i18n.md)) |
 | `products`, `orders`, `order_items` | 3 | E-commerce — ทำแล้วในก้อนที่ 37; บัตร Stripe เพิ่ม `orders.provider/provider_ref/payment_url` ในก้อนที่ 39; คืนเงินเพิ่ม `orders.refunded_amount/refunded_at/refund_reason/refund_ref` และสถานะ `refunded` ในก้อนที่ 47 |
-| `memberships` | 3 | Paywall |
+| `readers`, `membership_plans`, `reader_subscriptions` | 3 | Paywall — ทำแล้วในก้อนที่ 60 (บัญชีผู้อ่านต่อเว็บ, แพ็กเกจรายเดือน/รายปี, สถานะ + วันหมดรอบ); หน้า/บทความใช้ `contents.access` (`public` \| `members`) |
 | `webhooks`, `api_keys` | 3 | Public API |
 
 ## 11.4 Checklist ตารางใหม่
@@ -224,6 +224,8 @@ CREATE POLICY site_isolation ON contents
 | contents | `(site_id, type, status, published_at DESC)` | list หน้า/บทความ |
 | contents | `(site_id, locale, type, slug)` UNIQUE | lookup ตาม URL |
 | contents | `(site_id, status, archived_at)` | หน้าถังขยะ + งาน purge |
+| readers | `(site_id, email)` UNIQUE | กันสมัครซ้ำในเว็บเดียว + login |
+| reader_subscriptions | `(site_id, status)`, `(reader_id)`, `stripe_subscription_id` UNIQUE | ตรวจสิทธิ์/รายได้ + webhook |
 | media | `(site_id, folder)` | จัดกลุ่มไฟล์ |
 | form_submissions | `(form_id, created_at DESC)` | ดูข้อความล่าสุด |
 | pageviews | partition by `ts` | query ช่วงเวลาเร็ว |

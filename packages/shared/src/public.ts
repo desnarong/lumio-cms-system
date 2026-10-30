@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { blockTreeSchema } from './blocks.js';
-import { CONTENT_TYPES, seoSchema, type ContentType } from './content.js';
+import { CONTENT_ACCESS, CONTENT_TYPES, seoSchema, type ContentType } from './content.js';
 import { publicFormSchema } from './forms.js';
 import { safeLinkSchema } from './links.js';
+import { publicPaywallSchema } from './membership.js';
 
 /**
  * Payload the renderer consumes through `/api/v1/public/:host/...`
@@ -67,6 +68,8 @@ export const publicContentSchema = z.object({
   publishedAt: z.string().nullable(),
   updatedAt: z.string(),
   coverImage: z.string().nullable().default(null),
+  /** `members` pages are served with their body withheld unless the reader paid. */
+  access: z.enum(CONTENT_ACCESS).default('public'),
 });
 export type PublicContent = z.infer<typeof publicContentSchema>;
 
@@ -142,6 +145,11 @@ export const publicPageSchema = z.object({
   translations: z.array(publicTranslationSchema).default([]),
   /** Set when the requested slug was moved; the renderer answers 301/302. */
   redirect: publicRedirectSchema.nullable().default(null),
+  /**
+   * Set when the page is members-only and this visitor is not entitled: the body
+   * arrives empty, the teaser stays, and the renderer shows the join form.
+   */
+  paywall: publicPaywallSchema.nullable().default(null),
 });
 export type PublicPage = z.infer<typeof publicPageSchema>;
 

@@ -40,6 +40,7 @@ const demoTrash = (): ContentSummary => ({
   status: 'archived',
   locale: 'th',
   translationGroupId: 'demo-trash-1',
+  access: 'public',
   excerpt: null,
   revision: 4,
   updatedAt: '2026-10-10T09:00:00.000Z',

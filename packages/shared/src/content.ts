@@ -8,6 +8,10 @@ export type ContentType = (typeof CONTENT_TYPES)[number];
 export const CONTENT_STATUSES = ['draft', 'scheduled', 'published', 'archived'] as const;
 export type ContentStatus = (typeof CONTENT_STATUSES)[number];
 
+/** Who may read a published page or post (docs/PROGRESS.md batch A). */
+export const CONTENT_ACCESS = ['public', 'members'] as const;
+export type ContentAccess = (typeof CONTENT_ACCESS)[number];
+
 /** How long a page or post stays in the trash before the purge job removes it. */
 export const CONTENT_TRASH_RETENTION_DAYS = 30;
 
@@ -95,6 +99,8 @@ export const createContentInputSchema = z.object({
   coverMediaId: z.string().uuid().nullable().optional(),
   blocks: blockTreeSchema.default([]),
   seo: seoSchema.default({}),
+  /** Members-only pages are withheld from visitors who have not joined. */
+  access: z.enum(CONTENT_ACCESS).optional(),
 });
 export type CreateContentInput = z.infer<typeof createContentInputSchema>;
 
@@ -143,6 +149,8 @@ export interface ContentSummary {
   archivedAt: string | null;
   /** Public URL of the chosen cover image, when the list loaded it. */
   coverImageUrl?: string | null;
+  /** `members` pages only open for readers with a live membership. */
+  access: ContentAccess;
 }
 
 export interface ContentDetail extends ContentSummary {

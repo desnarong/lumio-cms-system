@@ -4,7 +4,8 @@ import { PageView } from '../../components/PageView';
 import { loadPageShopProducts } from '../../lib/block-shop';
 import { loadPageLatestPosts } from '../../lib/block-posts';
 import { loadPagePromotions } from '../../lib/block-promotions';
-import { loadPageOrNull } from '../../lib/content';
+import { loadPageForReader, loadPageOrNull } from '../../lib/content';
+import { readReaderToken } from '../../lib/reader';
 import { applyRedirect } from '../../lib/redirect';
 import { requestHost } from '../../lib/request-host';
 import { requestLocale } from '../../lib/request-locale';
@@ -29,7 +30,8 @@ export default async function SlugPage({ params }: SlugPageProps) {
   const host = await requestHost();
   const locale = await requestLocale();
   const { slug } = await params;
-  const page = await loadPageOrNull(host, slug, locale);
+  const readerToken = await readReaderToken();
+  const page = await loadPageForReader(host, slug, locale, readerToken);
   if (!page) {
     await reportNotFound(host, `/${slug}`);
     notFound();
@@ -50,6 +52,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
     <PageView
       page={page}
       host={host}
+      readerSignedIn={readerToken !== null}
       {...(shopProducts ? { shopProducts } : {})}
       {...(latestPosts ? { latestPosts } : {})}
       {...(promotions ? { promotions } : {})}

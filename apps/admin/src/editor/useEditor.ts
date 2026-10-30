@@ -11,6 +11,7 @@ import type {
   BlockEditorMode,
   BlockNode,
   BlockTree,
+  ContentAccess,
   ContentDetail,
   SectionTemplate,
   Seo,
@@ -70,6 +71,8 @@ export interface EditorController {
   applySeo: (seo: Seo) => Promise<boolean>;
   /** Sets or clears a post's cover image; false when saving failed. */
   applyCover: (mediaId: string | null, url: string | null) => Promise<boolean>;
+  /** Opens or closes a page for members only; false when saving failed. */
+  applyAccess: (access: ContentAccess) => Promise<boolean>;
   /** Swaps the tree for the assistant's translation, as a single undo step. */
   replaceBlocks: (blocks: BlockTree) => void;
   toggleVisibility: (id: string, device: BlockDevice) => void;
@@ -101,6 +104,7 @@ const DEFAULT_AUTOSAVE_DELAY = 2000;
 const emptyContent = (contentId: string): ContentDetail => ({
   id: contentId,
   type: 'page',
+  access: 'public',
   title: '',
   slug: 'home',
   status: 'draft',
@@ -446,6 +450,21 @@ export const useEditor = ({
         } catch (error) {
           errorRef.current?.(
             error instanceof ApiError ? error.message : t('editor.coverError'),
+          );
+          return false;
+        }
+      },
+      [api, contentId, t],
+    ),
+    applyAccess: useCallback(
+      async (access: ContentAccess) => {
+        try {
+          await api.update(contentId, { access });
+          dispatch({ type: 'access', access });
+          return true;
+        } catch (error) {
+          errorRef.current?.(
+            error instanceof Error ? error.message : t('editor.accessError'),
           );
           return false;
         }

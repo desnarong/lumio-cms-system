@@ -167,7 +167,8 @@ app.post('/lumio-webhook', async (req, res) => {
 
 ## 24.8 สิ่งที่ยังไม่ทำ
 
-- Membership/Paywall และ Block Marketplace ยังไม่ถูกสร้าง (ดู `docs/PROGRESS.md` หัวข้อ “งานถัดไป”)
+- Membership/Paywall สร้างแล้ว (ก้อนที่ 60 ใน `docs/PROGRESS.md`) และเปิดได้เฉพาะเมื่อไลเซนส์ระบุ `membership`;
+  Block Marketplace ยังไม่ถูกสร้าง
 - ยังไม่มีหน้าจอแอดมินสำหรับวางไลเซนส์ (ติดตั้งผ่าน env ก่อน) — ถ้าต้องการ ให้เพิ่มหน้าตั้งค่า › ไลเซนส์
   พร้อม `GET/PATCH /v1/license` แบบเขียนไฟล์ใน `.lumio-data/`
 

@@ -11,6 +11,7 @@ import { languageLinks } from '../lib/languages';
 import { fallbackTitle } from '../lib/page-title';
 import { siteTheme } from '../lib/theme';
 import { JsonLd } from './JsonLd';
+import { PaywallNotice } from './PaywallNotice';
 import { PageViewTracker } from './PageViewTracker';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
@@ -29,6 +30,8 @@ export interface PageViewProps {
   latestPosts?: readonly LatestPostCard[];
   /** Live offers for a feature grid that follows the promotion list. */
   promotions?: readonly PromotionCard[];
+  /** True when the visitor carries a reader session, so the paywall can say so. */
+  readerSignedIn?: boolean;
 }
 
 /**
@@ -43,6 +46,7 @@ export const PageView = ({
   shopProducts,
   latestPosts,
   promotions,
+  readerSignedIn = false,
 }: PageViewProps) => {
   const { site, content, menus, globalBlocks } = page;
   if (!content) return null;
@@ -100,14 +104,21 @@ export const PageView = ({
       <main className="site-main" id="main">
         <article className="site-article" data-content-slug={content.slug} lang={content.locale}>
           {fallbackH1 ? <h1 className="site-page-title">{fallbackH1}</h1> : null}
-          <BlockTreeRenderer
-            blocks={content.blocks}
-            forms={page.forms}
-            languages={languages}
-            {...(shopProducts ? { shopProducts } : {})}
-            {...(latestPosts ? { latestPosts } : {})}
-            {...(promotions ? { promotions } : {})}
-          />
+          {page.paywall?.locked ? (
+            <>
+              {content.excerpt ? <p className="site-article__excerpt">{content.excerpt}</p> : null}
+              <PaywallNotice plans={page.paywall.plans} signedIn={readerSignedIn} />
+            </>
+          ) : (
+            <BlockTreeRenderer
+              blocks={content.blocks}
+              forms={page.forms}
+              languages={languages}
+              {...(shopProducts ? { shopProducts } : {})}
+              {...(latestPosts ? { latestPosts } : {})}
+              {...(promotions ? { promotions } : {})}
+            />
+          )}
         </article>
       </main>
       <SiteFooter

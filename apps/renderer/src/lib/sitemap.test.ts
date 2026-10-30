@@ -49,7 +49,15 @@ describe('robotsPolicy', () => {
         {
           userAgent: '*',
           allow: '/',
-          disallow: ['/preview/', '/api/', '/cart', '/checkout', '/order/', '/signin'],
+          disallow: [
+            '/preview/',
+            '/api/',
+            '/cart',
+            '/checkout',
+            '/order/',
+            '/signin',
+            '/membership',
+          ],
         },
       ],
       sitemap: 'https://baandoi.example.com/sitemap.xml',

@@ -48,6 +48,9 @@ export class PublicCacheInterceptor implements NestInterceptor {
     const http = context.switchToHttp();
     const request = http.getRequest<Request>();
     const response = http.getResponse<Response>();
+    // A reader's own view (full body of a members page) must never be cached
+    // for the next visitor, so an authenticated read is answered as private.
+    const authenticated = typeof request.headers.authorization === 'string';
     const cacheControl = [
       'public',
       `max-age=${this.options.maxAge}`,
@@ -57,6 +60,11 @@ export class PublicCacheInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((value) => {
+        if (authenticated) {
+          response.setHeader('Cache-Control', 'private, no-store');
+          return value;
+        }
+
         const etag = weakEtag(JSON.stringify(value ?? null));
         response.setHeader('ETag', etag);
         response.setHeader('Cache-Control', cacheControl);

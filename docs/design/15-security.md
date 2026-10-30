@@ -5,12 +5,14 @@
 | ด้าน | มาตรการ |
 |---|---|
 | Authentication | Argon2id, 2FA, ล็อกบัญชีเมื่อผิดซ้ำ, Session management |
+| Reader accounts | ผู้อ่านใช้ Argon2id + โทเคน HMAC แยกจากทีมงาน (`READER_SECRET`), ระบุได้แค่ “ผู้อ่านคนนี้ของเว็บนี้”, อายุ 30 วัน, คุกกี้ httpOnly |
 | Authorization | RBAC + RLS ที่ DB, ตรวจ site_id ทุก query |
 | Input | Sanitize rich text (DOMPurify/allow-list), validate ด้วย Zod/class-validator |
 | Block HTML/Embed | จำกัดเฉพาะ role Admin ขึ้นไป + render ใน sandbox iframe |
 | Upload | ตรวจ MIME จริง, สแกนไวรัสด้วย ClamAV (`MEDIA_SCANNER=clamav`), จำกัดขนาด, ห้าม SVG script |
 | Transport | HTTPS บังคับ, HSTS, CSP, SameSite cookie |
 | Rate limit | Login, Form submit (+ Honeypot / Turnstile กัน spam) |
+| Paywall | ตรวจสิทธิ์ที่เซิร์ฟเวอร์ทุกครั้ง (fail-closed), หน้า locked ส่ง body ว่าง + `noindex`, คำตอบที่มี Authorization เป็น `private, no-store`, ลืมรหัสผ่านตอบเหมือนกันทุกกรณีเพื่อไม่ให้เดาว่ามีบัญชี |
 | Apps/Plugins | รันใน sandbox (iframe + postMessage / WASM) ไม่แตะ DB ตรง ใช้ permission scopes |
 | Backup | อัตโนมัติรายวัน เก็บ 30 วัน + ปุ่ม Restore คลิกเดียว |
 | Compliance | PDPA: Cookie banner ในตัว, ลบข้อมูลตามคำขอ, Data export |
@@ -43,6 +45,10 @@
 - ห้าม commit secrets — ใช้ env + secret manager
 - ห้าม log token/password/ข้อมูลอ่อนไหว
 - Rotate keys เป็นระยะ + แยก key ต่อ environment
+- `READER_SECRET` ใช้เซ็นเซสชันของผู้อ่าน (ถ้าไม่ตั้ง จะ fallback ไป `JWT_ACCESS_SECRET`)
+  — หมุนเวียนแล้วผู้อ่านทุกคนต้องเข้าสู่ระบบใหม่
+- `LUMIO_LICENSE` เป็นโทเคนที่ลงลายเซ็น ไม่ใช่ความลับระดับสูง แต่ใส่ใน env ของ production
+  และตรวจได้ด้วย `POST /api/v1/public/license/verify`
 
 ## 15.5 Backup & Restore
 

@@ -38,6 +38,7 @@ export const createDemoContent = (): ContentDetail => {
   return {
     id: DEMO_CONTENT_ID,
     type: 'page',
+    access: 'public',
     title: 'หน้าแรก',
     slug: 'home',
     status: 'draft',
@@ -63,6 +64,7 @@ const summaryOf = (detail: ContentDetail): ContentSummary => ({
   status: detail.status,
   locale: detail.locale,
   translationGroupId: detail.translationGroupId,
+  access: detail.access,
   excerpt: detail.excerpt,
   revision: detail.revision,
   updatedAt: detail.updatedAt,
@@ -114,6 +116,7 @@ export const createDemoContentApi = (): ContentApi => {
       const detail: ContentDetail = {
         id,
         type: input.type,
+        access: input.access ?? 'public',
         title: input.title,
         slug: input.slug,
         status: 'draft',

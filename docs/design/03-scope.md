@@ -36,7 +36,7 @@
 ## 3.3 เฟส 3
 
 - E-commerce (สินค้า, ตะกร้า, PromptPay/Stripe)
-- Membership / Paywall
+- Membership / Paywall — ทำแล้วในก้อนที่ 60 (เปิดด้วยไลเซนส์ `membership`)
 - Multi-site / Agency dashboard, White-label
 - Public API + Webhooks
 - Developer SDK (สร้าง custom block/app)

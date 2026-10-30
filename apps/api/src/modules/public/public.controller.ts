@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Param,
   Post,
   Query,
@@ -20,10 +21,17 @@ import {
 import type { Request } from 'express';
 import { ok } from '../../common/api-response';
 import { EdgeCollectGuard } from '../../common/edge-collect.guard';
+import { bearerToken, verifyReaderToken, type ReaderClaim } from '../../common/reader-token';
 import { RateLimit, RateLimitGuard } from '../../common/rate-limit.guard';
 import { PublicCacheInterceptor } from './public-cache.interceptor';
 import { PublicService } from './public.service';
 import { PublicTrackingService } from './public-tracking.service';
+
+/** A reader token on a public read; anything malformed is simply anonymous. */
+const readerClaim = (authorization: string | undefined): ReaderClaim | undefined => {
+  const token = bearerToken(authorization);
+  return token ? (verifyReaderToken(token) ?? undefined) : undefined;
+};
 
 const PAGE_CACHE = new PublicCacheInterceptor({
   maxAge: 60,
@@ -87,8 +95,16 @@ export class PublicController {
     @Param('host') host: string,
     @Param('slug') slug: string,
     @Query('locale') locale: unknown,
+    @Headers('authorization') authorization?: string,
   ) {
-    return ok(await this.publicContent.getPage(host, safeSlug(slug), safeLocale(locale)));
+    return ok(
+      await this.publicContent.getPage(
+        host,
+        safeSlug(slug),
+        safeLocale(locale),
+        readerClaim(authorization),
+      ),
+    );
   }
 
   /**
@@ -125,8 +141,16 @@ export class PublicController {
     @Param('host') host: string,
     @Param('slug') slug: string,
     @Query('locale') locale: unknown,
+    @Headers('authorization') authorization?: string,
   ) {
-    return ok(await this.publicContent.getPost(host, safeSlug(slug), safeLocale(locale)));
+    return ok(
+      await this.publicContent.getPost(
+        host,
+        safeSlug(slug),
+        safeLocale(locale),
+        readerClaim(authorization),
+      ),
+    );
   }
 
   @Get('sitemap')

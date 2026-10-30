@@ -24,6 +24,7 @@ import type {
   BlockEditorMode,
   BlockNode,
   BlockTree,
+  ContentAccess,
   ContentDetail,
   Seo,
   TextLayout,
@@ -69,6 +70,8 @@ export type EditorAction =
   | { type: 'seo'; seo: Seo }
   /** Cover image changed outside the block tree (a post's blog-list picture). */
   | { type: 'cover'; coverMediaId: string | null; coverImageUrl: string | null }
+  /** Who may read this page on the public site (docs/PROGRESS.md batch A). */
+  | { type: 'access'; access: ContentAccess }
   /** Swaps the whole tree for an assistant translation, as one undo step. */
   | { type: 'translate-blocks'; blocks: BlockTree }
   | { type: 'toggle-visibility'; id: string; device: BlockDevice }
@@ -188,6 +191,9 @@ export const editorReducer = (state: EditorState, action: EditorAction): EditorS
 
     case 'seo':
       return { ...state, content: { ...state.content, seo: action.seo } };
+
+    case 'access':
+      return { ...state, content: { ...state.content, access: action.access } };
 
     case 'translate-blocks':
       return withBlocks(state, action.blocks);

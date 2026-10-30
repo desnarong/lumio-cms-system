@@ -214,6 +214,7 @@ describe('BackupView', () => {
     status: 'archived',
     locale: 'th',
     translationGroupId: 'c1',
+    access: 'public',
     excerpt: null,
     revision: 3,
     updatedAt: '2026-10-10T09:00:00.000Z',

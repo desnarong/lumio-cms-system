@@ -7,7 +7,9 @@ Lumio Community edition อยู่ภายใต้ [AGPL-3.0](LICENSE)
 - **Membership / Paywall** — บัญชีผู้อ่าน แพ็กเกจสมาชิก และการเข้าถึงเนื้อหาเฉพาะสมาชิก
 - **Block Marketplace** — ติดตั้งชุดบล็อกจากภายนอกที่ลงลายเซ็น
 
-ฟีเจอร์เหล่านี้จะไม่ถูกเผยแพร่ในรีโปนี้ แต่จะปลดล็อกในรุ่นที่ติดตั้งได้เมื่อมีไลเซนส์ที่ลงลายเซ็น
+Membership/Paywall **มีซอร์สอยู่ในรีโปนี้** (ก้อนที่ 60) แต่เปิดใช้ได้เฉพาะเมื่อไลเซนส์ที่ลงลายเซ็น
+ระบุ `membership` — ยังต้องเปิดสวิตช์ใน ตั้งค่า › ส่วนเสริม ของแต่ละเว็บอีกชั้น
+(Block Marketplace ยังไม่ถูกสร้าง)
 รายละเอียดรูปแบบไลเซนส์และ API ตรวจสอบลายเซ็น: [`docs/design/24-community-licensing.md`](docs/design/24-community-licensing.md)
 
 ## สิ่งที่คุณทำได้กับ Community edition
@@ -18,7 +20,7 @@ Lumio Community edition อยู่ภายใต้ [AGPL-3.0](LICENSE)
 
 ## สิ่งที่ต้องมีไลเซนส์
 
-- เปิดฟีเจอร์ Membership/Paywall หรือ Block Marketplace
+- เปิดฟีเจอร์ Membership/Paywall หรือ Block Marketplace (`LUMIO_LICENSE` ต้องระบุฟีเจอร์นั้น)
 - ใช้แบรนด์/โลโก้ของผู้ขายในเชิงพาณิชย์ (ติดต่อแยก)
 - ขอเงื่อนไขแบบไม่ผูก AGPL (dual licence) สำหรับองค์กรที่แก้โค้ดแล้วไม่ต้องการเผยแพร่
 

@@ -9,11 +9,27 @@ import {
   shopOrderResponseSchema,
   shopProductResponseSchema,
   slipSubmissionSchema,
+  membershipCheckoutSchema,
+  publicMembershipPlanListSchema,
   publicPageSchema,
+  readerSessionResponseSchema,
+  readerSessionSchema,
   publicPostListSchema,
   publicPromotionListSchema,
   publicSitemapSchema,
+  membershipCheckoutInputSchema,
+  readerForgotPasswordInputSchema,
+  readerLoginInputSchema,
+  readerRegisterInputSchema,
+  readerResetPasswordInputSchema,
+  readerVerifyEmailInputSchema,
+  type MembershipCheckout,
   type PageviewInput,
+  type PublicMembershipPlan,
+  type ReaderLoginInput,
+  type ReaderRegisterInput,
+  type ReaderSession,
+  type ReaderSessionResponse,
   type PublicPage,
   type PublicOrder,
   type PublicPostList,
@@ -66,9 +82,18 @@ export class ApiUnavailableError extends Error {
   }
 }
 
+/** The API understood the request and refused it (bad input, wrong password, …). */
+export class ApiRejectedError extends Error {
+  constructor(readonly status: number, message = 'คำขอไม่ผ่านการตรวจสอบ') {
+    super(message);
+    this.name = 'ApiRejectedError';
+  }
+}
+
 export interface PublicApi {
-  getPage(host: string, slug: string, locale?: string): Promise<PublicPage>;
-  getPost(host: string, slug: string, locale?: string): Promise<PublicPage>;
+  /** A reader token opens members-only pages; without one the API sends a teaser. */
+  getPage(host: string, slug: string, locale?: string, readerToken?: string): Promise<PublicPage>;
+  getPost(host: string, slug: string, locale?: string, readerToken?: string): Promise<PublicPage>;
   listPosts(host: string, locale?: string): Promise<PublicPostList>;
   /** Offers the shop is running right now, for the promotion page. */
   listPromotions(host: string): Promise<PublicPromotion[]>;
@@ -100,6 +125,23 @@ export interface PublicApi {
     input: PaymentSlipInput,
     locale?: string,
   ): Promise<SlipSubmission>;
+  /** Plans a visitor can join (docs/PROGRESS.md batch A). */
+  listMembershipPlans(host: string): Promise<PublicMembershipPlan[]>;
+  registerReader(host: string, input: ReaderRegisterInput): Promise<ReaderSessionResponse>;
+  loginReader(host: string, input: ReaderLoginInput): Promise<ReaderSessionResponse>;
+  readerProfile(host: string, token: string): Promise<ReaderSession>;
+  readerCheckout(
+    host: string,
+    token: string,
+    planId: string,
+  ): Promise<MembershipCheckout | null>;
+  forgotReaderPassword(host: string, email: string): Promise<void>;
+  resetReaderPassword(
+    host: string,
+    token: string,
+    password: string,
+  ): Promise<void>;
+  verifyReaderEmail(host: string, token: string): Promise<ReaderSession>;
 }
 
 export interface PublicApiOptions {
@@ -128,12 +170,19 @@ export const createPublicApi = (options: PublicApiOptions): PublicApi => {
   const fetchImpl = options.fetchImpl ?? (fetch as unknown as FetchLike);
   const revalidate = options.revalidate ?? 60;
 
-  const request = async <T>(path: string, parse: (value: unknown) => T): Promise<T> => {
+  const request = async <T>(
+    path: string,
+    parse: (value: unknown) => T,
+    readerToken?: string,
+  ): Promise<T> => {
     let response: FetchResponse;
     try {
       response = await fetchImpl(`${baseUrl}/api/v1/public/${path}`, {
-        headers: { accept: 'application/json' },
-        next: { revalidate },
+        headers: readerToken
+          ? { accept: 'application/json', authorization: `Bearer ${readerToken}` }
+          : { accept: 'application/json' },
+        // A reader's own view must never be served from a shared cache.
+        ...(readerToken ? { cache: 'no-store' as const } : { next: { revalidate } }),
       });
     } catch (error) {
       throw new ApiUnavailableError(String(error));
@@ -146,30 +195,48 @@ export const createPublicApi = (options: PublicApiOptions): PublicApi => {
     return parse(unwrap(body));
   };
 
-  const postJson = async <T>(path: string, body: unknown, parse: (value: unknown) => T): Promise<T> => {
+  const postJson = async <T>(
+    path: string,
+    body: unknown,
+    parse: (value: unknown) => T,
+    readerToken?: string,
+  ): Promise<T> => {
     let response: FetchResponse;
     try {
       response = await fetchImpl(`${baseUrl}/api/v1/public/${path}`, {
         method: 'POST',
-        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        headers: readerToken
+          ? {
+              'content-type': 'application/json',
+              accept: 'application/json',
+              authorization: `Bearer ${readerToken}`,
+            }
+          : { 'content-type': 'application/json', accept: 'application/json' },
         body: JSON.stringify(body),
       });
     } catch (error) {
       throw new ApiUnavailableError(String(error));
     }
     if (response.status === 404) throw new ContentNotFoundError();
+    if (response.status === 400 || response.status === 401 || response.status === 409 || response.status === 429) {
+      throw new ApiRejectedError(response.status);
+    }
     if (!response.ok) throw new ApiUnavailableError(`API responded ${response.status}`);
     return parse(unwrap(await response.json()));
   };
 
   return {
-    getPage: (host, slug, locale) =>
-      request(`${encodeURIComponent(host)}/pages/${encodeURIComponent(slug)}${localeQuery(locale)}`, (value) =>
-        publicPageSchema.parse(value),
+    getPage: (host, slug, locale, readerToken) =>
+      request(
+        `${encodeURIComponent(host)}/pages/${encodeURIComponent(slug)}${localeQuery(locale)}`,
+        (value) => publicPageSchema.parse(value),
+        readerToken,
       ),
-    getPost: (host, slug, locale) =>
-      request(`${encodeURIComponent(host)}/posts/${encodeURIComponent(slug)}${localeQuery(locale)}`, (value) =>
-        publicPageSchema.parse(value),
+    getPost: (host, slug, locale, readerToken) =>
+      request(
+        `${encodeURIComponent(host)}/posts/${encodeURIComponent(slug)}${localeQuery(locale)}`,
+        (value) => publicPageSchema.parse(value),
+        readerToken,
       ),
     listPosts: (host, locale) =>
       request(`${encodeURIComponent(host)}/posts${localeQuery(locale)}`, (value) =>
@@ -255,6 +322,55 @@ export const createPublicApi = (options: PublicApiOptions): PublicApi => {
         `${encodeURIComponent(host)}/shop/orders/${encodeURIComponent(token)}/slip${localeQuery(locale)}`,
         input,
         (value) => slipSubmissionSchema.parse(value),
+      ),
+    listMembershipPlans: (host) =>
+      request(`${encodeURIComponent(host)}/membership/plans`, (value) =>
+        publicMembershipPlanListSchema.parse(value).items,
+      ),
+    registerReader: (host, input) =>
+      postJson(
+        `${encodeURIComponent(host)}/membership/readers`,
+        readerRegisterInputSchema.parse(input),
+        (value) => readerSessionResponseSchema.parse(value),
+      ),
+    loginReader: (host, input) =>
+      postJson(
+        `${encodeURIComponent(host)}/membership/readers/login`,
+        readerLoginInputSchema.parse(input),
+        (value) => readerSessionResponseSchema.parse(value),
+      ),
+    readerProfile: (host, token) =>
+      request(
+        `${encodeURIComponent(host)}/membership/readers/me`,
+        (value) => readerSessionSchema.parse(value),
+        token,
+      ),
+    readerCheckout: (host, token, planId) =>
+      postJson(
+        `${encodeURIComponent(host)}/membership/checkout`,
+        membershipCheckoutInputSchema.parse({ planId }),
+        (value) => membershipCheckoutSchema.nullable().parse(value),
+        token,
+      ),
+    forgotReaderPassword: async (host, email) => {
+      await postJson(
+        `${encodeURIComponent(host)}/membership/readers/forgot`,
+        readerForgotPasswordInputSchema.parse({ email }),
+        (value) => value,
+      );
+    },
+    resetReaderPassword: async (host, token, password) => {
+      await postJson(
+        `${encodeURIComponent(host)}/membership/readers/reset`,
+        readerResetPasswordInputSchema.parse({ token, password }),
+        (value) => value,
+      );
+    },
+    verifyReaderEmail: (host, token) =>
+      postJson(
+        `${encodeURIComponent(host)}/membership/readers/verify`,
+        readerVerifyEmailInputSchema.parse({ token }),
+        (value) => readerSessionSchema.parse(value),
       ),
     collectPageview: async (host, input) => {
       const payload = pageviewInputSchema.parse(input);

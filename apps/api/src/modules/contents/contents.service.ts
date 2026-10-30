@@ -107,6 +107,7 @@ const toSummary = (row: ContentWithCover): ContentSummary => ({
   updatedAt: row.updatedAt.toISOString(),
   publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
   archivedAt: row.archivedAt ? row.archivedAt.toISOString() : null,
+  access: row.access === 'members' ? 'members' : 'public',
   ...(row.coverMedia === undefined ? {} : { coverImageUrl: toPublicMediaUrl(row.coverMedia) }),
 });
 
@@ -279,6 +280,7 @@ export class ContentsService {
             coverMediaId: input.coverMediaId ?? null,
             blocksDraft: asJson(input.blocks),
             seo: asJson(input.seo),
+            access: input.access ?? 'public',
             authorId: actorId,
             revision: 1,
           },
@@ -346,6 +348,7 @@ export class ContentsService {
             input.coverMediaId === undefined ? undefined : input.coverMediaId,
           seo: input.seo === undefined ? undefined : asJson(input.seo),
           status: input.status ?? undefined,
+          access: input.access ?? undefined,
           ...(archivedAt === undefined ? {} : { archivedAt }),
           ...(nextBlocks
             ? { blocksDraft: nextBlocks, revision: current.revision + 1 }

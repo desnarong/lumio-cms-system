@@ -14,7 +14,7 @@ export type SettingsTab =
   | 'publish'
   | 'features'
   | 'billing';
-export type GrowthTab = 'seo' | 'analytics' | 'newsletter' | 'apps';
+export type GrowthTab = 'seo' | 'analytics' | 'newsletter' | 'membership' | 'apps';
 export type CommerceTab = 'products' | 'promotions' | 'orders' | 'settings';
 
 export const DESIGN_TABS: DesignTab[] = ['style', 'menus', 'header-footer', 'template', 'sections'];
@@ -30,7 +30,13 @@ export const SETTINGS_TABS: SettingsTab[] = [
   'features',
   'billing',
 ];
-export const GROWTH_TABS: GrowthTab[] = ['seo', 'analytics', 'newsletter', 'apps'];
+export const GROWTH_TABS: GrowthTab[] = [
+  'seo',
+  'analytics',
+  'newsletter',
+  'membership',
+  'apps',
+];
 export const COMMERCE_TABS: CommerceTab[] = ['products', 'promotions', 'orders', 'settings'];
 
 /**

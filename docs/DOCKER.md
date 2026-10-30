@@ -107,6 +107,14 @@ docker image prune -f                       # เก็บ image เก่า
 - healthcheck ของ api ใช้ `/api/health`; ถ้า unhealthy ให้ดู `docker compose logs api`
 - `restart: unless-stopped` ทำให้ container กลับมาเองหลังเครื่อง reboot
 
+## Membership / Paywall ใน Docker
+
+- ต้องมี `READER_SECRET` ใน env (เซ็นเซสชันของผู้อ่าน) — ไม่ตั้ง thìสมัคร/เข้าสู่ระบบผู้อ่านไม่ได้
+- ต้องมี `LUMIO_LICENSE` ที่ระบุ `membership`; ไม่ตั้งคือรันแบบ Community และเมนู เติบโต › สมาชิก จะถูกซ่อน
+- เปิดสวิตช์รายเว็บที่ ตั้งค่า › ส่วนเสริม อีกชั้น (ค่าเริ่มต้นปิด)
+- Stripe webhook ของสมาชิก: `https://<api-host>/api/v1/public/membership/webhook`
+- ตรวจไลเซนส์ที่ใช้งานอยู่: `curl -X POST https://<api-host>/api/v1/public/license/verify -H 'content-type: application/json' -d '{"token":"<LUMIO_LICENSE>"}'`
+
 ## ข้อจำกัดที่รู้อยู่
 
 - Image ของ api/renderer ยัง copy ทั้ง repo (ยังไม่ prune devDependencies) — แลกกับความง่ายของ Prisma CLI และ Next

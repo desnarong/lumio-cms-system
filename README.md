@@ -18,8 +18,8 @@ Lumio คือ CMS แบบ multi-tenant (pnpm workspaces + Turborepo) ที�
 - ทีม + RBAC, 2FA, audit log, แบ็กอัปอัตโนมัติ, redirect manager, custom domain + SSL
 - ทุกอย่างตรวจสอบได้ด้วย `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`
 
-**ยังไม่รวม (ต้องมีไลเซนส์):** Membership/Paywall และ Block Marketplace — บันทึกแผนไว้ใน
-[`docs/PROGRESS.md`](docs/PROGRESS.md) หัวข้อ “งานถัดไป”
+**ต้องมีไลเซนส์:** Membership/Paywall (สร้างแล้วในซอร์สนี้ เปิดเมื่อไลเซนส์ระบุ `membership`) และ
+Block Marketplace (ยังไม่สร้าง) — ดู [`docs/PROGRESS.md`](docs/PROGRESS.md)
 
 ## โครงสร้าง
 

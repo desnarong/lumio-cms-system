@@ -1,0 +1,104 @@
+/* Members and plans of one site (docs/PROGRESS.md batch A). */
+
+.membership {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.membership__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-md);
+}
+
+.membership__stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.membership__stat-label {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.membership__stat-value {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+}
+
+.membership__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.membership__badge {
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-hover);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.membership__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.membership__table th,
+.membership__table td {
+  padding: var(--space-sm) var(--space-xs);
+  border-bottom: 1px solid var(--color-border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.membership__table th {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.membership__table td strong {
+  display: block;
+}
+
+.membership__checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--text-sm);
+}
+
+.membership__dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  background: color-mix(in srgb, var(--color-text) 35%, transparent);
+}
+
+.membership__dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: min(480px, 100%);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.membership__dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}

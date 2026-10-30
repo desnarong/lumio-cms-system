@@ -12,6 +12,7 @@ import './editor/editor.css';
 import './forms/forms.css';
 import './growth/growth.css';
 import './media/media.css';
+import './membership/membership.css';
 import './settings/settings.css';
 import './shell/shell.css';
 import './wizard/wizard.css';

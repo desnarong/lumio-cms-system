@@ -4,6 +4,7 @@ import { MessagesProvider, ToastProvider } from '@lumio/ui';
 import { createDemoAiApi } from '../ai/demo.js';
 import { CommercePage } from '../commerce/CommercePage.js';
 import { createDemoCommerceApi } from '../commerce/demo.js';
+import { createDemoMembershipApi } from '../membership/demo.js';
 import { GrowthPage } from '../growth/GrowthPage.js';
 import {
   createDemoAnalyticsApi,
@@ -61,6 +62,7 @@ const growth = (role: Role, features?: readonly ('ai' | 'analytics' | 'newslette
         analytics: createDemoAnalyticsApi(),
         newsletter: createDemoNewsletterApi(),
         apps: createDemoAppsApi(),
+      membership: createDemoMembershipApi(),
       }}
       canManage={role !== 'viewer'}
       role={role}

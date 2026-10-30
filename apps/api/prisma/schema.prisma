@@ -48,29 +48,32 @@ model Site {
   createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt            DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  owner            User?             @relation("SiteOwner", fields: [ownerId], references: [id], onDelete: SetNull)
-  members          SiteMember[]
-  domains          Domain[]
-  contents         Content[]
-  taxonomies       Taxonomy[]
-  media            Media[]
-  menus            Menu[]
-  globalBlocks     GlobalBlock[]
-  sectionTemplates SectionTemplate[]
-  forms            Form[]
-  subscribers      Subscriber[]
-  redirects        Redirect[]
-  siteApps         SiteApp[]
-  auditLogs        AuditLog[]
-  invoices         Invoice[]
-  aiUsage          AiUsage[]
-  products         Product[]
-  productVariants  ProductVariant[]
-  orders           Order[]
-  paymentSlips     PaymentSlip[]
-  backups          SiteBackup[]
-  notFound         NotFound[]
-  promotions       Promotion[]
+  owner               User?                @relation("SiteOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  members             SiteMember[]
+  domains             Domain[]
+  contents            Content[]
+  taxonomies          Taxonomy[]
+  media               Media[]
+  menus               Menu[]
+  globalBlocks        GlobalBlock[]
+  sectionTemplates    SectionTemplate[]
+  forms               Form[]
+  subscribers         Subscriber[]
+  redirects           Redirect[]
+  siteApps            SiteApp[]
+  auditLogs           AuditLog[]
+  invoices            Invoice[]
+  aiUsage             AiUsage[]
+  products            Product[]
+  productVariants     ProductVariant[]
+  orders              Order[]
+  paymentSlips        PaymentSlip[]
+  backups             SiteBackup[]
+  notFound            NotFound[]
+  promotions          Promotion[]
+  readers             Reader[]
+  membershipPlans     MembershipPlan[]
+  readerSubscriptions ReaderSubscription[]
 
   @@index([stripeSubscriptionId])
   @@map("sites")
@@ -152,6 +155,8 @@ model Content {
   seo                Json      @default("{}") @db.JsonB
   /// Every language of this page shares one group id (docs/design/17-i18n.md 17.2).
   translationGroupId String?   @map("translation_group_id") @db.Uuid
+  /// `public` or `members`; members-only pages need a live reader membership.
+  access             String    @default("public")
   revision           Int       @default(1)
   publishedAt        DateTime? @map("published_at") @db.Timestamptz(6)
   scheduledAt        DateTime? @map("scheduled_at") @db.Timestamptz(6)
@@ -634,7 +639,6 @@ model AuditLog {
   @@map("audit_logs")
 }
 
-
 /// A marketing offer such as "ซื้อ 10 แถม 1" or free shipping. The promotion
 /// page lists these automatically, and dates decide when they are shown.
 model Promotion {
@@ -666,4 +670,73 @@ model Promotion {
   @@index([siteId, active, startsAt, endsAt])
   @@index([siteId, sort])
   @@map("promotions")
+}
+
+model Reader {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId          String    @map("site_id") @db.Uuid
+  email           String
+  name            String?
+  passwordHash    String    @map("password_hash")
+  /// Set when the reader follows the link in the welcome email.
+  verifiedAt      DateTime? @map("verified_at") @db.Timestamptz(6)
+  verifyTokenHash String?   @map("verify_token_hash")
+  verifyExpiresAt DateTime? @map("verify_expires_at") @db.Timestamptz(6)
+  resetTokenHash  String?   @map("reset_token_hash")
+  resetExpiresAt  DateTime? @map("reset_expires_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site          Site                 @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  subscriptions ReaderSubscription[]
+
+  @@unique([siteId, email])
+  @@index([siteId, createdAt])
+  @@map("readers")
+}
+
+model MembershipPlan {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId      String   @map("site_id") @db.Uuid
+  name        String
+  description String   @default("")
+  /// month | year
+  interval    String
+  /// Price in satang, like the shop, so money never drifts.
+  price       Int
+  currency    String   @default("THB")
+  /// active | paused; a paused plan stays on old subscriptions but hides from the site.
+  status      String   @default("active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site          Site                 @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  subscriptions ReaderSubscription[]
+
+  @@index([siteId, status])
+  @@map("membership_plans")
+}
+
+model ReaderSubscription {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId               String    @map("site_id") @db.Uuid
+  readerId             String    @map("reader_id") @db.Uuid
+  planId               String?   @map("plan_id") @db.Uuid
+  /// active | past_due | cancelled | expired
+  status               String    @default("active")
+  currentPeriodEnd     DateTime? @map("current_period_end") @db.Timestamptz(6)
+  /// True once the reader asked Stripe to stop the next renewal.
+  cancelAtPeriodEnd    Boolean   @default(false) @map("cancel_at_period_end")
+  stripeSubscriptionId String?   @unique @map("stripe_subscription_id")
+  stripeCustomerId     String?   @map("stripe_customer_id")
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site   Site            @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  reader Reader          @relation(fields: [readerId], references: [id], onDelete: Cascade)
+  plan   MembershipPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+
+  @@index([siteId, status])
+  @@index([readerId])
+  @@map("reader_subscriptions")
 }

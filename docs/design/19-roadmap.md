@@ -8,7 +8,7 @@
 | **1. MVP** | 10–12 สัปดาห์ | Editor + Blocks + Pages/Posts + Media + Design Panel + Publish + Domain |
 | **2. Beta** | 6–8 สัปดาห์ | Forms, SEO score, Team, Version history, Template 10 แบบ |
 | **3. Launch** | 4 สัปดาห์ | Billing, Onboarding wizard, Docs, Template 20 แบบ |
-| **4. Growth** | ต่อเนื่อง | AI, i18n, Analytics, App Store, E-commerce |
+| **4. Growth** | ต่อเนื่อง | AI, i18n, Analytics, App Store, E-commerce, Membership/Paywall (ก้อนที่ 60) |
 
 ## 19.2 ลำดับการสร้างที่แนะนำ
 

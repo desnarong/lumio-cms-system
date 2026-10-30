@@ -388,6 +388,7 @@ export const AdminApp = ({
               analytics: clients.analytics,
               newsletter: clients.newsletter,
               apps: clients.apps,
+              membership: clients.membership,
             }}
             canManage={GROWTH_MANAGER_ROLES.includes(role)}
             role={role}

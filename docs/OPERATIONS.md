@@ -7,13 +7,15 @@
 ## 1. Secrets และบัญชีเริ่มต้น
 
 - [ ] เปลี่ยน `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `PREVIEW_SECRET`,
-      `MEDIA_UPLOAD_SECRET`, `REVALIDATE_SECRET`, `ANALYTICS_HASH_SALT`
+      `MEDIA_UPLOAD_SECRET`, `REVALIDATE_SECRET`, `ANALYTICS_HASH_SALT`, `READER_SECRET`
       (ค่า `change-me-*` ใน `.env.example` ใช้สำหรับพัฒนาเท่านั้น)
 - [ ] ตั้ง `SECRETS_ENCRYPTION_KEY` หรือสำรอง `.lumio-data/secrets.key` ไว้
       (ถ้าหาย ผู้ใช้ต้องกรอกคีย์ธนาคาร/ร้านค้า/อีเมลใหม่ทั้งหมด)
 - [ ] ตรวจว่า **ไม่มีบัญชีทดลอง** (`owner@example.com` / `lumio-demo-1234`) ในฐานข้อมูลจริง
       หรือเปลี่ยนรหัสผ่าน/ปิดใช้งานก่อนเปิดให้คนนอกใช้
 - [ ] `LUMIO_LICENSE_PUBLIC_KEY` เว้นว่างใน production (ใช้กุญแจที่ฝังในบิลด์)
+- [ ] `LUMIO_LICENSE` มีเฉพาะเครื่องที่ซื้อไลเซนส์ (Membership/Paywall, Marketplace)
+      — ไม่ตั้ง = ระบบทำงานแบบ Community
 - [ ] ตรวจว่าไม่มี `.env` หรือไฟล์คีย์ถูก commit (`git status`, secret scanning ของ GitHub)
 
 ## 2. ฐานข้อมูลและสิทธิ์
@@ -46,6 +48,8 @@
 - [ ] ตั้ง SMTP/Resend ของแต่ละเว็บ หรือผู้ส่งกลาง แล้วกด “ส่งอีเมลทดสอบ”
 - [ ] Stripe: ใช้ `sk_live_...` + webhook secret จริง และตรวจ event ที่ต้องรับ
       (`checkout.session.*`, `invoice.*`, `customer.subscription.*`)
+- [ ] ลงทะเบียน webhook สำหรับสมาชิกผู้อ่านที่ `/api/v1/public/membership/webhook`
+      (event เดียวกับ Stripe ข้างบน; เว็บมาจาก `metadata.siteId`)
 - [ ] ตั้ง webhook ฝั่งลูกค้าแล้วทดสอบลายเซ็นด้วย `verifyLumioSignature()` จาก `@lumio/sdk`
 - [ ] ตรวจว่าอีเมลคำสั่งซื้อ/ใบเสร็จไปถึงจริง (ไม่ตกสแปม) และ `ADMIN_ORIGIN` ถูกต้อง
 
