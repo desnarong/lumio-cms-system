@@ -4,7 +4,7 @@ import {
   type ReaderSubscriptionStatus,
 } from '@lumio/shared';
 import { ApiException } from '../../common/api-error';
-import { stripeSecretKey, type StripeEvent } from '../billing/stripe';
+import { postCheckoutSession, stripeSecretKey, type StripeEvent } from '../billing/stripe';
 
 /**
  * Reader subscriptions on Stripe (docs/PROGRESS.md batch A). Same plain REST
@@ -13,8 +13,6 @@ import { stripeSecretKey, type StripeEvent } from '../billing/stripe';
  * The plan price is sent as `price_data`, so no Stripe price ids have to be
  * created by hand.
  */
-
-const STRIPE_CHECKOUT = 'https://api.stripe.com/v1/checkout/sessions';
 
 export interface ReaderCheckoutRequest {
   siteId: string;
@@ -78,33 +76,7 @@ export const createReaderCheckoutSession = async (
     );
   }
 
-  let response: Response;
-  try {
-    response = await fetchImpl(STRIPE_CHECKOUT, {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${key}`,
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      body: buildReaderCheckoutBody(request),
-      signal: AbortSignal.timeout(15_000),
-    });
-  } catch {
-    throw ApiException.conflict('ติดต่อ Stripe ไม่ได้ ลองอีกครั้ง');
-  }
-
-  if (!response.ok) {
-    throw ApiException.conflict('Stripe สร้างหน้าชำระเงินไม่สำเร็จ ลองอีกครั้ง');
-  }
-
-  const payload = (await response.json().catch(() => null)) as {
-    id?: unknown;
-    url?: unknown;
-  } | null;
-  if (typeof payload?.id !== 'string' || typeof payload?.url !== 'string') {
-    throw ApiException.conflict('Stripe ตอบกลับไม่ครบ ลองอีกครั้ง');
-  }
-  return { id: payload.id, url: payload.url };
+  return postCheckoutSession(fetchImpl, buildReaderCheckoutBody(request), key);
 };
 
 const asRecord = (value: unknown): Record<string, unknown> | null =>
@@ -161,8 +133,16 @@ export const readReaderSubscriptionEvent = (event: StripeEvent): ReaderSubscript
 
   const metadata = asRecord(object.metadata) ?? {};
 
-  if (event.type === 'checkout.session.completed') {
+  if (
+    event.type === 'checkout.session.completed' ||
+    event.type === 'checkout.session.async_payment_succeeded'
+  ) {
     if (object.mode !== 'subscription') return null;
+    // A completed session whose money has not arrived yet must not unlock pages;
+    // the async event arrives once the payment actually settles.
+    if (event.type === 'checkout.session.completed' && object.payment_status === 'unpaid') {
+      return null;
+    }
     return {
       stripeSubscriptionId: text(object.subscription),
       stripeCustomerId: text(object.customer),

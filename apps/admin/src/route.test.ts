@@ -17,9 +17,11 @@ import {
   createDemoSeoApi,
 } from './growth/demo.js';
 import { createDemoMediaApi } from './media/demo.js';
+import { createDemoMarketplaceApi } from './marketplace/api.js';
 import { createDemoSettingsApi } from './settings/demo.js';
 import { createDemoBillingApi } from './settings/billing.js';
 import { createDemoWizardApi } from './wizard/demo.js';
+import { createDemoUpdatesApi } from './updates/demo.js';
 import { isRouteAllowed, parseRoute, resolveRoute, routePath } from './route.js';
 
 interface Options {
@@ -51,6 +53,8 @@ const clients = ({ demo = true, listSites, listPages }: Options = {}): AdminClie
     analytics: createDemoAnalyticsApi(),
     newsletter: createDemoNewsletterApi(),
     apps: createDemoAppsApi(),
+    marketplace: createDemoMarketplaceApi(),
+    updates: createDemoUpdatesApi(),
   };
 };
 

@@ -165,6 +165,17 @@ CREATE TABLE site_apps (
   app_key TEXT, config JSONB, enabled BOOLEAN DEFAULT true,
   PRIMARY KEY (site_id, app_key)
 );
+-- ชุดส่วนจากตลาดบล็อก: manifest ที่ตรวจ schema/ลายเซ็นแล้วเท่านั้น ไม่มีโค้ด
+CREATE TABLE site_block_packs (
+  site_id UUID REFERENCES sites(id) ON DELETE CASCADE,
+  pack_key TEXT NOT NULL, version TEXT NOT NULL,
+  source TEXT NOT NULL DEFAULT 'official' CHECK (source IN ('official', 'external')),
+  manifest JSONB NOT NULL,        -- marketplacePackSchema ตรวจทุกครั้งที่อ่าน
+  token TEXT,                     -- โทเคนที่ลงลายเซ็นของแพ็กภายนอก (null = แพ็กของระบบ)
+  enabled BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ(6) DEFAULT now(), updated_at TIMESTAMPTZ(6) DEFAULT now(),
+  PRIMARY KEY (site_id, pack_key)
+);
 CREATE TABLE pageviews (            -- เก็บแบบ privacy-friendly ไม่เก็บ IP เต็ม
   site_id UUID, path TEXT, referrer TEXT, country TEXT, device TEXT,
   session_hash TEXT, ts TIMESTAMPTZ DEFAULT now()

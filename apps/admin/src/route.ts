@@ -14,7 +14,7 @@ export type SettingsTab =
   | 'publish'
   | 'features'
   | 'billing';
-export type GrowthTab = 'seo' | 'analytics' | 'newsletter' | 'membership' | 'apps';
+export type GrowthTab = 'seo' | 'analytics' | 'newsletter' | 'membership' | 'apps' | 'marketplace';
 export type CommerceTab = 'products' | 'promotions' | 'orders' | 'settings';
 
 export const DESIGN_TABS: DesignTab[] = ['style', 'menus', 'header-footer', 'template', 'sections'];
@@ -36,6 +36,7 @@ export const GROWTH_TABS: GrowthTab[] = [
   'newsletter',
   'membership',
   'apps',
+  'marketplace',
 ];
 export const COMMERCE_TABS: CommerceTab[] = ['products', 'promotions', 'orders', 'settings'];
 
@@ -71,7 +72,9 @@ const BILLING_ROLES: Role[] = ['owner'];
 export const isRouteAllowed = (route: AdminRoute, role: Role): boolean => {
   if (route.name === 'design') return DESIGN_ROLES.includes(role);
   if (route.name === 'growth') {
-    return route.tab === 'apps' ? APP_ROLES.includes(role) : GROWTH_ROLES.includes(role);
+    return route.tab === 'apps' || route.tab === 'marketplace'
+      ? APP_ROLES.includes(role)
+      : GROWTH_ROLES.includes(role);
   }
   if (route.name === 'commerce') {
     return route.tab === 'settings' ? SHOP_SETTINGS_ROLES.includes(role) : SHOP_ROLES.includes(role);

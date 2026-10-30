@@ -32,6 +32,7 @@ Block engine + Editor → Renderer → Media → Design tokens → Publish pipel
 | 8 | Media | `ทำ media library: presigned upload, sharp worker สร้าง WebP/AVIF + srcset` |
 | 9 | Wizard + Templates | `ใช้สกิล lumio-template-pack ทำ onboarding wizard 5 ขั้นตอน และ template 3 แบบแรก` |
 | 10 | Review | `ใช้สกิล lumio-security-review ตรวจโค้ดทั้งหมดของเฟส 1 แล้วสรุปสิ่งที่ต้องแก้` |
+| 11 | Block Marketplace | `ใช้สกิล lumio-api-endpoint และ lumio-db-migration ทำตลาดบล็อกตามหัวข้อ 16.8 (manifest ลงลายเซ็น, ติดตั้ง/ถอน/อัปเดตต่อเว็บ, license gate)` |
 
 ## 19.4 Definition of Done ระดับโปรเจกต์ (MVP)
 

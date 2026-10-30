@@ -23,6 +23,7 @@ import { MediaModule } from './modules/media/media.module';
 import { MembersModule } from './modules/members/members.module';
 import { MembershipModule } from './modules/membership/membership.module';
 import { MenusModule } from './modules/menus/menus.module';
+import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 import { NewsletterModule } from './modules/newsletter/newsletter.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { PublicModule } from './modules/public/public.module';
@@ -33,6 +34,7 @@ import { SectionTemplatesModule } from './modules/section-templates/section-temp
 import { SeoModule } from './modules/seo/seo.module';
 import { SitesModule } from './modules/sites/sites.module';
 import { TemplatesModule } from './modules/templates/templates.module';
+import { UpdatesModule } from './modules/updates/updates.module';
 import { OriginGuard } from './common/origin.guard';
 import { RateLimitModule } from './common/rate-limit.module';
 
@@ -55,6 +57,7 @@ import { RateLimitModule } from './common/rate-limit.module';
     DesignModule,
     GlobalBlocksModule,
     MenusModule,
+    MarketplaceModule,
     SectionTemplatesModule,
     DomainsModule,
     EmailModule,
@@ -72,6 +75,7 @@ import { RateLimitModule } from './common/rate-limit.module';
     PublishModule,
     PromotionsModule,
     MediaModule,
+    UpdatesModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: OriginGuard }],
 })

@@ -3,7 +3,7 @@
 > ติดตามงานย่อยตาม [`docs/design/19-roadmap.md`](design/19-roadmap.md) หัวข้อ 19.3
 > อัปเดตสถานะทุกครั้งที่จบงานหนึ่งก้อน
 
-อัปเดตล่าสุด: 2026-10-30 (ก้อนที่ 60 เสร็จ)
+อัปเดตล่าสุด: 2026-10-30 (ก้อนที่ 62 เสร็จ)
 
 ## สถานะงาน (Roadmap 19.3)
 
@@ -71,6 +71,8 @@
 | 58  | แก้เมนู “เพิ่มส่วนใหม่” ใน editor ให้ปิดได้จริง + toolbar บนมือถือ | ✅ เสร็จ | ป๊อปอัปเกาะตำแหน่งปุ่มที่กด (ไม่กระโดดไปล่างหน้า), มีฉากหลังกดปิด, ปุ่มปิด, Esc ปิดได้ทุกที่, คืนโฟกัสกลับปุ่มเดิม, ไอคอนบล็อกตรงชนิด, เปลี่ยนไอคอนลาก/ทำซ้ำ และให้ toolbar ขึ้นบรรทัดใหม่บนมือถือ |
 | 59  | หน้าเข้าสู่ระบบของผู้ซื้อบนเว็บสาธารณะ (`/signin`)                   | ✅ เสร็จ | เปิดคำสั่งซื้อด้วยเลขคำสั่งซื้อ + เบอร์โทร/อีเมลที่ใช้สั่ง (`POST /public/:host/shop/orders/lookup`, rate limit 10/นาที, ตอบ 404 เดียวกันทั้งเลขผิดและข้อมูลติดต่อผิด), จำรายการที่เปิดไว้บนเครื่องด้วยคุกกี้ httpOnly, ออกจากระบบได้, ไม่มี JS ฝั่งเว็บ, `noindex` + robots disallow |
 | 60  | Membership / Paywall (ก้อนถัดไป A)                            | ✅ เสร็จ | บัญชีผู้อ่านแยกจากทีมงาน (สมัคร/เข้าสู่ระบบ/ลืมรหัสผ่าน/ยืนยันอีเมล), แพ็กเกจต่อเว็บ (รายเดือน/รายปี), หน้าบทความ-หน้าเว็บตั้ง `access: members` ได้จากแผงข้าง editor, หน้าถูกล็อกแสดงตัวอย่าง + ฟอร์มเข้าร่วม, Stripe Subscription + webhook, หน้าจอ เติบโต › สมาชิก (แพ็กเกจ/รายชื่อ/รายได้/หยุดต่ออายุ) — เปิดเฉพาะเมื่อไลเซนส์ระบุ `membership` |
+| 61  | Block Marketplace (ก้อนถัดไป B)                              | ✅ เสร็จ | ชุดส่วนสำเร็จรูปที่ลงลายเซ็น Ed25519 (`lumio_pack_v1.…`), แพ็กทางการ 4 ชุด, ติดตั้ง/อัปเดต/เปิดปิด/ถอนต่อเว็บ + audit, ส่วนของแพ็กโผล่ในเมนู `/` ของ editor, หน้าจอ เติบโต › ตลาดบล็อก, kill switch + ไลเซนส์ `marketplace`, ถอนแล้วหน้าไม่พังเพราะอ้างได้เฉพาะบล็อกที่บิลด์มี |
+| 62  | Integration test ที่ยิง Stripe จริง (test account)            | ✅ เสร็จ | 7 เคสยิง Stripe จริง (Checkout payment/subscription, คูปอง, ร้านค้า, สมาชิก, charge+refund) ด้วย `sk_test_` จาก env/.env ที่ไม่ถูก commit, ปฏิเสธ live key, ข้ามเมื่อไม่มีคีย์ — ระหว่างทางพบและแก้บั๊กบัญชี Stripe ใหม่ไม่รับ `payment_method_types` และปิดช่องสมาชิก aktif ก่อนเงินเข้า (unpaid/async) |
 
 | สัญลักษณ์: ✅ เสร็จ · 🔄 กำลังทำ · ⏳ ยังไม่เริ่ม · ⚠️ ติดปัญหา
 
@@ -2360,13 +2362,14 @@ pnpm --filter api test src/modules/commerce
 
 ดูรายละเอียดที่ก้อนที่ 60 ด้านล่าง; ที่ยังเหลือจริงคือ integration test ที่ยิง Stripe จริงด้วย test key
 
-### ก้อนถัดไป B — Block Marketplace (เฟส 2)
+### ก้อนถัดไป B — Block Marketplace (เฟส 2) — ✅ เสร็จแล้วในก้อนที่ 61
 
 - คลัง Block/ชุดส่วนจากภายนอกพร้อม manifest ที่ลงลายเซ็น และตรวจลายเซ็นก่อนติดตั้ง
 - ติดตั้ง/ถอน/อัปเดตต่อเว็บ, เก็บเวอร์ชัน, และไม่ให้ block ที่ถอนแล้วทำหน้าเว็บพัง (fallback)
 - ต้องมี sandbox/สิทธิ์เข้าถึงข้อมูลแบบเดียวกับ Apps และ audit ทุกการติดตั้ง
 - ผูกกับไลเซนส์: เปิดได้เฉพาะเมื่อ `LUMIO_LICENSE` มี `marketplace`
-- **หมายเหตุ**: ยังไม่เริ่ม เพื่อไม่ให้ Community edition มีพื้นผิวโจมตีเพิ่มก่อนเปิดตัว
+- **หมายเหตุ**: แพ็กเป็นข้อมูลล้วน (ไม่รันโค้ด ไม่มีสิทธิ์เข้าถึงข้อมูล) จึงไม่เพิ่มพื้นผิวโจมตี
+  แบบ Apps — ดูรายละเอียดที่ก้อนที่ 61 ด้านล่าง
 
 ## ก้อนที่ 49 — Community edition + ไลเซนส์/API ตรวจลายเซ็น
 
@@ -2735,6 +2738,83 @@ docker compose --profile app up -d --build
 ```bash
 pnpm --filter @lumio/shared build
 pnpm --filter api prisma migrate deploy
+pnpm lint && pnpm typecheck && pnpm test
+docker compose --profile app up -d --build
+```
+
+## ก้อนที่ 61 — Block Marketplace (ก้อนถัดไป B)
+
+เปิดตลาดชุดส่วนจากภายนอกโดยไม่เพิ่มพื้นผิวโจมตี: แพ็กเป็น **ข้อมูลล้วน**
+(block tree ของบล็อกที่ Lumio มีอยู่แล้ว) ไม่มีโค้ดที่รันบนเว็บ ไม่มีสิทธิ์เข้าถึงข้อมูล
+และถอนแพ็กแล้วหน้าเว็บยังเรนเดอร์ได้เพราะทุกบล็อกยังอยู่ในบิลด์
+
+- **Shared** — `packages/shared/src/marketplace.ts`
+  - `marketplacePackSchema` (strict): v, key, name/nameEn, description, version (semver),
+    author, homepage, license, minLumioVersion, sections[] — ฟิลด์แปลกปลอมถูกปฏิเสธ
+  - token `lumio_pack_v1.<payload>.<signature>` + `parseMarketplacePackToken` +
+    `comparePackVersions` และ `BUILTIN_BLOCK_TYPES` (มีเทสต์ใน `@lumio/blocks` กันหลุด)
+  - view types ของ API/หน้าจอ (`MarketplacePackSummary`, `InstalledPack`, `MarketplaceSection`)
+  - input schema: ตรวจโทเคน, ติดตั้ง (key หรือ token อย่างใดอย่างหนึ่ง), เปิด/ปิด
+- **ฐานข้อมูล** — migration `20261114000000_marketplace`
+  - ตาราง `site_block_packs` (`site_id`, `pack_key`, `version`, `source`, `manifest`, `token`,
+    `enabled`, `created_at`, `updated_at`) + index `(site_id, enabled)` + RLS `site_isolation` แบบ FORCE
+- **API** — `apps/api/src/modules/marketplace`
+  - `GET /v1/marketplace` (คลังทางการ 4 ชุด + ที่ติดตั้ง), `GET /v1/marketplace/sections`
+  - `POST /v1/marketplace/preview` (ตรวจลายเซ็น 20/นาที), `POST /v1/marketplace/installs` (10/นาที)
+    — ติดตั้งครั้งแรกหรืออัปเดตในที่เมื่อเวอร์ชันใหม่กว่า, `PATCH/DELETE /installs/:packKey`
+  - ตรวจ Ed25519 ด้วยกุญแจที่ฝังใน `marketplace.keys.ts` (override ด้วย `MARKETPLACE_PUBLIC_KEY`
+    เฉพาะ non-production), ทุก write เขียน audit `marketplace.pack.*`, เปิดทั้งชุดด้วย
+    `@RequireFeature('marketplace')` + kill switch `MARKETPLACE_PLATFORM_DISABLED`
+  - แพ็กทางการ 4 ชุดใน `official-packs.ts` (เปิดตัวเว็บ, เรื่องราวธุรกิจ, หน้าบทความ, หน้าร้าน)
+- **แอดมิน** — เติบโต › ตลาดบล็อก (`apps/admin/src/marketplace/`)
+  - การ์ดคลัง/ติดตั้งแล้ว + เวอร์ชัน จำนวนส่วน สัญญาอนุญาต ที่มา, สวิตช์เปิดปิด, ถอนพร้อมเลิกทำ
+  - การ์ดติดตั้งจากโทเคนที่ลงลายเซ็น (ตรวจก่อนแล้วจึงติดตั้ง) และโหมดเดโมในหน่วยความจำ
+  - ส่วนของแพ็กที่เปิดใช้ถูก merge เข้าคลังส่วนของ editor (เมนู `/`) พร้อมชื่อแพ็กนำหน้า
+- **เครื่องมือผู้ขาย** — `scripts/marketplace-keygen.mjs` และ `scripts/marketplace-pack.mjs`
+  (ทดสอบแล้วว่าโทเคนที่ออกใหม่ตรวจผ่านด้วยกุญแจที่ฝังในบิลด์)
+- **เอกสาร** — `docs/design/16-apps.md` 16.8, `12-api.md`, `11-data-model.md`, `03-scope.md`,
+  `19-roadmap.md`, `docs/OPERATIONS.md`
+- **เทสต์** — shared 16, blocks 1, API 25 (service 20 + HTTP 5), admin 7;
+  lint / typecheck ผ่านทุกแพ็กเกจ
+
+```bash
+pnpm --filter @lumio/shared test marketplace
+pnpm --filter @lumio/blocks test registry
+pnpm --filter api test src/modules/marketplace src/http/api.spec.ts
+pnpm --filter admin test src/marketplace
+pnpm --filter api prisma migrate deploy
+pnpm lint && pnpm typecheck && pnpm test
+docker compose --profile app up -d --build
+```
+## ก้อนที่ 62 — Integration test ที่ยิง Stripe จริงด้วย test key
+
+ปิดช่องที่ค้างมาตั้งแต่ก้อนที่ A/44: ทุกเทสต์ Stripe เดิม stub `fetch` ทั้งหมด
+ก้อนนี้จึงมีชุดที่คุยกับ **Stripe test account จริง** เพื่อพิสูจน์ว่า payload ที่เราส่ง
+Stripe ยอมรับจริง ไม่ใช่แค่ตรงกับที่เราคิดเอง
+
+- **เทสต์ใหม่** — `apps/api/src/modules/billing/stripe.integration.spec.ts` (7 เคส)
+  - Checkout โหมด `payment` (บัตร): ตรวจ `amount_total`, `currency`, metadata, rail แล้ว expire ทิ้ง
+  - คูปองเครดิตส่วนที่เหลือ: ตรวจ `amount_off` เป็นสตางค์ + `duration=once` แล้วลบ
+  - Checkout โหมด `subscription` พร้อมเครดิต, หน้าชำระเงินของร้านค้า (มีค่าส่ง), และหน้าสมัครสมาชิกผู้อ่าน
+  - Charge ด้วย `pm_card_visa` จริงแล้วคืนเงินผ่าน `refundStripePayment` (ตรวจ `re_…`, ยอด, สถานะ)
+  - คีย์อ่านจาก `STRIPE_SECRET_KEY`/`STRIPE_TEST_SECRET_KEY` หรือ `.env` local;
+    **ปฏิเสธคีย์ที่ไม่ใช่ `sk_test_`** และข้ามทั้งชุดเมื่อไม่มีคีย์ → CI/Community ไม่ต้องมี Stripe
+- **บั๊กที่เจอจากการยิงจริง** — บัญชี Stripe ที่สร้างใหม่ตอบ 400
+  “The `payment_method_types` parameter is no longer supported” (dynamic payment methods)
+  - แก้ที่จุดเดียว: `postCheckoutSession()` ใน `billing/stripe.ts` ส่ง `payment_method_types`
+    ตามที่ผู้ใช้เลือกก่อน และถ้า Stripe ปฏิเสธเฉพาะพารามิเตอร์นี้ จะลองใหม่โดยไม่ส่ง
+    (ใช้ค่าจาก Dashboard) — ทั้ง billing, ร้านค้า และสมาชิกใช้ฟังก์ชันเดียวกันแล้ว
+  - เทสต์ unit 2 เคสยืนยันว่าลองซ้ำเฉพาะกรณีนี้ และไม่ลองซ้ำเมื่อ error อื่น
+- **ปิดช่องเพย์วอลล์กับเงินที่ยังไม่เข้า** — `checkout.session.completed` ที่
+  `payment_status=unpaid` ไม่ถูกนับเป็นสมาชิก aktif อีก และ `checkout.session.async_payment_succeeded`
+  สร้าง/ปลดล็อกแถวได้ (เดิมรอเฉพาะ `completed`)
+- **เอกสาร** — `docs/OPERATIONS.md` (เลือกวิธีจ่ายใน Dashboard ของบัญชีใหม่),
+  `.env.example` (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PUBLISHABLE_KEY`)
+- **ผลตรวจ** — API 916 เคสผ่านทั้งหมด (รวม 7 เคสที่ยิง Stripe จริง) · repo รวม 2,263 เคส · lint / typecheck ผ่าน
+
+```bash
+# คีย์ทดสอบอยู่ใน .env (gitignored) หรือส่งผ่าน env ก็ได้
+pnpm --filter api test src/modules/billing/stripe.integration.spec.ts
 pnpm lint && pnpm typecheck && pnpm test
 docker compose --profile app up -d --build
 ```

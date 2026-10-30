@@ -519,6 +519,31 @@
   font-size: var(--text-xs);
 }
 
+/* ── Block marketplace ────────────────────────────────────────────────── */
+.marketplace-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-lg);
+  margin: 0;
+}
+
+.marketplace-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.marketplace-meta dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.marketplace-meta dd {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
 .apps-sandbox__footer {
   display: flex;
   justify-content: flex-end;

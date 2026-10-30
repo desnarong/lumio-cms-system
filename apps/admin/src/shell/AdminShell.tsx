@@ -12,6 +12,8 @@ import {
 } from '@lumio/ui';
 import { cn } from '@lumio/ui/cn';
 import { routePath, type AdminRoute } from '../route.js';
+import type { UpdatesApi } from '../updates/api.js';
+import { VersionPanel } from '../updates/VersionPanel.js';
 import type { ContentCommandSource } from './commands.js';
 import { activeDestinationId, visibleSidebar } from './nav.js';
 import { useCommands } from './useCommands.js';
@@ -35,6 +37,8 @@ export interface AdminShellProps {
   /** Language of the back office; the switcher changes it (AGENTS.md rule 4). */
   locale?: UiLocale;
   onLocaleChange?: (locale: UiLocale) => void;
+  /** Version badge and update notice; omitted by the chrome-only tests. */
+  updates?: UpdatesApi;
   children: ReactNode;
 }
 
@@ -78,6 +82,7 @@ export const AdminShell = ({
   onSignOut,
   locale = 'th',
   onLocaleChange,
+  updates,
   children,
 }: AdminShellProps) => {
   const t = useT();
@@ -168,6 +173,7 @@ export const AdminShell = ({
         </nav>
 
         <div className="shell-sidebar__footer">
+          {updates ? <VersionPanel api={updates} /> : null}
           <button
             type="button"
             className="shell-collapse"

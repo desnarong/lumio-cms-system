@@ -1,4 +1,4 @@
-import type { CreateSectionTemplateInput, SectionTemplate } from '@lumio/shared';
+import type { CreateSectionTemplateInput, MarketplaceSection, SectionTemplate } from '@lumio/shared';
 import { translateNow } from '@lumio/ui';
 import { ApiError } from './api.js';
 
@@ -24,6 +24,15 @@ export interface HttpSectionTemplateApiConfig {
   getSiteId?: () => string | null;
   fetchImpl?: typeof fetch;
 }
+
+/** A section that came from an installed marketplace pack, labelled with its pack. */
+export const sectionTemplateFromPack = (section: MarketplaceSection): SectionTemplate => ({
+  id: section.id,
+  name: `${section.packName} · ${section.name}`,
+  blocks: section.blocks,
+  createdAt: '',
+  createdBy: null,
+});
 
 /** Talks to `/api/v1/section-templates` (site always sent as `X-Site-Id`). */
 export const createHttpSectionTemplateApi = ({
@@ -66,7 +75,15 @@ export const createHttpSectionTemplateApi = ({
   };
 
   return {
-    list: () => request<SectionTemplate[]>('/section-templates'),
+    list: async () => {
+      const own = await request<SectionTemplate[]>('/section-templates');
+      // Sections of installed marketplace packs are offered next to saved ones.
+      // A site without the marketplace (or without its licence) simply has none.
+      const packed = await request<MarketplaceSection[]>('/marketplace/sections').catch(
+        () => [] as MarketplaceSection[],
+      );
+      return [...own, ...packed.map(sectionTemplateFromPack)];
+    },
     create: (input) =>
       request<SectionTemplate>('/section-templates', {
         method: 'POST',

@@ -50,5 +50,8 @@ blob-report/
 # vendor licence signing key — never commit
 lumio-license-private.pem
 *.license.key
+# vendor marketplace pack signing key — never commit
+lumio-marketplace-private.pem
+*.marketplace.key
 # TypeScript build info
 tsconfig.tsbuildinfo

@@ -16,6 +16,10 @@
 - [ ] `LUMIO_LICENSE_PUBLIC_KEY` เว้นว่างใน production (ใช้กุญแจที่ฝังในบิลด์)
 - [ ] `LUMIO_LICENSE` มีเฉพาะเครื่องที่ซื้อไลเซนส์ (Membership/Paywall, Marketplace)
       — ไม่ตั้ง = ระบบทำงานแบบ Community
+- [ ] ตลาดบล็อก: `MARKETPLACE_PUBLIC_KEY` เว้นว่างใน production (ใช้กุญแจที่ฝังในบิลด์)
+      และไม่ตั้ง `MARKETPLACE_PLATFORM_DISABLED` เว้นแต่ต้องหยุดติดตั้งแพ็กชั่วคราว;
+      ตั้ง `LUMIO_VERSION` ถ้าต้องการให้ตรวจ `minLumioVersion` ของแพ็ก
+- [ ] กุญแจลงลายเซ็นแพ็ก (`lumio-marketplace-private.pem`) เก็บนอกเซิร์ฟเวอร์ production
 - [ ] ตรวจว่าไม่มี `.env` หรือไฟล์คีย์ถูก commit (`git status`, secret scanning ของ GitHub)
 
 ## 2. ฐานข้อมูลและสิทธิ์
@@ -48,6 +52,9 @@
 - [ ] ตั้ง SMTP/Resend ของแต่ละเว็บ หรือผู้ส่งกลาง แล้วกด “ส่งอีเมลทดสอบ”
 - [ ] Stripe: ใช้ `sk_live_...` + webhook secret จริง และตรวจ event ที่ต้องรับ
       (`checkout.session.*`, `invoice.*`, `customer.subscription.*`)
+- [ ] เลือกวิธีจ่ายที่รับได้ใน Stripe Dashboard › Payment methods (บัญชีใหม่ใช้ dynamic
+      payment methods; ระบบจะลองส่ง `payment_method_types` แล้วถ้า Stripe ปฏิเสธจะสร้าง
+      หน้าชำระเงินโดยใช้ค่าจาก Dashboard แทน — ไม่ต้องตั้ง env เพิ่ม)
 - [ ] ลงทะเบียน webhook สำหรับสมาชิกผู้อ่านที่ `/api/v1/public/membership/webhook`
       (event เดียวกับ Stripe ข้างบน; เว็บมาจาก `metadata.siteId`)
 - [ ] ตั้ง webhook ฝั่งลูกค้าแล้วทดสอบลายเซ็นด้วย `verifyLumioSignature()` จาก `@lumio/sdk`

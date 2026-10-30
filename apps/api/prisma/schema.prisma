@@ -74,6 +74,7 @@ model Site {
   readers             Reader[]
   membershipPlans     MembershipPlan[]
   readerSubscriptions ReaderSubscription[]
+  blockPacks          SiteBlockPack[]
 
   @@index([stripeSubscriptionId])
   @@map("sites")
@@ -739,4 +740,28 @@ model ReaderSubscription {
   @@index([siteId, status])
   @@index([readerId])
   @@map("reader_subscriptions")
+}
+
+/// A pack of ready-made sections a site installed from the block marketplace
+/// (docs/PROGRESS.md batch B). Packs are data only: every block in them is one
+/// this build already ships, so uninstalling a pack never breaks a page.
+model SiteBlockPack {
+  siteId    String   @map("site_id") @db.Uuid
+  packKey   String   @map("pack_key")
+  version   String
+  /// official | external: where the pack came from (16-apps.md).
+  source    String   @default("official")
+  /// The accepted manifest, validated with marketplacePackSchema on every read.
+  manifest  Json     @db.JsonB
+  /// The signed token a third-party pack was accepted from; null for official packs.
+  token     String?
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@id([siteId, packKey])
+  @@index([siteId, enabled])
+  @@map("site_block_packs")
 }

@@ -75,6 +75,37 @@ describe('reading a stripe event', () => {
     ).toBeNull();
   });
 
+  it('does not unlock a subscription whose money has not arrived yet', () => {
+    expect(
+      readReaderSubscriptionEvent(
+        event('checkout.session.completed', {
+          mode: 'subscription',
+          payment_status: 'unpaid',
+          metadata: { siteId: request.siteId, readerId: request.readerId, planId: request.planId },
+        }),
+      ),
+    ).toBeNull();
+  });
+
+  it('unlocks the subscription once a delayed payment settles', () => {
+    const patch = readReaderSubscriptionEvent(
+      event('checkout.session.async_payment_succeeded', {
+        mode: 'subscription',
+        subscription: 'sub_123',
+        customer: 'cus_123',
+        payment_status: 'paid',
+        metadata: { siteId: request.siteId, readerId: request.readerId, planId: request.planId },
+      }),
+    );
+
+    expect(patch).toMatchObject({
+      stripeSubscriptionId: 'sub_123',
+      status: 'active',
+      readerId: request.readerId,
+      planId: request.planId,
+    });
+  });
+
   it('reads the paid period of an updated subscription', () => {
     const patch = readReaderSubscriptionEvent(
       event('customer.subscription.updated', {

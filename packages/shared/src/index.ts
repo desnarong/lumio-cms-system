@@ -39,3 +39,6 @@ export * from './publish.js';
 export * from './flags.js';
 export * from './license.js';
 export * from './membership.js';
+export * from './marketplace.js';
+export * from './version.js';
+export * from './updates.js';

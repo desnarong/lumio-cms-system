@@ -1,6 +1,6 @@
 import type { AddressInfo } from 'node:net';
 import type { Server } from 'node:http';
-import { createHmac } from 'node:crypto';
+import { createHmac, generateKeyPairSync, sign } from 'node:crypto';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test, type TestingModule, type TestingModuleBuilder } from '@nestjs/testing';
 import type { Role } from '@lumio/shared';
@@ -17,6 +17,7 @@ import { AuthService } from '../modules/auth/auth.service';
 import { BillingService } from '../modules/billing/billing.service';
 import { ContentsService } from '../modules/contents/contents.service';
 import { PrismaService } from '../modules/prisma/prisma.service';
+import { MarketplaceService } from '../modules/marketplace/marketplace.service';
 import { PublicService } from '../modules/public/public.service';
 import { RedirectsService } from '../modules/redirects/redirects.service';
 
@@ -70,18 +71,24 @@ interface Harness {
 
 const startApp = async (options: {
   membershipRole?: Role | null;
+  /** Add-on switches the fake site reports (`sites.settings.flags`). */
+  siteFlags?: Record<string, boolean>;
   configure?: (builder: TestingModuleBuilder) => TestingModuleBuilder;
 } = {}): Promise<Harness> => {
   const membership = {
     role: (options.membershipRole === undefined ? 'owner' : options.membershipRole) as Role | null,
   };
+  const settings = { flags: options.siteFlags ?? {} };
 
-  // The membership lookup is the only database call the guard chain makes, so a
-  // tiny in-memory stand-in is enough to exercise Auth/Site/Roles for real.
+  // The membership and site lookups are the only database calls the guard chain
+  // makes, so a tiny in-memory stand-in is enough to exercise them for real.
   const tx = {
     siteMember: {
       findFirst: async (): Promise<{ role: string } | null> =>
         membership.role === null ? null : { role: membership.role },
+    },
+    site: {
+      findUnique: async (): Promise<{ settings: unknown }> => ({ settings }),
     },
   };
   const fakeDb = {
@@ -705,6 +712,112 @@ describe('API over HTTP', () => {
         jsonRequest({ fromPath: '/a', toPath: '/b' }, withSession(app.token)),
       );
       app.membership.role = 'owner';
+
+      expect(response.status).toBe(403);
+    });
+  });
+
+  describe('block marketplace', () => {
+    const pair = generateKeyPairSync('ed25519');
+    const publicKey = pair.publicKey.export({ format: 'der', type: 'spki' }).toString('base64');
+
+    const installedPack = {
+      key: 'lumio-launch',
+      name: 'ชุดเปิดตัวเว็บ',
+      version: '1.1.0',
+      source: 'official' as const,
+      enabled: true,
+      sectionCount: 2,
+      signed: false,
+      installedAt: '2026-10-30T00:00:00.000Z',
+      updatedAt: '2026-10-30T00:00:00.000Z',
+    };
+
+    const licence = (features: string[]): string => {
+      const payload = { v: 1, sub: 'ทดสอบ', plan: 'pro', features, iat: 1_760_000_000 };
+      const segment = Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
+      const signingInput = `lumio_lic_v1.${segment}`;
+      const signature = sign(null, Buffer.from(signingInput, 'utf8'), pair.privateKey);
+      return `${signingInput}.${signature.toString('base64url')}`;
+    };
+
+    let app: Harness;
+
+    beforeAll(async () => {
+      process.env.LUMIO_LICENSE_PUBLIC_KEY = publicKey;
+      process.env.LUMIO_LICENSE = licence(['marketplace']);
+
+      app = await startApp({
+        siteFlags: { marketplace: true },
+        configure: (builder) =>
+          builder.overrideProvider(MarketplaceService).useValue({
+            view: async () => ({ catalog: [], installed: [] }),
+            sections: async () => [],
+            install: async () => installedPack,
+            setEnabled: async () => installedPack,
+            remove: async () => undefined,
+          }),
+      });
+    });
+
+    afterAll(async () => {
+      await app.close();
+      delete process.env.LUMIO_LICENSE;
+      delete process.env.LUMIO_LICENSE_PUBLIC_KEY;
+      delete process.env.LUMIO_DISABLED_FEATURES;
+    });
+
+    it('serves the catalogue to a licensed site', async () => {
+      const response = await app.request('/api/v1/marketplace', {
+        headers: withSession(app.token),
+      });
+
+      expect(response.status).toBe(200);
+      expect(await readJson(response)).toEqual({ data: { catalog: [], installed: [] } });
+    });
+
+    it('lets an editor read pack sections but not install one', async () => {
+      app.membership.role = 'editor';
+      const sections = await app.request('/api/v1/marketplace/sections', {
+        headers: withSession(app.token),
+      });
+      const install = await app.request(
+        '/api/v1/marketplace/installs',
+        jsonRequest({ key: 'lumio-launch' }, withSession(app.token)),
+      );
+      app.membership.role = 'owner';
+
+      expect(sections.status).toBe(200);
+      expect(install.status).toBe(403);
+    });
+
+    it('installs a pack for an owner', async () => {
+      const response = await app.request(
+        '/api/v1/marketplace/installs',
+        jsonRequest({ key: 'lumio-launch' }, withSession(app.token)),
+      );
+
+      expect(response.status).toBe(201);
+      expect((await readJson(response)).data).toMatchObject({ key: 'lumio-launch' });
+    });
+
+    it('refuses the marketplace when the licence does not cover it', async () => {
+      const previous = process.env.LUMIO_LICENSE;
+      process.env.LUMIO_LICENSE = licence(['membership']);
+      const response = await app.request('/api/v1/marketplace', {
+        headers: withSession(app.token),
+      });
+      process.env.LUMIO_LICENSE = previous;
+
+      expect(response.status).toBe(403);
+    });
+
+    it('refuses the marketplace when the platform closed it', async () => {
+      process.env.LUMIO_DISABLED_FEATURES = 'marketplace';
+      const response = await app.request('/api/v1/marketplace', {
+        headers: withSession(app.token),
+      });
+      delete process.env.LUMIO_DISABLED_FEATURES;
 
       expect(response.status).toBe(403);
     });

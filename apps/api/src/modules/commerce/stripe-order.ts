@@ -1,5 +1,5 @@
 import { ApiException } from '../../common/api-error';
-import { stripeConfigured, stripeSecretKey } from '../billing/stripe';
+import { postCheckoutSession, stripeConfigured, stripeSecretKey } from '../billing/stripe';
 
 /**
  * Card checkout for a shop order (docs/design/03-scope.md 3.3). The order row is
@@ -29,8 +29,6 @@ export interface StripeOrderSession {
   id: string;
   url: string;
 }
-
-const STRIPE_CHECKOUT = 'https://api.stripe.com/v1/checkout/sessions';
 
 export const shopCardEnabled = (): boolean => stripeConfigured();
 
@@ -76,31 +74,5 @@ export const createStripeOrderSession = async (
     );
   }
 
-  let response: Response;
-  try {
-    response = await fetchImpl(STRIPE_CHECKOUT, {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${key}`,
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      body: buildStripeOrderBody(request),
-      signal: AbortSignal.timeout(15_000),
-    });
-  } catch {
-    throw ApiException.conflict('ติดต่อ Stripe ไม่ได้ ลองอีกครั้ง');
-  }
-
-  if (!response.ok) {
-    throw ApiException.conflict('Stripe สร้างหน้าชำระเงินไม่สำเร็จ ลองอีกครั้ง');
-  }
-
-  const payload = (await response.json().catch(() => null)) as {
-    id?: unknown;
-    url?: unknown;
-  } | null;
-  if (typeof payload?.id !== 'string' || typeof payload?.url !== 'string') {
-    throw ApiException.conflict('Stripe ตอบกลับไม่ครบ ลองอีกครั้ง');
-  }
-  return { id: payload.id, url: payload.url };
+  return postCheckoutSession(fetchImpl, buildStripeOrderBody(request), key);
 };

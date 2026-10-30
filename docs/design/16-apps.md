@@ -73,4 +73,28 @@ Shop, Analytics เพิ่มเติม, Instagram feed
 
 ---
 
+## 16.8 Block Marketplace (ชุดส่วนจากภายนอก)
+
+ตลาดบล็อกขาย **ชุดส่วนสำเร็จรูป** (section packs) ไม่ใช่โค้ดที่รันบนเว็บ —
+ส่วนหนึ่ง ๆ คือ block tree ที่ประกอบจากบล็อกที่ Lumio มีอยู่แล้วเท่านั้น
+
+- **รูปแบบแพ็ก** (`marketplacePackSchema` ใน `packages/shared`): `v`, `key`, `name`,
+  `version` (semver), `author`, `sections[]` และฟิลด์เสริม `homepage` / `license` /
+  `minLumioVersion` — schema เป็น `strict()` ฟิลด์แปลกปลอม (entry script, สิทธิ์ ฯลฯ)
+  ถูกปฏิเสธ ไม่ใช่ถูกเมิน
+- **ลายเซ็น** — แพ็กภายนอกต้องมาเป็นโทเคน `lumio_pack_v1.<payload>.<signature>`
+  (Ed25519) ตรวจด้วยกุญแจสาธารณะที่ฝังในบิลด์ (`marketplace.keys.ts`,
+  override ด้วย `MARKETPLACE_PUBLIC_KEY` ได้เฉพาะ non-production) ก่อนบันทึกทุกครั้ง
+- **สิทธิ์** — เปิดทั้งชุดด้วย `@RequireFeature('marketplace')` จึงต้องมีไลเซนส์ที่ระบุ
+  `marketplace`; owner/admin ติดตั้ง/ถอน/เปิดปิดได้, editor เห็นเฉพาะส่วนที่ติดตั้งแล้ว
+  ฝั่งแพลตฟอร์มมี kill switch `MARKETPLACE_PLATFORM_DISABLED`
+- **ทำไมถอนแล้วหน้าไม่พัง** — แพ็กอ้างได้เฉพาะ `BUILTIN_BLOCK_TYPES` (มีเทสต์กันรายการ
+  หลุดจาก `@lumio/blocks`) บล็อกที่ใช้จึงยังอยู่ในบิลด์เสมอ; ถ้าไม่มีจริง renderer
+  แสดง `UnknownBlock` แทนที่จะ throw
+- **การติดตั้ง** — `POST /marketplace/installs` รับ `{ key }` (แพ็กทางการที่มากับบิลด์)
+  หรือ `{ token }` (แพ็กภายนอก) อัปเดตในที่เมื่อเวอร์ชันใหม่กว่า, ทุกครั้งเขียน audit
+  (`marketplace.pack.install|update|enable|disable|remove`) และข้อมูลอยู่ใน RLS ต่อเว็บ
+- **เครื่องมือผู้ขาย** — `node scripts/marketplace-keygen.mjs` และ
+  `node scripts/marketplace-pack.mjs --key … --file pack.json`
+
 [← Security](15-security.md) · [ถัดไป: i18n →](17-i18n.md)

@@ -123,40 +123,46 @@ export const buildCheckoutBody = (
   return body;
 };
 
-export const createStripeCheckout = async (
+/**
+ * Creates a hosted Checkout Session.
+ *
+ * Newer Stripe accounts no longer accept `payment_method_types`: the methods a
+ * buyer sees come from the Dashboard (dynamic payment methods). Older accounts
+ * still use the parameter to offer one rail. We send the rail the owner chose
+ * and, only when Stripe rejects that exact parameter, retry without it, so both
+ * generations of account work without an operator setting.
+ */
+export const postCheckoutSession = async (
   fetchImpl: typeof fetch,
-  request: CheckoutRequest,
-  config: { key: string; returnUrl: string } = {
-    key: stripeSecretKey(),
-    returnUrl: billingReturnUrl(),
-  },
+  body: URLSearchParams,
+  key: string,
 ): Promise<StripeSession> => {
-  if (config.key.length === 0) {
-    throw ApiException.conflict(
-      'ยังไม่ได้เชื่อมต่อ Stripe กรุณาตั้งค่า STRIPE_SECRET_KEY ก่อนรับชำระเงิน',
-    );
-  }
+  const send = async (payload: URLSearchParams): Promise<Response> => {
+    try {
+      return await fetchImpl(STRIPE_API, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${key}`,
+          'content-type': 'application/x-www-form-urlencoded',
+        },
+        body: payload,
+        signal: AbortSignal.timeout(15_000),
+      });
+    } catch {
+      throw ApiException.conflict('ติดต่อ Stripe ไม่ได้ ลองอีกครั้ง');
+    }
+  };
 
-  let response: Response;
-  // A subscription renews at the plan price, so the credit rides on a one-time
-  // coupon instead of lowering `unit_amount` forever.
-  const couponId =
-    request.mode === 'subscription' && (request.credit ?? 0) > 0
-      ? await createStripeCoupon(fetchImpl, request.credit ?? 0, config.key, request.planLabel)
-      : null;
-
-  try {
-    response = await fetchImpl(STRIPE_API, {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${config.key}`,
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      body: buildCheckoutBody(request, config.returnUrl, couponId),
-      signal: AbortSignal.timeout(15_000),
-    });
-  } catch {
-    throw ApiException.conflict('ติดต่อ Stripe ไม่ได้ ลองอีกครั้ง');
+  let response = await send(body);
+  if (response.status === 400) {
+    const rejected = (await response.json().catch(() => null)) as {
+      error?: { param?: unknown };
+    } | null;
+    if (rejected?.error?.param === 'payment_method_types') {
+      const fallback = new URLSearchParams(body);
+      fallback.delete('payment_method_types[]');
+      response = await send(fallback);
+    }
   }
 
   if (!response.ok) {
@@ -172,6 +178,34 @@ export const createStripeCheckout = async (
   }
 
   return { id: payload.id, url: payload.url };
+};
+
+export const createStripeCheckout = async (
+  fetchImpl: typeof fetch,
+  request: CheckoutRequest,
+  config: { key: string; returnUrl: string } = {
+    key: stripeSecretKey(),
+    returnUrl: billingReturnUrl(),
+  },
+): Promise<StripeSession> => {
+  if (config.key.length === 0) {
+    throw ApiException.conflict(
+      'ยังไม่ได้เชื่อมต่อ Stripe กรุณาตั้งค่า STRIPE_SECRET_KEY ก่อนรับชำระเงิน',
+    );
+  }
+
+  // A subscription renews at the plan price, so the credit rides on a one-time
+  // coupon instead of lowering `unit_amount` forever.
+  const couponId =
+    request.mode === 'subscription' && (request.credit ?? 0) > 0
+      ? await createStripeCoupon(fetchImpl, request.credit ?? 0, config.key, request.planLabel)
+      : null;
+
+  return postCheckoutSession(
+    fetchImpl,
+    buildCheckoutBody(request, config.returnUrl, couponId),
+    config.key,
+  );
 };
 
 export interface CanceledSubscription {

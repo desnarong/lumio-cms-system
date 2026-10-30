@@ -6,6 +6,7 @@ import {
   cancelStripeSubscription,
   cancelStripeSubscriptionNow,
   createStripeCheckout,
+  postCheckoutSession,
   verifyStripeSignature,
   type CheckoutRequest,
 } from './stripe';
@@ -287,5 +288,50 @@ describe('proration through a one-time coupon', () => {
         { key: 'sk_test_1', returnUrl: 'http://localhost:49300/x' },
       ),
     ).rejects.toThrow(/ส่วนลด/);
+  });
+});
+
+describe('postCheckoutSession', () => {
+  const rejected = (param: string): Response =>
+    ({
+      ok: false,
+      status: 400,
+      json: async () => ({ error: { param } }),
+    }) as unknown as Response;
+
+  it('retries without payment_method_types when Stripe stopped accepting it', async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(rejected('payment_method_types'))
+      .mockResolvedValueOnce(jsonResponse({ id: 'cs_test_1', url: 'https://checkout.stripe.com/1' }));
+
+    const session = await postCheckoutSession(
+      fetchImpl as unknown as typeof fetch,
+      buildCheckoutBody(request(), 'http://localhost:49300/x'),
+      'sk_test_1',
+    );
+
+    expect(session).toEqual({ id: 'cs_test_1', url: 'https://checkout.stripe.com/1' });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+
+    const first = fetchImpl.mock.calls[0]?.[1]?.body as URLSearchParams;
+    const second = fetchImpl.mock.calls[1]?.[1]?.body as URLSearchParams;
+    expect(first.getAll('payment_method_types[]')).toEqual(['promptpay']);
+    expect(second.has('payment_method_types[]')).toBe(false);
+    expect(second.get('mode')).toBe('payment');
+    expect(second.get('line_items[0][price_data][unit_amount]')).toBe('49900');
+  });
+
+  it('does not retry a rejection about anything else', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(rejected('success_url'));
+
+    await expect(
+      postCheckoutSession(
+        fetchImpl as unknown as typeof fetch,
+        buildCheckoutBody(request(), 'http://localhost:49300/x'),
+        'sk_test_1',
+      ),
+    ).rejects.toBeInstanceOf(ApiException);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 });

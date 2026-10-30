@@ -327,8 +327,12 @@ export class MembershipService {
       }
 
       // A brand-new subscription: only the checkout event carries the plan and
-      // the reader, so anything else is for a row we have not created yet.
-      if (event.type !== 'checkout.session.completed' || !patch.readerId || !patch.planId) {
+      // the reader, so anything else is for a row we have not created yet. A
+      // delayed payment settles with the async event, so both may create it.
+      const fromCheckout =
+        event.type === 'checkout.session.completed' ||
+        event.type === 'checkout.session.async_payment_succeeded';
+      if (!fromCheckout || !patch.readerId || !patch.planId) {
         return false;
       }
 

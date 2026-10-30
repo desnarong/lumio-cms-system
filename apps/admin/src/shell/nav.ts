@@ -183,6 +183,15 @@ export const NAV_SCREENS: NavScreen[] = [
     feature: 'apps',
     route: { name: 'growth', tab: 'apps' },
   },
+  {
+    id: 'marketplace',
+    labelKey: 'nav.marketplace',
+    icon: 'layers',
+    section: 'site',
+    roles: APP_ROLES,
+    feature: 'marketplace',
+    route: { name: 'growth', tab: 'marketplace' },
+  },
 
   // ── Settings ───────────────────────────────────────────────────────────
   {
@@ -415,6 +424,7 @@ export const featureForRoute = (route: AdminRoute): FeatureFlagKey | undefined =
     if (route.tab === 'newsletter') return 'newsletter';
     if (route.tab === 'membership') return 'membership';
     if (route.tab === 'apps') return 'apps';
+    if (route.tab === 'marketplace') return 'marketplace';
   }
   return undefined;
 };

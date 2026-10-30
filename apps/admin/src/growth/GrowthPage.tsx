@@ -8,6 +8,8 @@ import { AppsPage } from './AppsPage.js';
 import { NewsletterPage } from './NewsletterPage.js';
 import { SeoPage } from './SeoPage.js';
 import type { MembershipApi } from '../membership/api.js';
+import { MarketplacePage } from '../marketplace/MarketplacePage.js';
+import type { MarketplaceApi } from '../marketplace/api.js';
 import type { AnalyticsApi, AppsApi, NewsletterApi, SeoApi } from './api.js';
 
 export interface GrowthApis {
@@ -16,6 +18,7 @@ export interface GrowthApis {
   newsletter: NewsletterApi;
   apps: AppsApi;
   membership: MembershipApi;
+  marketplace: MarketplaceApi;
 }
 
 export interface GrowthPageProps {
@@ -36,6 +39,7 @@ const TAB_LABELS: Record<GrowthTab, MessageKey> = {
   newsletter: 'nav.newsletter',
   membership: 'nav.membership',
   apps: 'nav.apps',
+  marketplace: 'nav.marketplace',
 };
 
 /**
@@ -87,5 +91,13 @@ export const GrowthPage = ({
       );
     case 'apps':
       return <AppsPage api={apis.apps} canManage={canManage} headerTabs={headerTabs} />;
+    case 'marketplace':
+      return (
+        <MarketplacePage
+          api={apis.marketplace}
+          canManage={canManage}
+          headerTabs={headerTabs}
+        />
+      );
   }
 };

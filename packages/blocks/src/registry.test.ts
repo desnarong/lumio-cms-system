@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { BUILTIN_BLOCK_TYPES } from '@lumio/shared';
 import { headingBlock } from './blocks/heading/index.js';
 import { builtinBlocks, registerBuiltinBlocks } from './builtins.js';
 import { BlockRegistry, registry } from './registry.js';
@@ -36,6 +37,10 @@ describe('BlockRegistry', () => {
     registerBuiltinBlocks();
     registerBuiltinBlocks();
     expect(registry.list()).toHaveLength(builtinBlocks.length);
+  });
+
+  it('offers the marketplace exactly the blocks this build renders', () => {
+    expect([...BUILTIN_BLOCK_TYPES]).toEqual(builtinBlocks.map((block) => block.type));
   });
 
   it('keeps every builtin default valid against its schema', () => {

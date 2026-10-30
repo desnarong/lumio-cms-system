@@ -40,6 +40,8 @@ import {
 import type { MembershipApi } from './membership/api.js';
 import { createHttpMembershipApi } from './membership/api.js';
 import { createDemoMembershipApi } from './membership/demo.js';
+import type { MarketplaceApi } from './marketplace/api.js';
+import { createDemoMarketplaceApi, createHttpMarketplaceApi } from './marketplace/api.js';
 import type { MediaApi } from './media/api.js';
 import { createHttpMediaApi } from './media/api.js';
 import { createDemoMediaApi } from './media/demo.js';
@@ -51,6 +53,9 @@ import { createDemoBillingApi, createHttpBillingApi } from './settings/billing.j
 import type { WizardApi } from './wizard/api.js';
 import { createHttpWizardApi } from './wizard/api.js';
 import { createDemoWizardApi } from './wizard/demo.js';
+import type { UpdatesApi } from './updates/api.js';
+import { createHttpUpdatesApi } from './updates/api.js';
+import { createDemoUpdatesApi } from './updates/demo.js';
 
 export interface LogoUpload {
   mediaId: string;
@@ -74,6 +79,8 @@ export interface AdminClients {
   commerce: CommerceApi;
   /** Reader accounts and paid memberships (docs/PROGRESS.md batch A). */
   membership: MembershipApi;
+  /** Section packs from the block marketplace (docs/PROGRESS.md batch B). */
+  marketplace: MarketplaceApi;
   design: DesignApi;
   settings: SettingsApi;
   billing: BillingApi;
@@ -81,6 +88,8 @@ export interface AdminClients {
   analytics: AnalyticsApi;
   newsletter: NewsletterApi;
   apps: AppsApi;
+  /** Installed version and the newest release the server knows about. */
+  updates: UpdatesApi;
   /** Step 2 of the wizard uploads the logo through the media library. */
   uploadLogo?: (file: File) => Promise<LogoUpload>;
   demoHint?: string;
@@ -128,6 +137,7 @@ export const createAdminClients = ({
       dashboard: createDemoDashboardApi(),
       commerce: createDemoCommerceApi(),
       membership: createDemoMembershipApi(),
+      marketplace: createDemoMarketplaceApi(),
       design: createDemoDesignApi(),
       settings: createDemoSettingsApi({ media }),
       billing: createDemoBillingApi(),
@@ -135,6 +145,7 @@ export const createAdminClients = ({
       analytics: createDemoAnalyticsApi(),
       newsletter: createDemoNewsletterApi(),
       apps: createDemoAppsApi(),
+      updates: createDemoUpdatesApi(),
       uploadLogo: async (file) => {
         const item = await media.upload(file, { folder: 'brand' });
         return { mediaId: item.id, url: item.url ?? '' };
@@ -166,6 +177,7 @@ export const createAdminClients = ({
     dashboard: createHttpDashboardApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     commerce: createHttpCommerceApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     membership: createHttpMembershipApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    marketplace: createHttpMarketplaceApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     design: createHttpDesignApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     settings: createHttpSettingsApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     billing: createHttpBillingApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
@@ -173,6 +185,7 @@ export const createAdminClients = ({
     analytics: createHttpAnalyticsApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     newsletter: createHttpNewsletterApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     apps: createHttpAppsApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    updates: createHttpUpdatesApi({ baseUrl, getAccessToken, fetchImpl }),
     uploadLogo: async (file) => {
       const item = await media.upload(file, { folder: 'brand' });
       return { mediaId: item.id, url: item.url ?? '' };

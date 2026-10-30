@@ -1,0 +1,13 @@
+[Unit]
+Description=Lumio update check and self-update
+Documentation=file:///opt/lumio/docs/design/18-deployment.md
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/lumio
+# The script refuses to run on a dirty tree, so a local edit is never lost.
+Environment=LUMIO_UPDATE_INTERVAL_MINUTES=360
+Environment=LUMIO_HEALTH_URL=http://127.0.0.1:49100/api/health
+ExecStart=/usr/bin/node scripts/update.mjs

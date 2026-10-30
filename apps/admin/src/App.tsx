@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { FEATURE_FLAG_KEYS, HOME_SLUG, type ContentType, type FeatureFlagKey, type Role } from '@lumio/shared';
+import {
+  FEATURE_FLAG_KEYS,
+  HOME_SLUG,
+  type ContentType,
+  type FeatureFlagKey,
+  type Role,
+} from '@lumio/shared';
 import {
   MessagesProvider,
   Skeleton,
@@ -85,7 +91,13 @@ const loadShellContext = async (clients: AdminClients): Promise<ShellContext> =>
   const sites = await clients.wizard.listSites().catch(() => []);
   const site = sites.find((entry) => entry.id === siteId) ?? sites[0];
   if (!site) {
-    return { siteName: '', role: 'owner', publicUrl: '', locales: [], features: [...FEATURE_FLAG_KEYS] };
+    return {
+      siteName: '',
+      role: 'owner',
+      publicUrl: '',
+      locales: [],
+      features: [...FEATURE_FLAG_KEYS],
+    };
   }
 
   // A site that closed an add-on must not see its menu entries; when the request
@@ -141,11 +153,7 @@ export interface AdminAppProps {
   onSignedIn?: () => void;
 }
 
-export const AdminApp = ({
-  clients,
-  sessionExpired = false,
-  onSignedIn,
-}: AdminAppProps) => {
+export const AdminApp = ({ clients, sessionExpired = false, onSignedIn }: AdminAppProps) => {
   const router = useAppRouter();
   const navigate = router.navigate;
   // No session means we already know the first screen: no spinner needed.
@@ -310,103 +318,105 @@ export const AdminApp = ({
       <MediaLibraryProvider api={clients.media} ai={clients.ai}>
         <AdminShell
           route={effective}
-        siteName={context?.siteName ?? ''}
-        userName={clients.session.read()?.user.name ?? ''}
-        role={role}
-        features={context?.features}
-        locale={locale}
-        onLocaleChange={changeLocale}
-        {...(context?.publicUrl ? { publicUrl: context.publicUrl } : {})}
-        canCreate={role !== 'viewer'}
-        onCreate={openCreate}
-        searchContent={async (query) => {
-          const page = await clients.content.list({ q: query, limit: 6 });
-          return page.items.map((item) => ({
-            id: item.id,
-            title: item.title,
-            type: item.type,
-            slug: item.slug,
-          }));
-        }}
-        onNavigate={go}
-        onSignOut={signOut}
-      >
-        {effective.name === 'dashboard' ? (
-          <DashboardPage
-            api={clients.dashboard}
-            onOpenEditor={(contentId) => go(`/editor/${contentId}`)}
-            onNavigate={go}
-          />
-        ) : null}
-        {effective.name === 'content' ? (
-          <ContentListPage
-            api={clients.content}
-            kind={effective.kind}
-            locales={context?.locales ?? []}
-            onCreate={openCreate}
-            onOpenEditor={(contentId) => go(`/editor/${contentId}`)}
-          />
-        ) : null}
-        {effective.name === 'forms' ? (
-          <FormsPage
-            api={clients.forms}
-            canManage={FORM_MANAGER_ROLES.includes(role)}
-            locales={context?.locales ?? []}
-          />
-        ) : null}
-        {effective.name === 'media' ? (
-          <MediaLibraryPage api={clients.media} ai={clients.ai} />
-        ) : null}
-        {effective.name === 'design' ? (
-          <DesignPage
-            api={clients.design}
-            tab={effective.tab}
-            onNavigate={go}
-            locales={context?.locales ?? []}
-          />
-        ) : null}
-        {effective.name === 'commerce' ? (
-          <CommercePage
-            api={clients.commerce}
-            media={clients.media}
-            tab={effective.tab}
-            canManage={
-              effective.tab === 'settings'
-                ? SHOP_SETTINGS_ROLES.includes(role)
-                : SHOP_ROLES.includes(role)
-            }
-            role={role}
-            {...(context ? { features: context.features } : {})}
-            onNavigate={go}
-          />
-        ) : null}
-        {effective.name === 'growth' ? (
-          <GrowthPage
-            tab={effective.tab}
-            apis={{
-              seo: clients.seo,
-              analytics: clients.analytics,
-              newsletter: clients.newsletter,
-              apps: clients.apps,
-              membership: clients.membership,
-            }}
-            canManage={GROWTH_MANAGER_ROLES.includes(role)}
-            role={role}
-            {...(context ? { features: context.features } : {})}
-            onNavigate={go}
-          />
-        ) : null}
-        {effective.name === 'settings' ? (
-          <SettingsPage
-            api={clients.settings}
-            billing={clients.billing}
-            security={clients.auth}
-            tab={effective.tab}
-            role={role}
-            {...(context ? { features: context.features } : {})}
-            onNavigate={go}
-          />
-        ) : null}
+          siteName={context?.siteName ?? ''}
+          userName={clients.session.read()?.user.name ?? ''}
+          role={role}
+          features={context?.features}
+          locale={locale}
+          onLocaleChange={changeLocale}
+          updates={clients.updates}
+          {...(context?.publicUrl ? { publicUrl: context.publicUrl } : {})}
+          canCreate={role !== 'viewer'}
+          onCreate={openCreate}
+          searchContent={async (query) => {
+            const page = await clients.content.list({ q: query, limit: 6 });
+            return page.items.map((item) => ({
+              id: item.id,
+              title: item.title,
+              type: item.type,
+              slug: item.slug,
+            }));
+          }}
+          onNavigate={go}
+          onSignOut={signOut}
+        >
+          {effective.name === 'dashboard' ? (
+            <DashboardPage
+              api={clients.dashboard}
+              onOpenEditor={(contentId) => go(`/editor/${contentId}`)}
+              onNavigate={go}
+            />
+          ) : null}
+          {effective.name === 'content' ? (
+            <ContentListPage
+              api={clients.content}
+              kind={effective.kind}
+              locales={context?.locales ?? []}
+              onCreate={openCreate}
+              onOpenEditor={(contentId) => go(`/editor/${contentId}`)}
+            />
+          ) : null}
+          {effective.name === 'forms' ? (
+            <FormsPage
+              api={clients.forms}
+              canManage={FORM_MANAGER_ROLES.includes(role)}
+              locales={context?.locales ?? []}
+            />
+          ) : null}
+          {effective.name === 'media' ? (
+            <MediaLibraryPage api={clients.media} ai={clients.ai} />
+          ) : null}
+          {effective.name === 'design' ? (
+            <DesignPage
+              api={clients.design}
+              tab={effective.tab}
+              onNavigate={go}
+              locales={context?.locales ?? []}
+            />
+          ) : null}
+          {effective.name === 'commerce' ? (
+            <CommercePage
+              api={clients.commerce}
+              media={clients.media}
+              tab={effective.tab}
+              canManage={
+                effective.tab === 'settings'
+                  ? SHOP_SETTINGS_ROLES.includes(role)
+                  : SHOP_ROLES.includes(role)
+              }
+              role={role}
+              {...(context ? { features: context.features } : {})}
+              onNavigate={go}
+            />
+          ) : null}
+          {effective.name === 'growth' ? (
+            <GrowthPage
+              tab={effective.tab}
+              apis={{
+                seo: clients.seo,
+                analytics: clients.analytics,
+                newsletter: clients.newsletter,
+                apps: clients.apps,
+                membership: clients.membership,
+                marketplace: clients.marketplace,
+              }}
+              canManage={GROWTH_MANAGER_ROLES.includes(role)}
+              role={role}
+              {...(context ? { features: context.features } : {})}
+              onNavigate={go}
+            />
+          ) : null}
+          {effective.name === 'settings' ? (
+            <SettingsPage
+              api={clients.settings}
+              billing={clients.billing}
+              security={clients.auth}
+              tab={effective.tab}
+              role={role}
+              {...(context ? { features: context.features } : {})}
+              onNavigate={go}
+            />
+          ) : null}
         </AdminShell>
       </MediaLibraryProvider>
     );

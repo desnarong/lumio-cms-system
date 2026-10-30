@@ -31,7 +31,7 @@
 - Analytics ในตัว (ไม่ต้องใช้ Google Analytics)
 - Newsletter / Email subscribers
 - Booking / นัดหมาย (app)
-- Block Marketplace
+- Block Marketplace — ทำแล้วในก้อนที่ 61 (ชุดส่วนที่ลงลายเซ็น, เปิดด้วยไลเซนส์ `marketplace`)
 
 ## 3.3 เฟส 3
 
