@@ -3,76 +3,78 @@
 > ติดตามงานย่อยตาม [`docs/design/19-roadmap.md`](design/19-roadmap.md) หัวข้อ 19.3
 > อัปเดตสถานะทุกครั้งที่จบงานหนึ่งก้อน
 
-อัปเดตล่าสุด: 2026-10-30 (ก้อนที่ 62 เสร็จ)
+อัปเดตล่าสุด: 2026-10-30 (ก้อนที่ 64 เสร็จ)
 
 ## สถานะงาน (Roadmap 19.3)
 
-| #   | งาน                                                           |  สถานะ   | หมายเหตุ                                                                                                                                                                                                                                                                     |
-| --- | ------------------------------------------------------------- | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | สร้างโครง monorepo                                            | ✅ เสร็จ | pnpm + turbo, apps ทั้ง 3, packages ทั้ง 5, docker-compose, CI                                                                                                                                                                                                               |
-| 2   | Database (Prisma + RLS + seed)                                | ✅ เสร็จ | Prisma schema ตามหัวข้อ 11 + RLS (FORCE) + seed ไทย 2 เว็บ + test ข้ามเว็บ                                                                                                                                                                                                   |
-| 3   | Design tokens + UI kit                                        | ✅ เสร็จ | tokens ครบ (light/dark) + UI kit 27 component + Storybook 10 + a11y                                                                                                                                                                                                          |
-| 4   | Auth + Sites + RBAC                                           | ✅ เสร็จ | login/register/refresh/logout/me, sites, members, guard 3 ชั้น + audit log                                                                                                                                                                                                   |
-| 5   | Block engine + 6 block แรก                                    | ✅ เสร็จ | engine ครบ (shell/editable/img/renderer/paths/migrate/loader) + 6 block + panel                                                                                                                                                                                              |
-| 6   | Editor (edit-on-page)                                         | ✅ เสร็จ | Contents API + หน้า Editor (inline edit, slash, ลากวาง, panel, undo, autosave)                                                                                                                                                                                               |
-| 7   | Renderer + Publish                                            | ✅ เสร็จ | Public API + renderer อ่าน blocks_published + SEO/JSON-LD/sitemap + publish job                                                                                                                                                                                              |
-| 8   | Media library                                                 | ✅ เสร็จ | presign + ตรวจ magic bytes + sharp worker (WebP/AVIF/srcset) + คลังรูปในแอดมิน                                                                                                                                                                                               |
-| 9   | Wizard + Templates                                            | ✅ เสร็จ | template 3 แบบ (ร้านอาหาร/คลินิก/ฟรีแลนซ์) + wizard 5 ขั้น + login admin + เปลี่ยนเทมเพลต                                                                                                                                                                                    |
-| 10  | Security review                                               | ✅ เสร็จ | แก้ XSS ลิงก์แล้ว; เหลืออัปเกรด next + header/CSRF → [`design/23-security-review.md`](design/23-security-review.md)                                                                                                                                                          |
-| 11  | Security hardening                                            | ✅ เสร็จ | ปิด blocker/ควรแก้จากก้อนที่ 10: next 15.5, overrides, headers+CSP, CSRF, trust proxy, Redis rate limit, lockout — `pnpm audit` เหลือ 2 (แก้ไม่ได้ในก้อนนี้)                                                                                                                 |
-| 12  | หน้าจอหลังบ้าน (Dashboard + ดีไซน์)                           | ✅ เสร็จ | admin shell 5 เมนู + Dashboard (สถิติ/สุขภาพเว็บ/checklist) + หน้าจอดีไซน์ครบ (สไตล์/เมนู/Header-Footer/เปลี่ยน Template/เทมเพลตส่วน) + รายการหน้าเว็บ-บทความ + ตั้งค่า (ทั่วไป/โดเมน/ทีมงาน)                                                                                |
-| 13  | ฟอร์มติดต่อ & ข้อความที่ได้รับ                                | ✅ เสร็จ | ฟอร์ม (สร้าง/แก้ช่อง/แจ้งเตือนอีเมล-LINE) + กล่องข้อความ (กรอง/อ่านแล้ว/เก็บเข้าคลัง + undo) + block ฟอร์มบนหน้าเว็บที่ส่งข้อความได้โดยไม่ใช้ JavaScript                                                                                                                     |
-| 14  | ประวัติเวอร์ชัน & ถังขยะเนื้อหา                               | ✅ เสร็จ | เก็บเวอร์ชันทุกครั้งที่เผยแพร่ + บันทึกเวอร์ชันเอง/ดูตัวอย่าง/กู้คืนในหน้าแก้ไข, ถังขยะเนื้อหา (กู้คืน/ลบถาวร) ทั้งในรายการหน้าเว็บและเมนูตั้งค่า + ลบอัตโนมัติหลัง 30 วัน                                                                                                   |
-| 15  | เมนู “เติบโต” (SEO/Analytics/Newsletter/Apps)                 | ✅ เสร็จ | `GET /seo/health` ต่อจากคะแนนสุขภาพเว็บ, หน้าสถิติผู้เข้าชม (7/30 วัน + แนวโน้ม + หน้าที่ถูกเปิด/แหล่งที่มา/อุปกรณ์), รายชื่อผู้ติดตามข่าว (เพิ่ม/เปลี่ยนสถานะ/นำออก + undo + export CSV), คลัง Apps พร้อม permission scope                                                  |
-| 16  | Command palette, สถิติจริง, App sandbox, สำรองข้อมูล, แพ็กเกจ | ✅ เสร็จ | Command Palette (Ctrl/⌘+K) ค้นคำสั่ง+เนื้อหา, beacon เก็บ pageview + Analytics ใช้งานได้จริง, App sandbox (iframe + postMessage ตรวจ scope), export/import ทั้งเว็บ (JSON), หน้าจอแพ็กเกจ/โควตา/ประวัติการชำระเงิน (migration `invoices`)                                    |
-| 17  | ผู้ช่วย AI (เขียน/แปล/คำอธิบายรูป/SEO)                        | ✅ เสร็จ | provider abstraction (local ไม่ต้องมี key + OpenAI-compatible), เสนอเป็น diff ให้กด "นำไปใช้"/"ยกเลิก" + undo, โควตาตามแพ็กเกจ (ตาราง `ai_usage`) + cache + audit, ปุ่ม ✨ ใน editor/คลังรูป                                                                                 |
-| 18  | หลายภาษา (i18n)                                               | ✅ เสร็จ | `contents.translation_group_id` + สร้างคำแปลจากโครงเดิม (ร่างเสมอ, แปลทั้งหน้าด้วย AI ได้), URL `/en/...` (ภาษาหลักไม่มีคำนำหน้า) + hreflang/x-default + fallback พร้อมป้าย, block ตัวสลับภาษา (ไม่มี JS), แท็บตั้งค่า › ภาษา                                                |
-| 19  | i18n ต่อ (ปุ่มแปล + ตัวกรองภาษา)                              | ✅ เสร็จ | `missingTranslationIndexes` + `POST /contents/:id/translate-content` (แปลเฉพาะข้อความที่ยังไม่ได้แปล, คืน tree ให้ editor ทำเป็น undo ขั้นเดียว), ปุ่ม ✨ ใน LanguageBar, ตัวกรองภาษา + ป้ายภาษาต่อแถวในรายการหน้าเว็บ/บทความ                                                |
-| 20  | เทสต์ HTTP + S3 + BullMQ + i18n ฝั่งเว็บ + AI ต่อ             | ✅ เสร็จ | เทสต์ระดับ HTTP 17 เคส (เจอบั๊ก 304 แล้วแก้), S3/MinIO driver จริง + ตรวจขนาด/magic bytes ตอน confirm, BullMQ จริง (`QUEUE_DRIVER=bullmq`), i18n ฝั่งเว็บครบ (Accept-Language, เมนู/ฟอร์มต่อภาษา, ซับโดเมนภาษา), AI: cache บน Redis + alt-text เป็นชุด + `/ai/generate-site` |
-| 21  | i18n หน้าจอแอดมินที่เหลือ                                     | ✅ เสร็จ | ครบทุกหน้าจอ (editor, คลังรูป, ฟอร์ม, ดีไซน์, เติบโต, ตั้งค่า, wizard, login, AI) + `translateNow` สำหรับโค้ดนอก React                                                                                                                                                       |
-| 22  | ข้อความจาก API, ชื่อบล็อก, Nest 11, AI สั่งงานทั้งเว็บ        | ✅ เสร็จ | `X-Locale` + แคตตาล็อกฝั่งเซิร์ฟเวอร์, `labelEn` ใน registry, Nest 11.2.7, `/ai/site-command` เสนอ design-token diff พร้อม inverse patch                                                                                                                                     |
-| 23  | AI แนะนำ meta จากหน้า เติบโต › SEO                            | ✅ เสร็จ | การ์ดผู้ช่วยในหน้ารายงาน SEO (รายหน้าที่ยังขาดชื่อเรื่อง/คำอธิบาย) + diff ก่อนบันทึก + เลิกทำได้, `PATCH /contents/:id/seo` รวมค่าเดิมแทนการทับ, ซ่อมหน้าเว็บที่เผยแพร่แล้วทันที                                      |
-| 24  | สีแบรนด์จากโลโก้ใน wizard ขั้น 4                              | ✅ เสร็จ | `POST /media/:id/palette` อ่านสีจากโลโก้จริงด้วย sharp + `extractBrandPalette()` (เลือกสีหลัก/สีตัดกัน ผ่าน WCAG) · ปุ่ม "ใช้สีจากโลโก้" ในขั้น 4 พร้อมปุ่มใช้สีเดิม · โหมดเดโมให้พาเลทที่แน่นอน |
-| 25  | เก็บงานค้างคลังรูป: ลบถังขยะอัตโนมัติ + AVIF ผ่าน picture | ✅ เสร็จ | media.archived_at + migration, purgeExpiredTrash() ลบไฟล์/แถวตาม 30 วัน + MediaPurgeProcessor ใน worker, avifSrcSet ใน MediaItem/image value แล้ว Img เรนเดอร์ picture + source image/avif พร้อม WebP fallback |
-| 26  | จุดโฟกัสรูป (ตั้ง + ใช้ตัดภาพจริง)                           | ✅ เสร็จ | สไลเดอร์ + พรีวิวในคลังรูปบันทึกด้วย PATCH /media/:id พร้อม undo, focalPoint ส่งต่อผ่าน picker → block → Img ใช้ object-position กับ aspect ที่ block กำหนด |
-| 27  | สร้างเว็บหลายภาษาเป็น background job                       | ✅ เสร็จ | site.locales + locales input, SiteLocaleService/Processor (memory/BullMQ) สร้างหน้าและแปลด้วย AI พร้อม fallback เป็น copy, GET /sites/:id/locales ให้ wizard poll สถานะ, ปุ่มเลือกภาษาในขั้น 5 |
-| 28  | แชท AI สั่งแก้เนื้อหาบล็อกที่เลือก                          | ✅ เสร็จ | POST /ai/block-command + aiBlockCommandInputSchema/AiChange.path, parser ออฟไลน์ (สั้นลง/ทางการ/กันเอง/เปลี่ยนเป็น), provider OpenAI ตรวจ path ก่อนคืน diff, ปุ่ม “แก้ข้อความที่เลือก” ในแผง AI นำไปใช้เป็น undo ขั้นเดียว |
-| 29  | รับชำระเงินจริงผ่าน Stripe (บัตร + พร้อมเพย์)                  | ✅ เสร็จ | POST /billing/checkout + /billing/webhook (HMAC จาก raw body), invoices.provider/provider_ref/method, async promptpay + void เมื่อหมดอายุ, PATCH /billing/plan ใช้ได้เฉพาะแพ็กเกจฟรี, โมดัลเลือกวิธีจ่ายในแอดมิน |
-| 30  | ต่ออายุอัตโนมัติ + ใบเสร็จรอบใหม่ (Stripe)                     | ✅ เสร็จ | sites.stripe_*_id, บัตร = subscription รายเดือน (พร้อมเพย์ = ครั้งเดียว), webhook invoice.paid/payment_failed/subscription.updated/deleted, POST /billing/cancel, แอดมินแสดงรอบต่ออายุ + ยกเลิกได้ |
-| 31  | บังคับใช้โควตาตามแพ็กเกจ (หน้า/พื้นที่/ทีม)                   | ✅ เสร็จ | QuotaService ตรวจใต้ forSite ตอนสร้างหน้า/กู้คืน/สร้างคำแปล, presign รูป, เชิญทีม; ข้อความธุรกิจไทย-อังกฤษจาก shared, ไม่จำกัดเมื่อแผน null, เกินอยู่แล้วยังใช้งานได้ |
-| 32  | เปลี่ยนแพ็กเกจไม่ให้ต่ออายุซ้ำ                              | ✅ เสร็จ | ยกเลิก subscription เดิมทันทีหลังจ่ายรอบใหม่สำเร็จ (DELETE + 404 = จบ), void ใบแจ้งหนี้ที่ค้างจาก checkout ที่ถูกทิ้ง, audit ทั้งสำเร็จ/ล้มเหลว, แอดมินแจ้งว่าไม่คืนส่วนที่เหลือของรอบ |
-| 33  | ล้างแคช CDN หลังเผยแพร่                                      | ✅ เสร็จ | CdnPurgeNotifier POST {host, paths} พร้อม HMAC ของ body ไป CDN_PURGE_URL, purge ล้มไม่ทำให้ publish ล้ม, renderer ปฏิเสธก็ไม่ purge, ไม่ตั้งค่า = no-op |
-| 34  | ยืนยันตัวตนสองขั้น (TOTP)                                    | ✅ เสร็จ | users.totp_enabled_at/recovery_codes + migration, RFC 6238 เอง (SHA-1, 6 หลัก/30 วิ, ±1 step), login เป็น challenge 5 นาที + /auth/2fa/verify, setup/enable/disable + recovery codes ใช้ครั้งเดียว (hash), หน้าจอ login ขั้นที่สอง + การ์ดในตั้งค่า |
-| 35  | เก็บงานค้าง: proration, App manifest ภายนอก, pageview จาก edge, ClamAV, import ไฟล์สื่อ | ✅ เสร็จ | เครดิตส่วนที่เหลือของรอบเดิมหักจากยอดเปลี่ยนแพ็กเกจ (invoices.credit), รับ manifest จากนักพัฒนาพร้อมป้องกัน SSRF และ kill switch ระดับแพลตฟอร์ม, รับ pageview แบบชุดจาก edge ด้วยโทเคน, สแกนไวรัสผ่าน clamd และนำเข้าไฟล์สื่อกลับจาก backup |
-| 36  | เก็บงานค้าง: เพดานพิกเซล, on-demand TLS, import โดเมน/สมาชิก | ✅ เสร็จ | `MEDIA_MAX_INPUT_PIXELS` ใช้กับ sharp ทุกจุด, `GET /public/tls/ask` + Caddy on-demand TLS, backup กู้โดเมน/สมาชิก (เฉพาะบัญชีที่มีอยู่) และ merge global blocks ตาม kind |
-| 37  | E-commerce (สินค้า, ตะกร้า, พร้อมเพย์, คำสั่งซื้อ)            | ✅ เสร็จ | ตาราง products/orders/order_items + RLS, API ร้านค้าและหน้าจอแอดมิน (สินค้า/คำสั่งซื้อ/ตั้งค่ารับเงิน), หน้าร้าน + ตะกร้า + checkout + ใบยืนยันทาง `/shop`, `/cart`, `/checkout`, `/order/:token` (ไม่ใช้ JS ฝั่งเว็บ) |
-| 38  | Template ต่อจาก 3 เป็น 5 แบบ                                 | ✅ เสร็จ | เพิ่มเทมเพลต “สานศิลป์” (ร้านค้า) และ “เมฆขาว” (บล็อก) พร้อมหน้าไทยจริง 5 หน้า, เมนู, tokens และภาพตัวอย่าง; ยังไม่แตะเนื้อหาผู้ใช้ |
-| 39  | ปิดงานค้างร้านค้า: อีเมล, backup, บัตร Stripe                | ✅ เสร็จ | แจ้งออเดอร์ใหม่/เปลี่ยนสถานะทางอีเมล (Resend, ไม่มีคีย์ = log), backup/restore สินค้า+คำสั่งซื้อ, รับบัตรผ่าน Stripe Checkout + webhook ปิดออเดอร์, ตั้งค่าเปิด/ปิดบัตรในแอดมิน |
-| 40  | ปิดงานค้างร้านค้า/สื่อ/ตัวอย่าง: สลิป, ตัวเลือกสินค้า, ค่าส่ง, วิธีจ่าย, ใบเสร็จ, webhook, bulk media, preview/robots/ISR | ✅ เสร็จ | สลิปพร้อมเพย์ + ตรวจอัตโนมัติ/อนุมัติ, ตัวเลือกไซซ์-สี, ค่าส่งแบบ fix/ตามน้ำหนัก/ตามพื้นที่, เปิด-ปิดวิธีจ่าย, ใบเสร็จ HTML+PDF, webhook ที่ลงชื่อ HMAC, แก้ alt หลายรูป/ย้ายโฟลเดอร์, หน้า preview draft, robots ตัด path ส่วนตัว, cache ต่อ host |
-| 41  | จัดการเปลี่ยนเส้นทาง (Redirect manager)                      | ✅ เสร็จ | ตาราง `redirects` เดิมถูกใช้ครั้งแรก: API `GET/POST/PATCH/DELETE /redirects` (301/302, กัน loop/ที่อยู่หน้าหลัก, audit, RLS ต่อเว็บ) + แท็บ “เปลี่ยนเส้นทาง” ในหน้าตั้งค่า (เพิ่ม/แก้/ลบพร้อมเลิกทำ) · renderer ตามกฎเดิมเมื่อไม่พบหน้านั้น |
-| 42  | ครอปรูปในคลังสื่อ                                            | ✅ เสร็จ | `media.crop` + PATCH /media/:id รับกรอบครอป, worker ตัดทุกระยะจากกรอบเดิม (คีย์เดิมจึงไม่ทำให้หน้าที่ยังใช้ srcset เก่าพัง), UI ครอปพร้อมพรีวิว/สไลเดอร์, กัน GIF และรูปที่ยังเรนเดอร์ไม่เสร็จ |
-| 43  | ปิด MVP: อีเมลจริง, สำรองอัตโนมัติ, OG image, 404 monitor, static publish | ✅ เสร็จ | ตั้งค่าอีเมลของเว็บเอง (SMTP/Resend, เข้ารหัส, ทดสอบส่งจริง) + ฟอร์มส่งอีเมลจริง, สำรองข้อมูลรายวันพร้อมเก็บย้อนหลัง, OG image เจนอัตโนมัติ, เก็บ 404 30 วัน + การ์ดในหน้า SEO, ส่ง HTML ขึ้น static host พร้อม HMAC และ Lighthouse CI |
-| 44  | ปิด MVP ส่วนที่เหลือ: CDN ที่ลูกค้าตั้งเอง, โดเมน/SSL อัตโนมัติ, Lighthouse บังคับ | ✅ เสร็จ | ตั้งค่า › การเผยแพร่ (renderer/static host/CDN + คีย์เข้ารหัส) ต่อเว็บ ไม่ต้องพึ่ง .env, กุญแจระบบสร้างเอง, เขียน static แบบขนานภายใน 10 วินาที + บันทึกเวลาล่าสุด, worker ตรวจ DNS เปิด SSL ให้เองทุก 5 นาที, LHCI บังคับ ≥ 0.9 |
+| #   | งาน                                                                                                                       |  สถานะ   | หมายเหตุ                                                                                                                                                                                                                                                                     |
+| --- | ------------------------------------------------------------------------------------------------------------------------- | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | สร้างโครง monorepo                                                                                                        | ✅ เสร็จ | pnpm + turbo, apps ทั้ง 3, packages ทั้ง 5, docker-compose, CI                                                                                                                                                                                                               |
+| 2   | Database (Prisma + RLS + seed)                                                                                            | ✅ เสร็จ | Prisma schema ตามหัวข้อ 11 + RLS (FORCE) + seed ไทย 2 เว็บ + test ข้ามเว็บ                                                                                                                                                                                                   |
+| 3   | Design tokens + UI kit                                                                                                    | ✅ เสร็จ | tokens ครบ (light/dark) + UI kit 27 component + Storybook 10 + a11y                                                                                                                                                                                                          |
+| 4   | Auth + Sites + RBAC                                                                                                       | ✅ เสร็จ | login/register/refresh/logout/me, sites, members, guard 3 ชั้น + audit log                                                                                                                                                                                                   |
+| 5   | Block engine + 6 block แรก                                                                                                | ✅ เสร็จ | engine ครบ (shell/editable/img/renderer/paths/migrate/loader) + 6 block + panel                                                                                                                                                                                              |
+| 6   | Editor (edit-on-page)                                                                                                     | ✅ เสร็จ | Contents API + หน้า Editor (inline edit, slash, ลากวาง, panel, undo, autosave)                                                                                                                                                                                               |
+| 7   | Renderer + Publish                                                                                                        | ✅ เสร็จ | Public API + renderer อ่าน blocks_published + SEO/JSON-LD/sitemap + publish job                                                                                                                                                                                              |
+| 8   | Media library                                                                                                             | ✅ เสร็จ | presign + ตรวจ magic bytes + sharp worker (WebP/AVIF/srcset) + คลังรูปในแอดมิน                                                                                                                                                                                               |
+| 9   | Wizard + Templates                                                                                                        | ✅ เสร็จ | template 3 แบบ (ร้านอาหาร/คลินิก/ฟรีแลนซ์) + wizard 5 ขั้น + login admin + เปลี่ยนเทมเพลต                                                                                                                                                                                    |
+| 10  | Security review                                                                                                           | ✅ เสร็จ | แก้ XSS ลิงก์แล้ว; เหลืออัปเกรด next + header/CSRF → [`design/23-security-review.md`](design/23-security-review.md)                                                                                                                                                          |
+| 11  | Security hardening                                                                                                        | ✅ เสร็จ | ปิด blocker/ควรแก้จากก้อนที่ 10: next 15.5, overrides, headers+CSP, CSRF, trust proxy, Redis rate limit, lockout — `pnpm audit` เหลือ 2 (แก้ไม่ได้ในก้อนนี้)                                                                                                                 |
+| 12  | หน้าจอหลังบ้าน (Dashboard + ดีไซน์)                                                                                       | ✅ เสร็จ | admin shell 5 เมนู + Dashboard (สถิติ/สุขภาพเว็บ/checklist) + หน้าจอดีไซน์ครบ (สไตล์/เมนู/Header-Footer/เปลี่ยน Template/เทมเพลตส่วน) + รายการหน้าเว็บ-บทความ + ตั้งค่า (ทั่วไป/โดเมน/ทีมงาน)                                                                                |
+| 13  | ฟอร์มติดต่อ & ข้อความที่ได้รับ                                                                                            | ✅ เสร็จ | ฟอร์ม (สร้าง/แก้ช่อง/แจ้งเตือนอีเมล-LINE) + กล่องข้อความ (กรอง/อ่านแล้ว/เก็บเข้าคลัง + undo) + block ฟอร์มบนหน้าเว็บที่ส่งข้อความได้โดยไม่ใช้ JavaScript                                                                                                                     |
+| 14  | ประวัติเวอร์ชัน & ถังขยะเนื้อหา                                                                                           | ✅ เสร็จ | เก็บเวอร์ชันทุกครั้งที่เผยแพร่ + บันทึกเวอร์ชันเอง/ดูตัวอย่าง/กู้คืนในหน้าแก้ไข, ถังขยะเนื้อหา (กู้คืน/ลบถาวร) ทั้งในรายการหน้าเว็บและเมนูตั้งค่า + ลบอัตโนมัติหลัง 30 วัน                                                                                                   |
+| 15  | เมนู “เติบโต” (SEO/Analytics/Newsletter/Apps)                                                                             | ✅ เสร็จ | `GET /seo/health` ต่อจากคะแนนสุขภาพเว็บ, หน้าสถิติผู้เข้าชม (7/30 วัน + แนวโน้ม + หน้าที่ถูกเปิด/แหล่งที่มา/อุปกรณ์), รายชื่อผู้ติดตามข่าว (เพิ่ม/เปลี่ยนสถานะ/นำออก + undo + export CSV), คลัง Apps พร้อม permission scope                                                  |
+| 16  | Command palette, สถิติจริง, App sandbox, สำรองข้อมูล, แพ็กเกจ                                                             | ✅ เสร็จ | Command Palette (Ctrl/⌘+K) ค้นคำสั่ง+เนื้อหา, beacon เก็บ pageview + Analytics ใช้งานได้จริง, App sandbox (iframe + postMessage ตรวจ scope), export/import ทั้งเว็บ (JSON), หน้าจอแพ็กเกจ/โควตา/ประวัติการชำระเงิน (migration `invoices`)                                    |
+| 17  | ผู้ช่วย AI (เขียน/แปล/คำอธิบายรูป/SEO)                                                                                    | ✅ เสร็จ | provider abstraction (local ไม่ต้องมี key + OpenAI-compatible), เสนอเป็น diff ให้กด "นำไปใช้"/"ยกเลิก" + undo, โควตาตามแพ็กเกจ (ตาราง `ai_usage`) + cache + audit, ปุ่ม ✨ ใน editor/คลังรูป                                                                                 |
+| 18  | หลายภาษา (i18n)                                                                                                           | ✅ เสร็จ | `contents.translation_group_id` + สร้างคำแปลจากโครงเดิม (ร่างเสมอ, แปลทั้งหน้าด้วย AI ได้), URL `/en/...` (ภาษาหลักไม่มีคำนำหน้า) + hreflang/x-default + fallback พร้อมป้าย, block ตัวสลับภาษา (ไม่มี JS), แท็บตั้งค่า › ภาษา                                                |
+| 19  | i18n ต่อ (ปุ่มแปล + ตัวกรองภาษา)                                                                                          | ✅ เสร็จ | `missingTranslationIndexes` + `POST /contents/:id/translate-content` (แปลเฉพาะข้อความที่ยังไม่ได้แปล, คืน tree ให้ editor ทำเป็น undo ขั้นเดียว), ปุ่ม ✨ ใน LanguageBar, ตัวกรองภาษา + ป้ายภาษาต่อแถวในรายการหน้าเว็บ/บทความ                                                |
+| 20  | เทสต์ HTTP + S3 + BullMQ + i18n ฝั่งเว็บ + AI ต่อ                                                                         | ✅ เสร็จ | เทสต์ระดับ HTTP 17 เคส (เจอบั๊ก 304 แล้วแก้), S3/MinIO driver จริง + ตรวจขนาด/magic bytes ตอน confirm, BullMQ จริง (`QUEUE_DRIVER=bullmq`), i18n ฝั่งเว็บครบ (Accept-Language, เมนู/ฟอร์มต่อภาษา, ซับโดเมนภาษา), AI: cache บน Redis + alt-text เป็นชุด + `/ai/generate-site` |
+| 21  | i18n หน้าจอแอดมินที่เหลือ                                                                                                 | ✅ เสร็จ | ครบทุกหน้าจอ (editor, คลังรูป, ฟอร์ม, ดีไซน์, เติบโต, ตั้งค่า, wizard, login, AI) + `translateNow` สำหรับโค้ดนอก React                                                                                                                                                       |
+| 22  | ข้อความจาก API, ชื่อบล็อก, Nest 11, AI สั่งงานทั้งเว็บ                                                                    | ✅ เสร็จ | `X-Locale` + แคตตาล็อกฝั่งเซิร์ฟเวอร์, `labelEn` ใน registry, Nest 11.2.7, `/ai/site-command` เสนอ design-token diff พร้อม inverse patch                                                                                                                                     |
+| 23  | AI แนะนำ meta จากหน้า เติบโต › SEO                                                                                        | ✅ เสร็จ | การ์ดผู้ช่วยในหน้ารายงาน SEO (รายหน้าที่ยังขาดชื่อเรื่อง/คำอธิบาย) + diff ก่อนบันทึก + เลิกทำได้, `PATCH /contents/:id/seo` รวมค่าเดิมแทนการทับ, ซ่อมหน้าเว็บที่เผยแพร่แล้วทันที                                                                                             |
+| 24  | สีแบรนด์จากโลโก้ใน wizard ขั้น 4                                                                                          | ✅ เสร็จ | `POST /media/:id/palette` อ่านสีจากโลโก้จริงด้วย sharp + `extractBrandPalette()` (เลือกสีหลัก/สีตัดกัน ผ่าน WCAG) · ปุ่ม "ใช้สีจากโลโก้" ในขั้น 4 พร้อมปุ่มใช้สีเดิม · โหมดเดโมให้พาเลทที่แน่นอน                                                                             |
+| 25  | เก็บงานค้างคลังรูป: ลบถังขยะอัตโนมัติ + AVIF ผ่าน picture                                                                 | ✅ เสร็จ | media.archived_at + migration, purgeExpiredTrash() ลบไฟล์/แถวตาม 30 วัน + MediaPurgeProcessor ใน worker, avifSrcSet ใน MediaItem/image value แล้ว Img เรนเดอร์ picture + source image/avif พร้อม WebP fallback                                                               |
+| 26  | จุดโฟกัสรูป (ตั้ง + ใช้ตัดภาพจริง)                                                                                        | ✅ เสร็จ | สไลเดอร์ + พรีวิวในคลังรูปบันทึกด้วย PATCH /media/:id พร้อม undo, focalPoint ส่งต่อผ่าน picker → block → Img ใช้ object-position กับ aspect ที่ block กำหนด                                                                                                                  |
+| 27  | สร้างเว็บหลายภาษาเป็น background job                                                                                      | ✅ เสร็จ | site.locales + locales input, SiteLocaleService/Processor (memory/BullMQ) สร้างหน้าและแปลด้วย AI พร้อม fallback เป็น copy, GET /sites/:id/locales ให้ wizard poll สถานะ, ปุ่มเลือกภาษาในขั้น 5                                                                               |
+| 28  | แชท AI สั่งแก้เนื้อหาบล็อกที่เลือก                                                                                        | ✅ เสร็จ | POST /ai/block-command + aiBlockCommandInputSchema/AiChange.path, parser ออฟไลน์ (สั้นลง/ทางการ/กันเอง/เปลี่ยนเป็น), provider OpenAI ตรวจ path ก่อนคืน diff, ปุ่ม “แก้ข้อความที่เลือก” ในแผง AI นำไปใช้เป็น undo ขั้นเดียว                                                   |
+| 29  | รับชำระเงินจริงผ่าน Stripe (บัตร + พร้อมเพย์)                                                                             | ✅ เสร็จ | POST /billing/checkout + /billing/webhook (HMAC จาก raw body), invoices.provider/provider_ref/method, async promptpay + void เมื่อหมดอายุ, PATCH /billing/plan ใช้ได้เฉพาะแพ็กเกจฟรี, โมดัลเลือกวิธีจ่ายในแอดมิน                                                             |
+| 30  | ต่ออายุอัตโนมัติ + ใบเสร็จรอบใหม่ (Stripe)                                                                                | ✅ เสร็จ | sites.stripe_*_id, บัตร = subscription รายเดือน (พร้อมเพย์ = ครั้งเดียว), webhook invoice.paid/payment_failed/subscription.updated/deleted, POST /billing/cancel, แอดมินแสดงรอบต่ออายุ + ยกเลิกได้                                                                           |
+| 31  | บังคับใช้โควตาตามแพ็กเกจ (หน้า/พื้นที่/ทีม)                                                                               | ✅ เสร็จ | QuotaService ตรวจใต้ forSite ตอนสร้างหน้า/กู้คืน/สร้างคำแปล, presign รูป, เชิญทีม; ข้อความธุรกิจไทย-อังกฤษจาก shared, ไม่จำกัดเมื่อแผน null, เกินอยู่แล้วยังใช้งานได้                                                                                                        |
+| 32  | เปลี่ยนแพ็กเกจไม่ให้ต่ออายุซ้ำ                                                                                            | ✅ เสร็จ | ยกเลิก subscription เดิมทันทีหลังจ่ายรอบใหม่สำเร็จ (DELETE + 404 = จบ), void ใบแจ้งหนี้ที่ค้างจาก checkout ที่ถูกทิ้ง, audit ทั้งสำเร็จ/ล้มเหลว, แอดมินแจ้งว่าไม่คืนส่วนที่เหลือของรอบ                                                                                       |
+| 33  | ล้างแคช CDN หลังเผยแพร่                                                                                                   | ✅ เสร็จ | CdnPurgeNotifier POST {host, paths} พร้อม HMAC ของ body ไป CDN_PURGE_URL, purge ล้มไม่ทำให้ publish ล้ม, renderer ปฏิเสธก็ไม่ purge, ไม่ตั้งค่า = no-op                                                                                                                      |
+| 34  | ยืนยันตัวตนสองขั้น (TOTP)                                                                                                 | ✅ เสร็จ | users.totp_enabled_at/recovery_codes + migration, RFC 6238 เอง (SHA-1, 6 หลัก/30 วิ, ±1 step), login เป็น challenge 5 นาที + /auth/2fa/verify, setup/enable/disable + recovery codes ใช้ครั้งเดียว (hash), หน้าจอ login ขั้นที่สอง + การ์ดในตั้งค่า                          |
+| 35  | เก็บงานค้าง: proration, App manifest ภายนอก, pageview จาก edge, ClamAV, import ไฟล์สื่อ                                   | ✅ เสร็จ | เครดิตส่วนที่เหลือของรอบเดิมหักจากยอดเปลี่ยนแพ็กเกจ (invoices.credit), รับ manifest จากนักพัฒนาพร้อมป้องกัน SSRF และ kill switch ระดับแพลตฟอร์ม, รับ pageview แบบชุดจาก edge ด้วยโทเคน, สแกนไวรัสผ่าน clamd และนำเข้าไฟล์สื่อกลับจาก backup                                  |
+| 36  | เก็บงานค้าง: เพดานพิกเซล, on-demand TLS, import โดเมน/สมาชิก                                                              | ✅ เสร็จ | `MEDIA_MAX_INPUT_PIXELS` ใช้กับ sharp ทุกจุด, `GET /public/tls/ask` + Caddy on-demand TLS, backup กู้โดเมน/สมาชิก (เฉพาะบัญชีที่มีอยู่) และ merge global blocks ตาม kind                                                                                                     |
+| 37  | E-commerce (สินค้า, ตะกร้า, พร้อมเพย์, คำสั่งซื้อ)                                                                        | ✅ เสร็จ | ตาราง products/orders/order_items + RLS, API ร้านค้าและหน้าจอแอดมิน (สินค้า/คำสั่งซื้อ/ตั้งค่ารับเงิน), หน้าร้าน + ตะกร้า + checkout + ใบยืนยันทาง `/shop`, `/cart`, `/checkout`, `/order/:token` (ไม่ใช้ JS ฝั่งเว็บ)                                                       |
+| 38  | Template ต่อจาก 3 เป็น 5 แบบ                                                                                              | ✅ เสร็จ | เพิ่มเทมเพลต “สานศิลป์” (ร้านค้า) และ “เมฆขาว” (บล็อก) พร้อมหน้าไทยจริง 5 หน้า, เมนู, tokens และภาพตัวอย่าง; ยังไม่แตะเนื้อหาผู้ใช้                                                                                                                                          |
+| 39  | ปิดงานค้างร้านค้า: อีเมล, backup, บัตร Stripe                                                                             | ✅ เสร็จ | แจ้งออเดอร์ใหม่/เปลี่ยนสถานะทางอีเมล (Resend, ไม่มีคีย์ = log), backup/restore สินค้า+คำสั่งซื้อ, รับบัตรผ่าน Stripe Checkout + webhook ปิดออเดอร์, ตั้งค่าเปิด/ปิดบัตรในแอดมิน                                                                                              |
+| 40  | ปิดงานค้างร้านค้า/สื่อ/ตัวอย่าง: สลิป, ตัวเลือกสินค้า, ค่าส่ง, วิธีจ่าย, ใบเสร็จ, webhook, bulk media, preview/robots/ISR | ✅ เสร็จ | สลิปพร้อมเพย์ + ตรวจอัตโนมัติ/อนุมัติ, ตัวเลือกไซซ์-สี, ค่าส่งแบบ fix/ตามน้ำหนัก/ตามพื้นที่, เปิด-ปิดวิธีจ่าย, ใบเสร็จ HTML+PDF, webhook ที่ลงชื่อ HMAC, แก้ alt หลายรูป/ย้ายโฟลเดอร์, หน้า preview draft, robots ตัด path ส่วนตัว, cache ต่อ host                           |
+| 41  | จัดการเปลี่ยนเส้นทาง (Redirect manager)                                                                                   | ✅ เสร็จ | ตาราง `redirects` เดิมถูกใช้ครั้งแรก: API `GET/POST/PATCH/DELETE /redirects` (301/302, กัน loop/ที่อยู่หน้าหลัก, audit, RLS ต่อเว็บ) + แท็บ “เปลี่ยนเส้นทาง” ในหน้าตั้งค่า (เพิ่ม/แก้/ลบพร้อมเลิกทำ) · renderer ตามกฎเดิมเมื่อไม่พบหน้านั้น                                  |
+| 42  | ครอปรูปในคลังสื่อ                                                                                                         | ✅ เสร็จ | `media.crop` + PATCH /media/:id รับกรอบครอป, worker ตัดทุกระยะจากกรอบเดิม (คีย์เดิมจึงไม่ทำให้หน้าที่ยังใช้ srcset เก่าพัง), UI ครอปพร้อมพรีวิว/สไลเดอร์, กัน GIF และรูปที่ยังเรนเดอร์ไม่เสร็จ                                                                               |
+| 43  | ปิด MVP: อีเมลจริง, สำรองอัตโนมัติ, OG image, 404 monitor, static publish                                                 | ✅ เสร็จ | ตั้งค่าอีเมลของเว็บเอง (SMTP/Resend, เข้ารหัส, ทดสอบส่งจริง) + ฟอร์มส่งอีเมลจริง, สำรองข้อมูลรายวันพร้อมเก็บย้อนหลัง, OG image เจนอัตโนมัติ, เก็บ 404 30 วัน + การ์ดในหน้า SEO, ส่ง HTML ขึ้น static host พร้อม HMAC และ Lighthouse CI                                       |
+| 44  | ปิด MVP ส่วนที่เหลือ: CDN ที่ลูกค้าตั้งเอง, โดเมน/SSL อัตโนมัติ, Lighthouse บังคับ                                        | ✅ เสร็จ | ตั้งค่า › การเผยแพร่ (renderer/static host/CDN + คีย์เข้ารหัส) ต่อเว็บ ไม่ต้องพึ่ง .env, กุญแจระบบสร้างเอง, เขียน static แบบขนานภายใน 10 วินาที + บันทึกเวลาล่าสุด, worker ตรวจ DNS เปิด SSL ให้เองทุก 5 นาที, LHCI บังคับ ≥ 0.9                                             |
 
-| 45  | เทมเพลต 5 → 10 แบบ                                           | ✅ เสร็จ | เพิ่ม “ครัวริมน้ำ”, “คลินิกใจดี”, “ภาพบ้านทุ่ง”, “ดอกไม้บ้านสวน”, “เสียงเมือง” พร้อม tokens/เมนู/หน้าไทยจริง/preview ครบทั้ง 10 แพ็ก                                                                                                                                                 |
-| 46  | Feature flags (สวิตช์ส่วนเสริม)                               | ✅ เสร็จ | `sites.settings.flags` + kill switch ระดับแพลตฟอร์ม, API `GET/PATCH /features`, หน้าตั้งค่า › ส่วนเสริม, ซ่อนเมนู/กัน route ของ AI/สถิติ/ข่าวสาร/Apps/ร้านค้า                                                                                                                                 |
-| 47  | คืนเงินคำสั่งซื้อ + ใบเสร็จในอีเมล                            | ✅ เสร็จ | สถานะ `refunded` + `POST /orders/:id/refund` (คืนผ่าน Stripe เมื่อมี payment intent, คืนสต็อก, audit, webhook `order.refunded`), แนบ PDF ใบเสร็จในอีเมลเมื่อชำระเงินสำเร็จ + แสดงยอดคืนบนหน้าคำสั่งซื้อ                                                                                                                                                 |
-| 48  | E2E (Playwright) + CI                                        | ✅ เสร็จ | 3 เส้นทางหลักบนแอดมินโหมดเดโม (เข้าสู่ระบบ, ปิดส่วนเสริม, คืนเงิน), `pnpm test:e2e`, job `e2e` ใน CI พร้อมเก็บ trace เมื่อล้ม                                                                                                                                                 |
+| 45 | เทมเพลต 5 → 10 แบบ | ✅ เสร็จ | เพิ่ม “ครัวริมน้ำ”, “คลินิกใจดี”, “ภาพบ้านทุ่ง”, “ดอกไม้บ้านสวน”, “เสียงเมือง” พร้อม tokens/เมนู/หน้าไทยจริง/preview ครบทั้ง 10 แพ็ก |
+| 46 | Feature flags (สวิตช์ส่วนเสริม) | ✅ เสร็จ | `sites.settings.flags` + kill switch ระดับแพลตฟอร์ม, API `GET/PATCH /features`, หน้าตั้งค่า › ส่วนเสริม, ซ่อนเมนู/กัน route ของ AI/สถิติ/ข่าวสาร/Apps/ร้านค้า |
+| 47 | คืนเงินคำสั่งซื้อ + ใบเสร็จในอีเมล | ✅ เสร็จ | สถานะ `refunded` + `POST /orders/:id/refund` (คืนผ่าน Stripe เมื่อมี payment intent, คืนสต็อก, audit, webhook `order.refunded`), แนบ PDF ใบเสร็จในอีเมลเมื่อชำระเงินสำเร็จ + แสดงยอดคืนบนหน้าคำสั่งซื้อ |
+| 48 | E2E (Playwright) + CI | ✅ เสร็จ | 3 เส้นทางหลักบนแอดมินโหมดเดโม (เข้าสู่ระบบ, ปิดส่วนเสริม, คืนเงิน), `pnpm test:e2e`, job `e2e` ใน CI พร้อมเก็บ trace เมื่อล้ม |
 
-| 49  | Community edition + ไลเซนส์/ลายเซ็น                              | ✅ เสร็จ | AGPL-3.0 + ไฟล์รีโปสาธารณะ, ไลเซนส์ Ed25519 ตรวจออฟไลน์ (`GET /v1/license`, `POST /v1/public/license/verify`), ฟีเจอร์ที่ต้องมีไลเซนส์, `verifyLumioSignature` ใน SDK และ `git init` |
-| 50  | เอกสารปฏิบัติการจริง + กุญแจผู้ขาย                            | ✅ เสร็จ | `docs/OPERATIONS.md` (checklist production), `TRADEMARK.md`, 24.6.1 การเก็บ/สำรอง/หมุนกุญแจ + fingerprint |
-| 51  | ถอดโดเมนของบุคคลอื่นออกจากค่าเริ่มต้น                         | ✅ เสร็จ | เปลี่ยน `lumio.app` → `example.com` ทั้ง repo (code/seed/docs/tests), เตือน production ให้ตั้ง `PUBLIC_ROOT_DOMAIN`/`EMAIL_FROM` เอง |
-| 52  | รีดีไซน์ UX/UI หลังบ้าน + ใช้ไอคอนแทน emoji                    | ✅ เสร็จ | ปรับ shell/หน้าเนื้อหา/editor/ดีไซน์/ตั้งค่าให้ใช้ design tokens และไอคอนร่วมกัน, เพิ่มสถานะว่าง/คำอธิบาย และทดสอบ a11y |
-| 53  | เทมเพลตครบ 20 แบบ + เทมเพลตแรงบันดาลใจจาก B-Lighting           | ✅ เสร็จ | เพิ่มเทมเพลตเป็น 20 แพ็กพร้อม tokens/เมนู/หน้าไทยจริง/preview และโหมดเดโมของ wizard 13 แพ็ก |
-| 54  | Docker ทั้งระบบ (profiles, migrate, volumes, healthchecks)     | ✅ เสร็จ | แยก profile infra/app, migrate service, volume ที่ต้องสำรอง, healthcheck/restart, Node 22.13, `API_INTERNAL_URL` ของ renderer และ Caddy dev/prod |
-| 55  | UX/UI polish รอบสอง + ลิงก์ตัวอย่างใน Docker                   | ✅ เสร็จ | หน้าจอร้านค้า/แอป/เมนู/สื่อ/ตั้งค่าเป็น section ที่อ่านง่าย, แอปแยก “ติดตั้งแล้ว/พร้อมติดตั้ง”, ฟอร์มและตารางกระชับขึ้น, ปุ่มดูตัวอย่างใช้ `RENDERER_PUBLIC_URL`, `ADMIN_ORIGIN` รับหลาย origin, เทสต์กันความล้มเหลวจาก timeout |
-| 56  | ต่ออายุเซสชันอัตโนมัติ + กลับหน้าเข้าสู่ระบบเมื่อหมดอายุจริง      | ✅ เสร็จ | admin เรียก `/auth/refresh` ครั้งเดียวแบบ single-flight เมื่อเจอ 401 แล้วยิงคำขอเดิมซ้ำ, ถ้า refresh ไม่ผ่านหรือยังถูกปฏิเสธจะล้างเซสชันและพากลับหน้า login พร้อมบอกเหตุผล; ไม่แตะ 401 ของการเข้าสู่ระบบหรือลิงก์อัปโหลด |
-| 57  | ปรับหน้าสำรองข้อมูล/แพ็กเกจ + เอา “กลับไปภาพรวม” ออก               | ✅ เสร็จ | หน้าสำรองข้อมูลแยกเป็นการ์ดดาวน์โหลด/นำเข้าที่อ่านง่ายและซ่อน file input แบบ native, หน้าแพ็กเกจไฮไลต์แพ็กเกจที่ใช้อยู่และแสดงฟีเจอร์ด้วยไอคอน, และเอาแถบ “กลับไปภาพรวม” ในคลังสื่อออก |
-| 58  | แก้เมนู “เพิ่มส่วนใหม่” ใน editor ให้ปิดได้จริง + toolbar บนมือถือ | ✅ เสร็จ | ป๊อปอัปเกาะตำแหน่งปุ่มที่กด (ไม่กระโดดไปล่างหน้า), มีฉากหลังกดปิด, ปุ่มปิด, Esc ปิดได้ทุกที่, คืนโฟกัสกลับปุ่มเดิม, ไอคอนบล็อกตรงชนิด, เปลี่ยนไอคอนลาก/ทำซ้ำ และให้ toolbar ขึ้นบรรทัดใหม่บนมือถือ |
-| 59  | หน้าเข้าสู่ระบบของผู้ซื้อบนเว็บสาธารณะ (`/signin`)                   | ✅ เสร็จ | เปิดคำสั่งซื้อด้วยเลขคำสั่งซื้อ + เบอร์โทร/อีเมลที่ใช้สั่ง (`POST /public/:host/shop/orders/lookup`, rate limit 10/นาที, ตอบ 404 เดียวกันทั้งเลขผิดและข้อมูลติดต่อผิด), จำรายการที่เปิดไว้บนเครื่องด้วยคุกกี้ httpOnly, ออกจากระบบได้, ไม่มี JS ฝั่งเว็บ, `noindex` + robots disallow |
-| 60  | Membership / Paywall (ก้อนถัดไป A)                            | ✅ เสร็จ | บัญชีผู้อ่านแยกจากทีมงาน (สมัคร/เข้าสู่ระบบ/ลืมรหัสผ่าน/ยืนยันอีเมล), แพ็กเกจต่อเว็บ (รายเดือน/รายปี), หน้าบทความ-หน้าเว็บตั้ง `access: members` ได้จากแผงข้าง editor, หน้าถูกล็อกแสดงตัวอย่าง + ฟอร์มเข้าร่วม, Stripe Subscription + webhook, หน้าจอ เติบโต › สมาชิก (แพ็กเกจ/รายชื่อ/รายได้/หยุดต่ออายุ) — เปิดเฉพาะเมื่อไลเซนส์ระบุ `membership` |
-| 61  | Block Marketplace (ก้อนถัดไป B)                              | ✅ เสร็จ | ชุดส่วนสำเร็จรูปที่ลงลายเซ็น Ed25519 (`lumio_pack_v1.…`), แพ็กทางการ 4 ชุด, ติดตั้ง/อัปเดต/เปิดปิด/ถอนต่อเว็บ + audit, ส่วนของแพ็กโผล่ในเมนู `/` ของ editor, หน้าจอ เติบโต › ตลาดบล็อก, kill switch + ไลเซนส์ `marketplace`, ถอนแล้วหน้าไม่พังเพราะอ้างได้เฉพาะบล็อกที่บิลด์มี |
-| 62  | Integration test ที่ยิง Stripe จริง (test account)            | ✅ เสร็จ | 7 เคสยิง Stripe จริง (Checkout payment/subscription, คูปอง, ร้านค้า, สมาชิก, charge+refund) ด้วย `sk_test_` จาก env/.env ที่ไม่ถูก commit, ปฏิเสธ live key, ข้ามเมื่อไม่มีคีย์ — ระหว่างทางพบและแก้บั๊กบัญชี Stripe ใหม่ไม่รับ `payment_method_types` และปิดช่องสมาชิก aktif ก่อนเงินเข้า (unpaid/async) |
+| 49 | Community edition + ไลเซนส์/ลายเซ็น | ✅ เสร็จ | AGPL-3.0 + ไฟล์รีโปสาธารณะ, ไลเซนส์ Ed25519 ตรวจออฟไลน์ (`GET /v1/license`, `POST /v1/public/license/verify`), ฟีเจอร์ที่ต้องมีไลเซนส์, `verifyLumioSignature` ใน SDK และ `git init` |
+| 50 | เอกสารปฏิบัติการจริง + กุญแจผู้ขาย | ✅ เสร็จ | `docs/OPERATIONS.md` (checklist production), `TRADEMARK.md`, 24.6.1 การเก็บ/สำรอง/หมุนกุญแจ + fingerprint |
+| 51 | ถอดโดเมนของบุคคลอื่นออกจากค่าเริ่มต้น | ✅ เสร็จ | เปลี่ยน `lumio.app` → `example.com` ทั้ง repo (code/seed/docs/tests), เตือน production ให้ตั้ง `PUBLIC_ROOT_DOMAIN`/`EMAIL_FROM` เอง |
+| 52 | รีดีไซน์ UX/UI หลังบ้าน + ใช้ไอคอนแทน emoji | ✅ เสร็จ | ปรับ shell/หน้าเนื้อหา/editor/ดีไซน์/ตั้งค่าให้ใช้ design tokens และไอคอนร่วมกัน, เพิ่มสถานะว่าง/คำอธิบาย และทดสอบ a11y |
+| 53 | เทมเพลตครบ 20 แบบ + เทมเพลตแรงบันดาลใจจาก B-Lighting | ✅ เสร็จ | เพิ่มเทมเพลตเป็น 20 แพ็กพร้อม tokens/เมนู/หน้าไทยจริง/preview และโหมดเดโมของ wizard 13 แพ็ก |
+| 54 | Docker ทั้งระบบ (profiles, migrate, volumes, healthchecks) | ✅ เสร็จ | แยก profile infra/app, migrate service, volume ที่ต้องสำรอง, healthcheck/restart, Node 22.13, `API_INTERNAL_URL` ของ renderer และ Caddy dev/prod |
+| 55 | UX/UI polish รอบสอง + ลิงก์ตัวอย่างใน Docker | ✅ เสร็จ | หน้าจอร้านค้า/แอป/เมนู/สื่อ/ตั้งค่าเป็น section ที่อ่านง่าย, แอปแยก “ติดตั้งแล้ว/พร้อมติดตั้ง”, ฟอร์มและตารางกระชับขึ้น, ปุ่มดูตัวอย่างใช้ `RENDERER_PUBLIC_URL`, `ADMIN_ORIGIN` รับหลาย origin, เทสต์กันความล้มเหลวจาก timeout |
+| 56 | ต่ออายุเซสชันอัตโนมัติ + กลับหน้าเข้าสู่ระบบเมื่อหมดอายุจริง | ✅ เสร็จ | admin เรียก `/auth/refresh` ครั้งเดียวแบบ single-flight เมื่อเจอ 401 แล้วยิงคำขอเดิมซ้ำ, ถ้า refresh ไม่ผ่านหรือยังถูกปฏิเสธจะล้างเซสชันและพากลับหน้า login พร้อมบอกเหตุผล; ไม่แตะ 401 ของการเข้าสู่ระบบหรือลิงก์อัปโหลด |
+| 57 | ปรับหน้าสำรองข้อมูล/แพ็กเกจ + เอา “กลับไปภาพรวม” ออก | ✅ เสร็จ | หน้าสำรองข้อมูลแยกเป็นการ์ดดาวน์โหลด/นำเข้าที่อ่านง่ายและซ่อน file input แบบ native, หน้าแพ็กเกจไฮไลต์แพ็กเกจที่ใช้อยู่และแสดงฟีเจอร์ด้วยไอคอน, และเอาแถบ “กลับไปภาพรวม” ในคลังสื่อออก |
+| 58 | แก้เมนู “เพิ่มส่วนใหม่” ใน editor ให้ปิดได้จริง + toolbar บนมือถือ | ✅ เสร็จ | ป๊อปอัปเกาะตำแหน่งปุ่มที่กด (ไม่กระโดดไปล่างหน้า), มีฉากหลังกดปิด, ปุ่มปิด, Esc ปิดได้ทุกที่, คืนโฟกัสกลับปุ่มเดิม, ไอคอนบล็อกตรงชนิด, เปลี่ยนไอคอนลาก/ทำซ้ำ และให้ toolbar ขึ้นบรรทัดใหม่บนมือถือ |
+| 59 | หน้าเข้าสู่ระบบของผู้ซื้อบนเว็บสาธารณะ (`/signin`) | ✅ เสร็จ | เปิดคำสั่งซื้อด้วยเลขคำสั่งซื้อ + เบอร์โทร/อีเมลที่ใช้สั่ง (`POST /public/:host/shop/orders/lookup`, rate limit 10/นาที, ตอบ 404 เดียวกันทั้งเลขผิดและข้อมูลติดต่อผิด), จำรายการที่เปิดไว้บนเครื่องด้วยคุกกี้ httpOnly, ออกจากระบบได้, ไม่มี JS ฝั่งเว็บ, `noindex` + robots disallow |
+| 60 | Membership / Paywall (ก้อนถัดไป A) | ✅ เสร็จ | บัญชีผู้อ่านแยกจากทีมงาน (สมัคร/เข้าสู่ระบบ/ลืมรหัสผ่าน/ยืนยันอีเมล), แพ็กเกจต่อเว็บ (รายเดือน/รายปี), หน้าบทความ-หน้าเว็บตั้ง `access: members` ได้จากแผงข้าง editor, หน้าถูกล็อกแสดงตัวอย่าง + ฟอร์มเข้าร่วม, Stripe Subscription + webhook, หน้าจอ เติบโต › สมาชิก (แพ็กเกจ/รายชื่อ/รายได้/หยุดต่ออายุ) — เปิดเฉพาะเมื่อไลเซนส์ระบุ `membership` |
+| 61 | Block Marketplace (ก้อนถัดไป B) | ✅ เสร็จ | ชุดส่วนสำเร็จรูปที่ลงลายเซ็น Ed25519 (`lumio_pack_v1.…`), แพ็กทางการ 4 ชุด, ติดตั้ง/อัปเดต/เปิดปิด/ถอนต่อเว็บ + audit, ส่วนของแพ็กโผล่ในเมนู `/` ของ editor, หน้าจอ เติบโต › ตลาดบล็อก, kill switch + ไลเซนส์ `marketplace`, ถอนแล้วหน้าไม่พังเพราะอ้างได้เฉพาะบล็อกที่บิลด์มี |
+| 62 | Integration test ที่ยิง Stripe จริง (test account) | ✅ เสร็จ | 7 เคสยิง Stripe จริง (Checkout payment/subscription, คูปอง, ร้านค้า, สมาชิก, charge+refund) ด้วย `sk_test_` จาก env/.env ที่ไม่ถูก commit, ปฏิเสธ live key, ข้ามเมื่อไม่มีคีย์ — ระหว่างทางพบและแก้บั๊กบัญชี Stripe ใหม่ไม่รับ `payment_method_types` และปิดช่องสมาชิก aktif ก่อนเงินเข้า (unpaid/async) |
+| 63 | ป้ายเวอร์ชัน + ตรวจรุ่นใหม่ + อัปเดตตัวเองบน host | ✅ เสร็จ | แอดมินแสดงเวอร์ชันที่ footer ทุกหน้าและเตือนเมื่อมีรุ่นใหม่ (`GET /v1/updates`, cache 6 ชม., ตรวจใหม่ 10/นาที), `scripts/update.mjs` (`--check`/`--auto`) ทำ checkout tag → rebuild compose → รอ health → ย้อนกลับอัตโนมัติถ้าไม่ขึ้น, systemd timer 6 ชม., ปฏิเสธเมื่อ working tree ไม่สะอาด, ปล่อยเป็น 0.24.0 |
+| 64 | ตรวจหาอัปเดตจาก release feed แบบ private | ✅ เสร็จ | repo เป็น private ทำให้ GitHub ตอบ 404 ให้คำขอไม่ระบุตัวตน → API และสคริปต์อ่าน `LUMIO_UPDATE_TOKEN`/`GITHUB_TOKEN` แบบ read-only ส่งเป็น Bearer เฉพาะเมื่อมีค่า, token อยู่ฝั่งเซิร์ฟเวอร์ไม่ส่งไปเบราว์เซอร์, ปล่อยเป็น 0.24.1 |
 
 | สัญลักษณ์: ✅ เสร็จ · 🔄 กำลังทำ · ⏳ ยังไม่เริ่ม · ⚠️ ติดปัญหา
 
@@ -1444,8 +1446,8 @@ pnpm --filter admin test src/growth         # การ์ดผู้ช่ว�
     แจ้งโทนที่ใช้ และมีปุ่ม “ใช้สีเดิม” เป็น undo (ตามกฎ UX: ไม่มี confirm)
 - Test ใหม่ 17 เคส: shared 8 (การสกัดสี/ค่าสีตกหล่น/ฟอลแบ็ก/ซินแท็กซ์สคีมา/ระยะฮิว),
   api 4 (อ่านสีจริงจาก PNG, ข้ามเว็บ, รอประมวลผล, ไฟล์เสีย), admin 5 (HTTP + เดโม + withBrandPalette
-  + แสดง/ซ่อนปุ่มในขั้น 4) รวม repo **1,328 เคส** (shared 218, tokens 10, sdk 11, ui 70,
-  blocks 122, api 449, admin 361, renderer 87)
+  - แสดง/ซ่อนปุ่มในขั้น 4) รวม repo **1,328 เคส** (shared 218, tokens 10, sdk 11, ui 70,
+    blocks 122, api 449, admin 361, renderer 87)
 - ผลตรวจ: `pnpm lint` / `pnpm typecheck` / `pnpm test` / `pnpm build` ผ่านทั้งหมด
 - หมายเหตุความปลอดภัย: route อยู่ใน `SiteGuard` + `@Roles`, ไม่รับ URL/ไฟล์จากผู้ใช้ (อ่านเฉพาะคลังของเว็บ),
   จำกัดพิกเซลที่ถอดรหัส, ไม่เขียนข้อมูลใด ๆ จึงไม่มี audit ที่ต้องบันทึก
@@ -2274,7 +2276,6 @@ pnpm --filter admin test src/settings/PublishPanel.test.tsx
 **ยังเหลือ (นอก MVP)**: refund/คืนสินค้า, แนบใบเสร็จในอีเมลอัตโนมัติ, integration test ที่ยิง Stripe จริง,
 Membership/paywall, ระบบจองคิวจริง, Block Marketplace, Agency/White-label, Public API keys และ e2e test
 
-
 ## ก้อนที่ 45 — เทมเพลต 5 → 10 แบบ
 
 ปิดเป้า beta ของ roadmap 19.1 (Template 10 แบบ) โดยยังไม่แตะเนื้อหาของผู้ใช้
@@ -2483,18 +2484,18 @@ pnpm --filter admin dev            # ตรวจที่ 375 / 768 / 1280px �
 
 - **เทมเพลตใหม่ 10 แพ็ก** (รวมเป็น 20) — ทุกแพ็กมี 4–5 หน้าตัวอย่าง ภาษาไทยจริงตามประเภทธุรกิจ
 
-  | แพ็ก | ประเภทธุรกิจ | โทน |
-  |---|---|---|
-  | บี-ไลท์ติ้ง (`blighting-energy`) | shop | ขาว-น้ำเงินเข้ม `#17469D` / `#2E8FE0` |
-  | สุขใจ โฮมสเตย์ (`sukjai-homestay`) | other | เขียวทะเล-ทรายอุ่น |
-  | ฟิตดี สตูดิโอ (`fitdee-studio`) | other | ดำ-เขียวมะนาว |
-  | ธรรมศาสตร์ ทนายความ (`thammasart-law`) | other | กรมท่า-ทอง |
-  | สบาย สปา (`sabai-spa`) | other | เขียวสมุนไพร-ทรายนวล |
-  | บ้านช่าง คอนสตรัคชัน (`banchang-build`) | other | เทาคอนกรีต-ส้ม |
-  | ครูเพลิน สถาบันติว (`kruplearn-tutor`) | other | น้ำเงิน-เหลือง |
-  | พลอยทราเวล (`ploytravel`) | other | ฟ้า-คอรัล |
-  | เพ็ทฮัก คลินิกสัตว์ (`pethug-clinic`) | clinic | เขียวมิ้นต์-ส้มนุ่ม |
-  | เมืองไทย ออโต้แคร์ (`muangthai-autocare`) | other | เทาเข้ม-แดง |
+  | แพ็ก                                      | ประเภทธุรกิจ | โทน                                   |
+  | ----------------------------------------- | ------------ | ------------------------------------- |
+  | บี-ไลท์ติ้ง (`blighting-energy`)          | shop         | ขาว-น้ำเงินเข้ม `#17469D` / `#2E8FE0` |
+  | สุขใจ โฮมสเตย์ (`sukjai-homestay`)        | other        | เขียวทะเล-ทรายอุ่น                    |
+  | ฟิตดี สตูดิโอ (`fitdee-studio`)           | other        | ดำ-เขียวมะนาว                         |
+  | ธรรมศาสตร์ ทนายความ (`thammasart-law`)    | other        | กรมท่า-ทอง                            |
+  | สบาย สปา (`sabai-spa`)                    | other        | เขียวสมุนไพร-ทรายนวล                  |
+  | บ้านช่าง คอนสตรัคชัน (`banchang-build`)   | other        | เทาคอนกรีต-ส้ม                        |
+  | ครูเพลิน สถาบันติว (`kruplearn-tutor`)    | other        | น้ำเงิน-เหลือง                        |
+  | พลอยทราเวล (`ploytravel`)                 | other        | ฟ้า-คอรัล                             |
+  | เพ็ทฮัก คลินิกสัตว์ (`pethug-clinic`)     | clinic       | เขียวมิ้นต์-ส้มนุ่ม                   |
+  | เมืองไทย ออโต้แคร์ (`muangthai-autocare`) | other        | เทาเข้ม-แดง                           |
 
 - **บี-ไลท์ติ้ง (อ้างอิงจาก blightingenergy.com)** — อ่านโครงเว็บจริงแล้วออกแบบแพ็กใหม่เอง
   - สีหลัก `#17469D` และสีเสริม `#2E8FE0` จาก CSS ของเว็บ, พื้นขาว, ปุ่มแบบ outline, มุมโค้งเล็ก
@@ -2662,10 +2663,6 @@ pnpm lint && pnpm typecheck && pnpm test
 docker compose --profile app up -d --build
 ```
 
-
-
-
-
 ## ก้อนที่ 59 — หน้าเข้าสู่ระบบของผู้ซื้อบนเว็บสาธารณะ
 
 ไอคอน “บัญชีของฉัน” ใน header ของเว็บสาธารณะลิงก์ไปที่ `/signin` แต่ยังไม่มีหน้านั้น
@@ -2786,6 +2783,7 @@ pnpm --filter api prisma migrate deploy
 pnpm lint && pnpm typecheck && pnpm test
 docker compose --profile app up -d --build
 ```
+
 ## ก้อนที่ 62 — Integration test ที่ยิง Stripe จริงด้วย test key
 
 ปิดช่องที่ค้างมาตั้งแต่ก้อนที่ A/44: ทุกเทสต์ Stripe เดิม stub `fetch` ทั้งหมด
@@ -2817,4 +2815,81 @@ Stripe ยอมรับจริง ไม่ใช่แค่ตรงกั
 pnpm --filter api test src/modules/billing/stripe.integration.spec.ts
 pnpm lint && pnpm typecheck && pnpm test
 docker compose --profile app up -d --build
+```
+
+## ก้อนที่ 63 — ป้ายเวอร์ชัน + ตรวจรุ่นใหม่ + อัปเดตตัวเองบน host
+
+ก่อนก้อนนี้ไม่มีทางรู้จากในระบบว่าเครื่องที่รันอยู่เป็นเวอร์ชันไหน และไม่มีสัญญาณบอกว่ามีรุ่นใหม่
+ก้อนนี้จึงตอบสองคำถามนั้นในหน้าแอดมิน แต่ **ไม่ให้ container อัปเดตตัวมันเอง**
+(process ไม่สามารถ rebuild container ที่ตัวเองรันอยู่ได้อย่างปลอดภัย) — การอัปเดตจริง
+เป็นสคริปต์ที่รันบน host
+
+- **Shared** — `packages/shared/src/updates.ts`
+  - `parseUpdateManifest()` อ่านได้ทั้ง manifest ของ Lumio และ payload GitHub release
+    (`tag_name`/`html_url`/`body`/`published_at`) แล้ว normalize `v` นำหน้าออก
+  - `buildUpdateStatus()` คืน snapshot เดียว (เวอร์ชันที่ใช้, รุ่นล่าสุด, `updateAvailable`,
+    `checkedAt`, `error`, `releaseUrl`, `notes`, `autoUpdate`) — เอกสารปลายทางเสียหาย
+    เป็นค่า `error` ไม่ใช่ exception (กล่องแจ้งเตือนปิด ไม่ลากหน้าจอพัง)
+  - `version.ts` — `normalizeVersion`/`isNewerVersion` ใช้ร่วมกับสคริปต์อัปเดต
+- **API** — `apps/api/src/modules/updates`
+  - `GET /v1/updates` (60/นาที) และ `POST /v1/updates/check` (10/นาที) ต้อง login
+    เพราะป้ายเวอร์ชันอยู่ใน shell ทุกหน้า และกันการยิง GitHub ถี่
+  - อ่านเวอร์ชันที่ติดตั้งจาก `LUMIO_VERSION` ก่อน ถ้าไม่มีจึงอ่าน `apps/api/package.json`
+    (เลขเดียวกับที่สคริปต์ bump ดูแล); ค่าเริ่มต้น manifest คือหน้า releases ของโปรเจกต์
+    ที่แปลงเป็น GitHub API ให้เอง, ปิดได้ด้วย `LUMIO_UPDATE_CHECK=false`
+  - cache คำตอบสำเร็จ 6 ชม. (`LUMIO_UPDATE_CHECK_MINUTES`) แต่คำตอบที่ล้มเหลว
+    cache แค่ 10 นาที เพื่อให้ลองใหม่เร็วขึ้นโดยไม่ยิงทุกครั้งที่เปิดหน้า
+- **แอดมิน** — `apps/admin/src/updates/`
+  - `VersionPanel` อยู่ footer ของ sidebar ทุกหน้า (โชว์ทันทีจากเลขในบิลด์ก่อน API ตอบ),
+    poll ทุก 15 นาที, ปุ่มตรวจใหม่, กล่องเตือนพร้อม “ตอนนี้ใช้ … · อัปเดตเป็น …”
+    ลิงก์ release notes และบอกว่าอัปเดตอัตโนมัติเปิดอยู่หรือต้องรันสคริปต์
+  - sidebar ที่ย่อแล้วซ่อนข้อความด้วย visually-hidden เพื่อไม่ให้บีบปุ่มอื่น
+  - i18n ครบ 8 คีย์ (ไทย/อังกฤษ) และมีโหมดเดโมในหน่วยความจำสำหรับหน้าเดโม
+- **อัปเดตบน host** — `scripts/update.mjs`
+  - `node scripts/update.mjs --check` ตรวจอย่างเดียว, ไม่ใส่ flag = อัปเดตครั้งเดียว,
+    `--auto` วนตาม `LUMIO_UPDATE_INTERVAL_MINUTES`
+  - อัปเดต = `git fetch --tags` → resolve tag (`v` หรือไม่มี `v`) → `checkout --detach`
+    → `docker compose --profile app up -d --build` → รอ `LUMIO_HEALTH_URL` (180 วิ)
+    → **ถ้าไม่ขึ้น ย้อน commit เดิมแล้ว rebuild + รอ health ก่อนโยน error**
+  - ปฏิเสธทันทีถ้า working tree ไม่สะอาด (`git status --porcelain` ไม่ว่าง)
+    จึงไม่มีทางที่งานที่ยังไม่ commit จะหาย
+  - `infra/systemd/lumio-update.{service,timer}` — ตรวจทุก 6 ชม. หลังบูต 15 นาที,
+    `RandomizedDelaySec=10min`, `Persistent=true`; npm script `update:check` / `update:auto`
+- **เอกสาร** — `docs/design/18-deployment.md` 18.8 (กลไก, env, systemd), `.env.example`
+  (ชุด `LUMIO_UPDATE_*`, `LUMIO_AUTO_UPDATE`, `LUMIO_HEALTH_URL`), `docs/OPERATIONS.md`,
+  และ bump เป็น 0.24.0 (เป็น release แรกที่ป้ายในแอปใช้เทียบ)
+- **ผลตรวจ** — API 8 เคส (`updates.service.spec.ts`) และ admin 4 เคส
+  (`VersionPanel.test.tsx`, `api.test.ts`); lint / typecheck ผ่าน
+
+```bash
+node scripts/update.mjs --check
+pnpm --filter api test src/modules/updates
+pnpm --filter admin test src/updates
+pnpm lint && pnpm typecheck && pnpm test
+```
+
+## ก้อนที่ 64 — อ่าน release feed ของ repo ส่วนตัวได้
+
+หลังปล่อย 0.24.0 พบว่าป้ายเวอร์ชันไม่เคยเห็นรุ่นใหม่เลย เพราะ repo โปรเจกต์เป็น private
+GitHub จึงตอบ **404** ให้คำขอ release ที่ไม่ระบุตัวตน (ไม่ใช่ 401) — ฝั่งแอดมินเห็นแค่
+“ยังตรวจหาอัปเดตไม่ได้”
+
+- **API** — `updates.config.ts` เพิ่ม `updateManifestToken()` อ่าน `LUMIO_UPDATE_TOKEN`
+  หรือ `GITHUB_TOKEN` แบบ read-only และ `fetchUpdateStatus()` แนบ
+  `Authorization: Bearer …` **เฉพาะเมื่อมีค่า** (manifest สาธารณะจึงยังใช้ได้เหมือนเดิม)
+  - token ถูกอ่านฝั่งเซิร์ฟเวอร์เท่านั้น ไม่ถูกใส่ใน response ที่แอดมินได้รับ
+    (เบราว์เซอร์เห็นเพียงเลขเวอร์ชัน)
+- **สคริปต์** — `scripts/update.mjs` ใช้ตัวแปรเดียวกันตอนอ่าน manifest
+  เพื่อให้ `--check`/`--auto` ทำงานได้กับ feed ส่วนตัว
+- **เทสต์** — เพิ่มเคสยืนยันว่าส่ง header เฉพาะเมื่อมี token และไม่ส่งเมื่อไม่มี
+- **เอกสาร** — `.env.example` อธิบายว่า token read-only ก็พอ และอยู่ฝั่งเซิร์ฟเวอร์เท่านั้น;
+  `docs/design/18-deployment.md` 18.8 ระบุว่า repo เป็น private จึงต้องตั้ง token;
+  bump เป็น 0.24.1
+- **ผลตรวจ** — `pnpm --filter api test src/modules/updates` ผ่าน 9 เคส,
+  `pnpm --filter admin test src/updates` ผ่าน 4 เคส; lint / typecheck ผ่าน
+
+```bash
+pnpm --filter api test src/modules/updates
+pnpm --filter admin test src/updates
+pnpm lint && pnpm typecheck
 ```
