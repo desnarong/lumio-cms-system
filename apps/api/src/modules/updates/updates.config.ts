@@ -54,6 +54,16 @@ export const updateManifestUrl = (env: NodeJS.ProcessEnv = process.env): string 
   return configured.length > 0 ? normalizeManifestUrl(configured) : null;
 };
 
+/**
+ * Token for a private release feed (the project repository is private). It is
+ * read server-side only and never returned by the API, so the admin screen can
+ * check without exposing the token to a browser.
+ */
+export const updateManifestToken = (env: NodeJS.ProcessEnv = process.env): string | null => {
+  const token = (env.LUMIO_UPDATE_TOKEN ?? env.GITHUB_TOKEN ?? '').trim();
+  return token.length > 0 ? token : null;
+};
+
 /** True when the operator wants the host timer to apply updates unattended. */
 export const autoUpdateEnabled = (env: NodeJS.ProcessEnv = process.env): boolean =>
   env.LUMIO_AUTO_UPDATE === 'true';

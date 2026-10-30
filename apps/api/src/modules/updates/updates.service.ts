@@ -4,6 +4,7 @@ import {
   autoUpdateEnabled,
   readInstalledVersion,
   updateCheckIntervalMs,
+  updateManifestToken,
   updateManifestUrl,
 } from './updates.config';
 
@@ -15,6 +16,8 @@ export interface FetchUpdateStatusOptions {
   currentVersion: string;
   manifestUrl: string | null;
   autoUpdate: boolean;
+  /** Server-side token for a private release feed; never sent to a browser. */
+  token?: string | null;
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
   now?: Date;
@@ -29,6 +32,7 @@ export const fetchUpdateStatus = async ({
   currentVersion,
   manifestUrl,
   autoUpdate,
+  token = null,
   fetchImpl,
   timeoutMs = DEFAULT_TIMEOUT_MS,
   now = new Date(),
@@ -45,6 +49,7 @@ export const fetchUpdateStatus = async ({
       headers: {
         accept: 'application/vnd.github+json, application/json',
         'user-agent': 'Lumio-CMS',
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
       },
       signal: AbortSignal.timeout(timeoutMs),
     });
@@ -78,6 +83,7 @@ export class UpdatesService {
     const status = await fetchUpdateStatus({
       currentVersion: readInstalledVersion(),
       manifestUrl: updateManifestUrl(),
+      token: updateManifestToken(),
       autoUpdate: autoUpdateEnabled(),
       now: new Date(now),
     });

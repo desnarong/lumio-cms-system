@@ -76,6 +76,20 @@ describe('fetchUpdateStatus', () => {
     });
   });
 
+  it('authenticates the request only when a private feed needs a token', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ version: '0.24.0' }));
+
+    await fetchUpdateStatus({
+      ...base,
+      manifestUrl: 'https://updates.test/latest.json',
+      token: 'read-only-token',
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    const init = fetchImpl.mock.calls[0]?.[1] as { headers: Record<string, string> };
+    expect(init.headers.authorization).toBe('Bearer read-only-token');
+  });
+
   it('keeps the installed version when checks are switched off', async () => {
     const status = await fetchUpdateStatus({ ...base, manifestUrl: null });
     expect(status).toMatchObject({

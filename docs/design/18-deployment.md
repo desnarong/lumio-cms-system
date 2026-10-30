@@ -129,7 +129,9 @@ endpoint นี้ไม่มี auth เพราะเรียกจาก C
 API ตรวจ manifest (ค่าเริ่มต้นคือหน้า
 [github.com/desnarong/lumio-cms-system/releases](https://github.com/desnarong/lumio-cms-system/releases)
 ซึ่งระบบแปลงเป็น GitHub API ให้เอง) แล้ว cache คำตอบ 6 ชั่วโมง ตั้ง
-`LUMIO_UPDATE_MANIFEST_URL` เป็น JSON ของตัวเองได้:
+`LUMIO_UPDATE_MANIFEST_URL` เป็น JSON ของตัวเองได้ และเพราะ repo นี้เป็น private
+จึงต้องใส่ `LUMIO_UPDATE_TOKEN` (หรือ `GITHUB_TOKEN`) แบบ read-only ให้ API
+อ่าน feed ได้ (token อยู่ฝั่งเซิร์ฟเวอร์เท่านั้น ไม่ถูกส่งไปเบราว์เซอร์):
 
 ```json
 { "version": "0.24.0", "releaseUrl": "https://example.com/releases/0.24.0", "notes": "..." }

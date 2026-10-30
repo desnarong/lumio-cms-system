@@ -62,10 +62,13 @@ export const readCurrentVersion = () =>
 
 /** Reads the release manifest, or a GitHub release payload. */
 export const readLatestVersion = async (manifestUrl) => {
+  // A private repository needs a token; the same variable the API uses.
+  const token = (process.env.LUMIO_UPDATE_TOKEN ?? process.env.GITHUB_TOKEN ?? '').trim();
   const response = await fetch(manifestUrl, {
     headers: {
       accept: 'application/vnd.github+json, application/json',
       'user-agent': 'Lumio-CMS-updater',
+      ...(token.length > 0 ? { authorization: `Bearer ${token}` } : {}),
     },
     signal: AbortSignal.timeout(10_000),
   });
