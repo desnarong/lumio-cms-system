@@ -10,6 +10,15 @@ import { z } from 'zod';
 export const LICENSE_FEATURES = ['membership', 'marketplace', 'whitelabel'] as const;
 export type LicenseFeature = (typeof LICENSE_FEATURES)[number];
 
+/**
+ * How a licence proves itself. `offline` tokens stand alone: the signature and
+ * its expiry are all a build needs. `online` tokens grant only the right to
+ * fetch short-lived leases from the vendor, which is what makes seat limits,
+ * heartbeat and revocation possible (docs/design/24-community-licensing.md 24.9).
+ */
+export const LICENSE_MODES = ['offline', 'online'] as const;
+export type LicenseMode = (typeof LICENSE_MODES)[number];
+
 export const isLicenseFeature = (value: unknown): value is LicenseFeature =>
   typeof value === 'string' && (LICENSE_FEATURES as readonly string[]).includes(value);
 
@@ -31,6 +40,10 @@ export const licensePayloadSchema = z.object({
   iat: z.number().int().nonnegative(),
   /** Expiry, Unix seconds; null or absent means perpetual. */
   exp: z.number().int().nonnegative().nullable().optional(),
+  /** Absent means `offline`, so tokens issued before online mode keep working. */
+  mode: z.enum(LICENSE_MODES).optional(),
+  /** Installation a lease is bound to; absent on an offline licence. */
+  inst: z.string().trim().min(1).max(120).optional(),
 });
 export type LicensePayload = z.infer<typeof licensePayloadSchema>;
 
@@ -41,6 +54,12 @@ export const LICENSE_REASONS = [
   'bad_signature',
   'expired',
   'no_public_key',
+  /** An online licence that has not fetched a lease yet. */
+  'not_activated',
+  /** A lease issued for a different installation. */
+  'wrong_install',
+  /** The lease ran out but the offline grace window still covers it. */
+  'grace',
 ] as const;
 export type LicenseReason = (typeof LICENSE_REASONS)[number];
 
@@ -54,12 +73,37 @@ export const licenseStatusSchema = z.object({
   issuedAt: z.string().nullable(),
   expiresAt: z.string().nullable(),
   reason: z.enum(LICENSE_REASONS),
+  /** `online` licences hold a short-lived lease and phone home to renew it. */
+  mode: z.enum(LICENSE_MODES).default('offline'),
+  /** True when the token is bound to one installation. */
+  bound: z.boolean().default(false),
 });
 export type LicenseStatus = z.infer<typeof licenseStatusSchema>;
 
 export const verifyLicenseInputSchema = z.object({
   token: z.string().trim().min(1).max(4096),
 });
+
+/**
+ * Where the licence in force came from (docs/design/24-community-licensing.md
+ * 24.10). `env` wins over `database` so an operator can override an install
+ * from the deployment config; `none` means this is the Community edition.
+ */
+export const LICENSE_SOURCES = ['env', 'database', 'none'] as const;
+export type LicenseSource = (typeof LICENSE_SOURCES)[number];
+
+/** Installing a licence from the admin screen; the API verifies it first. */
+export const installLicenseInputSchema = z.object({
+  token: z.string().trim().min(1).max(4096),
+});
+export type InstallLicenseInput = z.infer<typeof installLicenseInputSchema>;
+
+export const licenseViewSchema = licenseStatusSchema.extend({
+  source: z.enum(LICENSE_SOURCES),
+  /** When the stored licence was installed; null for an env or Community install. */
+  installedAt: z.string().nullable(),
+});
+export type LicenseView = z.infer<typeof licenseViewSchema>;
 export type VerifyLicenseInput = z.infer<typeof verifyLicenseInputSchema>;
 
 export const licenseStatusOfPayload = (payload: LicensePayload): LicenseStatus => ({
@@ -70,8 +114,13 @@ export const licenseStatusOfPayload = (payload: LicensePayload): LicenseStatus =
   features: payload.features,
   seats: payload.seats ?? null,
   issuedAt: new Date(payload.iat * 1000).toISOString(),
-  expiresAt: payload.exp === null || payload.exp === undefined ? null : new Date(payload.exp * 1000).toISOString(),
+  expiresAt:
+    payload.exp === null || payload.exp === undefined
+      ? null
+      : new Date(payload.exp * 1000).toISOString(),
   reason: 'ok',
+  mode: payload.mode ?? 'offline',
+  bound: typeof payload.inst === 'string' && payload.inst.length > 0,
 });
 
 export const communityStatus = (reason: LicenseReason = 'missing'): LicenseStatus => ({
@@ -84,7 +133,15 @@ export const communityStatus = (reason: LicenseReason = 'missing'): LicenseStatu
   issuedAt: null,
   expiresAt: null,
   reason,
+  mode: 'offline',
+  bound: false,
 });
+
+/** True when the licence names another installation than this one. */
+export const isLeaseForOtherInstall = (
+  payload: LicensePayload,
+  installId: string,
+): boolean => typeof payload.inst === 'string' && payload.inst.length > 0 && payload.inst !== installId;
 
 export const isLicenseExpired = (payload: LicensePayload, nowMs: number = Date.now()): boolean =>
   typeof payload.exp === 'number' && payload.exp * 1000 <= nowMs;

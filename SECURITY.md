@@ -40,4 +40,4 @@
 - เปลี่ยน `JWT_*`, `PREVIEW_SECRET`, `MEDIA_UPLOAD_SECRET`, `ANALYTICS_HASH_SALT` ก่อนใช้งานจริง
 - ใช้ role ฐานข้อมูลที่ไม่ใช่เจ้าของตารางเพื่อให้ RLS มีผล
 - เก็บ `SECRETS_ENCRYPTION_KEY` / `.lumio-data/secrets.key` ให้ปลอดภัยและสำรองไว้
-- ตั้ง `LUMIO_LICENSE_PUBLIC_KEY` ว่างใน production เพื่อใช้กุญแจที่ฝังมากับรุ่น
+- ไม่ต้องตั้ง `LUMIO_LICENSE_PUBLIC_KEY`: กุญแจที่ฝังในบิลด์ชนะเสมอ (env ถูกอ่านเฉพาะบิลด์ที่ยังไม่มีกุญแจ)

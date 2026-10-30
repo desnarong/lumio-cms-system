@@ -292,6 +292,14 @@ export const NAV_SCREENS: NavScreen[] = [
     route: { name: 'settings', tab: 'branding' },
   },
   {
+    id: 'license',
+    labelKey: 'settings.tabLicense',
+    icon: 'key',
+    section: 'site',
+    roles: ['owner'],
+    route: { name: 'settings', tab: 'license' },
+  },
+  {
     id: 'billing',
     labelKey: 'nav.billing',
     icon: 'credit-card',

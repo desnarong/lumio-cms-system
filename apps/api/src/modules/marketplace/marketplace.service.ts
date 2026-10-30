@@ -357,10 +357,10 @@ export class MarketplaceService {
     return { pack, source: 'external', token: token.trim() };
   }
 
-  /** Production trusts only the key baked into the build; env is a dev convenience. */
+  /** A baked vendor key always wins; env only fills a build that ships none. */
   private publicKey(): string {
-    const override =
-      process.env.NODE_ENV === 'production' ? '' : (process.env.MARKETPLACE_PUBLIC_KEY ?? '');
-    return (override || MARKETPLACE_PUBLIC_KEY).trim();
+    const baked = MARKETPLACE_PUBLIC_KEY.trim();
+    const fromEnv = (process.env.MARKETPLACE_PUBLIC_KEY ?? '').trim();
+    return baked.length > 0 ? baked : fromEnv;
   }
 }

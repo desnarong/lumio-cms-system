@@ -83,8 +83,8 @@ Shop, Analytics เพิ่มเติม, Instagram feed
   `minLumioVersion` — schema เป็น `strict()` ฟิลด์แปลกปลอม (entry script, สิทธิ์ ฯลฯ)
   ถูกปฏิเสธ ไม่ใช่ถูกเมิน
 - **ลายเซ็น** — แพ็กภายนอกต้องมาเป็นโทเคน `lumio_pack_v1.<payload>.<signature>`
-  (Ed25519) ตรวจด้วยกุญแจสาธารณะที่ฝังในบิลด์ (`marketplace.keys.ts`,
-  override ด้วย `MARKETPLACE_PUBLIC_KEY` ได้เฉพาะ non-production) ก่อนบันทึกทุกครั้ง
+  (Ed25519) ตรวจด้วยกุญแจสาธารณะที่ฝังในบิลด์ (`marketplace.keys.ts`; กุญแจที่ฝังชนะเสมอ,
+  `MARKETPLACE_PUBLIC_KEY` ถูกอ่านเฉพาะบิลด์ที่ยังไม่มีกุญแจ) ก่อนบันทึกทุกครั้ง
 - **สิทธิ์** — เปิดทั้งชุดด้วย `@RequireFeature('marketplace')` จึงต้องมีไลเซนส์ที่ระบุ
   `marketplace`; owner/admin ติดตั้ง/ถอน/เปิดปิดได้, editor เห็นเฉพาะส่วนที่ติดตั้งแล้ว
   ฝั่งแพลตฟอร์มมี kill switch `MARKETPLACE_PLATFORM_DISABLED`

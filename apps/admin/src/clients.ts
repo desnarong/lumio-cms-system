@@ -42,6 +42,8 @@ import { createHttpMembershipApi } from './membership/api.js';
 import { createDemoMembershipApi } from './membership/demo.js';
 import type { ApiKeysApi } from './settings/api-keys.js';
 import { createDemoApiKeysApi, createHttpApiKeysApi } from './settings/api-keys.js';
+import type { LicenseApi } from './settings/license.js';
+import { createDemoLicenseApi, createHttpLicenseApi } from './settings/license.js';
 import type { AgencyApi } from './settings/branding.js';
 import { createDemoAgencyApi, createHttpAgencyApi } from './settings/branding.js';
 import type { BookingApi } from './booking/api.js';
@@ -93,6 +95,8 @@ export interface AdminClients {
   apiKeys: ApiKeysApi;
   /** White-label branding of the installation. */
   agency: AgencyApi;
+  /** The deployment licence (ตั้งค่า › ไลเซนส์). */
+  license: LicenseApi;
   design: DesignApi;
   settings: SettingsApi;
   billing: BillingApi;
@@ -153,6 +157,7 @@ export const createAdminClients = ({
       booking: createDemoBookingApi(),
       apiKeys: createDemoApiKeysApi(),
       agency: createDemoAgencyApi(),
+      license: createDemoLicenseApi(),
       design: createDemoDesignApi(),
       settings: createDemoSettingsApi({ media }),
       billing: createDemoBillingApi(),
@@ -196,6 +201,7 @@ export const createAdminClients = ({
     booking: createHttpBookingApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     apiKeys: createHttpApiKeysApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     agency: createHttpAgencyApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
+    license: createHttpLicenseApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     design: createHttpDesignApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     settings: createHttpSettingsApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),
     billing: createHttpBillingApi({ baseUrl, getAccessToken, getSiteId, fetchImpl }),

@@ -4,7 +4,7 @@
  * `lumio_pack_v1.<payload>.<signature>` token an owner pastes into
  * เติบโต › ตลาดบล็อก (docs/PROGRESS.md "ก้อนถัดไป B").
  *
- *   node scripts/marketplace-pack.mjs --key ./lumio-marketplace-private.pem \
+ *   node scripts/marketplace-pack.mjs --key ../.lumio-vendor-keys/lumio-marketplace-private.pem \
  *     --file ./my-pack.json --out ./my-pack.lumio
  *
  * The manifest must follow docs/design/16-apps.md: version 1, a `key` in

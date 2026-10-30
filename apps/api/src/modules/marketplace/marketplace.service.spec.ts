@@ -5,6 +5,9 @@ import type { AuditService } from '../audit/audit.service';
 import type { PrismaService } from '../prisma/prisma.service';
 import { MarketplaceService, verifyPackSignature } from './marketplace.service';
 
+// A baked vendor key always wins, so the suite swaps it for a key of its own.
+vi.mock('./marketplace.keys', () => ({ MARKETPLACE_PUBLIC_KEY: '' }));
+
 const SITE_ID = '00000000-0000-4000-8000-0000000000a1';
 const USER_ID = '00000000-0000-4000-8000-000000000001';
 const NOW = new Date('2026-10-30T00:00:00Z');

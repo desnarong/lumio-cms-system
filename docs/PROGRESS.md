@@ -3,7 +3,7 @@
 > ติดตามงานย่อยตาม [`docs/design/19-roadmap.md`](design/19-roadmap.md) หัวข้อ 19.3
 > อัปเดตสถานะทุกครั้งที่จบงานหนึ่งก้อน
 
-อัปเดตล่าสุด: 2026-10-30 (ก้อนที่ 67 เสร็จ)
+อัปเดตล่าสุด: 2026-10-30 (ก้อนที่ 68 เสร็จ)
 
 ## สถานะงาน (Roadmap 19.3)
 
@@ -2979,3 +2979,36 @@ pnpm --filter api test src/modules/api-keys
 pnpm --filter admin test src/settings/api-keys.test.ts
 pnpm lint && pnpm typecheck && pnpm test
 ```
+
+## ก้อนที่ 68 — วางไลเซนส์ในหน้าจอ (เก็บในฐานข้อมูล ไม่ต้องแก้ .env)
+
+ปิดรายการค้าง “หน้าจอแอดมินสำหรับวางไลเซนส์” ใน 24.8: เจ้าของเว็บวางโทเคนที่ซื้อมาได้เอง
+จากหลังบ้าน ระบบเก็บในฐานข้อมูลให้ — `LUMIO_LICENSE` ยังใช้ได้และชนะเสมอเมื่อต้องปักจาก config
+
+- **ฐานข้อมูล** — migration `20261116000000_platform_license`
+  ตาราง `platform_license` แถวเดียว (`id = 'default'`, `token`, `updated_by`, `updated_at`)
+  ระดับแพลตฟอร์มเหมือน `agency_branding`: ไม่มี `site_id` และไม่มี RLS
+- **Shared** — `LICENSE_SOURCES`, `installLicenseInputSchema`, `licenseViewSchema`
+  (สถานะเดิม + `source`: `env`/`database`/`none` + `installedAt`)
+- **API** — `LicenseStore` ใหม่ + controller
+  - `GET /v1/license` ตอบ `source`/`installedAt` ให้หน้าจอรู้ว่าไลเซนส์มาจากไหน
+  - `PATCH /v1/license` (owner) ตรวจลายเซ็นก่อนบันทึกทุกครั้ง, audit `license.install`,
+    เก็บใน DB แล้วโหลดเข้า memory (feature check เป็น synchronous) และถ้าเป็นโหมด online
+    จะขอ lease ทันที
+  - `DELETE /v1/license` (owner) กลับเป็น Community + audit `license.remove`
+  - บูตแล้วอ่านแถวจาก DB; ถ้าตารางยังไม่มีจะไม่ทำให้ API ล่ม (ขึ้น warning แล้วเป็น Community)
+  - `refresh()` ยิงเครื่องออกไลเซนส์เฉพาะโทเคนโหมด `online` (เดิมยิงแม้เป็นออฟไลน์แล้วขึ้น warning)
+- **แอดมิน** — ตั้งค่า › ไลเซนส์ (owner): การ์ดสถานะ (รุ่น/แพ็กเกจ/ผู้ถือ/วันหมดอายุ/โหมด/ที่มา/
+  ความสามารถที่เปิด), กล่องวางโทเคน + ติดตั้ง/ถอด (พร้อม toast + audit), ปุ่ม “ต่ออายุตอนนี้”
+  สำหรับไลเซนส์ออนไลน์, แบนเนอร์อธิบายเมื่อไลเซนส์มาจาก .env
+- **เอกสาร** — `24-community-licensing.md` 24.10 + 24.8, `12-api.md`, `11-data-model.md`,
+  `OPERATIONS.md`, `.env.example`
+- **ผลตรวจ** — API 964 เคส (เพิ่ม store 7 + HTTP 4), admin 517 เคส (เพิ่ม 8); lint/typecheck ผ่าน
+
+```bash
+pnpm --filter api db:deploy
+pnpm --filter api test src/modules/license src/http/api.spec.ts
+pnpm --filter admin test src/settings/LicensePanel
+pnpm lint && pnpm typecheck && pnpm test
+```
+

@@ -4,7 +4,7 @@ import { createHmac, generateKeyPairSync, sign } from 'node:crypto';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test, type TestingModule, type TestingModuleBuilder } from '@nestjs/testing';
 import type { Role } from '@lumio/shared';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { AppModule } from '../app.module';
 import { ApiExceptionFilter } from '../common/api-exception.filter';
 import { resolveAllowedOrigins } from '../common/origin.guard';
@@ -20,6 +20,10 @@ import { PrismaService } from '../modules/prisma/prisma.service';
 import { MarketplaceService } from '../modules/marketplace/marketplace.service';
 import { PublicService } from '../modules/public/public.service';
 import { RedirectsService } from '../modules/redirects/redirects.service';
+import { LicenseStore } from '../modules/license/license.store';
+
+// A baked vendor key always wins over the env, so the suite supplies its own.
+vi.mock('../modules/license/license.keys', () => ({ LICENSE_PUBLIC_KEY: '' }));
 
 /**
  * HTTP-level checks (docs/design/15-security.md 15.2). The unit specs prove each
@@ -710,6 +714,90 @@ describe('API over HTTP', () => {
       const response = await app.request(
         '/api/v1/redirects',
         jsonRequest({ fromPath: '/a', toPath: '/b' }, withSession(app.token)),
+      );
+      app.membership.role = 'owner';
+
+      expect(response.status).toBe(403);
+    });
+  });
+
+  describe('deployment licence', () => {
+    let app: Harness;
+    const installed: string[] = [];
+    const view = (plan: 'pro' | 'community') => ({
+      edition: plan === 'pro' ? 'pro' : 'community',
+      valid: plan === 'pro',
+      plan,
+      subject: plan === 'pro' ? 'บริษัท ตัวอย่าง จำกัด' : null,
+      features: plan === 'pro' ? ['membership', 'marketplace'] : [],
+      seats: plan === 'pro' ? 3 : null,
+      issuedAt: '2026-10-30T00:00:00.000Z',
+      expiresAt: null,
+      reason: plan === 'pro' ? 'ok' : 'missing',
+      mode: 'offline',
+      bound: false,
+      source: plan === 'pro' ? 'database' : 'none',
+      installedAt: plan === 'pro' ? '2026-10-30T00:00:00.000Z' : null,
+    });
+
+    beforeAll(async () => {
+      app = await startApp({
+        configure: (builder) =>
+          builder.overrideProvider(LicenseStore).useValue({
+            view: () => view('community'),
+            install: async (input: { token: string }) => {
+              installed.push(input.token);
+              return view('pro');
+            },
+            remove: async () => view('community'),
+            onModuleInit: async () => undefined,
+          }),
+      });
+    });
+    afterAll(async () => {
+      await app.close();
+    });
+
+    it('shows where the licence came from', async () => {
+      const response = await app.request('/api/v1/license', {
+        headers: withSession(app.token),
+      });
+
+      expect(response.status).toBe(200);
+      expect(await readJson(response)).toMatchObject({
+        data: { edition: 'community', source: 'none' },
+      });
+    });
+
+    it('lets an owner install a licence', async () => {
+      const response = await app.request(
+        '/api/v1/license',
+        jsonRequest({ token: 'lumio_lic_v1.abc.def' }, withSession(app.token), 'PATCH'),
+      );
+
+      expect(response.status).toBe(200);
+      expect(installed[installed.length - 1]).toBe('lumio_lic_v1.abc.def');
+      expect(await readJson(response)).toMatchObject({
+        data: { edition: 'pro', source: 'database' },
+      });
+    });
+
+    it('rejects an empty token before it reaches the store', async () => {
+      installed.length = 0;
+      const response = await app.request(
+        '/api/v1/license',
+        jsonRequest({ token: '   ' }, withSession(app.token), 'PATCH'),
+      );
+
+      expect(response.status).toBe(400);
+      expect(installed).toHaveLength(0);
+    });
+
+    it('refuses an admin who is not the owner', async () => {
+      app.membership.role = 'admin';
+      const response = await app.request(
+        '/api/v1/license',
+        jsonRequest({ token: 'lumio_lic_v1.abc.def' }, withSession(app.token), 'PATCH'),
       );
       app.membership.role = 'owner';
 

@@ -15,6 +15,7 @@ export type SettingsTab =
   | 'features'
   | 'billing'
   | 'api-keys'
+  | 'license'
   | 'branding';
 export type GrowthTab =
   | 'seo'
@@ -39,6 +40,7 @@ export const SETTINGS_TABS: SettingsTab[] = [
   'features',
   'billing',
   'api-keys',
+  'license',
   'branding',
 ];
 export const GROWTH_TABS: GrowthTab[] = [
@@ -94,7 +96,7 @@ export const isRouteAllowed = (route: AdminRoute, role: Role): boolean => {
   if (route.name === 'settings') {
     if (route.tab === 'billing') return BILLING_ROLES.includes(role);
     // White-labelling changes the whole installation, so it stays with the owner.
-    if (route.tab === 'branding') return role === 'owner';
+    if (route.tab === 'branding' || route.tab === 'license') return role === 'owner';
     return SETTINGS_ROLES.includes(role);
   }
   return true;

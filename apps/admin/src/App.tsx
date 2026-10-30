@@ -435,6 +435,7 @@ export const AdminApp = ({ clients, sessionExpired = false, onSignedIn }: AdminA
           {effective.name === 'settings' ? (
             <SettingsPage
               api={clients.settings}
+              license={clients.license}
               billing={clients.billing}
               security={clients.auth}
               tab={effective.tab}

@@ -53,6 +53,8 @@ import { PublishPanel } from './PublishPanel.js';
 import { FeaturesPanel } from './FeaturesPanel.js';
 import { ApiKeysPanel } from './ApiKeysPanel.js';
 import { BrandingPanel } from './BrandingPanel.js';
+import { LicensePanel } from './LicensePanel.js';
+import type { LicenseApi } from './license.js';
 import type { ApiKeysApi } from './api-keys.js';
 import type { AgencyApi } from './branding.js';
 
@@ -71,6 +73,8 @@ export interface SettingsPageProps {
   apiKeys?: ApiKeysApi;
   /** White-label branding of the installation. */
   agency?: AgencyApi;
+  /** The deployment licence (ตั้งค่า › ไลเซนส์). */
+  license?: LicenseApi;
   /** True when every client is in-memory. */
   demo?: boolean;
   /** Called after the brand is saved so the shell updates without a reload. */
@@ -110,6 +114,7 @@ const TABS: { id: SettingsTab; labelKey: MessageKey }[] = [
   { id: 'redirects', labelKey: 'settings.tabRedirects' },
   { id: 'features', labelKey: 'settings.tabFeatures' },
   { id: 'api-keys', labelKey: 'settings.tabApiKeys' },
+  { id: 'license', labelKey: 'settings.tabLicense' },
   { id: 'branding', labelKey: 'settings.tabBranding' },
   { id: 'billing', labelKey: 'nav.billing' },
 ];
@@ -1414,6 +1419,7 @@ export const SettingsPage = ({
   security,
   apiKeys,
   agency,
+  license: apiLicense,
   demo = false,
   onBrandingSaved,
 }: SettingsPageProps) => {
@@ -1456,6 +1462,9 @@ export const SettingsPage = ({
       {tab === 'billing' ? <BillingPanel api={billing} /> : null}
       {tab === 'api-keys' && apiKeys ? (
         <ApiKeysPanel api={apiKeys} canManage={role === 'owner' || role === 'admin'} demo={demo} />
+      ) : null}
+      {tab === 'license' && apiLicense ? (
+        <LicensePanel api={apiLicense} canManage={role === 'owner'} demo={demo ?? false} />
       ) : null}
       {tab === 'branding' && agency ? (
         <BrandingPanel

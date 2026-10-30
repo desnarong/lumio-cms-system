@@ -854,3 +854,17 @@ model AgencyBranding {
 
   @@map("agency_branding")
 }
+
+/// The licence pasted in the admin, so an owner never edits `.env`
+/// (docs/design/24-community-licensing.md 24.10). Platform level: one row per
+/// deployment, no site id and no RLS. `LUMIO_LICENSE` still wins, which is what
+/// lets an operator override a bad install from the deployment config.
+model PlatformLicense {
+  id        String   @id @default("default")
+  token     String
+  /// Who installed it; null for a token written before this row existed.
+  updatedBy String?  @map("updated_by") @db.Uuid
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("platform_license")
+}

@@ -25,6 +25,7 @@ import { createDemoSettingsApi } from './settings/demo.js';
 import { createDemoBillingApi } from './settings/billing.js';
 import { createDemoWizardApi } from './wizard/demo.js';
 import { createDemoUpdatesApi } from './updates/demo.js';
+import { createDemoLicenseApi } from './settings/license.js';
 import { isRouteAllowed, parseRoute, resolveRoute, routePath } from './route.js';
 
 interface Options {
@@ -60,6 +61,7 @@ const clients = ({ demo = true, listSites, listPages }: Options = {}): AdminClie
     booking: createDemoBookingApi(),
     apiKeys: createDemoApiKeysApi(),
     agency: createDemoAgencyApi(),
+    license: createDemoLicenseApi(),
     updates: createDemoUpdatesApi(),
   };
 };

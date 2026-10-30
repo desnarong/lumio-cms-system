@@ -13,10 +13,14 @@
       (ถ้าหาย ผู้ใช้ต้องกรอกคีย์ธนาคาร/ร้านค้า/อีเมลใหม่ทั้งหมด)
 - [ ] ตรวจว่า **ไม่มีบัญชีทดลอง** (`owner@example.com` / `lumio-demo-1234`) ในฐานข้อมูลจริง
       หรือเปลี่ยนรหัสผ่าน/ปิดใช้งานก่อนเปิดให้คนนอกใช้
-- [ ] `LUMIO_LICENSE_PUBLIC_KEY` เว้นว่างใน production (ใช้กุญแจที่ฝังในบิลด์)
-- [ ] `LUMIO_LICENSE` มีเฉพาะเครื่องที่ซื้อไลเซนส์ (Membership/Paywall, Marketplace)
-      — ไม่ตั้ง = ระบบทำงานแบบ Community
-- [ ] ตลาดบล็อก: `MARKETPLACE_PUBLIC_KEY` เว้นว่างใน production (ใช้กุญแจที่ฝังในบิลด์)
+- [ ] ไม่ตั้ง `LUMIO_LICENSE_PUBLIC_KEY` — กุญแจที่ฝังในบิลด์ชนะเสมอ (ถ้าตั้ง จะขึ้น warning และถูกเพิกเฉย)
+- [ ] ไลเซนส์: เจ้าของเว็บวางที่ ตั้งค่า › ไลเซนส์ (เก็บในฐานข้อมูล) — ไม่ต้องตั้ง `LUMIO_LICENSE`
+      ถ้าจะปักไลเซนส์จาก config ของเครื่องจึงค่อยตั้ง (ค่า env ชนะค่าที่บันทึกไว้เสมอ)
+- [ ] ไลเซนส์แบบออนไลน์: ตั้ง `LUMIO_LICENSE_SERVER` ให้ชี้เครื่องออกไลเซนส์
+      (`LUMIO_LICENSE_GRACE_DAYS`, `LUMIO_LICENSE_REFRESH_HOURS` ตามสัญญา) และตรวจว่า
+      `GET /v1/license` ตอบ `mode: "online"`, `bound: true`, `reason: "ok"` หลังบูต
+- [ ] เครื่องออกไลเซนส์ (นอกรีโป) mount กุญแจแบบอ่านอย่างเดียว และตั้ง `ISSUER_TOKEN` ที่เดายาก
+- [ ] ตลาดบล็อก: ไม่ต้องตั้ง `MARKETPLACE_PUBLIC_KEY` (กุญแจที่ฝังในบิลด์ชนะเสมอ)
       และไม่ตั้ง `MARKETPLACE_PLATFORM_DISABLED` เว้นแต่ต้องหยุดติดตั้งแพ็กชั่วคราว;
       ตั้ง `LUMIO_VERSION` ถ้าต้องการให้ตรวจ `minLumioVersion` ของแพ็ก
 - [ ] กุญแจลงลายเซ็นแพ็ก (`lumio-marketplace-private.pem`) เก็บนอกเซิร์ฟเวอร์ production

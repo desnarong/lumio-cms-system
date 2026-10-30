@@ -3,7 +3,7 @@
  * Issues one Lumio licence token with the vendor private key
  * (docs/design/24-community-licensing.md).
  *
- *   node scripts/license-issue.mjs --key ./lumio-license-private.pem \
+ *   node scripts/license-issue.mjs --key ../.lumio-vendor-keys/lumio-license-private.pem \
  *     --sub "บริษัท ตัวอย่าง จำกัด" --features membership,marketplace --seats 5 --days 365
  *
  * The token is printed on stdout. It is not stored anywhere here.
@@ -12,7 +12,7 @@ import { createPrivateKey, sign } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const FEATURES = new Set(['membership', 'marketplace']);
+const FEATURES = new Set(['membership', 'marketplace', 'whitelabel']);
 
 const args = process.argv.slice(2);
 const flag = (name, fallback = '') => {

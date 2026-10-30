@@ -236,9 +236,10 @@ CREATE POLICY site_isolation ON contents
 | `booking_services` | `site_id`, `name`, `duration_minutes`, `price`, `active`, `sort` | บริการที่ลูกค้าเลือกจองได้ |
 | `bookings` | `site_id`, `service_id` (SET NULL), `service_name`, `starts_at`, `ends_at`, `status`, `cancel_hash` UNIQUE | เก็บชื่อบริการไว้ด้วยเพื่อให้ลบบริการแล้วประวัติยังอยู่ |
 | `agency_branding` | `id = 'default'`, `brand_name`, `logo_url`, `support_email`, `hide_branding`, `accent_color` | ตารางระดับแพลตฟอร์ม ไม่มี `site_id` และไม่มี RLS |
+| `platform_license` | `id = 'default'`, `token`, `updated_by`, `updated_at` | ไลเซนส์ที่วางในหน้าจอ (ระดับแพลตฟอร์ม ไม่มี `site_id`/RLS) — `LUMIO_LICENSE` ชนะเสมอ |
 
 - ตารางที่เป็นข้อมูลของเว็บทั้งสามยังใช้ `ENABLE/FORCE ROW LEVEL SECURITY` + policy `site_isolation`
-- ตารางระดับแพลตฟอร์ม (`agency_branding`) ยกเว้นตามกฎในหัวข้อ 11.4
+- ตารางระดับแพลตฟอร์ม (`agency_branding`, `platform_license`) ยกเว้นตามกฎในหัวข้อ 11.4
 - `bookings` มี CHECK ให้ `status` อยู่ในชุดที่กำหนด และ index `(site_id, starts_at)`, `(site_id, status, starts_at)`
 
 ## 11.7 Index ที่สำคัญ
