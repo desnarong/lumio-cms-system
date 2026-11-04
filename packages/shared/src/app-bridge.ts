@@ -40,7 +40,7 @@ export const requiredScopeFor = (method: string): AppPermission | null =>
 export const appBridgeRequestSchema = z.object({
   id: z.string().min(1).max(80),
   method: z.string().min(1).max(60),
-  params: z.record(z.unknown()).optional(),
+  params: z.record(z.string(), z.unknown()).optional(),
 });
 export type AppBridgeRequest = z.infer<typeof appBridgeRequestSchema>;
 

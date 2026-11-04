@@ -130,7 +130,7 @@ export interface BlockDefinition<P> {
   version: number;
   icon?: string;
   /** Validates `{ version, props, style }` and applies every default. */
-  schema: z.ZodType<BlockData<P>, z.ZodTypeDef, unknown>;
+  schema: z.ZodType<BlockData<P>>;
   defaults: BlockData<P>;
   Block: ComponentType<BlockRenderProps<P>>;
   /**

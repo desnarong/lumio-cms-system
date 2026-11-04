@@ -18,7 +18,7 @@ export const headingPropsSchema = z.object({
 export const headingSchema = z.object({
   version: z.literal(1),
   props: headingPropsSchema,
-  style: blockStyleSchema.default({}),
+  style: blockStyleSchema.prefault({}),
 });
 
 export type HeadingProps = z.infer<typeof headingPropsSchema>;

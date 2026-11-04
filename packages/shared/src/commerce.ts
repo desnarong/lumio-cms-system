@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { patchOf } from './patch.js';
 import { slugSchema } from './content.js';
 import { paginationQuerySchema } from './site.js';
 import { publicGlobalBlocksSchema, publicMenusSchema, publicSiteSchema } from './public.js';
@@ -131,13 +132,13 @@ export const commerceSettingsSchema = z.object({
 export type CommerceSettings = z.infer<typeof commerceSettingsSchema>;
 
 /** Connect fields are written by the Stripe flow only, never by a settings form. */
-export const updateCommerceSettingsInputSchema = commerceSettingsSchema
-  .omit({
+export const updateCommerceSettingsInputSchema = patchOf(
+  commerceSettingsSchema.omit({
     stripeAccountId: true,
     stripeChargesEnabled: true,
     stripePayoutsEnabled: true,
-  })
-  .partial();
+  }),
+);
 export type UpdateCommerceSettingsInput = z.infer<typeof updateCommerceSettingsInputSchema>;
 
 export const connectStatusSchema = z.object({
@@ -262,7 +263,7 @@ export const orderWebhookPayloadSchema = z.object({
     subtotal: webhookMoneySchema,
     shippingFee: webhookMoneySchema,
     total: webhookMoneySchema,
-    customer: z.record(z.unknown()),
+    customer: z.record(z.string(), z.unknown()),
     items: z.array(
       z.object({
         title: z.string(),
@@ -434,13 +435,11 @@ export const createProductInputSchema = productBaseSchema
   });
 export type CreateProductInput = z.infer<typeof createProductInputSchema>;
 
-export const updateProductInputSchema = productBaseSchema
-  .partial()
-  .refine(
-    (value) =>
-      value.compareAtPrice == null || value.price == null || value.compareAtPrice > value.price,
-    { message: 'ราคาก่อนลดต้องมากกว่าราคาขาย', path: ['compareAtPrice'] },
-  );
+export const updateProductInputSchema = patchOf(productBaseSchema).refine(
+  (value) =>
+    value.compareAtPrice == null || value.price == null || value.compareAtPrice > value.price,
+  { message: 'ราคาก่อนลดต้องมากกว่าราคาขาย', path: ['compareAtPrice'] },
+);
 export type UpdateProductInput = z.infer<typeof updateProductInputSchema>;
 
 /** Full product input is checked again after a partial update is merged. */

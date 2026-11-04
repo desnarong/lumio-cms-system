@@ -88,13 +88,8 @@ export type FormNotify = z.infer<typeof formNotifySchema>;
 export const createFormInputSchema = z.object({
   name: z.string().trim().min(1, 'กรุณาตั้งชื่อฟอร์ม').max(120),
   fields: formFieldsSchema,
-  notify: formNotifySchema.default({}),
-  successMessage: z
-    .string()
-    .trim()
-    .min(1)
-    .max(300)
-    .default(DEFAULT_FORM_SUCCESS_MESSAGE),
+  notify: formNotifySchema.prefault({}),
+  successMessage: z.string().trim().min(1).max(300).default(DEFAULT_FORM_SUCCESS_MESSAGE),
   /**
    * Language this form is written in (docs/design/17-i18n.md 17.5). Omitted
    * means "every language": `null` in the database, which is how forms created
@@ -195,7 +190,7 @@ export type UpdateSubmissionInput = z.infer<typeof updateSubmissionInputSchema>;
 
 /** Body of `POST /public/:host/forms/:id/submit`; the honeypot must stay empty. */
 export const submitFormInputSchema = z.object({
-  data: z.record(z.unknown()).default({}),
+  data: z.record(z.string(), z.unknown()).default({}),
   honeypot: z.string().max(200).optional(),
 });
 export type SubmitFormInput = z.infer<typeof submitFormInputSchema>;
@@ -206,8 +201,7 @@ export interface FormValidationError {
 }
 
 export type FormValidationResult =
-  | { ok: true; data: Record<string, string> }
-  | { ok: false; errors: FormValidationError[] };
+  { ok: true; data: Record<string, string> } | { ok: false; errors: FormValidationError[] };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TEL_PATTERN = /^[+()\-\s0-9]{6,20}$/;

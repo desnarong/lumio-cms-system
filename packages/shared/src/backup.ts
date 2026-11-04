@@ -25,8 +25,8 @@ export const siteExportSchema = z.object({
     localeDefault: z.string(),
     locales: z.array(z.string()),
     plan: z.string(),
-    themeTokens: z.record(z.unknown()),
-    settings: z.record(z.unknown()),
+    themeTokens: z.record(z.string(), z.unknown()),
+    settings: z.record(z.string(), z.unknown()),
   }),
   contents: z.array(
     z.object({
@@ -67,7 +67,7 @@ export const siteExportSchema = z.object({
     z.object({
       name: z.string().nullable(),
       fields: z.array(z.unknown()),
-      notify: z.record(z.unknown()),
+      notify: z.record(z.string(), z.unknown()),
       successMessage: z.string().nullable(),
     }),
   ),
@@ -129,7 +129,7 @@ export const siteExportSchema = z.object({
         number: z.string(),
         status: z.enum(ORDER_STATUSES),
         paymentMethod: z.enum(SHOP_PAYMENT_METHODS),
-        customer: z.record(z.unknown()),
+        customer: z.record(z.string(), z.unknown()),
         note: z.string().default(''),
         subtotal: z.number().int().nonnegative(),
         shippingFee: z.number().int().nonnegative(),
@@ -180,16 +180,34 @@ export type SiteImportInput = z.infer<typeof siteImportInputSchema>;
 
 /** How many rows an import added or skipped, so the toast can be honest. */
 export const siteImportResultSchema = z.object({
-  contents: z.object({ added: z.number().int().nonnegative(), skipped: z.number().int().nonnegative() }),
+  contents: z.object({
+    added: z.number().int().nonnegative(),
+    skipped: z.number().int().nonnegative(),
+  }),
   menus: z.number().int().nonnegative(),
   globalBlocks: z.number().int().nonnegative(),
   sectionTemplates: z.number().int().nonnegative(),
   forms: z.number().int().nonnegative(),
-  subscribers: z.object({ added: z.number().int().nonnegative(), skipped: z.number().int().nonnegative() }),
-  domains: z.object({ added: z.number().int().nonnegative(), skipped: z.number().int().nonnegative() }),
-  members: z.object({ added: z.number().int().nonnegative(), skipped: z.number().int().nonnegative() }),
-  products: z.object({ added: z.number().int().nonnegative(), skipped: z.number().int().nonnegative() }),
-  orders: z.object({ added: z.number().int().nonnegative(), skipped: z.number().int().nonnegative() }),
+  subscribers: z.object({
+    added: z.number().int().nonnegative(),
+    skipped: z.number().int().nonnegative(),
+  }),
+  domains: z.object({
+    added: z.number().int().nonnegative(),
+    skipped: z.number().int().nonnegative(),
+  }),
+  members: z.object({
+    added: z.number().int().nonnegative(),
+    skipped: z.number().int().nonnegative(),
+  }),
+  products: z.object({
+    added: z.number().int().nonnegative(),
+    skipped: z.number().int().nonnegative(),
+  }),
+  orders: z.object({
+    added: z.number().int().nonnegative(),
+    skipped: z.number().int().nonnegative(),
+  }),
   media: z
     .object({ added: z.number().int().nonnegative(), skipped: z.number().int().nonnegative() })
     .optional()

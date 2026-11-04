@@ -48,7 +48,7 @@ export const blockStyleSchema = z.object({
   widthPx: z.number().int().min(160).max(2400).optional(),
   /** Smallest height of the whole block band (px), set by dragging its bottom edge. */
   heightPx: z.number().int().min(80).max(2400).optional(),
-  visibility: visibilitySchema.default({}),
+  visibility: visibilitySchema.prefault({}),
   animation: z.enum(ANIMATIONS).default('none'),
 });
 
@@ -84,14 +84,17 @@ export const textRunSchema = z.object({
   color: z.enum(TEXT_RUN_COLORS).optional(),
   size: z.enum(TEXT_RUN_SIZES).optional(),
   /** Free colour from the editor's colour picker; wins over the token colour. */
-  colorHex: z.string().regex(/^#[0-9a-f]{3,8}$/i).optional(),
+  colorHex: z
+    .string()
+    .regex(/^#[0-9a-f]{3,8}$/i)
+    .optional(),
   /** Free font size in px from the editor; wins over the token size. */
   sizePx: z.number().int().min(8).max(240).optional(),
 });
 export type TextRun = z.infer<typeof textRunSchema>;
 
 /** Editable path (`props.text`) to the runs that style part of it. */
-export const textStylesSchema = z.record(z.array(textRunSchema)).default({});
+export const textStylesSchema = z.record(z.string(), z.array(textRunSchema)).default({});
 export type TextStyles = z.infer<typeof textStylesSchema>;
 
 /** Where one editable text sits and how large it is, relative to its block. */
@@ -104,7 +107,7 @@ export const textLayoutSchema = z.object({
 export type TextLayout = z.infer<typeof textLayoutSchema>;
 
 /** Editable path (`props.heading`) to its own position and size. */
-export const textLayoutsSchema = z.record(textLayoutSchema).default({});
+export const textLayoutsSchema = z.record(z.string(), textLayoutSchema).default({});
 export type TextLayouts = z.infer<typeof textLayoutsSchema>;
 
 export interface BlockNode {
@@ -120,13 +123,13 @@ export interface BlockNode {
   textLayouts?: TextLayouts;
 }
 
-export const blockNodeSchema: z.ZodType<BlockNode, z.ZodTypeDef, unknown> = z.lazy(() =>
+export const blockNodeSchema: z.ZodType<BlockNode> = z.lazy(() =>
   z.object({
     id: z.string().min(1),
     type: z.string().min(1),
     version: z.number().int().positive().default(1),
-    props: z.record(z.unknown()).default({}),
-    style: blockStyleSchema.default({}),
+    props: z.record(z.string(), z.unknown()).default({}),
+    style: blockStyleSchema.prefault({}),
     children: z.array(blockNodeSchema).default([]),
     textStyles: textStylesSchema.optional(),
     textLayouts: textLayoutsSchema.optional(),

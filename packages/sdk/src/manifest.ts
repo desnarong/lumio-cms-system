@@ -18,7 +18,7 @@ export const appManifestSchema = z.object({
   permissions: z.array(z.enum(PERMISSION_SCOPES)).default([]),
   blocks: z.array(z.string().min(1)).default([]),
   adminPages: z.array(appAdminPageSchema).default([]),
-  settingsSchema: z.record(z.unknown()).optional(),
+  settingsSchema: z.record(z.string(), z.unknown()).optional(),
   /** Shown in the Lumio store before the owner installs the App (16-apps.md). */
   description: z.string().min(1).optional(),
   category: z.enum(['marketing', 'communication', 'analytics', 'content']).optional(),

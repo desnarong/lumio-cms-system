@@ -15,7 +15,7 @@ export const buttonPropsSchema = z.object({
 export const buttonSchema = z.object({
   version: z.literal(1),
   props: buttonPropsSchema,
-  style: blockStyleSchema.default({}),
+  style: blockStyleSchema.prefault({}),
 });
 
 export type ButtonProps = z.infer<typeof buttonPropsSchema>;

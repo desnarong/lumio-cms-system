@@ -15,7 +15,7 @@ export const imagePropsSchema = z.object({
 export const imageSchema = z.object({
   version: z.literal(1),
   props: imagePropsSchema,
-  style: blockStyleSchema.default({}),
+  style: blockStyleSchema.prefault({}),
 });
 
 export type ImageProps = z.infer<typeof imagePropsSchema>;

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { patchOf } from './patch.js';
 
 /**
  * Agency / white-label branding (docs/PROGRESS.md "งานนอก MVP"). One deployment
@@ -26,7 +27,7 @@ export const agencyBrandingSchema = z.object({
 });
 export type AgencyBranding = z.infer<typeof agencyBrandingSchema>;
 
-export const agencyBrandingInputSchema = agencyBrandingSchema.partial();
+export const agencyBrandingInputSchema = patchOf(agencyBrandingSchema);
 export type AgencyBrandingInput = z.infer<typeof agencyBrandingInputSchema>;
 
 /** Branding plus whether this deployment's licence allows white-labelling. */

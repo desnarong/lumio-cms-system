@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { patchOf } from './patch.js';
 import { ORDER_STATUSES } from './commerce.js';
 
 /**
@@ -105,8 +106,8 @@ export const bblGatewayReady = (
 ): boolean => bankCredentialsReady(settings) && settings.webhookSecret.length > 0;
 
 /** Connection fields are written by the API flow only, never by a settings form. */
-export const updateBankSettingsInputSchema = bankSettingsSchema
-  .omit({
+export const updateBankSettingsInputSchema = patchOf(
+  bankSettingsSchema.omit({
     provider: true,
     clientSecret: true,
     apiKey: true,
@@ -114,26 +115,25 @@ export const updateBankSettingsInputSchema = bankSettingsSchema
     connectedAt: true,
     connectedBy: true,
     lastCheckedAt: true,
-  })
-  .partial()
-  .extend({
-    /** Plain secret from the form; omitted keeps the stored one. */
-    clientSecret: z
-      .string()
-      .trim()
-      .min(8, 'Client Secret ต้องยาวอย่างน้อย 8 ตัวอักษร')
-      .max(500)
-      .optional(),
-    /** `null` (or "") removes the key; omitted keeps the stored one. */
-    apiKey: z.string().trim().max(500).nullable().optional(),
-    /** Plain callback key from the form; omitted keeps the stored one. */
-    webhookSecret: z
-      .string()
-      .trim()
-      .min(8, 'Webhook Secret ต้องยาวอย่างน้อย 8 ตัวอักษร')
-      .max(500)
-      .optional(),
-  });
+  }),
+).extend({
+  /** Plain secret from the form; omitted keeps the stored one. */
+  clientSecret: z
+    .string()
+    .trim()
+    .min(8, 'Client Secret ต้องยาวอย่างน้อย 8 ตัวอักษร')
+    .max(500)
+    .optional(),
+  /** `null` (or "") removes the key; omitted keeps the stored one. */
+  apiKey: z.string().trim().max(500).nullable().optional(),
+  /** Plain callback key from the form; omitted keeps the stored one. */
+  webhookSecret: z
+    .string()
+    .trim()
+    .min(8, 'Webhook Secret ต้องยาวอย่างน้อย 8 ตัวอักษร')
+    .max(500)
+    .optional(),
+});
 export type UpdateBankSettingsInput = z.infer<typeof updateBankSettingsInputSchema>;
 
 export const bankConnectionSchema = z.object({

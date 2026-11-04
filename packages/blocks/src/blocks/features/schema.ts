@@ -102,7 +102,7 @@ export const featuresPropsSchema = z.object({
     .array(featureItemSchema)
     .min(1)
     .max(FEATURES_MAX_ITEMS)
-    .default(() => [
+    .prefault(() => [
       {
         icon: '☕',
         title: 'คั่วสดทุกสัปดาห์',
@@ -133,7 +133,7 @@ export const featuresPropsSchema = z.object({
 export const featuresSchema = z.object({
   version: z.literal(1),
   props: featuresPropsSchema,
-  style: blockStyleSchema.default({}),
+  style: blockStyleSchema.prefault({}),
 });
 
 export type FeatureItem = z.infer<typeof featureItemSchema>;

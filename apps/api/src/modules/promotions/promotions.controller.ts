@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { promotionInputSchema, type Role } from '@lumio/shared';
+import { patchOf, promotionInputSchema, type Role } from '@lumio/shared';
 import { ok } from '../../common/api-response';
 import { AuthGuard, type AuthenticatedUser } from '../auth/auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
@@ -43,7 +43,7 @@ export class PromotionsController {
     @CurrentUser() user: AuthenticatedUser,
     @Body() body: unknown,
   ) {
-    const input = promotionInputSchema.partial().parse(body);
+    const input = patchOf(promotionInputSchema).parse(body);
     return ok(await this.promotions.update(siteId, promotionId, input, user.id));
   }
 

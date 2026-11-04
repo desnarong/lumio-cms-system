@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { patchOf } from './patch.js';
 import { ROLES } from './rbac.js';
 
 export const PLANS = ['free', 'starter', 'pro', 'business', 'agency'] as const;
@@ -106,7 +107,7 @@ export const updateSiteInputSchema = z.object({
   subdomain: subdomainSchema.optional(),
   localeDefault: z.string().min(2).max(10).optional(),
   locales: z.array(z.string().min(2).max(10)).min(1).optional(),
-  settings: z.record(z.unknown()).optional(),
+  settings: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateSiteInput = z.infer<typeof updateSiteInputSchema>;
 
@@ -156,9 +157,8 @@ export type SiteChrome = z.infer<typeof siteChromeSchema>;
 
 export type SiteChromeLink = z.infer<typeof chromeLinkSchema>;
 
-
 /** Partial update from the Design Panel; unknown keys are ignored. */
-export const siteChromePatchSchema = siteChromeSchema.partial();
+export const siteChromePatchSchema = patchOf(siteChromeSchema);
 export type SiteChromePatch = z.infer<typeof siteChromePatchSchema>;
 
 /** Shape the admin uses for its site switcher; the API answers exactly this. */

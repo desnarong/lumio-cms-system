@@ -163,7 +163,7 @@ export const installedAppSchema = z.object({
   category: z.enum(APP_CATEGORIES),
   permissions: z.array(z.enum(APP_PERMISSIONS)),
   enabled: z.boolean(),
-  config: z.record(z.unknown()),
+  config: z.record(z.string(), z.unknown()),
   installedAt: z.string(),
   /** Where the App came from; external Apps load their admin page from `entry`. */
   source: z.enum(['catalog', 'external']).optional(),
@@ -174,13 +174,13 @@ export const installedAppSchema = z.object({
 export type InstalledApp = z.infer<typeof installedAppSchema>;
 
 export const installAppInputSchema = z.object({
-  config: z.record(z.unknown()).default({}),
+  config: z.record(z.string(), z.unknown()).default({}),
 });
 export type InstallAppInput = z.infer<typeof installAppInputSchema>;
 
 export const updateInstalledAppInputSchema = z.object({
   enabled: z.boolean().optional(),
-  config: z.record(z.unknown()).optional(),
+  config: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateInstalledAppInput = z.infer<typeof updateInstalledAppInputSchema>;
 

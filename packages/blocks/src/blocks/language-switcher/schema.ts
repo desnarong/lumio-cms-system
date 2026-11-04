@@ -15,7 +15,7 @@ export const languageSwitcherPropsSchema = z.object({
 export const languageSwitcherSchema = z.object({
   version: z.literal(1),
   props: languageSwitcherPropsSchema,
-  style: blockStyleSchema.default({}),
+  style: blockStyleSchema.prefault({}),
 });
 
 export type LanguageSwitcherProps = z.infer<typeof languageSwitcherPropsSchema>;

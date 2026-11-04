@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { bookingCancelInputSchema, bookingInputSchema } from '@lumio/shared';
+import { bookingCancelInputSchema, bookingInputSchema, patchOf } from '@lumio/shared';
 import { ok } from '../../common/api-response';
 import { RateLimit, RateLimitGuard } from '../../common/rate-limit.guard';
 import { BookingService } from './booking.service';
@@ -38,7 +38,7 @@ export class PublicBookingController {
   async cancel(@Param('host') host: string, @Param('token') token: string, @Body() body: unknown) {
     // The token is in the path; the body is accepted so a plain form can post an
     // empty object without a validation error.
-    bookingCancelInputSchema.partial().parse(body ?? {});
+    patchOf(bookingCancelInputSchema).parse(body ?? {});
     return ok(await this.bookings.cancelByToken(host, token));
   }
 }

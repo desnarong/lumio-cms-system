@@ -45,3 +45,4 @@ export * from './updates.js';
 export * from './api-key.js';
 export * from './agency.js';
 export * from './booking.js';
+export * from './patch.js';

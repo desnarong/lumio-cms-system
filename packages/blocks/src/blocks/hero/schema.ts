@@ -95,7 +95,7 @@ export const heroPropsSchema = z.object({
 export const heroSchema = z.object({
   version: z.literal(1),
   props: heroPropsSchema,
-  style: blockStyleSchema.default({}),
+  style: blockStyleSchema.prefault({}),
 });
 
 export type HeroProps = z.infer<typeof heroPropsSchema>;

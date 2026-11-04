@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { patchOf } from './patch.js';
 import { CONTENT_ACCESS, type ContentAccess } from './content.js';
 
 /**
@@ -15,12 +16,7 @@ export type MembershipInterval = (typeof MEMBERSHIP_INTERVALS)[number];
 export const MEMBERSHIP_PLAN_STATUSES = ['active', 'paused'] as const;
 export type MembershipPlanStatus = (typeof MEMBERSHIP_PLAN_STATUSES)[number];
 
-export const READER_SUBSCRIPTION_STATUSES = [
-  'active',
-  'past_due',
-  'cancelled',
-  'expired',
-] as const;
+export const READER_SUBSCRIPTION_STATUSES = ['active', 'past_due', 'cancelled', 'expired'] as const;
 export type ReaderSubscriptionStatus = (typeof READER_SUBSCRIPTION_STATUSES)[number];
 
 export const isContentAccess = (value: unknown): value is ContentAccess =>
@@ -30,8 +26,7 @@ export const isMembershipInterval = (value: unknown): value is MembershipInterva
   typeof value === 'string' && (MEMBERSHIP_INTERVALS as readonly string[]).includes(value);
 
 export const isReaderSubscriptionStatus = (value: unknown): value is ReaderSubscriptionStatus =>
-  typeof value === 'string' &&
-  (READER_SUBSCRIPTION_STATUSES as readonly string[]).includes(value);
+  typeof value === 'string' && (READER_SUBSCRIPTION_STATUSES as readonly string[]).includes(value);
 
 /** Whole days in one billing period, used to extend a subscription. */
 export const intervalDays = (interval: MembershipInterval): number =>
@@ -59,16 +54,12 @@ export const membershipPlanInputSchema = z.object({
   description: z.string().trim().max(500).default(''),
   interval: z.enum(MEMBERSHIP_INTERVALS),
   /** Price in satang; 0 means the plan is free. */
-  price: z
-    .number()
-    .int()
-    .min(0)
-    .max(100_000_000, 'ราคาสูงเกินไป'),
+  price: z.number().int().min(0).max(100_000_000, 'ราคาสูงเกินไป'),
   status: z.enum(MEMBERSHIP_PLAN_STATUSES).default('active'),
 });
 export type MembershipPlanInput = z.infer<typeof membershipPlanInputSchema>;
 
-export const updateMembershipPlanInputSchema = membershipPlanInputSchema.partial();
+export const updateMembershipPlanInputSchema = patchOf(membershipPlanInputSchema);
 export type UpdateMembershipPlanInput = z.infer<typeof updateMembershipPlanInputSchema>;
 
 export const membershipPlanSchema = z.object({
@@ -100,12 +91,7 @@ export const publicMembershipPlanListSchema = z.object({
 });
 export type PublicMembershipPlanList = z.infer<typeof publicMembershipPlanListSchema>;
 
-const emailSchema = z
-  .string()
-  .trim()
-  .toLowerCase()
-  .email('อีเมลไม่ถูกต้อง')
-  .max(200);
+const emailSchema = z.string().trim().toLowerCase().email('อีเมลไม่ถูกต้อง').max(200);
 
 /** A password a real person can remember without a password manager. */
 const passwordSchema = z
@@ -240,13 +226,9 @@ export const isSubscriptionActive = (
 };
 
 /** True when a page marked `members` must be withheld from this visitor. */
-export const isPaywalled = (
-  access: string | null | undefined,
-  entitled: boolean,
-): boolean => access === 'members' && !entitled;
+export const isPaywalled = (access: string | null | undefined, entitled: boolean): boolean =>
+  access === 'members' && !entitled;
 
 /** ISO date one billing period from `from`, used when Stripe omits the period. */
-export const periodEndFor = (
-  interval: MembershipInterval,
-  from: Date = new Date(),
-): Date => new Date(from.getTime() + intervalDays(interval) * 24 * 60 * 60 * 1000);
+export const periodEndFor = (interval: MembershipInterval, from: Date = new Date()): Date =>
+  new Date(from.getTime() + intervalDays(interval) * 24 * 60 * 60 * 1000);

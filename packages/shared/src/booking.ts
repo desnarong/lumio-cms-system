@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { patchOf } from './patch.js';
 
 /**
  * Appointment booking (docs/PROGRESS.md "งานนอก MVP"). A site publishes a list
@@ -12,7 +13,13 @@ import { z } from 'zod';
 export const BOOKING_UTC_OFFSET_MINUTES = 420;
 const OFFSET_MS = BOOKING_UTC_OFFSET_MINUTES * 60_000;
 
-export const BOOKING_STATUSES = ['pending', 'confirmed', 'completed', 'cancelled', 'no_show'] as const;
+export const BOOKING_STATUSES = [
+  'pending',
+  'confirmed',
+  'completed',
+  'cancelled',
+  'no_show',
+] as const;
 export type BookingStatus = (typeof BOOKING_STATUSES)[number];
 
 export const isBookingStatus = (value: unknown): value is BookingStatus =>
@@ -74,7 +81,7 @@ export const bookingServiceInputSchema = z.object({
 });
 export type BookingServiceInput = z.infer<typeof bookingServiceInputSchema>;
 
-export const updateBookingServiceInputSchema = bookingServiceInputSchema.partial();
+export const updateBookingServiceInputSchema = patchOf(bookingServiceInputSchema);
 export type UpdateBookingServiceInput = z.infer<typeof updateBookingServiceInputSchema>;
 
 export const bookingServiceSchema = z.object({
@@ -98,7 +105,14 @@ export const bookingInputSchema = z.object({
   /** Site-local start time, `HH:MM`. */
   time: z.string().regex(timePattern, 'เวลาไม่ถูกต้อง'),
   name: z.string().trim().min(1, 'กรุณากรอกชื่อ').max(120),
-  email: z.string().trim().toLowerCase().email('อีเมลไม่ถูกต้อง').max(200).optional().or(z.literal('')),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email('อีเมลไม่ถูกต้อง')
+    .max(200)
+    .optional()
+    .or(z.literal('')),
   phone: z.string().trim().max(40).optional().or(z.literal('')),
   note: z.string().trim().max(500).default(''),
   /** Hidden field no person fills in; a filled one is dropped silently. */
@@ -160,7 +174,16 @@ export const publicBookingSchema = z.object({
   enabled: z.boolean(),
   intro: z.string(),
   successMessage: z.string(),
-  services: z.array(bookingServiceSchema.pick({ id: true, name: true, description: true, durationMinutes: true, price: true, currency: true })),
+  services: z.array(
+    bookingServiceSchema.pick({
+      id: true,
+      name: true,
+      description: true,
+      durationMinutes: true,
+      price: true,
+      currency: true,
+    }),
+  ),
   days: z.array(bookingDaySchema),
 });
 export type PublicBooking = z.infer<typeof publicBookingSchema>;
@@ -277,7 +300,7 @@ export const DEFAULT_BOOKING_SETTINGS: BookingSettings = {
 
 /** The stored object merged over the defaults; a broken shape falls back. */
 export const mergeBookingSettings = (value: unknown): BookingSettings => {
-  const parsed = bookingSettingsSchema.partial().safeParse(value ?? {});
+  const parsed = patchOf(bookingSettingsSchema).safeParse(value ?? {});
   if (!parsed.success) return { ...DEFAULT_BOOKING_SETTINGS };
   const input = parsed.data;
   return {
@@ -305,8 +328,7 @@ export const slotTimesForDay = (settings: BookingSettings, weekday: number): str
 };
 
 /** Weekday of a `YYYY-MM-DD` string (0 = Sunday). */
-export const weekdayOf = (date: string): number =>
-  new Date(`${date}T00:00:00.000Z`).getUTCDay();
+export const weekdayOf = (date: string): number => new Date(`${date}T00:00:00.000Z`).getUTCDay();
 
 /** `YYYY-MM-DD` for a day `offset` days after `date`. */
 export const addDaysToDate = (date: string, offset: number): string => {

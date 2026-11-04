@@ -95,7 +95,7 @@ export const productsPropsSchema = z.object({
 export const productsSchema = z.object({
   version: z.literal(1),
   props: productsPropsSchema,
-  style: blockStyleSchema.default({}),
+  style: blockStyleSchema.prefault({}),
 });
 
 export type ProductCard = z.infer<typeof productCardSchema>;

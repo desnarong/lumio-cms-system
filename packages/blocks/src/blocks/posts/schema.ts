@@ -79,7 +79,7 @@ export const postsPropsSchema = z.object({
 export const postsSchema = z.object({
   version: z.literal(1),
   props: postsPropsSchema,
-  style: blockStyleSchema.default({}),
+  style: blockStyleSchema.prefault({}),
 });
 
 export type PostCard = z.infer<typeof postCardSchema>;

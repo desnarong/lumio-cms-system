@@ -18,7 +18,7 @@ import {
   type TemplateSummary,
 } from '@lumio/shared';
 import type { ThemeTokens } from '@lumio/shared';
-import type { ZodType, ZodTypeDef } from 'zod';
+import type { ZodType } from 'zod';
 
 /**
  * Reads template packs from `templates/` (docs/design/08-theme-design-panel.md
@@ -77,7 +77,7 @@ const readJson = (path: string): unknown => {
   }
 };
 
-const readValidated = <T>(path: string, schema: ZodType<T, ZodTypeDef, unknown>): T => {
+const readValidated = <T>(path: string, schema: ZodType<T>): T => {
   const parsed = schema.safeParse(readJson(path));
   if (!parsed.success) {
     const issues = parsed.error.issues

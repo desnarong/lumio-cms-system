@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { patchOf } from './patch.js';
 import { blockTreeSchema, type BlockTree } from './blocks.js';
 import { paginationQuerySchema } from './site.js';
 
@@ -98,13 +99,13 @@ export const createContentInputSchema = z.object({
   /** Cover image from the media library; shown on post cards and the post page. */
   coverMediaId: z.string().uuid().nullable().optional(),
   blocks: blockTreeSchema.default([]),
-  seo: seoSchema.default({}),
+  seo: seoSchema.prefault({}),
   /** Members-only pages are withheld from visitors who have not joined. */
   access: z.enum(CONTENT_ACCESS).optional(),
 });
 export type CreateContentInput = z.infer<typeof createContentInputSchema>;
 
-export const updateContentInputSchema = createContentInputSchema.partial().extend({
+export const updateContentInputSchema = patchOf(createContentInputSchema).extend({
   status: z.enum(CONTENT_STATUSES).optional(),
 });
 export type UpdateContentInput = z.infer<typeof updateContentInputSchema>;

@@ -42,7 +42,7 @@ const demoBlock: BlockDefinition<{ title: string; subtitle: string }> = {
       title: z.string(),
       subtitle: z.string().default(''),
     }),
-    style: blockStyleSchema.default({}),
+    style: blockStyleSchema.prefault({}),
   }),
   defaults: { version: 2, props: { title: 'หัวข้อ', subtitle: '' }, style: defaultBlockStyle },
   Block: () => null,

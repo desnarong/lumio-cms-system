@@ -22,7 +22,7 @@ export const paragraphPropsSchema = z.object({
 export const paragraphSchema = z.object({
   version: z.literal(1),
   props: paragraphPropsSchema,
-  style: blockStyleSchema.default({}),
+  style: blockStyleSchema.prefault({}),
 });
 
 export type ParagraphProps = z.infer<typeof paragraphPropsSchema>;

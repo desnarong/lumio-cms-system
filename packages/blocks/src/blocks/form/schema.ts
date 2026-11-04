@@ -16,7 +16,7 @@ export const formPropsSchema = z.object({
 export const formSchema = z.object({
   version: z.literal(1),
   props: formPropsSchema,
-  style: blockStyleSchema.default({}),
+  style: blockStyleSchema.prefault({}),
 });
 
 export type FormProps = z.infer<typeof formPropsSchema>;

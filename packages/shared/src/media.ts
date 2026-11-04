@@ -43,11 +43,7 @@ export const sniffImageMime = (bytes: Uint8Array): UploadMimeType | null => {
     return 'image/png';
   }
   if (bytes.length >= 4 && latin1(bytes, 0, 4) === 'GIF8') return 'image/gif';
-  if (
-    bytes.length >= 12 &&
-    latin1(bytes, 0, 4) === 'RIFF' &&
-    latin1(bytes, 8, 12) === 'WEBP'
-  ) {
+  if (bytes.length >= 12 && latin1(bytes, 0, 4) === 'RIFF' && latin1(bytes, 8, 12) === 'WEBP') {
     return 'image/webp';
   }
   if (bytes.length >= 12 && latin1(bytes, 4, 8) === 'ftyp') {
@@ -78,10 +74,7 @@ export const mediaTrashPurgeAt = (archivedAt: string | null): string | null => {
 };
 
 /** Whole days left before a trashed image is purged; 0 once it is due. */
-export const mediaTrashDaysLeft = (
-  archivedAt: string | null,
-  now: Date = new Date(),
-): number => {
+export const mediaTrashDaysLeft = (archivedAt: string | null, now: Date = new Date()): number => {
   const purgeAt = mediaTrashPurgeAt(archivedAt);
   if (!purgeAt) return 0;
   const remaining = new Date(purgeAt).getTime() - now.getTime();
@@ -89,10 +82,8 @@ export const mediaTrashDaysLeft = (
 };
 
 /** True once a trashed image has aged past the retention window. */
-export const isMediaTrashExpired = (
-  archivedAt: string | null,
-  now: Date = new Date(),
-): boolean => archivedAt !== null && mediaTrashDaysLeft(archivedAt, now) === 0;
+export const isMediaTrashExpired = (archivedAt: string | null, now: Date = new Date()): boolean =>
+  archivedAt !== null && mediaTrashDaysLeft(archivedAt, now) === 0;
 
 export const isMediaStatus = (value: unknown): value is MediaStatus =>
   typeof value === 'string' && (MEDIA_STATUSES as readonly string[]).includes(value);
@@ -182,11 +173,7 @@ const altSchema = z.string().trim().max(300);
 export const presignUploadInputSchema = z.object({
   filename: z.string().trim().min(1).max(200),
   mime: z.enum(UPLOAD_MIME_TYPES),
-  size: z
-    .number()
-    .int()
-    .positive()
-    .max(MEDIA_MAX_UPLOAD_BYTES, 'ไฟล์ใหญ่เกินกำหนด'),
+  size: z.number().int().positive().max(MEDIA_MAX_UPLOAD_BYTES, 'ไฟล์ใหญ่เกินกำหนด'),
   folder: folderSchema.optional(),
 });
 export type PresignUploadInput = z.infer<typeof presignUploadInputSchema>;
@@ -195,7 +182,7 @@ export const presignUploadResultSchema = z.object({
   mediaId: z.string().min(1),
   uploadUrl: z.string().min(1),
   method: z.literal('PUT'),
-  headers: z.record(z.string()),
+  headers: z.record(z.string(), z.string()),
   expiresAt: z.string(),
   maxBytes: z.number().int().positive(),
 });
@@ -295,7 +282,10 @@ export const mediaUrlFor = (base: string, key: string): string =>
 export const isAbsoluteUrl = (value: string): boolean => /^https?:\/\//i.test(value);
 
 /** Picks the smallest variant that still covers `width`, else the largest one. */
-export const pickVariant = (variants: readonly MediaVariant[], width: number): MediaVariant | null => {
+export const pickVariant = (
+  variants: readonly MediaVariant[],
+  width: number,
+): MediaVariant | null => {
   const usable = [...variants]
     .filter((variant) => variant.url.length > 0)
     .sort((a, b) => a.w - b.w);

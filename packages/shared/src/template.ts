@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { patchOf } from './patch.js';
 import { blockStyleSchema, blockTreeSchema, type BlockStyle, type BlockTree } from './blocks.js';
 import { CONTENT_TYPES } from './content.js';
 import { menuItemsSchema } from './public.js';
@@ -81,7 +82,7 @@ export const templateManifestSchema = z.object({
 export type TemplateManifest = z.infer<typeof templateManifestSchema>;
 
 /** Per-block-type style defaults (`section-styles.json`). */
-export const sectionStylesSchema = z.record(blockStyleSchema.partial());
+export const sectionStylesSchema = z.record(z.string(), patchOf(blockStyleSchema));
 export type SectionStyles = z.infer<typeof sectionStylesSchema>;
 
 /** Header/footer block trees plus the navigation menu (`global-blocks.json`, `menus.json`). */
@@ -213,10 +214,7 @@ export interface MenuDetail {
  * Alignment is a property of the bar, not of one language, so it lives in
  * `sites.settings.menuAlign` and applies to every menu of that location.
  */
-export const menuAlignFromSettings = (
-  settings: unknown,
-  location: MenuLocation,
-): MenuAlign => {
+export const menuAlignFromSettings = (settings: unknown, location: MenuLocation): MenuAlign => {
   // Sites that never chose an alignment keep the look they already had: the
   // header menu at the end of the bar, the footer menu at its start.
   const fallback: MenuAlign = location === 'header' ? 'right' : 'left';

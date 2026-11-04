@@ -11,7 +11,7 @@ import { publicPaywallSchema } from './membership.js';
  * renderer treats it as read-only: it never writes back to the API.
  */
 
-export const menuItemSchema: z.ZodType<MenuItem, z.ZodTypeDef, unknown> = z.lazy(() =>
+export const menuItemSchema: z.ZodType<MenuItem> = z.lazy(() =>
   z.object({
     label: z.string(),
     href: safeLinkSchema.optional(),
@@ -46,8 +46,8 @@ export const publicSiteSchema = z.object({
   subdomain: z.string(),
   localeDefault: z.string(),
   locales: z.array(z.string()),
-  themeTokens: z.record(z.unknown()).default({}),
-  settings: z.record(z.unknown()).default({}),
+  themeTokens: z.record(z.string(), z.unknown()).default({}),
+  settings: z.record(z.string(), z.unknown()).default({}),
   /** Logo chosen by the owner, shown in the site header. */
   logoUrl: z.string().nullable().default(null),
   /** Square icon shown in the browser tab, when the owner uploaded one. */
