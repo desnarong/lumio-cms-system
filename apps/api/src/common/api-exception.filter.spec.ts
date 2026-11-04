@@ -41,6 +41,20 @@ describe('ApiExceptionFilter', () => {
     );
   });
 
+  it('keeps only path, code and message of each zod issue', () => {
+    const response = responseStub();
+    const result = loginInputSchema.safeParse({ email: 'not-an-email', password: 'x' });
+    if (result.success) throw new Error('expected a validation failure');
+
+    new ApiExceptionFilter().catch(result.error, hostFor(response));
+
+    const body = response.json.mock.calls[0]?.[0] as { details: Array<Record<string, unknown>> };
+    expect(body.details.length).toBeGreaterThan(0);
+    for (const detail of body.details) {
+      expect(Object.keys(detail).sort()).toEqual(['code', 'message', 'path']);
+    }
+  });
+
   it('maps a ZodError to a 400 validation_error with details', () => {
     const response = responseStub();
     let zodError: ZodError | undefined;

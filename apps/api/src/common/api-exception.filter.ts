@@ -63,7 +63,9 @@ export class ApiExceptionFilter implements ExceptionFilter {
         body: {
           error: 'validation_error',
           message: 'ข้อมูลที่ส่งมาไม่ถูกต้อง',
-          details: exception.issues,
+          // Only what a client can act on: zod 4 also attaches long regex
+          // patterns and expected/received internals that nobody reads.
+          details: exception.issues.map(({ path, code, message }) => ({ path, code, message })),
         },
       };
     }
