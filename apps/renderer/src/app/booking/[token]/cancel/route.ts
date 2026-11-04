@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cancelBooking } from '../../../../lib/booking';
 import { requestHost } from '../../../../lib/request-host';
+import { publicUrl } from '../../../../lib/public-url';
 
 /** Cancels one booking from its confirmation page; the token is the credential. */
 export async function POST(
@@ -12,8 +13,8 @@ export async function POST(
   try {
     const host = await requestHost();
     await cancelBooking(host, token);
-    return NextResponse.redirect(new URL(`${target}?cancelled=1`, request.url), 303);
+    return NextResponse.redirect(publicUrl(`${target}?cancelled=1`, request), 303);
   } catch {
-    return NextResponse.redirect(new URL(`${target}?error=1`, request.url), 303);
+    return NextResponse.redirect(publicUrl(`${target}?error=1`, request), 303);
   }
 }

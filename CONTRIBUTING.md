@@ -28,6 +28,17 @@ pnpm test:e2e:install   # ครั้งแรกครั้งเดียว
 pnpm test:e2e
 ```
 
+E2E ของหน้าร้านฝั่งลูกค้า (สั่งซื้อจริงผ่าน Caddy → renderer → API) ต้องรัน stack ก่อน
+และใช้ข้อมูลเดโม:
+
+```bash
+docker compose --profile app up -d --build
+pnpm test:e2e:storefront
+```
+
+เทสเปิดวิธีชำระเงินของเว็บเดโมชั่วคราว ยกเลิกออเดอร์ทดสอบ แล้วคืนค่าเดิมเมื่อจบ
+การจ่ายด้วยบัตรต้องมี `STRIPE_SECRET_KEY` แบบ `sk_test_` ใน `.env`
+
 - ทุกตารางข้อมูลของเว็บต้องมี `site_id` + RLS
 - Validate input ด้วย Zod จาก `packages/shared`
 - ห้าม hard-code สี/ขนาดใน component — ใช้ design tokens

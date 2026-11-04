@@ -1,6 +1,6 @@
 {
   "name": "lumio",
-  "version": "0.27.5",
+  "version": "0.27.6",
   "private": true,
   "description": "Lumio CMS — multi-tenant website builder monorepo",
   "license": "UNLICENSED",
@@ -21,6 +21,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md,yml,yaml}\"",
     "test:e2e": "playwright test",
+    "test:e2e:storefront": "playwright test -c playwright.storefront.config.ts",
     "test:e2e:install": "playwright install chromium",
     "version:bump": "node scripts/bump-version.mjs",
     "update:check": "node scripts/update.mjs --check",

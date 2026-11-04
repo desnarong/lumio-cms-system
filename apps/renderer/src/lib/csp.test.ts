@@ -24,6 +24,15 @@ describe('buildContentSecurityPolicy', () => {
     expect(directiveOf(csp, 'font-src')).toContain('https://fonts.gstatic.com');
   });
 
+  it('lets checkout redirect to the payment providers and nowhere else', () => {
+    const formAction = directiveOf(buildContentSecurityPolicy({ nonce: 'n' }), 'form-action');
+
+    expect(formAction).toBe(
+      "form-action 'self' https://checkout.stripe.com https://*.bangkokbank.com",
+    );
+    expect(formAction).not.toMatch(/\*\s|https:(\s|$)/);
+  });
+
   it('blocks framing, objects and base tag abuse', () => {
     const csp = buildContentSecurityPolicy({ nonce: 'n' });
 

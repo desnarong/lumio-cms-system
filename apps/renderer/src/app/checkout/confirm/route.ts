@@ -3,6 +3,7 @@ import { createOrderInputSchema, ORDER_HONEYPOT_FIELD } from '@lumio/shared';
 import { requestHost } from '../../../lib/request-host';
 import { requestLocale } from '../../../lib/request-locale';
 import { createOrder, readCart } from '../../../lib/shop';
+import { publicUrl } from '../../../lib/public-url';
 
 const text = (form: FormData, key: string): string => {
   const value = form.get(key);
@@ -12,11 +13,11 @@ const text = (form: FormData, key: string): string => {
 /** Receives the checkout form, creates the order server-side and shows its token. */
 export async function POST(request: Request): Promise<Response> {
   const form = await request.formData().catch(() => null);
-  const failure = NextResponse.redirect(new URL('/checkout?error=1', request.url), 303);
+  const failure = NextResponse.redirect(publicUrl('/checkout?error=1', request), 303);
   if (!form) return failure;
 
   const items = await readCart();
-  if (items.length === 0) return NextResponse.redirect(new URL('/cart', request.url), 303);
+  if (items.length === 0) return NextResponse.redirect(publicUrl('/cart', request), 303);
 
   const parsed = createOrderInputSchema.safeParse({
     items,
@@ -42,7 +43,7 @@ export async function POST(request: Request): Promise<Response> {
     const created = await createOrder(host, parsed.data, locale);
     const target =
       created.payment.redirectUrl ?? `/order/${encodeURIComponent(created.order.token)}`;
-    const response = NextResponse.redirect(new URL(target, request.url), 303);
+    const response = NextResponse.redirect(publicUrl(target, request), 303);
     response.cookies.set({ name: 'lumio_cart', value: '', maxAge: 0, path: '/' });
     return response;
   } catch {

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { safeNextPath, withCartItem } from '../../../lib/cart';
 import { cartCookie, readCart } from '../../../lib/shop';
+import { publicUrl } from '../../../lib/public-url';
 
 /**
  * Plain HTML form target, so the shop works with no JavaScript at all. The cart
@@ -8,7 +9,7 @@ import { cartCookie, readCart } from '../../../lib/shop';
  */
 export async function POST(request: Request): Promise<Response> {
   const form = await request.formData().catch(() => null);
-  const fallback = new URL('/cart', request.url);
+  const fallback = publicUrl('/cart', request);
 
   if (!form) return NextResponse.redirect(fallback, 303);
 
@@ -20,10 +21,15 @@ export async function POST(request: Request): Promise<Response> {
   );
 
   const variantId = String(form.get('variantId') ?? '') || null;
-  const items = withCartItem(await readCart(), productId, Number.isFinite(quantity) ? quantity : 1, {
-    variantId,
-  });
-  const response = NextResponse.redirect(new URL(next, request.url), 303);
+  const items = withCartItem(
+    await readCart(),
+    productId,
+    Number.isFinite(quantity) ? quantity : 1,
+    {
+      variantId,
+    },
+  );
+  const response = NextResponse.redirect(publicUrl(next, request), 303);
   response.cookies.set(cartCookie(items));
   return response;
 }

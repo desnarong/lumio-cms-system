@@ -10,6 +10,7 @@ import {
 import { ApiUnavailableError } from '../../../lib/api';
 import { requestHost } from '../../../lib/request-host';
 import { lookupOrder } from '../../../lib/shop';
+import { publicUrl } from '../../../lib/public-url';
 
 const text = (form: FormData, key: string): string => {
   const value = form.get(key);
@@ -25,7 +26,7 @@ const text = (form: FormData, key: string): string => {
 export async function POST(request: Request): Promise<Response> {
   const form = await request.formData().catch(() => null);
   if (!form) {
-    return NextResponse.redirect(new URL('/signin?error=invalid', request.url), 303);
+    return NextResponse.redirect(publicUrl('/signin?error=invalid', request), 303);
   }
 
   const parsed = orderLookupInputSchema.safeParse({
@@ -34,14 +35,14 @@ export async function POST(request: Request): Promise<Response> {
     honeypot: text(form, ORDER_HONEYPOT_FIELD),
   });
   if (!parsed.success) {
-    return NextResponse.redirect(new URL('/signin?error=invalid', request.url), 303);
+    return NextResponse.redirect(publicUrl('/signin?error=invalid', request), 303);
   }
 
   try {
     const host = await requestHost();
     const order = await lookupOrder(host, parsed.data);
     const response = NextResponse.redirect(
-      new URL(`/order/${encodeURIComponent(order.token)}`, request.url),
+      publicUrl(`/order/${encodeURIComponent(order.token)}`, request),
       303,
     );
     const store = await cookies();
@@ -54,6 +55,6 @@ export async function POST(request: Request): Promise<Response> {
     return response;
   } catch (error) {
     const code = error instanceof ApiUnavailableError ? 'unavailable' : 'not-found';
-    return NextResponse.redirect(new URL(`/signin?error=${code}`, request.url), 303);
+    return NextResponse.redirect(publicUrl(`/signin?error=${code}`, request), 303);
   }
 }

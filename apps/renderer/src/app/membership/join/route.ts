@@ -3,6 +3,7 @@ import { readerRegisterInputSchema } from '@lumio/shared';
 import { ApiRejectedError } from '../../../lib/api';
 import { readerCookie, registerReader } from '../../../lib/reader';
 import { requestHost } from '../../../lib/request-host';
+import { publicUrl } from '../../../lib/public-url';
 
 const text = (form: FormData, key: string): string => {
   const value = form.get(key);
@@ -15,7 +16,7 @@ const text = (form: FormData, key: string): string => {
  */
 export async function POST(request: Request): Promise<Response> {
   const form = await request.formData().catch(() => null);
-  if (!form) return NextResponse.redirect(new URL('/membership?error=invalid', request.url), 303);
+  if (!form) return NextResponse.redirect(publicUrl('/membership?error=invalid', request), 303);
 
   const parsed = readerRegisterInputSchema.safeParse({
     email: text(form, 'email'),
@@ -24,17 +25,18 @@ export async function POST(request: Request): Promise<Response> {
     honeypot: text(form, 'honeypot'),
   });
   if (!parsed.success) {
-    return NextResponse.redirect(new URL('/membership?error=invalid', request.url), 303);
+    return NextResponse.redirect(publicUrl('/membership?error=invalid', request), 303);
   }
 
   try {
     const host = await requestHost();
     const session = await registerReader(host, parsed.data);
-    const response = NextResponse.redirect(new URL('/membership?joined=1', request.url), 303);
+    const response = NextResponse.redirect(publicUrl('/membership?joined=1', request), 303);
     response.cookies.set(readerCookie(session.token));
     return response;
   } catch (error) {
-    const code = error instanceof ApiRejectedError && error.status === 409 ? 'exists' : 'unavailable';
-    return NextResponse.redirect(new URL(`/membership?error=${code}`, request.url), 303);
+    const code =
+      error instanceof ApiRejectedError && error.status === 409 ? 'exists' : 'unavailable';
+    return NextResponse.redirect(publicUrl(`/membership?error=${code}`, request), 303);
   }
 }

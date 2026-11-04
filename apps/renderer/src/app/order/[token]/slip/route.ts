@@ -3,6 +3,7 @@ import { MAX_SLIP_BYTES, parseBaht } from '@lumio/shared';
 import { requestHost } from '../../../../lib/request-host';
 import { requestLocale } from '../../../../lib/request-locale';
 import { submitSlip } from '../../../../lib/shop';
+import { publicUrl } from '../../../../lib/public-url';
 
 const MIME_BY_EXTENSION: Record<string, string> = {
   'image/jpeg': 'jpeg',
@@ -21,7 +22,7 @@ export async function POST(
   const { token } = await context.params;
   const orderPath = `/order/${encodeURIComponent(token)}`;
   const fail = (reason: string): Response =>
-    NextResponse.redirect(new URL(`${orderPath}?slip=${reason}`, request.url), 303);
+    NextResponse.redirect(publicUrl(`${orderPath}?slip=${reason}`, request), 303);
 
   const form = await request.formData().catch(() => null);
   if (!form) return fail('error');
@@ -44,7 +45,7 @@ export async function POST(
       locale,
     );
     return NextResponse.redirect(
-      new URL(`${orderPath}?slip=${result.autoVerified ? 'verified' : 'review'}`, request.url),
+      publicUrl(`${orderPath}?slip=${result.autoVerified ? 'verified' : 'review'}`, request),
       303,
     );
   } catch {

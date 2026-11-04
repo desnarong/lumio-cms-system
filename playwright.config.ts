@@ -9,6 +9,8 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './e2e',
   testMatch: '**/*.e2e.ts',
+  // Storefront specs need the whole docker stack: playwright.storefront.config.ts.
+  testIgnore: '**/storefront/**',
   timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: true,

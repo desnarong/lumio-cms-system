@@ -3,6 +3,7 @@ import { decideLocale, isNavigationRequest } from './lib/accept-language';
 import { buildContentSecurityPolicy } from './lib/csp';
 import { DEFAULT_LOCALE, LOCALE_PREFIXES, splitLocalePath } from './lib/locale';
 import { LOCALE_HEADER } from './lib/request-locale';
+import { publicOrigin } from './lib/public-url';
 import { loadSiteLocales } from './lib/site-locales';
 
 /** Host header without the port; `localhost:49200` → `localhost`. */
@@ -37,7 +38,10 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   // The default language has no prefix; sending a visitor to the canonical URL
   // keeps one address per page (docs/design/17-i18n.md 17.4 rule 5).
   if (hasPrefix && locale === DEFAULT_LOCALE) {
-    return NextResponse.redirect(new URL(`${path}${search}`, request.nextUrl.origin), 308);
+    return NextResponse.redirect(
+      new URL(`${path}${search}`, publicOrigin(request.headers, request.url)),
+      308,
+    );
   }
 
   const host = hostOf(request);
@@ -61,7 +65,10 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   });
 
   if (routing.redirectTo) {
-    return NextResponse.redirect(new URL(routing.redirectTo, request.nextUrl.origin), 307);
+    return NextResponse.redirect(
+      new URL(routing.redirectTo, publicOrigin(request.headers, request.url)),
+      307,
+    );
   }
 
   const nonce = btoa(crypto.randomUUID());

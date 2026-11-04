@@ -3,13 +3,14 @@ import { FORM_HONEYPOT_FIELD } from '@lumio/shared';
 import { submitForm } from '../../../lib/content';
 import { formReturnPath } from '../../../lib/form-return';
 import { requestHost } from '../../../lib/request-host';
+import { publicUrl } from '../../../lib/public-url';
 
 export interface FormSubmitRouteProps {
   params: Promise<{ formId: string }>;
 }
 
 const redirectTo = (request: Request, target: string): Response =>
-  NextResponse.redirect(new URL(target, request.url), 303);
+  NextResponse.redirect(publicUrl(target, request), 303);
 
 /**
  * Receives a public form post and forwards it to the API (docs/design/12-api.md

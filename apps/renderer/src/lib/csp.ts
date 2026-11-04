@@ -6,6 +6,18 @@ export interface CspOptions {
 }
 
 /**
+ * Where a form may send the buyer. Checkout posts to this site and the answer is
+ * a redirect to the payment page, and browsers apply `form-action` to that
+ * redirect too: with only 'self' the card and bank buttons silently go nowhere.
+ * Only the payment providers the shop integrates are listed.
+ */
+const FORM_ACTION_SOURCES = [
+  "'self'",
+  'https://checkout.stripe.com',
+  'https://*.bangkokbank.com',
+] as const;
+
+/**
  * Content-Security-Policy for the public site (docs/design/15-security.md 15.2).
  * Scripts must come from the app or carry the request nonce, so injected inline
  * script cannot run; images may come from the API/CDN that serves the media
@@ -25,7 +37,7 @@ export const buildContentSecurityPolicy = ({ nonce, dev = false }: CspOptions): 
     "connect-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",
-    "form-action 'self'",
+    `form-action ${FORM_ACTION_SOURCES.join(' ')}`,
     "frame-ancestors 'none'",
   ].join('; ');
 };
