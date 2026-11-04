@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   decideLocale,
   isNavigationRequest,
@@ -115,6 +115,15 @@ describe('decideLocale', () => {
 });
 
 describe('loadSiteLocales', () => {
+  // The loader returns null without an API address, so the suite must not rely
+  // on whatever the developer's shell or .env happens to export.
+  beforeEach(() => {
+    vi.stubEnv('API_INTERNAL_URL', 'http://api.test');
+  });
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   const jsonResponse = (data: unknown, ok = true): Response =>
     ({ ok, json: async () => ({ data }) }) as unknown as Response;
 

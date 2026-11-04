@@ -6,8 +6,10 @@ packages:
 # (docs/design/23-security-review.md). Ranges are scoped so only the
 # vulnerable versions move; older major lines used by other tools stay put.
 overrides:
-  multer@<2.3.0: ^2.3.0
+  multer@<2.5.0: ^2.5.0
   body-parser@<1.20.6: ^1.20.6
+  body-parser@>=2.0.0 <2.4.0: ^2.4.0
+  fast-uri@<3.1.9: ^3.1.9
   qs@<6.16.0: ^6.16.0
   postcss@<8.5.23: ^8.5.23
   file-type@<21.3.2: ^21.3.2
