@@ -45,6 +45,21 @@ test.describe('back office', () => {
     await expect(row.getByText('ยืนยันแล้ว')).toBeVisible();
   });
 
+  test('the owner approves a PromptPay slip and the order becomes paid', async ({ page }) => {
+    await signIn(page);
+    await page.getByRole('link', { name: 'ร้านค้า' }).click();
+    await page.getByRole('tab', { name: 'คำสั่งซื้อ' }).click();
+
+    await page.getByRole('button', { name: /LM-261021-AB12/ }).click();
+    const orderDialog = page.getByRole('dialog', { name: 'คำสั่งซื้อ LM-261021-AB12' });
+    await expect(orderDialog.getByText(/DEMO-REF-0001/)).toBeVisible();
+
+    await orderDialog.getByRole('button', { name: 'ยืนยันสลิป' }).click();
+
+    await expect(page.getByText('ยืนยันการชำระเงินจากสลิปแล้ว')).toBeVisible();
+    await expect(orderDialog.getByRole('button', { name: 'ยืนยันสลิป' })).toHaveCount(0);
+  });
+
   test('the owner refunds a paid order in one flow', async ({ page }) => {
     await signIn(page);
     await page.getByRole('link', { name: 'ร้านค้า' }).click();
