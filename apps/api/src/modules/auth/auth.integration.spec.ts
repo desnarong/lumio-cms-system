@@ -45,7 +45,8 @@ describe.skipIf(!process.env.DATABASE_URL)('Auth and site scoping', () => {
 
   beforeAll(async () => {
     db = new PrismaService();
-    await db.$connect();
+    // As Nest boots it, so forSite()/forUser() run under the RLS session role.
+    await db.onModuleInit();
     await db.site.deleteMany({ where: { id: SITE_ID } });
     await db.user.deleteMany({ where: { id: { in: [OWNER_ID, OUTSIDER_ID] } } });
 
