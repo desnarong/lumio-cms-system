@@ -24,6 +24,8 @@ overrides:
   webpack@<5.104.1: ^5.104.1
   glob@>=13.0.0 <14.0.2: ^14.0.3
   minimatch@>=10.0.0 <11.0.1: ^11.0.1
+  # @prisma/config 6.19 pins 7.1.5 (GHSA-ggr8-5vv4-36mx); it only calls deepmerge().
+  deepmerge-ts@<8.0.0: ^8.0.2
 
 # Dependencies allowed to run install scripts. `msgpackr-extract` (an optional
 # native accelerator for BullMQ's msgpack) stays false: msgpackr falls back to
