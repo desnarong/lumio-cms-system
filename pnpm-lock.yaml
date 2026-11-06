@@ -205,6 +205,24 @@ importers:
 
   apps/renderer:
     dependencies:
+      '@fontsource/ibm-plex-sans-thai':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource/inter':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource/kanit':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource/noto-sans-thai':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource/plus-jakarta-sans':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource/prompt':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@lumio/blocks':
         specifier: workspace:*
         version: link:../../packages/blocks
@@ -955,6 +973,24 @@ packages:
   '@eslint/plugin-kit@0.4.1':
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@fontsource/ibm-plex-sans-thai@5.3.0':
+    resolution: {integrity: sha512-olXzgcA/CTk0PibqGMJrheml3/z8N9VzNLcHkzv9tCoBqnaMoxYYwZp4PZrDkPuOCUe1gW942e9f5fGOOlr3zg==}
+
+  '@fontsource/inter@5.3.0':
+    resolution: {integrity: sha512-RofMylZmjlJEfELXeNHFWBRcSs75rGU/6bV2S2jfnvv/3rPXPGe0LgUJTklcHZ9lM4OZmAVFhcJPnACfb91A3g==}
+
+  '@fontsource/kanit@5.3.0':
+    resolution: {integrity: sha512-XrVxf5NWb8QLAEbQS2GYir3AY0WbOLr5Q80fWurnoFWXyc7CWvioGNPC2dxRGZKocMUXbwGhuK+sJqWkRLAWNA==}
+
+  '@fontsource/noto-sans-thai@5.3.0':
+    resolution: {integrity: sha512-ngqUyvDukkZUHypQbUJvUdAeYa2aYZsyeDTsdqMudf7GK2F2TK19OZ5kbo+37qsBtkNpmAMhEObQnWnzPqzKUw==}
+
+  '@fontsource/plus-jakarta-sans@5.3.0':
+    resolution: {integrity: sha512-9WRw3G74Ve4cyPApAZSXLPY5DiLOZXDn7Q7dIBjFBpA0Pj56ljDItEdy2UUajjJxRuTg2HkMLO5C3K2nAQORWg==}
+
+  '@fontsource/prompt@5.3.0':
+    resolution: {integrity: sha512-cU4VVn7G0wSI3pu3a7tynpTQ5hk3Lm9nEjTOBLhVYsqbOlvVIj6Tc1f3450BOGSpDiPOxmYGj/D7rE/z/TYPJg==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -5160,6 +5196,18 @@ snapshots:
     dependencies:
       '@eslint/core': 0.17.0
       levn: 0.4.1
+
+  '@fontsource/ibm-plex-sans-thai@5.3.0': {}
+
+  '@fontsource/inter@5.3.0': {}
+
+  '@fontsource/kanit@5.3.0': {}
+
+  '@fontsource/noto-sans-thai@5.3.0': {}
+
+  '@fontsource/plus-jakarta-sans@5.3.0': {}
+
+  '@fontsource/prompt@5.3.0': {}
 
   '@humanfs/core@0.19.2':
     dependencies:

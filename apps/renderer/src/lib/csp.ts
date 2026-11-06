@@ -31,9 +31,10 @@ export const buildContentSecurityPolicy = ({ nonce, dev = false }: CspOptions): 
   return [
     "default-src 'self'",
     `script-src ${scriptSrc.join(' ')}`,
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https: http://localhost:*",
-    "font-src 'self' data: https://fonts.gstatic.com",
+    // Design fonts are self-hosted (src/app/fonts.ts).
+    "font-src 'self' data:",
     "connect-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",
