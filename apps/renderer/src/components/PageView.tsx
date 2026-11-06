@@ -5,7 +5,13 @@ import {
   type PromotionCard,
   type ShopProductCard,
 } from '@lumio/blocks/render';
-import { buildJsonLd, localeLabel, localePathFor, type BlockNode, type PublicPage } from '@lumio/shared';
+import {
+  buildJsonLd,
+  localeLabel,
+  localePathFor,
+  type BlockNode,
+  type PublicPage,
+} from '@lumio/shared';
 import { siteOrigin } from '../lib/host';
 import { languageLinks } from '../lib/languages';
 import { fallbackTitle } from '../lib/page-title';
@@ -15,6 +21,7 @@ import { PaywallNotice } from './PaywallNotice';
 import { PageViewTracker } from './PageViewTracker';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
+import { storefrontT } from '../lib/messages';
 
 // The render entry ships the block components without the editor panels.
 registerRenderBlocks();
@@ -61,7 +68,8 @@ export const PageView = ({
     site: {
       name: site.name,
       url: origin,
-      description: typeof site.settings.description === 'string' ? site.settings.description : undefined,
+      description:
+        typeof site.settings.description === 'string' ? site.settings.description : undefined,
     },
     content: {
       type: content.type,
@@ -98,7 +106,7 @@ export const PageView = ({
       */}
       {page.isFallback ? (
         <p className="site-locale-notice" role="note" lang={content.locale}>
-          ยังไม่มีหน้านี้ในภาษาที่เลือก กำลังแสดง{localeLabel(content.locale)}แทน
+          {storefrontT(content.locale)('page.fallback', { language: localeLabel(content.locale) })}
         </p>
       ) : null}
       <main className="site-main" id="main">
@@ -107,11 +115,16 @@ export const PageView = ({
           {page.paywall?.locked ? (
             <>
               {content.excerpt ? <p className="site-article__excerpt">{content.excerpt}</p> : null}
-              <PaywallNotice plans={page.paywall.plans} signedIn={readerSignedIn} />
+              <PaywallNotice
+                plans={page.paywall.plans}
+                signedIn={readerSignedIn}
+                locale={content.locale}
+              />
             </>
           ) : (
             <BlockTreeRenderer
               blocks={content.blocks}
+              locale={content.locale}
               forms={page.forms}
               languages={languages}
               {...(shopProducts ? { shopProducts } : {})}

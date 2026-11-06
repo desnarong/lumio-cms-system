@@ -133,15 +133,15 @@ export class MembersService {
       throw ApiException.forbidden('ไม่สามารถลบเจ้าของเว็บได้ กรุณาโอนความเป็นเจ้าของก่อน');
     }
 
-    await this.db.forSite(siteId, (tx) =>
-      tx.siteMember.delete({ where: { siteId_userId: { siteId, userId } } }),
-    );
-    await this.audit.log({
-      siteId,
-      userId: actorId,
-      action: 'member.remove',
-      target: userId,
-      meta: { role: target.role },
+    await this.db.forSite(siteId, async (tx) => {
+      await tx.siteMember.delete({ where: { siteId_userId: { siteId, userId } } });
+      await this.audit.record(tx, {
+        siteId,
+        userId: actorId,
+        action: 'member.remove',
+        target: userId,
+        meta: { role: target.role },
+      });
     });
   }
 

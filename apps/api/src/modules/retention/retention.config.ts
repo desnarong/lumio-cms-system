@@ -1,3 +1,5 @@
+import { CONTENT_TRASH_RETENTION_DAYS } from '@lumio/shared';
+
 /**
  * Retention knobs for data that grows with traffic rather than with what site
  * owners create (page views, the 404 log). All are env vars so an operator can
@@ -35,6 +37,13 @@ export const notFoundRetentionDays = (): number =>
  */
 export const notFoundMaxPerSite = (): number =>
   positiveInt(process.env.NOT_FOUND_MAX_PER_SITE, 1000, 10);
+
+/**
+ * Days a soft-deleted promotion, booking service, form or membership plan stays
+ * restorable. Defaults to the page trash window so every trash behaves alike.
+ */
+export const trashRetentionDays = (): number =>
+  positiveInt(process.env.TRASH_RETENTION_DAYS, CONTENT_TRASH_RETENTION_DAYS);
 
 export const retentionIntervalMs = (): number =>
   positiveInt(process.env.RETENTION_INTERVAL_MINUTES, 1440) * 60_000;

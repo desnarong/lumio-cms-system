@@ -28,6 +28,7 @@ import {
   type WizardStepId,
 } from './steps.js';
 import type { WizardApi } from './api.js';
+import { colors } from '@lumio/tokens';
 
 const BUSINESS_LABEL_KEYS: Record<WizardDraft['businessType'], MessageKey> = {
   restaurant: 'biz.restaurant',
@@ -500,7 +501,7 @@ export const WizardPage = ({
                       className="wizard-option__swatch"
                       style={{
                         borderRadius: 'var(--radius-md)',
-                        background: `linear-gradient(135deg, ${draft.primaryColor}, ${draft.accentColor ?? '#F472B6'})`,
+                        background: `linear-gradient(135deg, ${draft.primaryColor}, ${draft.accentColor ?? colors.accent[500]})`,
                       }}
                       aria-hidden="true"
                     />

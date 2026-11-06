@@ -33,6 +33,7 @@ import { coverOverflow, panFocalPoint } from './crop.js';
 import { panPosition } from './pan.js';
 import { SlashMenu } from './SlashMenu.js';
 import type { EditorTextField } from './types.js';
+import { literalColors } from '@lumio/tokens';
 
 export interface BlockCanvasProps {
   blocks: BlockTree;
@@ -181,7 +182,7 @@ const BlockRegion = ({
     left: number;
     length: number;
   } | null>(null);
-  const [customColor, setCustomColor] = useState('#17469d');
+  const [customColor, setCustomColor] = useState<string>(literalColors.textSeed);
   const [customSize, setCustomSize] = useState('24');
   const toolbarRef = useRef<HTMLDivElement>(null);
   const textDragRef = useRef<{
@@ -859,21 +860,21 @@ const BlockRegion = ({
               onKeyUp={(event) => event.stopPropagation()}
               onClick={(event) => event.stopPropagation()}
             >
-          <span className="editor-text-toolbar__label">สี</span>
+          <span className="editor-text-toolbar__label">{t('editor.toolbar.color')}</span>
           {(['inherit', 'primary', 'accent', 'muted'] as const).map((color) => (
             <button
               key={color}
               type="button"
               className={`editor-text-toolbar__swatch is-${color}`}
-              aria-label={`สี ${color}`}
-              title={`สี ${color}`}
+              aria-label={t('editor.toolbar.colorName', { color })}
+              title={t('editor.toolbar.colorName', { color })}
               onClick={() => applyRun({ color })}
             />
           ))}
-          <label className="editor-text-toolbar__custom" title="เลือกสีเอง">
+          <label className="editor-text-toolbar__custom" title={t('editor.toolbar.customColor')}>
             <input
               type="color"
-              aria-label="เลือกสีเอง"
+              aria-label={t('editor.toolbar.customColor')}
               value={customColor}
               onChange={(event) => {
                 setCustomColor(event.target.value);
@@ -881,7 +882,7 @@ const BlockRegion = ({
               }}
             />
           </label>
-          <span className="editor-text-toolbar__label">ขนาด</span>
+          <span className="editor-text-toolbar__label">{t('editor.toolbar.size')}</span>
           {(['sm', 'base', 'lg', 'xl'] as const).map((size) => (
             <button
               key={size}
@@ -897,8 +898,8 @@ const BlockRegion = ({
             type="number"
             min={8}
             max={240}
-            aria-label="ขนาดตัวอักษร (px)"
-            title="ขนาดตัวอักษร (px)"
+            aria-label={t('editor.toolbar.sizePx')}
+            title={t('editor.toolbar.sizePx')}
             value={customSize}
             onChange={(event) => setCustomSize(event.target.value)}
             onKeyDown={(event) => {
@@ -916,7 +917,7 @@ const BlockRegion = ({
               applyRun({ sizePx: px }, true);
             }}
           >
-            ใช้
+            {t('editor.toolbar.apply')}
           </button>
             </div>,
             document.body,

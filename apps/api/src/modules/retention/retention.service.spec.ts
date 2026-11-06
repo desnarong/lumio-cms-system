@@ -163,3 +163,36 @@ describe('RetentionScheduler', () => {
     expect(db.forSite).toHaveBeenCalled();
   });
 });
+
+describe('RetentionService.purgeDeleted', () => {
+  it('hard-deletes only rows deleted before the trash window', async () => {
+    vi.stubEnv('TRASH_RETENTION_DAYS', '30');
+    const deleteMany = () => vi.fn().mockResolvedValue({ count: 1 });
+    const tx = {
+      promotion: { deleteMany: deleteMany() },
+      bookingService: { deleteMany: deleteMany() },
+      form: { deleteMany: deleteMany() },
+      membershipPlan: { deleteMany: deleteMany() },
+    };
+    const db = {
+      site: { findMany: vi.fn(async () => [{ id: SITE_ID }]) },
+      forSite: vi.fn(async (_siteId: string, fn: (client: unknown) => Promise<unknown>) => fn(tx)),
+    } as unknown as PrismaService;
+
+    const summary = await new RetentionService(db).purgeDeleted(NOW);
+
+    const cutoff = new Date(NOW.getTime() - 30 * 24 * 60 * 60 * 1000);
+    for (const table of Object.values(tx)) {
+      expect(table.deleteMany).toHaveBeenCalledWith({
+        where: { siteId: SITE_ID, deletedAt: { lt: cutoff } },
+      });
+    }
+    expect(summary).toEqual({
+      sites: 1,
+      promotions: 1,
+      bookingServices: 1,
+      forms: 1,
+      membershipPlans: 1,
+    });
+  });
+});

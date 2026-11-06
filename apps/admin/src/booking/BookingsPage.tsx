@@ -25,6 +25,7 @@ import {
   TextField,
   useT,
   useToast,
+  type MessageKey,
 } from '@lumio/ui';
 import { ApiError } from '../api-error.js';
 import type { BookingApi } from './api.js';
@@ -37,7 +38,16 @@ export interface BookingsPageProps {
   headerTabs?: ReactNode;
 }
 
-const THAI_DAYS = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+const WEEKDAY_KEYS: readonly MessageKey[] = [
+  'weekday.0',
+  'weekday.1',
+  'weekday.2',
+  'weekday.3',
+  'weekday.4',
+  'weekday.5',
+  'weekday.6',
+];
+const weekdayKey = (weekday: number): MessageKey => WEEKDAY_KEYS[weekday] ?? 'weekday.0';
 
 const messageOf = (error: unknown, fallback: string): string =>
   error instanceof ApiError ? error.message : fallback;
@@ -69,7 +79,10 @@ export const BookingsPage = ({ api, canManage, demo = false, headerTabs }: Booki
   const [busy, setBusy] = useState(false);
   const [date, setDate] = useState('');
   const [status, setStatus] = useState<BookingStatus | ''>('');
-  const [editing, setEditing] = useState<{ service: BookingService | null; input: BookingServiceInput } | null>(null);
+  const [editing, setEditing] = useState<{
+    service: BookingService | null;
+    input: BookingServiceInput;
+  } | null>(null);
   const [pendingDelete, setPendingDelete] = useState<BookingService | null>(null);
 
   const load = useCallback(async () => {
@@ -137,6 +150,24 @@ export const BookingsPage = ({ api, canManage, demo = false, headerTabs }: Booki
     try {
       await api.deleteService(service.id);
       setServices((current) => current.filter((item) => item.id !== service.id));
+      toast.push({
+        tone: 'success',
+        title: t('booking.serviceDeleted', { name: service.name }),
+        undo: {
+          label: t('common.undo'),
+          onClick: () => {
+            void api
+              .restoreService(service.id)
+              .then((restored) => setServices((current) => [...current, restored]))
+              .catch((restoreError: unknown) =>
+                toast.push({
+                  tone: 'danger',
+                  title: messageOf(restoreError, t('common.genericError')),
+                }),
+              );
+          },
+        },
+      });
     } catch (deleteError) {
       toast.push({ tone: 'danger', title: messageOf(deleteError, t('common.genericError')) });
     } finally {
@@ -164,9 +195,7 @@ export const BookingsPage = ({ api, canManage, demo = false, headerTabs }: Booki
   const updateDay = (weekday: number, patch: Partial<BookingSettings['days'][number]>): void => {
     setSettings((current) => ({
       ...current,
-      days: current.days.map((day) =>
-        day.weekday === weekday ? { ...day, ...patch } : day,
-      ),
+      days: current.days.map((day) => (day.weekday === weekday ? { ...day, ...patch } : day)),
     }));
   };
 
@@ -278,12 +307,12 @@ export const BookingsPage = ({ api, canManage, demo = false, headerTabs }: Booki
                       disabled={!canManage}
                       onChange={(event) => updateDay(day.weekday, { open: event.target.checked })}
                     />
-                    <span>{THAI_DAYS[day.weekday]}</span>
+                    <span>{t(weekdayKey(day.weekday))}</span>
                   </label>
                   <input
                     className="booking-day__time"
                     type="time"
-                    aria-label={`${t('booking.start')} ${THAI_DAYS[day.weekday]}`}
+                    aria-label={`${t('booking.start')} ${t(weekdayKey(day.weekday))}`}
                     value={day.start}
                     disabled={!canManage || !day.open}
                     onChange={(event) => updateDay(day.weekday, { start: event.target.value })}
@@ -292,7 +321,7 @@ export const BookingsPage = ({ api, canManage, demo = false, headerTabs }: Booki
                   <input
                     className="booking-day__time"
                     type="time"
-                    aria-label={`${t('booking.end')} ${THAI_DAYS[day.weekday]}`}
+                    aria-label={`${t('booking.end')} ${t(weekdayKey(day.weekday))}`}
                     value={day.end}
                     disabled={!canManage || !day.open}
                     onChange={(event) => updateDay(day.weekday, { end: event.target.value })}
@@ -351,7 +380,7 @@ export const BookingsPage = ({ api, canManage, demo = false, headerTabs }: Booki
                         {service.durationMinutes} {t('booking.duration')} ·{' '}
                         {service.price > 0
                           ? formatMembershipPrice(service.price, service.currency)
-                          : 'ฟรี'}
+                          : t('booking.free')}
                         {service.description ? ` · ${service.description}` : ''}
                       </span>
                     </div>

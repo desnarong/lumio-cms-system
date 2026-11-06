@@ -3,6 +3,7 @@ import type { AuthUser } from '@lumio/shared';
 export const SESSION_STORAGE_KEY = 'lumio.session';
 
 export interface StoredSession {
+  /** Held in memory only; empty after a reload until the first refresh. */
   accessToken: string;
   user: AuthUser;
   /** Site the admin is working on; null right after sign-up, before the wizard. */
@@ -47,25 +48,31 @@ const isAuthUser = (value: unknown): value is AuthUser => {
 };
 
 /**
- * Keeps the signed-in session in the browser. The refresh token lives in an
- * httpOnly cookie the API sets, so only the short-lived access token is stored
- * here (docs/design/12-api.md 12.5).
+ * Keeps the signed-in session in the browser (docs/design/12-api.md 12.5).
+ *
+ * Only who is signed in and which site they work on are persisted. The access
+ * token lives in memory alone, so a script that manages to run on the page
+ * cannot lift it from `localStorage`. After a reload the token is empty: the
+ * first API call answers 401, `createSessionFetch` trades the httpOnly refresh
+ * cookie for a new token and retries, and the admin carries on.
  */
-export const createSessionStore = (
-  storage: KeyValueStorage = defaultStorage(),
-): SessionStore => {
+export const createSessionStore = (storage: KeyValueStorage = defaultStorage()): SessionStore => {
+  let accessToken = '';
+
+  const persist = (user: AuthUser, siteId: string | null): void =>
+    storage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ user, siteId }));
+
   const read = (): StoredSession | null => {
     const raw = storage.getItem(SESSION_STORAGE_KEY);
     if (!raw) return null;
 
     try {
       const parsed = JSON.parse(raw) as Record<string, unknown>;
-      if (typeof parsed.accessToken !== 'string' || !isAuthUser(parsed.user)) return null;
-      return {
-        accessToken: parsed.accessToken,
-        user: parsed.user,
-        siteId: typeof parsed.siteId === 'string' ? parsed.siteId : null,
-      };
+      if (!isAuthUser(parsed.user)) return null;
+      const siteId = typeof parsed.siteId === 'string' ? parsed.siteId : null;
+      // Entries written before tokens moved to memory still hold one: drop it.
+      if ('accessToken' in parsed) persist(parsed.user, siteId);
+      return { accessToken, user: parsed.user, siteId };
     } catch {
       // A corrupted entry must never block sign-in: treat it as signed out.
       return null;
@@ -74,11 +81,17 @@ export const createSessionStore = (
 
   return {
     read,
-    write: (session) => storage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session)),
+    write: (session) => {
+      accessToken = session.accessToken;
+      persist(session.user, session.siteId);
+    },
     setSiteId: (siteId) => {
       const current = read();
-      if (current) storage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ ...current, siteId }));
+      if (current) persist(current.user, siteId);
     },
-    clear: () => storage.removeItem(SESSION_STORAGE_KEY),
+    clear: () => {
+      accessToken = '';
+      storage.removeItem(SESSION_STORAGE_KEY);
+    },
   };
 };

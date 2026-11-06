@@ -11,16 +11,17 @@ import {
   type ParagraphSize,
   type ParagraphWidth,
 } from './schema.js';
+import { bt } from '../../i18n.js';
 
-const WIDTH_LABELS: Record<ParagraphWidth, string> = {
-  contained: 'ความกว้างอ่านสบาย (70 ตัวอักษร)',
-  full: 'เต็มความกว้าง 100%',
-};
+const WIDTH_LABELS = (): Record<ParagraphWidth, string> => ({
+  contained: bt('ความกว้างอ่านสบาย (70 ตัวอักษร)'),
+  full: bt('เต็มความกว้าง 100%'),
+});
 
-const SIZE_LABELS: Record<ParagraphSize, string> = {
-  base: 'ปกติ',
-  lg: 'ใหญ่ (คำนำ)',
-};
+const SIZE_LABELS = (): Record<ParagraphSize, string> => ({
+  base: bt('ปกติ'),
+  lg: bt('ใหญ่ (คำนำ)'),
+});
 
 export const ParagraphPanel = ({
   props,
@@ -29,32 +30,32 @@ export const ParagraphPanel = ({
   onChange,
 }: BlockPanelProps<ParagraphProps>) => (
   <>
-    <PanelSection title="เนื้อหา">
+    <PanelSection title={bt('เนื้อหา')}>
       <Textarea
-        label="ข้อความ"
+        label={bt('ข้อความ')}
         rows={6}
         value={props.text}
         onChange={(event) => onChange('props.text', event.target.value)}
       />
       <Select
-        label="ความกว้าง"
+        label={bt('ความกว้าง')}
         value={props.width}
         options={PARAGRAPH_WIDTHS.map((width) => ({
           value: width,
-          label: WIDTH_LABELS[width],
+          label: WIDTH_LABELS()[width],
         }))}
         onChange={(event) => onChange('props.width', event.target.value)}
       />
       <Select
-        label="ขนาดตัวอักษร"
+        label={bt('ขนาดตัวอักษร')}
         value={props.size}
-        options={PARAGRAPH_SIZES.map((size) => ({ value: size, label: SIZE_LABELS[size] }))}
+        options={PARAGRAPH_SIZES.map((size) => ({ value: size, label: SIZE_LABELS()[size] }))}
         onChange={(event) => onChange('props.size', event.target.value)}
       />
       <Select
-        label="การจัดวาง"
+        label={bt('การจัดวาง')}
         value={props.align}
-        options={alignmentOptions}
+        options={alignmentOptions()}
         onChange={(event) => onChange('props.align', event.target.value)}
       />
     </PanelSection>

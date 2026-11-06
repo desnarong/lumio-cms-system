@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { getActiveLocale, setActiveLocale } from './active-locale.js';
 
 /**
  * UI messages for the product chrome (docs/design/06-design-system.md,
@@ -1573,6 +1574,7 @@ export const TH_MESSAGES = {
   'booking.noServices': 'ยังไม่มีบริการ',
   'booking.noServicesHint': 'เพิ่มบริการแรกเพื่อให้ลูกค้าเลือกจองได้',
   'booking.deleteTitle': 'ลบบริการนี้?',
+  'booking.serviceDeleted': 'ลบบริการ “{name}” แล้ว',
   'booking.deleteBody': 'รายการจองเดิมจะยังอยู่ แต่ลูกค้าจะเลือกบริการ "{name}" ไม่ได้อีก',
   'booking.calendarTitle': 'เวลาทำการและรอบจอง',
   'booking.enabled': 'เปิดรับจองออนไลน์',
@@ -1602,6 +1604,79 @@ export const TH_MESSAGES = {
   'booking.publicHint': 'ลูกค้าเปิดหน้าจองได้ที่ /booking ของเว็บคุณ',
   'booking.demoHint': 'โหมดตัวอย่าง: การเปลี่ยนแปลงจะอยู่แค่ในเบราว์เซอร์นี้',
   'booking.emailMissing': 'กรุณาให้เบอร์โทรหรืออีเมล',
+  'promo.kind.bundle': 'ซื้อ X แถม Y',
+  'promo.kind.discount': 'ลดราคา',
+  'promo.kind.shipping': 'ส่งฟรี',
+  'promo.kind.gift': 'ของแถม',
+  'promo.kind.install': 'ติดตั้งฟรี',
+  'promo.kind.other': 'อื่น ๆ',
+  'promo.titleRequired': 'กรอกชื่อโปรโมชั่นก่อนบันทึก',
+  'promo.bundleRequired': 'ระบุจำนวนที่ซื้อและจำนวนที่แถม',
+  'promo.saved': 'บันทึกโปรโมชั่นแล้ว',
+  'promo.deleted': 'ลบโปรโมชั่นแล้ว',
+  'promo.description': 'ข้อเสนอที่หน้าโปรโมชั่นดึงไปแสดงอัตโนมัติ เช่น ซื้อ 10 แถม 1 หรือส่งฟรี',
+  'promo.add': 'เพิ่มโปรโมชั่น',
+  'promo.edit': 'แก้ไขโปรโมชั่น',
+  'promo.loadError': 'โหลดโปรโมชั่นไม่สำเร็จ',
+  'promo.empty': 'ยังไม่มีโปรโมชั่น',
+  'promo.emptyHint': 'สร้างข้อเสนอแรก เช่น ซื้อ 10 แถม 1 แล้วหน้าโปรโมชั่นจะแสดงให้เอง',
+  'promo.active': 'เปิดใช้',
+  'promo.inactive': 'ปิดอยู่',
+  'promo.buyGet': 'ซื้อ {buy} แถม {get}',
+  'promo.starts': 'เริ่ม {date}',
+  'promo.ends': 'ถึง {date}',
+  'promo.noExpiry': 'ไม่มีวันหมดอายุ',
+  'promo.editAction': 'แก้ไข',
+  'promo.formHint': 'ตั้งชื่อ เงื่อนไข และช่วงเวลา — โปรแบบซื้อ X แถม Y ระบบคิดของแถมในตะกร้าให้อัตโนมัติ',
+  'promo.name': 'ชื่อโปรโมชั่น',
+  'promo.namePlaceholder': 'เช่น ซื้อ 10 แถม 1',
+  'promo.kind': 'ประเภทโปรโมชั่น',
+  'promo.buyQty': 'ซื้อ (ชิ้น)',
+  'promo.getQty': 'แถม (ชิ้น)',
+  'promo.image': 'รูปโปรโมชั่น (ไม่บังคับ)',
+  'promo.imageHint': 'ใช้รูปแนวนอน เพื่อให้การ์ดบนหน้าเว็บดูเต็มและสวยที่สุด',
+  'promo.pickImage': 'เลือกรูป',
+  'promo.imageAlt': 'คำอธิบายรูป (ไม่บังคับ)',
+  'promo.imageAltHint': 'เว้นว่างได้ ระบบจะใช้ชื่อโปรโมชั่นแทน',
+  'promo.imageAltPlaceholder': 'เช่น หลอด LED ขั้ว E27 ในโปรซื้อ 10 แถม 1',
+  'promo.details': 'รายละเอียด',
+  'promo.startDate': 'เริ่มวันที่ (ไม่บังคับ)',
+  'promo.endDate': 'สิ้นสุดวันที่ (ไม่บังคับ)',
+  'promo.enable': 'เปิดใช้โปรโมชั่นนี้',
+  'weekday.0': 'อาทิตย์',
+  'weekday.1': 'จันทร์',
+  'weekday.2': 'อังคาร',
+  'weekday.3': 'พุธ',
+  'weekday.4': 'พฤหัสบดี',
+  'weekday.5': 'ศุกร์',
+  'weekday.6': 'เสาร์',
+  'booking.free': 'ฟรี',
+  'booking.serviceNotFound': 'ไม่พบบริการนี้',
+  'booking.serviceNotInTrash': 'ไม่พบบริการนี้ในถังขยะ',
+  'booking.bookingNotFound': 'ไม่พบรายการจองนี้',
+  'apiKeys.notFound': 'ไม่พบกุญแจนี้',
+  'commerce.slipLine': '{label} · {amount} บาท · อ้างอิง {reference}',
+  'design.footerBg.none': 'ไม่มีพื้นหลัง',
+  'design.footerBg.surface': 'พื้นผิว',
+  'design.footerBg.muted': 'เทาอ่อน',
+  'design.footerBg.brand': 'สีแบรนด์',
+  'editor.toolbar.color': 'สี',
+  'editor.toolbar.colorName': 'สี {color}',
+  'editor.toolbar.customColor': 'เลือกสีเอง',
+  'editor.toolbar.size': 'ขนาด',
+  'editor.toolbar.sizePx': 'ขนาดตัวอักษร (px)',
+  'editor.toolbar.apply': 'ใช้',
+  'editor.textLayout.move': 'ย้าย {field}',
+  'editor.textLayout.up': 'ขึ้น',
+  'editor.textLayout.down': 'ลง',
+  'editor.textLayout.left': 'ซ้าย',
+  'editor.textLayout.right': 'ขวา',
+  'editor.textLayout.x': 'แนวนอน (px)',
+  'editor.textLayout.y': 'แนวตั้ง (px)',
+  'editor.textLayout.scale': 'ขนาดข้อความ (%)',
+  'editor.textLayout.reset': 'คืนตำแหน่งเดิม',
+  'editor.textLayout.title': 'ย้ายและปรับขนาดข้อความ',
+  'editor.textLayout.hint': 'ขยับทีละ 8 พิกเซลด้วยปุ่มลูกศร หรือพิมพ์ตัวเลขด้านล่าง',
 } as const;
 
 export type MessageKey = keyof typeof TH_MESSAGES;
@@ -3176,6 +3251,7 @@ export const EN_MESSAGES: Partial<Record<MessageKey, string>> = {
   'booking.noServices': 'No services yet',
   'booking.noServicesHint': 'Add the first service so customers can pick one.',
   'booking.deleteTitle': 'Delete this service?',
+  'booking.serviceDeleted': 'Deleted “{name}”',
   'booking.deleteBody': 'Existing bookings stay, but customers can no longer pick "{name}".',
   'booking.calendarTitle': 'Opening hours and slots',
   'booking.enabled': 'Accept online bookings',
@@ -3205,6 +3281,79 @@ export const EN_MESSAGES: Partial<Record<MessageKey, string>> = {
   'booking.publicHint': 'Customers open the booking page at /booking of your site.',
   'booking.demoHint': 'Demo mode: changes stay in this browser',
   'booking.emailMissing': 'Add a phone number or an email',
+  'promo.kind.bundle': 'Buy X get Y',
+  'promo.kind.discount': 'Discount',
+  'promo.kind.shipping': 'Free shipping',
+  'promo.kind.gift': 'Free gift',
+  'promo.kind.install': 'Free installation',
+  'promo.kind.other': 'Other',
+  'promo.titleRequired': 'Name the promotion before saving',
+  'promo.bundleRequired': 'Enter how many to buy and how many are free',
+  'promo.saved': 'Promotion saved',
+  'promo.deleted': 'Promotion deleted',
+  'promo.description': 'Offers the promotions page shows on its own, such as buy 10 get 1 or free shipping',
+  'promo.add': 'Add promotion',
+  'promo.edit': 'Edit promotion',
+  'promo.loadError': 'Could not load promotions',
+  'promo.empty': 'No promotions yet',
+  'promo.emptyHint': 'Create your first offer, such as buy 10 get 1, and the promotions page shows it for you',
+  'promo.active': 'On',
+  'promo.inactive': 'Off',
+  'promo.buyGet': 'Buy {buy} get {get}',
+  'promo.starts': 'From {date}',
+  'promo.ends': 'until {date}',
+  'promo.noExpiry': 'No end date',
+  'promo.editAction': 'Edit',
+  'promo.formHint': 'Set the name, terms and dates — for buy X get Y, the cart adds the free items for you',
+  'promo.name': 'Promotion name',
+  'promo.namePlaceholder': 'e.g. Buy 10 get 1',
+  'promo.kind': 'Promotion type',
+  'promo.buyQty': 'Buy (items)',
+  'promo.getQty': 'Free (items)',
+  'promo.image': 'Promotion image (optional)',
+  'promo.imageHint': 'Use a landscape image so the card on the site looks full and sharp',
+  'promo.pickImage': 'Choose image',
+  'promo.imageAlt': 'Image description (optional)',
+  'promo.imageAltHint': 'Can be left empty; the promotion name is used instead',
+  'promo.imageAltPlaceholder': 'e.g. E27 LED bulb in the buy 10 get 1 offer',
+  'promo.details': 'Details',
+  'promo.startDate': 'Start date (optional)',
+  'promo.endDate': 'End date (optional)',
+  'promo.enable': 'Turn this promotion on',
+  'weekday.0': 'Sunday',
+  'weekday.1': 'Monday',
+  'weekday.2': 'Tuesday',
+  'weekday.3': 'Wednesday',
+  'weekday.4': 'Thursday',
+  'weekday.5': 'Friday',
+  'weekday.6': 'Saturday',
+  'booking.free': 'Free',
+  'booking.serviceNotFound': 'Service not found',
+  'booking.serviceNotInTrash': 'This service is not in the trash',
+  'booking.bookingNotFound': 'Booking not found',
+  'apiKeys.notFound': 'Key not found',
+  'commerce.slipLine': '{label} · ฿{amount} · reference {reference}',
+  'design.footerBg.none': 'No background',
+  'design.footerBg.surface': 'Surface',
+  'design.footerBg.muted': 'Light grey',
+  'design.footerBg.brand': 'Brand',
+  'editor.toolbar.color': 'Colour',
+  'editor.toolbar.colorName': 'Colour {color}',
+  'editor.toolbar.customColor': 'Pick a colour',
+  'editor.toolbar.size': 'Size',
+  'editor.toolbar.sizePx': 'Font size (px)',
+  'editor.toolbar.apply': 'Apply',
+  'editor.textLayout.move': 'Move {field}',
+  'editor.textLayout.up': 'Up',
+  'editor.textLayout.down': 'Down',
+  'editor.textLayout.left': 'Left',
+  'editor.textLayout.right': 'Right',
+  'editor.textLayout.x': 'Horizontal (px)',
+  'editor.textLayout.y': 'Vertical (px)',
+  'editor.textLayout.scale': 'Text size (%)',
+  'editor.textLayout.reset': 'Reset position',
+  'editor.textLayout.title': 'Move and resize text',
+  'editor.textLayout.hint': 'Nudge 8 pixels at a time with the arrow buttons, or type the numbers below',
 };
 
 export type MessageParams = Record<string, string | number>;
@@ -3232,8 +3381,6 @@ export const createTranslator = (locale: UiLocale): Translate => {
 const MessagesContext = createContext<Translate>(createTranslator('th'));
 const LocaleContext = createContext<UiLocale>('th');
 
-/** Language of the mounted provider; Thai before any provider mounts. */
-let activeLocale: UiLocale = 'th';
 
 export interface MessagesProviderProps {
   locale: UiLocale;
@@ -3248,7 +3395,7 @@ export interface MessagesProviderProps {
 export const MessagesProvider = ({ locale, children }: MessagesProviderProps) => {
   // Kept in step during render (not in an effect) so text built outside React,
   // such as an API client's network fallback, is already right on the first paint.
-  activeLocale = locale;
+  setActiveLocale(locale);
   const value = useMemo(() => createTranslator(locale), [locale]);
   return (
     <LocaleContext.Provider value={locale}>
@@ -3268,10 +3415,10 @@ export const useT = (): Translate => useContext(MessagesContext);
  * failure, for example) still reads in the user's language.
  */
 export const translateNow = (key: MessageKey, params?: MessageParams): string =>
-  createTranslator(activeLocale)(key, params);
+  createTranslator(getActiveLocale())(key, params);
 
 /** The language of the mounted provider, for code outside React (demo clients). */
-export const uiLocaleNow = (): UiLocale => activeLocale;
+export const uiLocaleNow = (): UiLocale => getActiveLocale();
 
 /** Languages a picker offers, in the order the product lists them. */
 export const uiLocaleOptions = (): { value: UiLocale; label: string }[] =>

@@ -1,10 +1,11 @@
 import { savedOrderDate, type SavedOrder } from '../lib/customer';
+import { storefrontT, type StorefrontKey } from '../lib/messages';
 
-/** Human explanations for the `?error=` codes the lookup route redirects with. */
-export const SIGN_IN_NOTICES: Record<string, string> = {
-  'not-found': 'ไม่พบคำสั่งซื้อที่ตรงกับเลขคำสั่งซื้อและข้อมูลติดต่อนี้ ลองตรวจอีกครั้ง',
-  invalid: 'กรุณากรอกเลขคำสั่งซื้อ และเบอร์โทรหรืออีเมลที่ใช้สั่งซื้อ',
-  unavailable: 'ตอนนี้ระบบขัดข้อง ลองอีกครั้งในอีกสักครู่',
+/** Message keys for the `?error=` codes the lookup route redirects with. */
+export const SIGN_IN_NOTICES: Record<string, StorefrontKey> = {
+  'not-found': 'signin.notice.notFound',
+  invalid: 'signin.notice.invalid',
+  unavailable: 'member.notice.unavailable',
 };
 
 export interface SignInPanelProps {
@@ -12,6 +13,8 @@ export interface SignInPanelProps {
   saved: SavedOrder[];
   /** `?error=` code from the lookup route. */
   error?: string | null;
+  /** Request language; Thai when not given. */
+  locale?: string | null;
 }
 
 /**
@@ -20,8 +23,9 @@ export interface SignInPanelProps {
  * the phone or email used at checkout (docs/design/11-data-model.md 11.3).
  * Plain HTML forms only, so it works with JavaScript turned off.
  */
-export const SignInPanel = ({ saved, error }: SignInPanelProps) => {
-  const notice = error ? SIGN_IN_NOTICES[error] ?? SIGN_IN_NOTICES['not-found'] : null;
+export const SignInPanel = ({ saved, error, locale }: SignInPanelProps) => {
+  const t = storefrontT(locale);
+  const notice = error ? t(SIGN_IN_NOTICES[error] ?? 'signin.notice.notFound') : null;
 
   return (
     <div className="shop-account">
@@ -34,12 +38,15 @@ export const SignInPanel = ({ saved, error }: SignInPanelProps) => {
       {saved.length > 0 ? (
         <section className="shop-account__saved" aria-labelledby="saved-orders-heading">
           <h2 className="shop-section-title" id="saved-orders-heading">
-            คำสั่งซื้อที่เปิดไว้บนเครื่องนี้
+            {t('signin.saved')}
           </h2>
           <ul className="shop-account__list">
             {saved.map((order) => (
               <li key={order.token}>
-                <a className="shop-account__order" href={`/order/${encodeURIComponent(order.token)}`}>
+                <a
+                  className="shop-account__order"
+                  href={`/order/${encodeURIComponent(order.token)}`}
+                >
                   <strong>{order.number}</strong>
                   <span className="shop-payment__hint">{savedOrderDate(order.createdAt)}</span>
                 </a>
@@ -48,21 +55,18 @@ export const SignInPanel = ({ saved, error }: SignInPanelProps) => {
           </ul>
           <form action="/signin/signout" method="post">
             <button className="shop-button shop-button--ghost" type="submit">
-              ออกจากระบบ
+              {t('member.signOut')}
             </button>
           </form>
         </section>
       ) : null}
 
       <form className="shop-account__form" action="/signin/lookup" method="post">
-        <h2 className="shop-section-title">เข้าสู่ระบบด้วยคำสั่งซื้อ</h2>
-        <p className="shop-payment__hint">
-          ใช้เลขคำสั่งซื้อบนใบเสร็จ และเบอร์โทรหรืออีเมลที่ให้ไว้ตอนสั่งซื้อ
-          ระบบจะพาไปหน้าคำสั่งซื้อของคุณทันที
-        </p>
+        <h2 className="shop-section-title">{t('signin.withOrder')}</h2>
+        <p className="shop-payment__hint">{t('signin.withOrderHint')}</p>
         <div className="shop-fields">
           <label className="shop-field shop-field--wide">
-            <span>เลขคำสั่งซื้อ</span>
+            <span>{t('signin.orderNumber')}</span>
             <input
               name="number"
               required
@@ -72,7 +76,7 @@ export const SignInPanel = ({ saved, error }: SignInPanelProps) => {
             />
           </label>
           <label className="shop-field shop-field--wide">
-            <span>เบอร์โทรหรืออีเมลที่ใช้สั่งซื้อ</span>
+            <span>{t('signin.contact')}</span>
             <input name="contact" required autoComplete="tel" maxLength={200} />
           </label>
         </div>
@@ -85,7 +89,7 @@ export const SignInPanel = ({ saved, error }: SignInPanelProps) => {
           aria-hidden="true"
         />
         <button className="shop-button shop-button--large" type="submit">
-          เข้าสู่ระบบ
+          {t('member.signIn')}
         </button>
       </form>
     </div>

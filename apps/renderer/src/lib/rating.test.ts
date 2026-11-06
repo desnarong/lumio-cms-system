@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { storefrontT } from './messages';
 import { ratingLabel, starFills } from './rating';
 
 describe('starFills', () => {
@@ -22,10 +23,10 @@ describe('starFills', () => {
 
 describe('ratingLabel', () => {
   it('reads the score and the review count', () => {
-    expect(ratingLabel(4.5, 32)).toBe('ให้คะแนน 4.5 จาก 5 จาก 32 รีวิว');
+    expect(ratingLabel(storefrontT('th'), 4.5, 32)).toBe('ให้คะแนน 4.5 จาก 5 จาก 32 รีวิว');
   });
 
   it('drops the count when nobody has reviewed yet', () => {
-    expect(ratingLabel(5, 0)).toBe('ให้คะแนน 5.0 จาก 5');
+    expect(ratingLabel(storefrontT('th'), 5, 0)).toBe('ให้คะแนน 5.0 จาก 5');
   });
 });

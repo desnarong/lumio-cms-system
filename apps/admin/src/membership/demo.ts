@@ -92,6 +92,7 @@ const summaryOf = (plans: MembershipPlan[], readers: MembershipReader[]): Member
 /** In-memory membership backend so the screen works before the API is up. */
 export const createDemoMembershipApi = (): MembershipApi => {
   const plans = [...PLAN_SEED];
+  const trashedPlans: typeof plans = [];
   const readers = [...READER_SEED];
   let counter = 0;
 
@@ -124,7 +125,14 @@ export const createDemoMembershipApi = (): MembershipApi => {
     },
     deletePlan: async (planId) => {
       const index = plans.findIndex((item) => item.id === planId);
-      if (index >= 0) plans.splice(index, 1);
+      if (index >= 0) trashedPlans.push(...plans.splice(index, 1));
+    },
+    restorePlan: async (planId) => {
+      const index = trashedPlans.findIndex((item) => item.id === planId);
+      const [plan] = index >= 0 ? trashedPlans.splice(index, 1) : [];
+      if (!plan) throw new Error('ไม่พบแพ็กเกจนี้ในถังขยะ');
+      plans.push(plan);
+      return plan;
     },
     readers: async () => list(),
     summary: async () => summaryOf(plans, readers),

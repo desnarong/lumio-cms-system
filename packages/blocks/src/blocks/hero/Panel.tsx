@@ -17,21 +17,23 @@ import {
   type HeroLayout,
   type HeroProps,
 } from './schema.js';
+import { bt } from '../../i18n.js';
 
-const HEIGHT_LABELS = [
-  { value: 'cover', label: 'เต็มเฟรม (ครอบภาพ)' },
-  { value: 'image', label: 'สูงตามรูปจริง (ไม่ครอป)' },
-] as const;
+const HEIGHT_LABELS = () =>
+  [
+    { value: 'cover', label: bt('เต็มเฟรม (ครอบภาพ)') },
+    { value: 'image', label: bt('สูงตามรูปจริง (ไม่ครอป)') },
+  ] as const;
 
-const LAYOUT_LABELS: Record<HeroLayout, string> = {
-  overlay: 'เต็มเฟรม · รูปพื้นหลัง ข้อความทับรูป',
-  centered: 'ข้อความกึ่งกลาง',
-  'split-right': 'ข้อความซ้าย รูปขวา',
-  'split-left': 'รูปซ้าย ข้อความขวา',
-};
+const LAYOUT_LABELS = (): Record<HeroLayout, string> => ({
+  overlay: bt('เต็มเฟรม · รูปพื้นหลัง ข้อความทับรูป'),
+  centered: bt('ข้อความกึ่งกลาง'),
+  'split-right': bt('ข้อความซ้าย รูปขวา'),
+  'split-left': bt('รูปซ้าย ข้อความขวา'),
+});
 
 const newButton = (): HeroButton => ({
-  label: 'ปุ่มใหม่',
+  label: bt('ปุ่มใหม่'),
   href: '/',
   variant: 'secondary',
   external: false,
@@ -51,20 +53,20 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
 
   return (
     <>
-      <PanelSection title="เนื้อหา">
+      <PanelSection title={bt('เนื้อหา')}>
         <TextField
-          label="หัวข้อหลัก"
+          label={bt('หัวข้อหลัก')}
           value={props.heading}
           onChange={(event) => onChange('props.heading', event.target.value)}
         />
         <TextField
-          label="คำอธิบายใต้หัวข้อ"
+          label={bt('คำอธิบายใต้หัวข้อ')}
           value={props.subheading}
           onChange={(event) => onChange('props.subheading', event.target.value)}
         />
         <TextField
-          label="ความกว้างคำอธิบาย (% ของพื้นที่)"
-          hint="มีผลกับเลย์เอาต์เต็มเฟรม — รูปซ้าย/ขวาใช้เต็มคอลัมน์ข้อความ"
+          label={bt('ความกว้างคำอธิบาย (% ของพื้นที่)')}
+          hint={bt('มีผลกับเลย์เอาต์เต็มเฟรม — รูปซ้าย/ขวาใช้เต็มคอลัมน์ข้อความ')}
           type="number"
           min={20}
           max={100}
@@ -77,17 +79,17 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
           }
         />
         <TextField
-          label="ข้อความเพิ่มเติมใต้คำอธิบาย"
-          hint="เช่น โปรโมชั่นหรือหมายเหตุการจัดส่ง เว้นว่างได้"
+          label={bt('ข้อความเพิ่มเติมใต้คำอธิบาย')}
+          hint={bt('เช่น โปรโมชั่นหรือหมายเหตุการจัดส่ง เว้นว่างได้')}
           value={props.note}
           onChange={(event) => onChange('props.note', event.target.value)}
         />
       </PanelSection>
 
-      <PanelSection title="ปุ่ม">
+      <PanelSection title={bt('ปุ่ม')}>
         <PanelItemList
           items={props.buttons}
-          addLabel="เพิ่มปุ่ม"
+          addLabel={bt('เพิ่มปุ่ม')}
           max={HERO_MAX_BUTTONS}
           create={newButton}
           onChange={(buttons) => onChange('props.buttons', buttons)}
@@ -100,12 +102,12 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
             return (
               <>
                 <TextField
-                  label="ข้อความบนปุ่ม"
+                  label={bt('ข้อความบนปุ่ม')}
                   value={button.label}
                   onChange={(event) => onChange(`props.buttons.${index}.label`, event.target.value)}
                 />
                 <LinkPicker
-                  label="ปลายทาง"
+                  label={bt('ปลายทาง')}
                   value={button.href}
                   external={button.external}
                   onChange={(href) => onChange(`props.buttons.${index}.href`, href)}
@@ -114,9 +116,9 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
                   }
                 />
                 <Select
-                  label="รูปแบบปุ่ม"
+                  label={bt('รูปแบบปุ่ม')}
                   value={button.variant}
-                  options={buttonVariantOptions}
+                  options={buttonVariantOptions()}
                   onChange={(event) =>
                     onChange(`props.buttons.${index}.variant`, event.target.value)
                   }
@@ -127,13 +129,13 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
         </PanelItemList>
       </PanelSection>
 
-      <PanelSection title="รูปภาพ">
+      <PanelSection title={bt('รูปภาพ')}>
         <ImagePicker
-          label="รูปประกอบ"
+          label={bt('รูปประกอบ')}
           value={props.image?.src ?? null}
           alt={props.image?.alt ?? ''}
           disabled={!mediaPicker}
-          hint={mediaPicker ? undefined : 'ยังไม่ได้เชื่อมคลังรูปภาพในหน้านี้'}
+          hint={mediaPicker ? undefined : bt('ยังไม่ได้เชื่อมคลังรูปภาพในหน้านี้')}
           onPick={() => {
             void mediaPicker
               ?.pick({ aspect: 'wide' })
@@ -147,8 +149,8 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
           onChange={(url) => onChange('props.image', imageFromUrl(url, props.image?.alt ?? ''))}
         />
         <TextField
-          label="คำอธิบายรูป (alt)"
-          hint="อธิบายภาพสั้น ๆ เพื่อผู้ใช้โปรแกรมอ่านหน้าจอ"
+          label={bt('คำอธิบายรูป (alt)')}
+          hint={bt('อธิบายภาพสั้น ๆ เพื่อผู้ใช้โปรแกรมอ่านหน้าจอ')}
           value={props.image?.alt ?? ''}
           onChange={(event) => {
             const alt = event.target.value;
@@ -159,8 +161,8 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
           }}
         />
         <ImagePicker
-          label="รูปเมื่อเอาเมาส์ชี้ (ไม่บังคับ)"
-          hint="รูปนี้จะค่อย ๆ ปรากฏทับรูปหลักเมื่อผู้ชมเอาเมาส์ชี้"
+          label={bt('รูปเมื่อเอาเมาส์ชี้ (ไม่บังคับ)')}
+          hint={bt('รูปนี้จะค่อย ๆ ปรากฏทับรูปหลักเมื่อผู้ชมเอาเมาส์ชี้')}
           value={props.hoverImage?.src ?? null}
           alt=""
           disabled={!mediaPicker}
@@ -176,14 +178,14 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
         />
         {props.hoverImage ? (
           <Button variant="ghost" size="sm" onClick={() => onChange('props.hoverImage', null)}>
-            ลบรูป hover
+            {bt('ลบรูป hover')}
           </Button>
         ) : null}
       </PanelSection>
 
-      <PanelSection title="พื้นหลังแบนเนอร์">
+      <PanelSection title={bt('พื้นหลังแบนเนอร์')}>
         <p className="lumio-panel-hint">
-          ลากบนรูปในหน้าจอเพื่อเลื่อนตำแหน่งรูปได้เลย หรือใส่ตัวเลขด้านล่างก็ได้
+          {bt('ลากบนรูปในหน้าจอเพื่อเลื่อนตำแหน่งรูปได้เลย หรือใส่ตัวเลขด้านล่างก็ได้')}
         </p>
         <Button
           variant="secondary"
@@ -201,83 +203,101 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
             })
           }
         >
-          เต็มจอ (เต็มความกว้าง)
+          {bt('เต็มจอ (เต็มความกว้าง)')}
         </Button>
         <p className="lumio-panel-hint">
-          ใช้กับเลย์เอาต์ ‘เต็มเฟรม · รูปพื้นหลัง ข้อความทับรูป’ แล้วกดปุ่มนี้เพื่อล้างความกว้าง/ระยะห่างที่ตั้งไว้
-          ให้ภาพพื้นหลังกินเต็มขอบจอ
+          {bt(
+            'ใช้กับเลย์เอาต์ ‘เต็มเฟรม · รูปพื้นหลัง ข้อความทับรูป’ แล้วกดปุ่มนี้เพื่อล้างความกว้าง/ระยะห่างที่ตั้งไว้ ให้ภาพพื้นหลังกินเต็มขอบจอ',
+          )}
         </p>
         <Select
-          label="ตำแหน่งข้อความ (บน–ล่าง)"
+          label={bt('ตำแหน่งข้อความ (บน–ล่าง)')}
           value={props.contentAlign}
           options={[
-            { value: 'top', label: 'ชิดบน' },
-            { value: 'center', label: 'กึ่งกลาง' },
-            { value: 'bottom', label: 'ชิดล่าง' },
+            { value: 'top', label: bt('ชิดบน') },
+            { value: 'center', label: bt('กึ่งกลาง') },
+            { value: 'bottom', label: bt('ชิดล่าง') },
           ]}
           onChange={(event) => onChange('props.contentAlign', event.target.value)}
         />
         <Select
-          label="ความสูงของแบนเนอร์"
+          label={bt('ความสูงของแบนเนอร์')}
           value={props.heightMode}
-          options={[...HEIGHT_LABELS]}
+          options={[...HEIGHT_LABELS()]}
           onChange={(event) => onChange('props.heightMode', event.target.value)}
         />
         <TextField
-          label="ซูมรูปพื้นหลัง (%)"
-          hint="100 = ขนาดเดิม, มากกว่า 100 = ซูมเข้า"
+          label={bt('ซูมรูปพื้นหลัง (%)')}
+          hint={bt('100 = ขนาดเดิม, มากกว่า 100 = ซูมเข้า')}
           type="number"
           min={100}
           max={300}
           value={String(props.backgroundZoom)}
           onChange={(event) =>
-            onChange('props.backgroundZoom', Math.min(300, Math.max(100, Math.round(Number(event.target.value) || 100))))
+            onChange(
+              'props.backgroundZoom',
+              Math.min(300, Math.max(100, Math.round(Number(event.target.value) || 100))),
+            )
           }
         />
         <TextField
-          label="ตำแหน่งแนวนอนของรูป (%)"
-          hint="0 = ชิดซ้าย, 100 = ชิดขวา"
+          label={bt('ตำแหน่งแนวนอนของรูป (%)')}
+          hint={bt('0 = ชิดซ้าย, 100 = ชิดขวา')}
           type="number"
           min={0}
           max={100}
           value={String(props.backgroundX)}
           onChange={(event) =>
-            onChange('props.backgroundX', Math.min(100, Math.max(0, Math.round(Number(event.target.value) || 0))))
+            onChange(
+              'props.backgroundX',
+              Math.min(100, Math.max(0, Math.round(Number(event.target.value) || 0))),
+            )
           }
         />
         <TextField
-          label="ตำแหน่งแนวตั้งของรูป (%)"
-          hint="0 = ชิดบน, 100 = ชิดล่าง"
+          label={bt('ตำแหน่งแนวตั้งของรูป (%)')}
+          hint={bt('0 = ชิดบน, 100 = ชิดล่าง')}
           type="number"
           min={0}
           max={100}
           value={String(props.backgroundY)}
           onChange={(event) =>
-            onChange('props.backgroundY', Math.min(100, Math.max(0, Math.round(Number(event.target.value) || 0))))
+            onChange(
+              'props.backgroundY',
+              Math.min(100, Math.max(0, Math.round(Number(event.target.value) || 0))),
+            )
           }
         />
         <TextField
-          label="ความเข้มเงามืดทับรูป (%)"
-          hint="0 = ไม่มีเงา, 100 = เข้มสุด"
+          label={bt('ความเข้มเงามืดทับรูป (%)')}
+          hint={bt('0 = ไม่มีเงา, 100 = เข้มสุด')}
           type="number"
           min={0}
           max={100}
           value={String(props.scrimOpacity)}
           onChange={(event) =>
-            onChange('props.scrimOpacity', Math.min(100, Math.max(0, Math.round(Number(event.target.value) || 0))))
+            onChange(
+              'props.scrimOpacity',
+              Math.min(100, Math.max(0, Math.round(Number(event.target.value) || 0))),
+            )
           }
         />
       </PanelSection>
 
-      <PanelSection title={`รูปซ้อนบนแบนเนอร์ (${props.foregrounds.length}/${HERO_MAX_FLOATS})`}>
+      <PanelSection
+        title={bt('รูปซ้อนบนแบนเนอร์ ({length}/{HERO_MAX_FLOATS})', undefined, {
+          length: props.foregrounds.length,
+          HERO_MAX_FLOATS: HERO_MAX_FLOATS,
+        })}
+      >
         {props.foregrounds.map((item, index) => (
           <div className="hero-float-editor" key={index}>
             <ImagePicker
-              label={`รูปซ้อนที่ ${index + 1}`}
+              label={bt('รูปซ้อนที่ {value0}', undefined, { value0: index + 1 })}
               value={item.image?.src ?? null}
               alt={item.image?.alt ?? ''}
               disabled={!mediaPicker}
-              hint={mediaPicker ? undefined : 'ยังไม่ได้เชื่อมคลังรูปภาพในหน้านี้'}
+              hint={mediaPicker ? undefined : bt('ยังไม่ได้เชื่อมคลังรูปภาพในหน้านี้')}
               onPick={() => {
                 void mediaPicker
                   ?.pick({ aspect: 'square' })
@@ -293,11 +313,15 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
               }
             />
             <ImagePicker
-              label="รูปตอน hover (ไม่บังคับ)"
+              label={bt('รูปตอน hover (ไม่บังคับ)')}
               value={item.hoverImage?.src ?? null}
               alt={item.hoverImage?.alt ?? ''}
               disabled={!mediaPicker}
-              hint={mediaPicker ? 'สลับรูปเมื่อเมาส์ชี้ที่รูปนี้' : 'ยังไม่ได้เชื่อมคลังรูปภาพในหน้านี้'}
+              hint={
+                mediaPicker
+                  ? bt('สลับรูปเมื่อเมาส์ชี้ที่รูปนี้')
+                  : bt('ยังไม่ได้เชื่อมคลังรูปภาพในหน้านี้')
+              }
               onPick={() => {
                 void mediaPicker
                   ?.pick({ aspect: 'square' })
@@ -317,7 +341,7 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
               }
             />
             <TextField
-              label="คำอธิบายรูป (alt)"
+              label={bt('คำอธิบายรูป (alt)')}
               value={item.image?.alt ?? ''}
               onChange={(event) =>
                 updateFloat(index, {
@@ -328,8 +352,8 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
               }
             />
             <TextField
-              label="ความกว้าง (% ของแบนเนอร์)"
-              hint="ลากขนาดในหน้าจอได้เลย ค่านี้จะปรับตามความกว้างของแบนเนอร์"
+              label={bt('ความกว้าง (% ของแบนเนอร์)')}
+              hint={bt('ลากขนาดในหน้าจอได้เลย ค่านี้จะปรับตามความกว้างของแบนเนอร์')}
               type="number"
               min={0}
               max={100}
@@ -341,17 +365,19 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
               }
             />
             <Select
-              label="ยึดด้านซ้าย/ขวา"
+              label={bt('ยึดด้านซ้าย/ขวา')}
               value={item.anchorX}
               options={[
-                { value: 'left', label: 'ซ้าย' },
-                { value: 'right', label: 'ขวา' },
+                { value: 'left', label: bt('ซ้าย') },
+                { value: 'right', label: bt('ขวา') },
               ]}
-              onChange={(event) => updateFloat(index, { anchorX: event.target.value as 'left' | 'right' })}
+              onChange={(event) =>
+                updateFloat(index, { anchorX: event.target.value as 'left' | 'right' })
+              }
             />
             <TextField
-              label="ระยะแนวนอน (%)"
-              hint="เปอร์เซ็นต์ของความกว้างแบนเนอร์"
+              label={bt('ระยะแนวนอน (%)')}
+              hint={bt('เปอร์เซ็นต์ของความกว้างแบนเนอร์')}
               type="number"
               value={String(Math.round(floatXPercent(item) * 10) / 10)}
               onChange={(event) =>
@@ -359,17 +385,19 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
               }
             />
             <Select
-              label="ยึดด้านบน/ล่าง"
+              label={bt('ยึดด้านบน/ล่าง')}
               value={item.anchorY}
               options={[
-                { value: 'top', label: 'บน' },
-                { value: 'bottom', label: 'ล่าง' },
+                { value: 'top', label: bt('บน') },
+                { value: 'bottom', label: bt('ล่าง') },
               ]}
-              onChange={(event) => updateFloat(index, { anchorY: event.target.value as 'top' | 'bottom' })}
+              onChange={(event) =>
+                updateFloat(index, { anchorY: event.target.value as 'top' | 'bottom' })
+              }
             />
             <TextField
-              label="ระยะแนวตั้ง (%)"
-              hint="เปอร์เซ็นต์ของความสูงแบนเนอร์"
+              label={bt('ระยะแนวตั้ง (%)')}
+              hint={bt('เปอร์เซ็นต์ของความสูงแบนเนอร์')}
               type="number"
               value={String(Math.round(floatYPercent(item) * 10) / 10)}
               onChange={(event) =>
@@ -377,7 +405,7 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
               }
             />
             <Switch
-              label="มีเงาใต้รูป"
+              label={bt('มีเงาใต้รูป')}
               checked={item.shadow}
               onChange={(checked) => updateFloat(index, { shadow: checked })}
             />
@@ -390,7 +418,7 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
                 )
               }
             >
-              ลบรูปนี้
+              {bt('ลบรูปนี้')}
             </Button>
           </div>
         ))}
@@ -400,50 +428,61 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
           onClick={() =>
             onChange('props.foregrounds', [
               ...props.foregrounds,
-              { image: null, width: 360, widthPercent: 25, x: 80, xPercent: 5, anchorX: 'right', anchorY: 'bottom', y: 0, yPercent: 0, shadow: true },
+              {
+                image: null,
+                width: 360,
+                widthPercent: 25,
+                x: 80,
+                xPercent: 5,
+                anchorX: 'right',
+                anchorY: 'bottom',
+                y: 0,
+                yPercent: 0,
+                shadow: true,
+              },
             ])
           }
         >
-          เพิ่มรูปซ้อน
+          {bt('เพิ่มรูปซ้อน')}
         </Button>
       </PanelSection>
 
-      <PanelSection title="การจัดวางแบนเนอร์">
+      <PanelSection title={bt('การจัดวางแบนเนอร์')}>
         <Select
-          label="ขนาดหัวข้อ"
+          label={bt('ขนาดหัวข้อ')}
           value={props.headingSize ?? 'md'}
           options={[
-            { value: 'sm', label: 'เล็ก' },
-            { value: 'md', label: 'มาตรฐาน' },
-            { value: 'lg', label: 'ใหญ่' },
-            { value: 'xl', label: 'ใหญ่พิเศษ (แบนเนอร์เต็มจอ)' },
+            { value: 'sm', label: bt('เล็ก') },
+            { value: 'md', label: bt('มาตรฐาน') },
+            { value: 'lg', label: bt('ใหญ่') },
+            { value: 'xl', label: bt('ใหญ่พิเศษ (แบนเนอร์เต็มจอ)') },
           ]}
           onChange={(event) => onChange('props.headingSize', event.target.value)}
         />
         <Select
-          label="ความกว้างเนื้อหาบนแบนเนอร์"
-          hint="โหมดกว้างทำให้ข้อความเริ่มใกล้ขอบซ้ายเหมือนเว็บแบรนด์"
+          label={bt('ความกว้างเนื้อหาบนแบนเนอร์')}
+          hint={bt('โหมดกว้างทำให้ข้อความเริ่มใกล้ขอบซ้ายเหมือนเว็บแบรนด์')}
           value={props.contentWidth ?? 'normal'}
           options={[
-            { value: 'normal', label: 'มาตรฐาน' },
-            { value: 'wide', label: 'กว้าง (เต็มจอ)' },
+            { value: 'normal', label: bt('มาตรฐาน') },
+            { value: 'wide', label: bt('กว้าง (เต็มจอ)') },
           ]}
           onChange={(event) => onChange('props.contentWidth', event.target.value)}
         />
         <Select
-          label="การจัดตำแหน่งข้อความ (ซ้าย–ขวา)"
-          hint="กึ่งกลางจะจัดหัวข้อ คำอธิบาย และปุ่มให้อยู่กลางพร้อมกัน"
+          label={bt('การจัดตำแหน่งข้อความ (ซ้าย–ขวา)')}
+          hint={bt('กึ่งกลางจะจัดหัวข้อ คำอธิบาย และปุ่มให้อยู่กลางพร้อมกัน')}
           value={style.textAlign ?? 'left'}
           options={[
-            { value: 'left', label: 'ชิดซ้าย' },
-            { value: 'center', label: 'กึ่งกลาง' },
-            { value: 'right', label: 'ชิดขวา' },
+            { value: 'left', label: bt('ชิดซ้าย') },
+            { value: 'center', label: bt('กึ่งกลาง') },
+            { value: 'right', label: bt('ชิดขวา') },
           ]}
           onChange={(event) => onChange('style.textAlign', event.target.value)}
         />
         <TextField
-          label="ระยะห่างรูปกับข้อความ (%)"
-          hint="ใช้กับเลย์เอาต์รูปซ้าย/ขวา ปรับตามจอบนมือถือ"
+          label={bt('ระยะห่างรูปกับข้อความ (%)')}
+          hint={bt('ใช้กับเลย์เอาต์รูปซ้าย/ขวา ปรับตามจอบนมือถือ')}
           type="number"
           min={0}
           max={20}
@@ -457,9 +496,12 @@ export const HeroPanel = ({ props, style, mode, onChange }: BlockPanelProps<Hero
           }
         />
         <Select
-          label="รูปแบบการวาง"
+          label={bt('รูปแบบการวาง')}
           value={props.layout}
-          options={HERO_LAYOUTS.map((layout) => ({ value: layout, label: LAYOUT_LABELS[layout] }))}
+          options={HERO_LAYOUTS.map((layout) => ({
+            value: layout,
+            label: LAYOUT_LABELS()[layout],
+          }))}
           onChange={(event) => onChange('props.layout', event.target.value)}
         />
       </PanelSection>

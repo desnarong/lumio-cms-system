@@ -38,6 +38,8 @@ export interface CommerceApi {
   createPromotion(input: PromotionInput): Promise<Promotion>;
   updatePromotion(promotionId: string, input: Partial<PromotionInput>): Promise<Promotion>;
   removePromotion(promotionId: string): Promise<void>;
+  /** Undo of `removePromotion`: the same promotion, same id. */
+  restorePromotion(promotionId: string): Promise<Promotion>;
   listOrders(query?: OrderListQuery): Promise<OrderList>;
   getOrder(orderId: string): Promise<OrderDetail>;
   updateOrderStatus(orderId: string, input: UpdateOrderStatusInput): Promise<OrderDetail>;
@@ -171,6 +173,8 @@ export const createHttpCommerceApi = ({
     removePromotion: async (promotionId) => {
       await request<{ success: boolean }>(`/promotions/${promotionId}`, { method: 'DELETE' });
     },
+    restorePromotion: (promotionId) =>
+      request<Promotion>(`/promotions/${promotionId}/restore`, { method: 'POST' }),
 
     listOrders: async (query: OrderListQuery = { limit: 100 }) => {
       const payload = await send(`/orders${queryString(query as Record<string, unknown>)}`);

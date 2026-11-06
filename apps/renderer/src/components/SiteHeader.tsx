@@ -7,6 +7,7 @@ import {
   type PublicSite,
 } from '@lumio/shared';
 import { headerActions, headerHeight, logoHeight } from '../lib/chrome';
+import { storefrontT, type StorefrontT } from '../lib/messages';
 
 export interface SiteNavProps {
   site: PublicSite;
@@ -19,6 +20,8 @@ export interface SiteNavProps {
   shopProducts?: readonly ShopProductCard[];
   /** Path of the page being rendered, used to mark the matching menu item. */
   currentPath?: string;
+  /** Request language for the header's own labels; the active language link otherwise. */
+  locale?: string | null;
 }
 
 const trimPath = (value: string): string => {
@@ -35,6 +38,8 @@ const MenuList = ({
 }: {
   items: MenuItem[];
   currentPath?: string;
+  /** Request language for the header's own labels; the active language link otherwise. */
+  locale?: string | null;
 }) => (
   <ul className="site-nav__list">
     {items.map((item, index) => {
@@ -97,9 +102,11 @@ const GlobeIcon = () => (
 const HeaderActions = ({
   site,
   languages = [],
+  t,
 }: {
   site: PublicSite;
   languages?: readonly LanguageLink[];
+  t: StorefrontT;
 }) => {
   const actions = headerActions(site);
   if (!actions.language && !actions.account && !actions.cart) return null;
@@ -110,7 +117,12 @@ const HeaderActions = ({
   return (
     <div className="site-header__actions">
       {actions.cart ? (
-        <a className="site-header__action" href="/cart" aria-label="ตะกร้าสินค้า" title="ตะกร้าสินค้า">
+        <a
+          className="site-header__action"
+          href="/cart"
+          aria-label={t('header.cart')}
+          title={t('header.cart')}
+        >
           <CartIcon />
         </a>
       ) : null}
@@ -118,8 +130,8 @@ const HeaderActions = ({
         <a
           className="site-header__action"
           href="/signin"
-          aria-label="บัญชีของฉัน"
-          title="บัญชีของฉัน"
+          aria-label={t('header.account')}
+          title={t('header.account')}
         >
           <UserIcon />
         </a>
@@ -128,8 +140,8 @@ const HeaderActions = ({
         <a
           className="site-header__action site-header__action--language"
           href={alternate?.href ?? '/'}
-          aria-label="เปลี่ยนภาษา"
-          title="เปลี่ยนภาษา"
+          aria-label={t('header.language')}
+          title={t('header.language')}
           lang={alternate?.locale}
         >
           <GlobeIcon />
@@ -151,7 +163,10 @@ export const SiteHeader = ({
   languages,
   currentPath,
   shopProducts,
+  locale,
 }: SiteNavProps) => {
+  const language = locale ?? languages?.find((link) => link.active)?.locale ?? site.localeDefault;
+  const t = storefrontT(language);
   const height = headerHeight(site);
   const logo = logoHeight(site);
 
@@ -179,7 +194,7 @@ export const SiteHeader = ({
             type="checkbox"
             id="site-nav-toggle"
             className="site-nav__checkbox"
-            aria-label="เมนู"
+            aria-label={t('header.menu')}
             aria-controls="site-nav-menu"
           />
           <label className="site-nav__toggle" htmlFor="site-nav-toggle">
@@ -188,7 +203,7 @@ export const SiteHeader = ({
           <nav
             id="site-nav-menu"
             className={`site-nav site-nav--align-${menuAlignFromSettings(site.settings, 'header')}`}
-            aria-label="เมนูหลัก"
+            aria-label={t('header.mainMenu')}
           >
             <MenuList items={menus.header} currentPath={currentPath} />
           </nav>
@@ -198,12 +213,13 @@ export const SiteHeader = ({
         <div className="site-header__blocks">
           <BlockTreeRenderer
             blocks={blocks}
+            locale={language}
             {...(languages ? { languages } : {})}
             {...(shopProducts ? { shopProducts } : {})}
           />
         </div>
       ) : null}
-      <HeaderActions site={site} {...(languages ? { languages } : {})} />
+      <HeaderActions site={site} t={t} {...(languages ? { languages } : {})} />
     </header>
   );
 };

@@ -11,48 +11,49 @@ import {
   type HeadingProps,
   type HeadingWeight,
 } from './schema.js';
+import { bt } from '../../i18n.js';
 
-const WEIGHT_LABELS: Record<HeadingWeight, string> = {
-  light: 'ตัวบาง',
-  regular: 'ปกติ',
-  semibold: 'กึ่งหนา',
-  bold: 'ตัวหนา',
-};
+const WEIGHT_LABELS = (): Record<HeadingWeight, string> => ({
+  light: bt('ตัวบาง'),
+  regular: bt('ปกติ'),
+  semibold: bt('กึ่งหนา'),
+  bold: bt('ตัวหนา'),
+});
 
-const LEVEL_LABELS: Record<HeadingLevel, string> = {
-  h1: 'หัวข้อใหญ่สุด (H1)',
-  h2: 'หัวข้อรอง (H2)',
-  h3: 'หัวข้อย่อย (H3)',
-  h4: 'หัวข้อย่อยเล็ก (H4)',
-};
+const LEVEL_LABELS = (): Record<HeadingLevel, string> => ({
+  h1: bt('หัวข้อใหญ่สุด (H1)'),
+  h2: bt('หัวข้อรอง (H2)'),
+  h3: bt('หัวข้อย่อย (H3)'),
+  h4: bt('หัวข้อย่อยเล็ก (H4)'),
+});
 
 export const HeadingPanel = ({ props, style, mode, onChange }: BlockPanelProps<HeadingProps>) => (
   <>
-    <PanelSection title="เนื้อหา">
+    <PanelSection title={bt('เนื้อหา')}>
       <TextField
-        label="ข้อความหัวข้อ"
+        label={bt('ข้อความหัวข้อ')}
         value={props.text}
         onChange={(event) => onChange('props.text', event.target.value)}
       />
       <Select
-        label="ระดับหัวข้อ"
+        label={bt('ระดับหัวข้อ')}
         value={props.level}
-        options={HEADING_LEVELS.map((level) => ({ value: level, label: LEVEL_LABELS[level] }))}
+        options={HEADING_LEVELS.map((level) => ({ value: level, label: LEVEL_LABELS()[level] }))}
         onChange={(event) => onChange('props.level', event.target.value)}
       />
       <Select
-        label="น้ำหนักตัวอักษร"
+        label={bt('น้ำหนักตัวอักษร')}
         value={props.weight}
         options={HEADING_WEIGHTS.map((weight) => ({
           value: weight,
-          label: WEIGHT_LABELS[weight],
+          label: WEIGHT_LABELS()[weight],
         }))}
         onChange={(event) => onChange('props.weight', event.target.value)}
       />
       <Select
-        label="การจัดวาง"
+        label={bt('การจัดวาง')}
         value={props.align}
-        options={alignmentOptions}
+        options={alignmentOptions()}
         onChange={(event) => onChange('props.align', event.target.value)}
       />
     </PanelSection>

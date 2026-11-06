@@ -3040,3 +3040,41 @@ pnpm --filter admin test src/security src/growth
 pnpm --filter api test src/modules/retention
 LUMIO_DESTRUCTIVE_DB_TESTS=1 DATABASE_URL=<ฐานข้อมูลทิ้งได้> pnpm --filter api test src/modules/retention
 ```
+
+## งานที่ทำเสร็จ (ก้อนที่ 70: ปิดงานค้างจากการวิเคราะห์ระบบ)
+
+ปิดข้อที่เหลือทั้งหมดจากการวิเคราะห์ระบบ 2026-11-06 (ต่อจากก้อนที่ 69)
+
+- **RLS มีผลจริงบน docker stack (บั๊กความปลอดภัย)** — API/worker ต่อฐานข้อมูลด้วย `POSTGRES_USER`
+  ซึ่งเป็น superuser จึงข้าม RLS ทั้งหมด: query ที่พึ่ง RLS อย่างเดียว (133 จุด) เห็นข้อมูลทุกเว็บ
+  เช่น บัญชีใหม่เห็นคำสั่งซื้อ (ชื่อ/เบอร์ลูกค้า) ของร้านเดโม และหน้าแรกสาธารณะของเว็บใหม่แสดงเนื้อหาเว็บอื่น
+  - migration `20261118000000_rls_session_role` สร้าง role `lumio_rls` (NOLOGIN, NOSUPERUSER, NOBYPASSRLS)
+    + สิทธิ์ตาราง/sequence + default privileges
+  - `forSite()` / `forUser()` สั่ง `SET LOCAL ROLE lumio_rls` ในทุก transaction เมื่อ role ใช้ได้
+    งานนอกขอบเขตนั้น (migration, partition ของ pageviews, หาเว็บจาก host) ใช้สิทธิ์เดิมของ connection
+  - API log error ตอนเริ่มถ้า connection ข้าม RLS และใช้ `lumio_rls` ไม่ได้
+  - เทสต์ DB จริง: connection superuser ที่ลด role แล้วเห็นเฉพาะเว็บตัวเอง
+- **ข้อความ error ของ API เป็นภาษาอังกฤษได้** — `common/error-messages.en.ts` (ไทย → อังกฤษ ~350 ข้อความ
+  รวมแบบมีตัวแปร `{1}`), `ApiExceptionFilter` แปล `message` และ `details[].message` เมื่อคำขอเป็น `en`
+  (`X-Locale` แล้ว `Accept-Language`); แอดมินส่ง `X-Locale` ทุกคำขอ API ผ่าน `createSessionFetch`
+  (ไม่ส่งไป signed storage URL) · เทสต์จับข้อความไทยใหม่ที่ยังไม่มีคำแปล
+- **i18n หน้าร้าน/บล็อก/แอดมิน** — `apps/renderer/src/lib/messages.ts` (`storefrontT`), `bt()` ใน
+  `packages/blocks/src/i18n.ts` + `messages.en.ts` (ข้อความผู้เข้าชมตามภาษาของหน้า, ข้อความ editor ตามภาษาแอดมิน),
+  คีย์แอดมินที่ยังเป็นไทยตรง ๆ ย้ายเข้า `@lumio/ui` — ค่าเริ่มต้นของเนื้อหา (schema/defaults) ยังเป็นไทยโดยตั้งใจ
+- **สี hard-code** → design tokens + เทสต์ `packages/tokens/src/no-hardcoded-colors.test.ts`
+- **ยกเลิกได้ + audit** — ลบโปรโมชัน/บริการจอง/ฟอร์ม/แพ็กเกจสมาชิก = ย้ายลงถังขยะ (`deleted_at`,
+  migration `20261117000000_soft_delete`) กู้คืนได้ และ worker ลบถาวรเมื่อเกินระยะถังขยะ
+- **access token อยู่ในหน่วยความจำ** — โหลดหน้าใหม่ใช้ refresh cookie (httpOnly) ต่อเซสชัน
+  หมายเหตุ dev: เปิดแอดมินที่ `http://localhost:49300` (ไม่ใช่ `127.0.0.1`) ให้ตรง site กับ API `localhost:49100`
+  ไม่อย่างนั้น cookie `SameSite=Lax` ไม่ถูกส่งและต้องเข้าสู่ระบบใหม่ทุกครั้งที่ reload
+- **editor พังเมื่อเลือกบล็อกจากเทมเพลตเก่า** — inspector ส่ง props ดิบให้ Panel (ขาด field ใหม่ เช่น
+  `foregrounds` ของ hero) → ตอนนี้ parse ด้วย schema ก่อนเหมือน renderer
+- **E2E กับ API จริง** — `e2e/storefront/journey.e2e.ts`: สมัคร → wizard สร้างเว็บ → หน้าเว็บสาธารณะ
+  ต้องไม่มีเนื้อหาเว็บอื่น → แก้หัวข้อในหน้า → เผยแพร่ → ผู้เข้าชมเห็นข้อความใหม่ (สร้างบัญชี/subdomain ใหม่ทุกรอบ)
+- **อัปเกรด** Prisma 5.22 → 6.19, React 18 → 19 (`@types/react` 19, peer ของ ui/blocks `^19.0.0`)
+
+```bash
+docker compose --profile app up -d --build
+pnpm test:e2e:storefront
+LUMIO_DESTRUCTIVE_DB_TESTS=1 DATABASE_URL=<ฐานข้อมูลทิ้งได้> pnpm --filter api test
+```

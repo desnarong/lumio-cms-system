@@ -98,7 +98,10 @@ const dbWith = (tx: Record<string, unknown>): PrismaService =>
     forSite: vi.fn(async (_siteId: string, fn: (client: unknown) => unknown) => fn(tx)),
   }) as unknown as PrismaService;
 
-const auditStub = (): { log: Mock } => ({ log: vi.fn().mockResolvedValue(undefined) });
+const auditStub = (): { log: Mock; record: Mock } => ({
+  log: vi.fn().mockResolvedValue(undefined),
+  record: vi.fn().mockResolvedValue(undefined),
+});
 
 const quotaStub = (): QuotaService =>
   ({ assertCanAddMediaBytes: vi.fn().mockResolvedValue(undefined) }) as unknown as QuotaService;

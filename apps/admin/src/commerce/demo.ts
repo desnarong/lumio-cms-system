@@ -239,6 +239,7 @@ const maskedAccount = (value: string | null): string | null =>
 export const createDemoCommerceApi = (): CommerceApi => {
   let products = demoProducts();
   let orders = [demoOrder(), demoPaidOrder()];
+  let trashedPromotions: Promotion[] = [];
   let promotions: Promotion[] = [
     {
       id: 'demo-promo-bundle',
@@ -406,7 +407,15 @@ export const createDemoCommerceApi = (): CommerceApi => {
       return updated;
     },
     removePromotion: async (promotionId: string) => {
+      trashedPromotions.push(...promotions.filter((item) => item.id === promotionId));
       promotions = promotions.filter((item) => item.id !== promotionId);
+    },
+    restorePromotion: async (promotionId: string) => {
+      const found = trashedPromotions.find((item) => item.id === promotionId);
+      if (!found) throw new Error('ไม่พบโปรโมชั่นนี้ในถังขยะ');
+      trashedPromotions = trashedPromotions.filter((item) => item.id !== promotionId);
+      promotions = [...promotions, found];
+      return found;
     },
 
     archiveProduct: async (productId: string) => {

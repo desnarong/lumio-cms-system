@@ -90,7 +90,7 @@ export class BackupService {
           tx.menu.findMany({ orderBy: { location: 'asc' } }),
           tx.globalBlock.findMany({ orderBy: { createdAt: 'asc' } }),
           tx.sectionTemplate.findMany({ orderBy: { createdAt: 'asc' } }),
-          tx.form.findMany({ orderBy: { createdAt: 'asc' } }),
+          tx.form.findMany({ where: { deletedAt: null }, orderBy: { createdAt: 'asc' } }),
           tx.subscriber.findMany({ orderBy: { createdAt: 'asc' } }),
           tx.domain.findMany({ orderBy: [{ isPrimary: 'desc' }, { hostname: 'asc' }] }),
           tx.siteMember.findMany({

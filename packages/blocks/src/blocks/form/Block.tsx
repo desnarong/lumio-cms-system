@@ -2,6 +2,7 @@ import { FORM_HONEYPOT_FIELD, type FormField } from '@lumio/shared';
 import { Editable } from '../../engine/editable.js';
 import type { BlockRenderProps } from '../../types.js';
 import type { FormProps } from './schema.js';
+import { bt } from '../../i18n.js';
 
 const INPUT_TYPES: Partial<Record<FormField['type'], string>> = {
   email: 'email',
@@ -13,7 +14,15 @@ const INPUT_TYPES: Partial<Record<FormField['type'], string>> = {
 const HelpText = ({ text }: { text: string | undefined }) =>
   text ? <p className="ui-field__hint">{text}</p> : null;
 
-const Field = ({ field, blockId }: { field: FormField; blockId: string }) => {
+const Field = ({
+  field,
+  blockId,
+  locale,
+}: {
+  field: FormField;
+  blockId: string;
+  locale?: string | undefined;
+}) => {
   const id = `${blockId}-${field.name}`;
   const label = (
     <label className="ui-field__label" htmlFor={id}>
@@ -66,7 +75,7 @@ const Field = ({ field, blockId }: { field: FormField; blockId: string }) => {
           required={field.required}
           defaultValue=""
         >
-          <option value="">{field.placeholder ?? 'เลือก…'}</option>
+          <option value="">{field.placeholder ?? bt('เลือก…', locale)}</option>
           {field.options.map((option) => (
             <option key={option} value={option}>
               {option}
@@ -101,7 +110,7 @@ const Field = ({ field, blockId }: { field: FormField; blockId: string }) => {
  * form threaded down from the page payload; the editor shows a hint until the
  * user picks one.
  */
-export const FormBlock = ({ props, block, forms = [] }: BlockRenderProps<FormProps>) => {
+export const FormBlock = ({ props, block, forms = [], locale }: BlockRenderProps<FormProps>) => {
   const form = forms.find((entry) => entry.id === props.formId) ?? null;
 
   return (
@@ -113,7 +122,7 @@ export const FormBlock = ({ props, block, forms = [] }: BlockRenderProps<FormPro
         runs={block.textStyles?.['props.heading']}
         layout={block.textLayouts?.['props.heading']}
         className="lumio-form__heading"
-        label="หัวข้อฟอร์ม"
+        label={bt('หัวข้อฟอร์ม')}
       />
       {props.description.length > 0 ? (
         <Editable
@@ -124,13 +133,13 @@ export const FormBlock = ({ props, block, forms = [] }: BlockRenderProps<FormPro
           runs={block.textStyles?.['props.description']}
           layout={block.textLayouts?.['props.description']}
           className="lumio-form__description"
-          label="คำอธิบายฟอร์ม"
+          label={bt('คำอธิบายฟอร์ม')}
         />
       ) : null}
 
       {!form ? (
         <p className="lumio-form__note" role="note">
-          ยังไม่ได้เลือกแบบฟอร์มสำหรับส่วนนี้ เลือกได้จากแผงด้านขวา
+          {bt('ยังไม่ได้เลือกแบบฟอร์มสำหรับส่วนนี้ เลือกได้จากแผงด้านขวา', locale)}
         </p>
       ) : (
         <form
@@ -140,21 +149,30 @@ export const FormBlock = ({ props, block, forms = [] }: BlockRenderProps<FormPro
           data-form-id={form.id}
         >
           <div className="lumio-form__honeypot" aria-hidden="true">
-            <label htmlFor={`${block.id}-hp`}>ห้ามกรอกช่องนี้</label>
-            <input id={`${block.id}-hp`} type="text" name={FORM_HONEYPOT_FIELD} tabIndex={-1} autoComplete="off" />
+            <label htmlFor={`${block.id}-hp`}>{bt('ห้ามกรอกช่องนี้', locale)}</label>
+            <input
+              id={`${block.id}-hp`}
+              type="text"
+              name={FORM_HONEYPOT_FIELD}
+              tabIndex={-1}
+              autoComplete="off"
+            />
           </div>
 
           {form.fields.map((field) => (
-            <Field key={field.id} field={field} blockId={block.id} />
+            <Field key={field.id} field={field} blockId={block.id} locale={locale} />
           ))}
 
-          <button type="submit" className="ui-button ui-button--primary ui-button--md lumio-form__submit">
+          <button
+            type="submit"
+            className="ui-button ui-button--primary ui-button--md lumio-form__submit"
+          >
             <Editable
               path="props.submitLabel"
               value={props.submitLabel}
               runs={block.textStyles?.['props.submitLabel']}
               layout={block.textLayouts?.['props.submitLabel']}
-              label="ข้อความบนปุ่ม"
+              label={bt('ข้อความบนปุ่ม')}
             />
           </button>
         </form>
@@ -170,8 +188,12 @@ export const FormBlock = ({ props, block, forms = [] }: BlockRenderProps<FormPro
           <p className="lumio-form__sent" id={`sent-${form.id}`} role="status">
             {form.successMessage}
           </p>
-          <p className="lumio-form__sent lumio-form__sent--error" id={`error-${form.id}`} role="alert">
-            ส่งข้อความไม่สำเร็จ กรุณาลองอีกครั้ง
+          <p
+            className="lumio-form__sent lumio-form__sent--error"
+            id={`error-${form.id}`}
+            role="alert"
+          >
+            {bt('ส่งข้อความไม่สำเร็จ กรุณาลองอีกครั้ง', locale)}
           </p>
         </>
       ) : null}

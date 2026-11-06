@@ -98,6 +98,17 @@ export class FormsController {
     return ok({ success: true });
   }
 
+  /** Undo of deleting a form: same id, submissions intact. */
+  @Post(':formId/restore')
+  @Roles(...WRITE_ROLES)
+  async restore(
+    @CurrentSite() siteId: string,
+    @Param('formId') formId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return ok(await this.forms.restore(siteId, formId, user.id));
+  }
+
   @Get(':formId/submissions')
   @Roles(...READ_ROLES)
   async submissions(

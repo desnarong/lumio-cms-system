@@ -15,6 +15,7 @@ import {
 import { useMediaPicker } from '@lumio/blocks';
 import { ApiError } from '../api-error.js';
 import type { AgencyApi } from './branding.js';
+import { literalColors } from '@lumio/tokens';
 
 export interface BrandingPanelProps {
   api: AgencyApi;
@@ -153,7 +154,7 @@ export const BrandingPanel = ({ api, canManage, onSaved }: BrandingPanelProps) =
           hint={t('branding.accentHint')}
           value={accentColor}
           disabled={!editable}
-          placeholder="#17469d"
+          placeholder={literalColors.textSeed}
           onChange={(event) => setAccentColor(event.target.value)}
         />
         <div className="settings-switch">

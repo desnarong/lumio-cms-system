@@ -1,3 +1,5 @@
+import type { StorefrontT } from './messages';
+
 export type StarFill = 'full' | 'half' | 'empty';
 
 /** Five star fills for a review score, rounding to the nearest half star. */
@@ -13,7 +15,12 @@ export const starFills = (rating: number | null): StarFill[] => {
 };
 
 /** Text a screen reader announces for the star row. */
-export const ratingLabel = (rating: number, count: number): string =>
-  `ให้คะแนน ${rating.toFixed(1)} จาก 5${
-    count > 0 ? ` จาก ${count.toLocaleString('th-TH')} รีวิว` : ''
-  }`;
+export const ratingLabel = (
+  t: StorefrontT,
+  rating: number,
+  count: number,
+  intl = 'th-TH',
+): string =>
+  count > 0
+    ? t('product.ratingCount', { rating: rating.toFixed(1), count: count.toLocaleString(intl) })
+    : t('product.rating', { rating: rating.toFixed(1) });

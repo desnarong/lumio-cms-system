@@ -81,7 +81,10 @@ export class MembershipService {
 
   async plans(siteId: string): Promise<MembershipPlan[]> {
     const rows = await this.db.forSite(siteId, (tx) =>
-      tx.membershipPlan.findMany({ orderBy: [{ createdAt: 'asc' }] }),
+      tx.membershipPlan.findMany({
+        where: { deletedAt: null },
+        orderBy: [{ createdAt: 'asc' }],
+      }),
     );
     return rows.map(toPlan);
   }
@@ -121,7 +124,7 @@ export class MembershipService {
     actorId: string,
   ): Promise<MembershipPlan> {
     const updated = await this.db.forSite(siteId, async (tx) => {
-      const existing = await tx.membershipPlan.findFirst({ where: { id: planId, siteId } });
+      const existing = await tx.membershipPlan.findFirst({ where: { id: planId, siteId, deletedAt: null } });
       if (!existing) throw ApiException.notFound('ไม่พบแพ็กเกจนี้');
       return tx.membershipPlan.update({
         where: { id: planId },
@@ -148,7 +151,7 @@ export class MembershipService {
   /** A plan with members is paused instead of deleted, so their access survives. */
   async deletePlan(siteId: string, planId: string, actorId: string): Promise<void> {
     await this.db.forSite(siteId, async (tx) => {
-      const plan = await tx.membershipPlan.findFirst({ where: { id: planId, siteId } });
+      const plan = await tx.membershipPlan.findFirst({ where: { id: planId, siteId, deletedAt: null } });
       if (!plan) throw ApiException.notFound('ไม่พบแพ็กเกจนี้');
 
       const subscribers = await tx.readerSubscription.count({ where: { planId } });
@@ -157,15 +160,38 @@ export class MembershipService {
           'แพ็กเกจนี้มีสมาชิกอยู่ กรุณาหยุดขายชั่วคราวแทนการลบ เพื่อไม่ให้สมาชิกเสียสิทธิ์',
         );
       }
-      await tx.membershipPlan.delete({ where: { id: planId } });
+      await tx.membershipPlan.update({ where: { id: planId }, data: { deletedAt: new Date() } });
+      await this.audit.record(tx, {
+        siteId,
+        userId: actorId,
+        action: 'membership.plan.delete',
+        target: planId,
+        meta: { name: plan.name },
+      });
     });
+  }
 
-    await this.audit.log({
-      siteId,
-      userId: actorId,
-      action: 'membership.plan.delete',
-      target: planId,
+  /** Undo of deleting a plan (only plans without members can be deleted). */
+  async restorePlan(siteId: string, planId: string, actorId: string): Promise<MembershipPlan> {
+    const row = await this.db.forSite(siteId, async (tx) => {
+      const plan = await tx.membershipPlan.findFirst({
+        where: { id: planId, siteId, deletedAt: { not: null } },
+      });
+      if (!plan) throw ApiException.notFound('ไม่พบแพ็กเกจนี้ในถังขยะ');
+      const restored = await tx.membershipPlan.update({
+        where: { id: planId },
+        data: { deletedAt: null },
+      });
+      await this.audit.record(tx, {
+        siteId,
+        userId: actorId,
+        action: 'membership.plan.restore',
+        target: planId,
+        meta: { name: plan.name },
+      });
+      return restored;
     });
+    return toPlan(row);
   }
 
   async readers(siteId: string, query: ReaderListQuery): Promise<MembershipReaderList> {
@@ -218,7 +244,7 @@ export class MembershipService {
     const [readers, plans, active] = await this.db.forSite(siteId, async (tx) =>
       Promise.all([
         tx.reader.count(),
-        tx.membershipPlan.count(),
+        tx.membershipPlan.count({ where: { deletedAt: null } }),
         tx.readerSubscription.findMany({
           where: { status: 'active', currentPeriodEnd: { gt: now } },
           include: { plan: { select: { price: true, interval: true } } },
@@ -286,7 +312,7 @@ export class MembershipService {
   async publicPlans(siteId: string): Promise<PublicMembershipPlan[]> {
     const rows = await this.db.forSite(siteId, (tx) =>
       tx.membershipPlan.findMany({
-        where: { status: 'active' },
+        where: { status: 'active', deletedAt: null },
         orderBy: [{ interval: 'asc' }, { price: 'asc' }],
         select: { id: true, name: true, description: true, interval: true, price: true, currency: true },
       }),
@@ -337,7 +363,7 @@ export class MembershipService {
       }
 
       const plan = await tx.membershipPlan.findFirst({
-        where: { id: patch.planId, siteId },
+        where: { id: patch.planId, siteId, deletedAt: null },
         select: { interval: true },
       });
       const reader = await tx.reader.findFirst({

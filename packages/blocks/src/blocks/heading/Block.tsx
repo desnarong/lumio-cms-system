@@ -1,6 +1,7 @@
 import { Editable } from '../../engine/editable.js';
 import type { BlockRenderProps } from '../../types.js';
 import type { HeadingProps } from './schema.js';
+import { bt } from '../../i18n.js';
 
 export const HeadingBlock = ({ props, block }: BlockRenderProps<HeadingProps>) => (
   <Editable
@@ -11,6 +12,6 @@ export const HeadingBlock = ({ props, block }: BlockRenderProps<HeadingProps>) =
     layout={block.textLayouts?.['props.text']}
     className={`lumio-heading lumio-heading--${props.level} lumio-heading--${props.weight}`}
     style={{ textAlign: props.align }}
-    label="ข้อความหัวข้อ"
+    label={bt('ข้อความหัวข้อ')}
   />
 );

@@ -4,6 +4,7 @@ import { Editable } from '../../engine/editable.js';
 import { Img } from '../../engine/img.js';
 import type { BlockRenderProps } from '../../types.js';
 import { featureItemSchema, type FeatureItem, type FeaturesProps } from './schema.js';
+import { bt } from '../../i18n.js';
 
 const iconStyle = (item: FeatureItem): CSSProperties =>
   ({ '--feature-icon-size': `${item.iconSize ?? 48}px` }) as CSSProperties;
@@ -111,7 +112,7 @@ export const FeaturesBlock = ({ props, block, promotions }: BlockRenderProps<Fea
       runs={block.textStyles?.['props.heading']}
       layout={block.textLayouts?.['props.heading']}
       className="lumio-features__heading"
-      label="หัวข้อส่วน"
+      label={bt('หัวข้อส่วน')}
     />
     <Editable
       as="p"
@@ -121,7 +122,7 @@ export const FeaturesBlock = ({ props, block, promotions }: BlockRenderProps<Fea
       runs={block.textStyles?.['props.subheading']}
       layout={block.textLayouts?.['props.subheading']}
       className="lumio-features__subheading"
-      label="คำอธิบายส่วน"
+      label={bt('คำอธิบายส่วน')}
     />
     <ul className="lumio-features__grid" data-columns={props.columns}>
       {items.map((item, index) => (
@@ -166,7 +167,7 @@ export const FeaturesBlock = ({ props, block, promotions }: BlockRenderProps<Fea
                 runs={block.textStyles?.[`props.items.${index}.title`]}
                 layout={block.textLayouts?.[`props.items.${index}.title`]}
                 className="lumio-features__title"
-                label="ชื่อจุดเด่น"
+                label={bt('ชื่อจุดเด่น')}
               />
             )}
             {live ? (
@@ -180,7 +181,7 @@ export const FeaturesBlock = ({ props, block, promotions }: BlockRenderProps<Fea
                 runs={block.textStyles?.[`props.items.${index}.description`]}
                 layout={block.textLayouts?.[`props.items.${index}.description`]}
                 className="lumio-features__text"
-                label="คำอธิบายจุดเด่น"
+                label={bt('คำอธิบายจุดเด่น')}
               />
             )}
             {item.link.length > 0 && item.buttonLabel.length > 0 ? (

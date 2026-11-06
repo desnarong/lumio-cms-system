@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 import type { ReactNode } from 'react';
+import { colors } from '@lumio/tokens';
 import { cn } from './cn.js';
 import { useT } from './i18n.js';
 import { Field } from './field.js';
@@ -26,7 +27,7 @@ export const ColorPicker = ({
   hint,
   error,
   value,
-  defaultValue = '#6366F1',
+  defaultValue = colors.brand[500],
   presets = [],
   disabled = false,
   className,

@@ -38,6 +38,10 @@ describe('booking times', () => {
   it('labels a day and a range in Thai', () => {
     expect(weekdayOf('2026-11-03')).toBe(2);
     expect(bookingDateLabel('2026-11-03')).toBe('อ. 3 พ.ย.');
+    expect(bookingDateLabel('2026-11-03', 'en')).toBe('Tue 3 Nov');
+    expect(bookingRangeLabel('2026-11-03T02:30:00.000Z', '2026-11-03T03:30:00.000Z', 'en')).toBe(
+      'Tue 3 Nov 09:30–10:30',
+    );
     expect(bookingRangeLabel('2026-11-03T02:30:00.000Z', '2026-11-03T03:30:00.000Z')).toBe(
       'อ. 3 พ.ย. 09:30–10:30',
     );

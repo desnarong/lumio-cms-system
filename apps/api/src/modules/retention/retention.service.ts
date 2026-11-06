@@ -12,6 +12,7 @@ import {
   notFoundRetentionDays,
   pageviewPartitionsAhead,
   pageviewRetentionMonths,
+  trashRetentionDays,
 } from './retention.config';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -28,6 +29,14 @@ export interface PartitionSummary {
   moved: number;
   /** Rows in `pageviews_default` older than the retention window, deleted. */
   expired: number;
+}
+
+export interface TrashSummary {
+  sites: number;
+  promotions: number;
+  bookingServices: number;
+  forms: number;
+  membershipPlans: number;
 }
 
 export interface NotFoundSummary {
@@ -172,7 +181,35 @@ export class RetentionService {
     return { sites: sites.length, removed };
   }
 
-  /** One full pass; each half runs even if the other fails. */
+  /**
+   * Hard-deletes soft-deleted rows whose undo window has passed. Each table is
+   * under RLS, so this also runs site by site.
+   */
+  async purgeDeleted(now: Date = new Date()): Promise<TrashSummary> {
+    const cutoff = new Date(now.getTime() - trashRetentionDays() * DAY_MS);
+    const expired = { deletedAt: { lt: cutoff } };
+    const sites = await this.db.site.findMany({ select: { id: true } });
+    const summary: TrashSummary = {
+      sites: sites.length,
+      promotions: 0,
+      bookingServices: 0,
+      forms: 0,
+      membershipPlans: 0,
+    };
+
+    for (const site of sites) {
+      await this.db.forSite(site.id, async (tx) => {
+        const where = { siteId: site.id, ...expired };
+        summary.promotions += (await tx.promotion.deleteMany({ where })).count;
+        summary.bookingServices += (await tx.bookingService.deleteMany({ where })).count;
+        summary.forms += (await tx.form.deleteMany({ where })).count;
+        summary.membershipPlans += (await tx.membershipPlan.deleteMany({ where })).count;
+      });
+    }
+    return summary;
+  }
+
+  /** One full pass; each part runs even if another fails. */
   async sweep(now: Date = new Date()): Promise<void> {
     try {
       const partitions = await this.maintainPageviewPartitions(now);
@@ -192,6 +229,15 @@ export class RetentionService {
       }
     } catch (error) {
       this.logger.warn(`ล้าง log 404 ไม่สำเร็จ: ${String(error)}`);
+    }
+
+    try {
+      const trash = await this.purgeDeleted(now);
+      const purged =
+        trash.promotions + trash.bookingServices + trash.forms + trash.membershipPlans;
+      if (purged > 0) this.logger.log(`ถังขยะ: ลบถาวร ${purged} รายการที่เกินระยะกู้คืน`);
+    } catch (error) {
+      this.logger.warn(`ล้างถังขยะไม่สำเร็จ: ${String(error)}`);
     }
   }
 }

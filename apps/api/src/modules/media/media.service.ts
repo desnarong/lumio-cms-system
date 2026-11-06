@@ -547,29 +547,29 @@ export class MediaService {
     const current = await this.findRow(siteId, mediaId);
     if (current.status === 'trashed') return;
 
-    await this.db.forSite(siteId, (tx) =>
-      tx.media.update({
+    await this.db.forSite(siteId, async (tx) => {
+      await tx.media.update({
         where: { id: mediaId },
         // The timestamp starts the retention window the sweep counts from.
         data: { status: 'trashed', archivedAt: current.archivedAt ?? new Date() },
-      }),
-    );
-    await this.audit.log({ siteId, userId: actorId, action: 'media.delete', target: mediaId });
+      });
+      await this.audit.record(tx, { siteId, userId: actorId, action: 'media.delete', target: mediaId });
+    });
   }
 
   async restore(siteId: string, mediaId: string, actorId: string): Promise<MediaItem> {
     const current = await this.findRow(siteId, mediaId);
     const variants = readVariants(current.variants);
 
-    const row = await this.db.forSite(siteId, (tx) =>
-      tx.media.update({
+    const row = await this.db.forSite(siteId, async (tx) => {
+      const restored = await tx.media.update({
         where: { id: mediaId },
         // Restoring clears the clock, so a re-deleted image gets a full window.
         data: { status: variants.length > 0 ? 'ready' : 'pending', archivedAt: null },
-      }),
-    );
-
-    await this.audit.log({ siteId, userId: actorId, action: 'media.restore', target: mediaId });
+      });
+      await this.audit.record(tx, { siteId, userId: actorId, action: 'media.restore', target: mediaId });
+      return restored;
+    });
     return toItem(row, mediaPublicBaseUrl());
   }
 

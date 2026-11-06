@@ -160,9 +160,7 @@ export const useForms = (api: FormsApi): FormsController => {
   const markRead = useCallback(
     async (submission: FormSubmission) => {
       setSubmissions((current) =>
-        current.map((entry) =>
-          entry.id === submission.id ? { ...entry, status: 'read' } : entry,
-        ),
+        current.map((entry) => (entry.id === submission.id ? { ...entry, status: 'read' } : entry)),
       );
       await setSubmissionStatus(submission, 'read');
       await refreshSummaries();
@@ -241,36 +239,19 @@ export const useForms = (api: FormsApi): FormsController => {
 
   const remove = useCallback(
     async (summary: FormSummary) => {
-      let removed: Form | null = null;
-      try {
-        removed = await apiRef.current.get(summary.id);
-      } catch {
-        removed = null;
-      }
-
       try {
         await apiRef.current.remove(summary.id);
         await reload();
         toast.push({
           tone: 'success',
           title: t('forms.deletedToast', { name: summary.name }),
-          ...(removed
-            ? {
-                undo: {
-                  label: t('common.undo'),
-                  onClick: () => {
-                    void apiRef.current
-                      .create({
-                        name: removed!.name,
-                        fields: removed!.fields,
-                        notify: removed!.notify,
-                        successMessage: removed!.successMessage,
-                      })
-                      .then(reload);
-                  },
-                },
-              }
-            : {}),
+          // Soft delete: undo restores the same form with its messages.
+          undo: {
+            label: t('common.undo'),
+            onClick: () => {
+              void apiRef.current.restore(summary.id).then(reload);
+            },
+          },
         });
       } catch (removeError) {
         toast.push({ tone: 'danger', title: formsErrorMessage(removeError) });

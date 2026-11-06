@@ -7,6 +7,7 @@ import { siteOrigin } from '../../lib/host';
 import { requestHost } from '../../lib/request-host';
 import { requestLocale } from '../../lib/request-locale';
 import { siteTheme } from '../../lib/theme';
+import { storefrontT } from '../../lib/messages';
 
 export const revalidate = 3_600;
 
@@ -15,9 +16,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await requestLocale();
   const { site, locale: effective } = await loadPosts(host, locale);
   return buildPageSeo({
-    title: `บทความ — ${site.name}`,
+    title: storefrontT(effective)('posts.metaTitle', { site: site.name }),
     siteName: site.name,
-    description: `เรื่องราวและความรู้ล่าสุดจาก ${site.name}`,
+    description: storefrontT(effective)('posts.metaDescription', { site: site.name }),
     canonical: `${siteOrigin(host)}${localePathFor('page', 'posts', effective, site.localeDefault)}`,
     favicon: site.faviconUrl,
   });
@@ -28,6 +29,7 @@ export default async function PostsPage() {
   const locale = await requestLocale();
   const { site, menus, globalBlocks, posts, locale: effective } = await loadPosts(host, locale);
   const theme = siteTheme(site.themeTokens);
+  const t = storefrontT(effective);
 
   return (
     <div className="site" style={theme.style} {...theme.attributes}>
@@ -36,12 +38,13 @@ export default async function PostsPage() {
         menus={menus}
         blocks={globalBlocks.header}
         currentPath={localePathFor('page', 'posts', effective, site.localeDefault)}
+        locale={effective}
       />
       <main className="site-main" id="main">
         <article className="site-article site-article--posts" lang={effective}>
-          <h1 className="site-page-title">บทความ</h1>
+          <h1 className="site-page-title">{t('posts.title')}</h1>
           {posts.length === 0 ? (
-            <p className="site-empty">ยังไม่มีบทความที่เผยแพร่</p>
+            <p className="site-empty">{t('posts.empty')}</p>
           ) : (
             <ul className="site-post-list">
               {posts.map((post) => (
@@ -76,7 +79,7 @@ export default async function PostsPage() {
           )}
         </article>
       </main>
-      <SiteFooter site={site} menus={menus} blocks={globalBlocks.footer} />
+      <SiteFooter site={site} menus={menus} blocks={globalBlocks.footer} locale={effective} />
     </div>
   );
 }

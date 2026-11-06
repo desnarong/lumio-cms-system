@@ -76,7 +76,7 @@ export type FetchLike = (url: string, init?: FetchOptions) => Promise<FetchRespo
 
 /** The page exists but is not published (or never existed). */
 export class ContentNotFoundError extends Error {
-  constructor(message = 'ไม่พบหน้านี้') {
+  constructor(message = 'Page not found') {
     super(message);
     this.name = 'ContentNotFoundError';
   }
@@ -84,7 +84,7 @@ export class ContentNotFoundError extends Error {
 
 /** The API could not answer; callers may fall back to demo content in dev. */
 export class ApiUnavailableError extends Error {
-  constructor(message = 'ต่อ API ไม่ได้') {
+  constructor(message = 'API unavailable') {
     super(message);
     this.name = 'ApiUnavailableError';
   }
@@ -92,7 +92,7 @@ export class ApiUnavailableError extends Error {
 
 /** The API understood the request and refused it (bad input, wrong password, …). */
 export class ApiRejectedError extends Error {
-  constructor(readonly status: number, message = 'คำขอไม่ผ่านการตรวจสอบ') {
+  constructor(readonly status: number, message = 'Request rejected') {
     super(message);
     this.name = 'ApiRejectedError';
   }
@@ -292,7 +292,7 @@ export const createPublicApi = (options: PublicApiOptions): PublicApi => {
         throw new ApiUnavailableError(String(error));
       }
 
-      if (response.status === 404) throw new ContentNotFoundError('ไม่พบฟอร์มนี้');
+      if (response.status === 404) throw new ContentNotFoundError('Form not found');
       if (!response.ok) throw new ApiUnavailableError(`API responded ${response.status}`);
 
       const data = unwrap(await response.json()) as { ok?: boolean } | null;

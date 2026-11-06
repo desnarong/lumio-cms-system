@@ -1250,8 +1250,11 @@ export const OrdersTab = ({ api, canManage }: OrdersTabProps) => {
             {selected.slip ? (
               <div className="commerce-order__slip">
                 <p>
-                  {t('commerce.slip')} · {formatBaht(selected.slip.amount)} บาท · อ้างอิง{' '}
-                  {selected.slip.reference}
+                  {t('commerce.slipLine', {
+                    label: t('commerce.slip'),
+                    amount: formatBaht(selected.slip.amount),
+                    reference: selected.slip.reference,
+                  })}
                 </p>
                 <p className="commerce-settings__hint">
                   {t('commerce.slip')}:{' '}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { formatBaht } from '@lumio/shared';
+import { money, storefrontIntlLocale, storefrontT } from '../../../lib/messages';
 import { JsonLd } from '../../../components/JsonLd';
 import { ProductGallery } from '../../../components/ProductGallery';
 import { QuantityStepper } from '../../../components/QuantityStepper';
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const locale = await requestLocale();
   const { slug } = await params;
   const shop = await loadShopProductOrNull(host, slug, locale);
-  if (!shop) return { title: 'ไม่พบสินค้านี้' };
+  if (!shop) return { title: storefrontT(locale)('product.notFound') };
   return {
     title: shop.product.title,
     description: (shop.product.summary || shop.product.description).slice(0, 160),
@@ -37,6 +38,8 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   const host = await requestHost();
   const locale = await requestLocale();
+  const t = storefrontT(locale);
+  const intl = storefrontIntlLocale(locale);
   const { slug } = await params;
   const { variant, quantity } = await searchParams;
   const shop = await loadShopProductOrNull(host, slug, locale);
@@ -47,9 +50,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
 
   const { product } = shop;
   const freeShipping =
-    shop.settings.freeShippingThreshold === null
-      ? null
-      : shop.settings.freeShippingThreshold;
+    shop.settings.freeShippingThreshold === null ? null : shop.settings.freeShippingThreshold;
   const fills = starFills(product.rating);
   const copy = productCopyBlocks(product.description);
   const presetVariant =
@@ -63,7 +64,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
     : 1;
 
   return (
-    <ShopShell chrome={shop} path={`/shop/${product.slug}`}>
+    <ShopShell chrome={shop} locale={locale} path={`/shop/${product.slug}`}>
       <JsonLd
         data={{
           '@context': 'https://schema.org',
@@ -92,8 +93,8 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           },
         }}
       />
-      <nav className="shop-breadcrumb" aria-label="เส้นทางนำทาง">
-        <a href="/shop">สินค้าทั้งหมด</a>
+      <nav className="shop-breadcrumb" aria-label={t('product.breadcrumb')}>
+        <a href="/shop">{t('shop.metaTitle')}</a>
         {product.category ? <span aria-hidden="true"> · </span> : null}
         {product.category ? (
           <a href={`/shop?category=${encodeURIComponent(product.category)}`}>{product.category}</a>
@@ -101,7 +102,11 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       </nav>
 
       <div className="shop-product">
-        <ProductGallery images={product.images} title={product.title} />
+        <ProductGallery
+          images={product.images}
+          title={product.title}
+          labels={{ thumbnail: t('product.thumbnail'), fullSize: t('product.fullSize') }}
+        />
 
         <div className="shop-product__info">
           <h1 className="shop-product__title">{product.title}</h1>
@@ -117,7 +122,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
               <span
                 className="shop-rating__stars"
                 role="img"
-                aria-label={ratingLabel(product.rating, product.ratingCount)}
+                aria-label={ratingLabel(t, product.rating, product.ratingCount, intl)}
               >
                 {fills.map((fill, index) => (
                   <span
@@ -132,16 +137,16 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
               <span className="shop-rating__score">{product.rating.toFixed(1)}</span>
               {product.ratingCount > 0 ? (
                 <span className="shop-rating__count">
-                  ({product.ratingCount.toLocaleString('th-TH')} รีวิว)
+                  {t('product.reviews', { count: product.ratingCount.toLocaleString(intl) })}
                 </span>
               ) : null}
             </p>
           ) : null}
 
           <p className="shop-product__price">
-            <span>{formatBaht(product.price)} บาท</span>
+            <span>{money(t, product.price)}</span>
             {product.compareAtPrice ? (
-              <s className="shop-product__compare">{formatBaht(product.compareAtPrice)} บาท</s>
+              <s className="shop-product__compare">{money(t, product.compareAtPrice)}</s>
             ) : null}
           </p>
 
@@ -150,7 +155,9 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
               <input type="hidden" name="productId" value={product.id} />
               {product.options.length > 0 ? (
                 <label className="shop-buy__label" htmlFor="product-variant">
-                  เลือก{product.options.map((option) => option.name).join(' / ')}
+                  {t('product.choose', {
+                    options: product.options.map((option) => option.name).join(' / '),
+                  })}
                   <select
                     className="shop-buy__variant"
                     id="product-variant"
@@ -159,12 +166,12 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
                     defaultValue={presetVariant ?? ''}
                   >
                     <option value="" disabled>
-                      เลือกตัวเลือก
+                      {t('product.chooseOption')}
                     </option>
                     {product.variants.map((entry) => (
                       <option value={entry.id} key={entry.id} disabled={!entry.inStock}>
-                        {entry.label} · {formatBaht(entry.price)} บาท
-                        {entry.inStock ? '' : ' (หมด)'}
+                        {entry.label} · {money(t, entry.price)}
+                        {entry.inStock ? '' : t('product.variantSoldOut')}
                       </option>
                     ))}
                   </select>
@@ -172,13 +179,18 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
               ) : null}
               <div className="shop-buy__quantity-row">
                 <label className="shop-buy__label" htmlFor="product-quantity">
-                  จำนวนสินค้า
+                  {t('product.quantity')}
                 </label>
                 <QuantityStepper
                   id="product-quantity"
                   name="quantity"
                   defaultValue={presetQuantity}
                   max={maxQuantity}
+                  labels={{
+                    decrease: t('product.decrease'),
+                    quantity: t('product.quantity'),
+                    increase: t('product.increase'),
+                  }}
                 />
               </div>
               <div className="shop-buy__actions">
@@ -188,7 +200,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
                   name="next"
                   value={`/shop/${product.slug}`}
                 >
-                  เพิ่มสินค้าลงตะกร้า
+                  {t('product.addToCart')}
                 </button>
                 <button
                   className="shop-button shop-buy__now"
@@ -196,22 +208,22 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
                   name="next"
                   value="/checkout"
                 >
-                  ซื้อเลย
+                  {t('product.buyNow')}
                 </button>
               </div>
             </form>
           ) : (
-            <p className="shop-product__soldout">สินค้าหมด — ติดต่อร้านเพื่อสอบถามรอบถัดไป</p>
+            <p className="shop-product__soldout">{t('product.soldOut')}</p>
           )}
 
           <ul className="shop-product__facts">
-            {product.stock !== null ? <li>เหลือ {product.stock} ชิ้น</li> : null}
-            {freeShipping !== null ? (
-              <li>ส่งฟรีเมื่อซื้อครบ {formatBaht(freeShipping)} บาท</li>
+            {product.stock !== null ? (
+              <li>{t('product.stockLeft', { count: product.stock })}</li>
             ) : null}
-            <li>
-              ค่าจัดส่ง {formatBaht(shop.settings.shippingFee)} บาท · ชำระผ่านพร้อมเพย์หรือเก็บเงินปลายทาง
-            </li>
+            {freeShipping !== null ? (
+              <li>{t('shop.freeShippingOver', { amount: formatBaht(freeShipping) })}</li>
+            ) : null}
+            <li>{t('product.shippingFact', { amount: formatBaht(shop.settings.shippingFee) })}</li>
           </ul>
         </div>
       </div>
@@ -219,7 +231,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       {product.specs.length > 0 ? (
         <section className="shop-specs" aria-labelledby="spec-heading">
           <h2 className="shop-section-title" id="spec-heading">
-            ข้อมูลผลิตภัณฑ์
+            {t('product.specs')}
           </h2>
           <dl className="shop-specs__list">
             {product.specs.map((row) => (
@@ -235,7 +247,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       {copy.length > 0 ? (
         <section className="shop-description" aria-labelledby="description-heading">
           <h2 className="shop-section-title" id="description-heading">
-            รายละเอียดสินค้า
+            {t('product.description')}
           </h2>
           <div className="shop-description__body">
             {copy.map((block, index) =>
@@ -256,7 +268,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       {shop.related.length > 0 ? (
         <section className="shop-related" aria-labelledby="related-heading">
           <h2 className="shop-section-title" id="related-heading">
-            สินค้าที่คล้ายกัน
+            {t('product.related')}
           </h2>
           <ul className="shop-grid">
             {shop.related.map((item) => (
@@ -274,7 +286,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
                     />
                   ) : null}
                   <h3 className="shop-card__title">{item.title}</h3>
-                  <p className="shop-card__price">{formatBaht(item.price)} บาท</p>
+                  <p className="shop-card__price">{money(t, item.price)}</p>
                 </a>
               </li>
             ))}

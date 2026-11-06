@@ -57,4 +57,15 @@ export class PromotionsController {
     await this.promotions.remove(siteId, promotionId, user.id);
     return ok({ success: true });
   }
+
+  /** Undo of `DELETE`: the same promotion, same id. */
+  @Post(':promotionId/restore')
+  @Roles(...WRITE_ROLES)
+  async restore(
+    @CurrentSite() siteId: string,
+    @Param('promotionId') promotionId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return ok(await this.promotions.restore(siteId, promotionId, user.id));
+  }
 }

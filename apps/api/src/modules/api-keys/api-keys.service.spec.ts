@@ -22,7 +22,10 @@ const row = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-const auditStub = (): { log: Mock } => ({ log: vi.fn().mockResolvedValue(undefined) });
+const auditStub = (): { log: Mock; record: Mock } => ({
+  log: vi.fn().mockResolvedValue(undefined),
+  record: vi.fn().mockResolvedValue(undefined),
+});
 
 const dbWith = (tx: Record<string, unknown>): PrismaService =>
   ({
@@ -53,7 +56,9 @@ describe('ApiKeysService', () => {
     const revoked = await keys.revoke(SITE_ID, KEY_ID, USER_ID);
 
     expect(revoked.revokedAt).not.toBeNull();
-    expect(audit.log).toHaveBeenCalledWith(
+    // Written in the same transaction as the revoke.
+    expect(audit.record).toHaveBeenCalledWith(
+      expect.anything(),
       expect.objectContaining({ action: 'api_key.revoke', target: KEY_ID }),
     );
   });

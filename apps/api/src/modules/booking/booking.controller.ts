@@ -84,6 +84,17 @@ export class BookingController {
     return ok({ success: true });
   }
 
+  /** Undo of deleting a service: same id, bookings stay linked. */
+  @Post('services/:serviceId/restore')
+  @Roles(...WRITE_ROLES)
+  async restoreService(
+    @CurrentSite() siteId: string,
+    @Param('serviceId') serviceId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return ok(await this.bookings.restoreService(siteId, serviceId, user.id));
+  }
+
   @Get('bookings')
   @Roles(...READ_ROLES)
   async list(@CurrentSite() siteId: string, @Query() query: unknown) {

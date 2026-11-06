@@ -80,6 +80,17 @@ export class MembershipController {
     return ok({ deleted: true });
   }
 
+  /** Undo of deleting a plan: same id. */
+  @Post('plans/:id/restore')
+  @Roles(...WRITE_ROLES)
+  async restorePlan(
+    @CurrentSite() siteId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') id: string,
+  ) {
+    return ok(await this.membership.restorePlan(siteId, id, user.id));
+  }
+
   @Get('readers')
   @Roles(...READ_ROLES)
   async readers(@CurrentSite() siteId: string, @Query() query: unknown) {

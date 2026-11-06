@@ -287,13 +287,12 @@ const HeaderChrome = ({ api }: { api: DesignApi }) => {
   );
 };
 
-
-const FOOTER_BACKGROUNDS = [
-  { value: 'none', label: 'ไม่มีพื้นหลัง' },
-  { value: 'surface', label: 'พื้นผิว' },
-  { value: 'muted', label: 'เทาอ่อน' },
-  { value: 'brand', label: 'สีแบรนด์' },
-] as const;
+const FOOTER_BACKGROUNDS: readonly { value: string; label: MessageKey }[] = [
+  { value: 'none', label: 'design.footerBg.none' },
+  { value: 'surface', label: 'design.footerBg.surface' },
+  { value: 'muted', label: 'design.footerBg.muted' },
+  { value: 'brand', label: 'design.footerBg.brand' },
+];
 
 type ChromeLink = { label: string; href: string };
 
@@ -337,7 +336,9 @@ const FooterChrome = ({ api }: { api: DesignApi }) => {
     patch({ [key]: [...chrome[key], { label: 'Facebook', href: '' }] } as Partial<SiteChrome>);
 
   const removeLink = (key: 'socialLinks' | 'legalLinks', index: number): void =>
-    patch({ [key]: chrome[key].filter((_, itemIndex) => itemIndex !== index) } as Partial<SiteChrome>);
+    patch({
+      [key]: chrome[key].filter((_, itemIndex) => itemIndex !== index),
+    } as Partial<SiteChrome>);
 
   const save = async (): Promise<void> => {
     setSaving(true);
@@ -385,7 +386,7 @@ const FooterChrome = ({ api }: { api: DesignApi }) => {
       <Select
         label={t('headerFooter.footerBackground')}
         value={chrome.footerBackground}
-        options={[...FOOTER_BACKGROUNDS]}
+        options={FOOTER_BACKGROUNDS.map((option) => ({ ...option, label: t(option.label) }))}
         onChange={(event) =>
           patch({ footerBackground: event.target.value as SiteChrome['footerBackground'] })
         }

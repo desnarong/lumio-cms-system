@@ -4,6 +4,7 @@ import { Editable } from '../../engine/editable.js';
 import { Img } from '../../engine/img.js';
 import type { BlockRenderProps } from '../../types.js';
 import { floatWidthPercent, floatXPercent, floatYPercent, type HeroProps } from './schema.js';
+import { bt } from '../../i18n.js';
 
 const HeroContent = ({ props, block }: { props: HeroProps; block: BlockNode }) => (
   <div className="lumio-hero__content">
@@ -14,7 +15,7 @@ const HeroContent = ({ props, block }: { props: HeroProps; block: BlockNode }) =
       runs={block.textStyles?.['props.heading']}
       layout={block.textLayouts?.['props.heading']}
       className="lumio-hero__heading"
-      label="หัวข้อหลัก"
+      label={bt('หัวข้อหลัก')}
     />
     <Editable
       as="p"
@@ -24,7 +25,7 @@ const HeroContent = ({ props, block }: { props: HeroProps; block: BlockNode }) =
       runs={block.textStyles?.['props.subheading']}
       layout={block.textLayouts?.['props.subheading']}
       className="lumio-hero__subheading"
-      label="คำอธิบายใต้หัวข้อ"
+      label={bt('คำอธิบายใต้หัวข้อ')}
     />
     <Editable
       as="p"
@@ -34,7 +35,7 @@ const HeroContent = ({ props, block }: { props: HeroProps; block: BlockNode }) =
       runs={block.textStyles?.['props.note']}
       layout={block.textLayouts?.['props.note']}
       className="lumio-hero__note"
-      label="ข้อความเพิ่มเติมใต้คำอธิบาย"
+      label={bt('ข้อความเพิ่มเติมใต้คำอธิบาย')}
     />
     {props.buttons.length > 0 ? (
       <div className="lumio-hero__actions">
@@ -51,7 +52,7 @@ const HeroContent = ({ props, block }: { props: HeroProps; block: BlockNode }) =
               value={button.label}
               runs={block.textStyles?.[`props.buttons.${index}.label`]}
               layout={block.textLayouts?.[`props.buttons.${index}.label`]}
-              label="ข้อความปุ่ม"
+              label={bt('ข้อความปุ่ม')}
             />
           </a>
         ))}

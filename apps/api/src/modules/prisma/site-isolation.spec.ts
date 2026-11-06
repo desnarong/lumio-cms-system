@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { runForSite, runForUser } from './site-context';
+import { inspectRlsRole, runForSite, runForUser } from './site-context';
 
 const SITE_A = '30000000-0000-4000-8000-0000000000a1';
 const SITE_B = '30000000-0000-4000-8000-0000000000a2';
@@ -134,5 +134,23 @@ describe.skipIf(!adminUrl)('RLS site isolation', () => {
   it('does not reveal memberships of other users', async () => {
     const rows = await runForUser(app, OUTSIDER_USER, (tx) => tx.siteMember.findMany());
     expect(rows).toHaveLength(0);
+  });
+
+  // The bundled stack connects as the table owner (a superuser), which RLS
+  // never binds; the session role is what keeps the policies on there.
+  it('isolates sites for an owner connection that drops to the session role', async () => {
+    const owner = await inspectRlsRole(admin);
+    expect(owner.canUseRlsRole).toBe(true);
+
+    const rows = await runForSite(
+      admin,
+      SITE_A,
+      (tx) => tx.content.findMany({ where: { siteId: { in: [SITE_A, SITE_B] } } }),
+      true,
+    );
+    expect(rows.map((row) => row.siteId)).toEqual([SITE_A]);
+
+    const members = await runForUser(admin, OUTSIDER_USER, (tx) => tx.siteMember.findMany(), true);
+    expect(members).toHaveLength(0);
   });
 });

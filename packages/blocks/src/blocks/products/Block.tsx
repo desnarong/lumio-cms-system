@@ -3,6 +3,7 @@ import { Img } from '../../engine/img.js';
 import type { BlockRenderProps, ShopProductCard } from '../../types.js';
 import type { ProductCard, ProductsProps } from './schema.js';
 import { shopProductsFor } from './shop.js';
+import { bt } from '../../i18n.js';
 
 const formatPrice = (value: number, currency: string): string =>
   `${currency}${value.toLocaleString('th-TH', {
@@ -17,12 +18,12 @@ interface PriceValue {
   soldOut: boolean;
 }
 
-const Price = ({ item }: { item: PriceValue }) => {
+const Price = ({ item, locale }: { item: PriceValue; locale?: string | undefined }) => {
   if (item.soldOut) {
-    return <span className="lumio-products__soldout">สินค้าหมด</span>;
+    return <span className="lumio-products__soldout">{bt('สินค้าหมด', locale)}</span>;
   }
   if (item.price <= 0) {
-    return <span className="lumio-products__price">สอบถามราคา</span>;
+    return <span className="lumio-products__price">{bt('สอบถามราคา', locale)}</span>;
   }
   const compareAt =
     typeof item.compareAtPrice === 'number' && item.compareAtPrice > item.price
@@ -38,7 +39,7 @@ const Price = ({ item }: { item: PriceValue }) => {
   );
 };
 
-const LiveCard = ({ item }: { item: ShopProductCard }) => (
+const LiveCard = ({ item, locale }: { item: ShopProductCard; locale?: string | undefined }) => (
   <li className="lumio-products__card" data-sold-out={item.soldOut ? 'true' : undefined}>
     <div className="lumio-products__media">
       <Img src={item.image ?? undefined} alt={item.name} aspect="square" />
@@ -48,12 +49,12 @@ const LiveCard = ({ item }: { item: ShopProductCard }) => (
       {item.description.length > 0 ? (
         <p className="lumio-products__description">{item.description}</p>
       ) : null}
-      <Price item={item} />
+      <Price item={item} locale={locale} />
       <a
         className="ui-button ui-button--primary ui-button--md lumio-products__button"
         href={item.link}
       >
-        ดูสินค้า
+        {bt('ดูสินค้า', locale)}
       </a>
     </div>
   </li>
@@ -65,9 +66,17 @@ interface ManualCardProps {
   block: BlockRenderProps<ProductsProps>['block'];
   showDescription: boolean;
   showPrice: boolean;
+  locale?: string | undefined;
 }
 
-const ManualCard = ({ item, index, block, showDescription, showPrice }: ManualCardProps) => (
+const ManualCard = ({
+  item,
+  index,
+  block,
+  showDescription,
+  showPrice,
+  locale,
+}: ManualCardProps) => (
   <li className="lumio-products__card" data-sold-out={item.soldOut ? 'true' : undefined}>
     <div className="lumio-products__media">
       <Img
@@ -90,7 +99,7 @@ const ManualCard = ({ item, index, block, showDescription, showPrice }: ManualCa
         runs={block.textStyles?.[`props.items.${index}.name`]}
         layout={block.textLayouts?.[`props.items.${index}.name`]}
         className="lumio-products__name"
-        label="ชื่อสินค้า"
+        label={bt('ชื่อสินค้า')}
       />
       {showDescription ? (
         <Editable
@@ -101,23 +110,28 @@ const ManualCard = ({ item, index, block, showDescription, showPrice }: ManualCa
           runs={block.textStyles?.[`props.items.${index}.description`]}
           layout={block.textLayouts?.[`props.items.${index}.description`]}
           className="lumio-products__description"
-          label="คำอธิบายสินค้า"
+          label={bt('คำอธิบายสินค้า')}
         />
       ) : null}
-      {showPrice ? <Price item={item} /> : null}
+      {showPrice ? <Price item={item} locale={locale} /> : null}
       {item.link.length > 0 ? (
         <a
           className="ui-button ui-button--primary ui-button--md lumio-products__button"
           href={item.link}
         >
-          {item.buttonLabel || 'ดูสินค้า'}
+          {item.buttonLabel || bt('ดูสินค้า', locale)}
         </a>
       ) : null}
     </div>
   </li>
 );
 
-export const ProductsBlock = ({ props, block, shopProducts }: BlockRenderProps<ProductsProps>) => {
+export const ProductsBlock = ({
+  props,
+  block,
+  shopProducts,
+  locale,
+}: BlockRenderProps<ProductsProps>) => {
   const live = props.source !== 'manual';
   const cards =
     live && shopProducts !== undefined
@@ -146,7 +160,7 @@ export const ProductsBlock = ({ props, block, shopProducts }: BlockRenderProps<P
         runs={block.textStyles?.['props.heading']}
         layout={block.textLayouts?.['props.heading']}
         className="lumio-products__heading"
-        label="หัวข้อส่วนสินค้า"
+        label={bt('หัวข้อส่วนสินค้า')}
       />
       <Editable
         as="p"
@@ -156,17 +170,17 @@ export const ProductsBlock = ({ props, block, shopProducts }: BlockRenderProps<P
         runs={block.textStyles?.['props.subheading']}
         layout={block.textLayouts?.['props.subheading']}
         className="lumio-products__subheading"
-        label="คำอธิบายส่วนสินค้า"
+        label={bt('คำอธิบายส่วนสินค้า')}
       />
       {cards !== null ? (
         cards.length === 0 ? (
           <p className="lumio-products__empty" role="note">
-            ยังไม่มีสินค้าที่เผยแพร่ในร้าน
+            {bt('ยังไม่มีสินค้าที่เผยแพร่ในร้าน', locale)}
           </p>
         ) : (
           <ul className="lumio-products__grid">
             {cards.map((item) => (
-              <LiveCard key={item.id} item={item} />
+              <LiveCard key={item.id} item={item} locale={locale} />
             ))}
           </ul>
         )
@@ -180,6 +194,7 @@ export const ProductsBlock = ({ props, block, shopProducts }: BlockRenderProps<P
               block={block}
               showDescription={props.showDescription}
               showPrice={props.showPrice}
+              locale={locale}
             />
           ))}
         </ul>

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { focalPointSchema, safeLinkSchema } from '@lumio/shared';
+import { bt } from '../i18n.js';
 
 export const TEXT_ALIGNMENTS = ['left', 'center', 'right'] as const;
 export type TextAlignment = (typeof TEXT_ALIGNMENTS)[number];
@@ -39,30 +40,30 @@ export const buttonValueSchema = z.object({
 });
 export type BlockButtonValue = z.infer<typeof buttonValueSchema>;
 
-export const alignmentOptions = [
-  { value: 'left', label: 'ชิดซ้าย' },
-  { value: 'center', label: 'กึ่งกลาง' },
-  { value: 'right', label: 'ชิดขวา' },
+export const alignmentOptions = () => [
+  { value: 'left', label: bt('ชิดซ้าย') },
+  { value: 'center', label: bt('กึ่งกลาง') },
+  { value: 'right', label: bt('ชิดขวา') },
 ];
 
-export const buttonVariantOptions = [
-  { value: 'primary', label: 'ปุ่มหลัก' },
-  { value: 'secondary', label: 'ปุ่มรอง' },
-  { value: 'ghost', label: 'ปุ่มโปร่ง' },
+export const buttonVariantOptions = () => [
+  { value: 'primary', label: bt('ปุ่มหลัก') },
+  { value: 'secondary', label: bt('ปุ่มรอง') },
+  { value: 'ghost', label: bt('ปุ่มโปร่ง') },
 ];
 
-export const buttonSizeOptions = [
-  { value: 'sm', label: 'เล็ก' },
-  { value: 'md', label: 'กลาง' },
-  { value: 'lg', label: 'ใหญ่' },
+export const buttonSizeOptions = () => [
+  { value: 'sm', label: bt('เล็ก') },
+  { value: 'md', label: bt('กลาง') },
+  { value: 'lg', label: bt('ใหญ่') },
 ];
 
-export const imageAspectOptions = [
-  { value: 'auto', label: 'ตามภาพต้นฉบับ' },
-  { value: 'square', label: 'จัตุรัส' },
-  { value: 'wide', label: 'แนวนอน' },
-  { value: 'photo', label: 'ภาพถ่าย (4:3)' },
-  { value: 'video', label: 'อัตราส่วนวิดีโอ' },
+export const imageAspectOptions = () => [
+  { value: 'auto', label: bt('ตามภาพต้นฉบับ') },
+  { value: 'square', label: bt('จัตุรัส') },
+  { value: 'wide', label: bt('แนวนอน') },
+  { value: 'photo', label: bt('ภาพถ่าย (4:3)') },
+  { value: 'video', label: bt('อัตราส่วนวิดีโอ') },
 ];
 
 /** Turns an `ImagePicker` result (a URL) into a stored image value. */

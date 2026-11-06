@@ -22,7 +22,7 @@ import { App } from './App';
 
 const container = document.getElementById('root');
 if (!container) {
-  throw new Error('ไม่พบ element #root สำหรับ mount แอป');
+  throw new Error('Missing #root element to mount the admin');
 }
 
 createRoot(container).render(

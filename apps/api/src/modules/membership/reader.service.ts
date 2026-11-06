@@ -247,7 +247,9 @@ export class ReaderService {
     await this.requireFeature(siteId);
 
     const plan = await this.db.forSite(siteId, (tx) =>
-      tx.membershipPlan.findFirst({ where: { id: planId, siteId, status: 'active' } }),
+      tx.membershipPlan.findFirst({
+        where: { id: planId, siteId, status: 'active', deletedAt: null },
+      }),
     );
     if (!plan) throw ApiException.notFound('ไม่พบแพ็กเกจนี้');
 

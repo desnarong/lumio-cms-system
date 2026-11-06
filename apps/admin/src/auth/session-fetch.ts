@@ -12,6 +12,8 @@ export interface SessionFetchOptions {
   /** Called when the refresh token is gone too, so the app can show the login screen. */
   onExpired?: () => void;
   fetchImpl?: typeof fetch;
+  /** UI language, sent as `X-Locale` so API error messages come back in it. */
+  locale?: () => string;
 }
 
 const AUTH_PATHS = ['/auth/login', '/auth/2fa/verify', '/auth/refresh'];
@@ -25,6 +27,15 @@ const isAuthRequest = (url: string): boolean => {
   const path = new URL(url).pathname;
   return AUTH_PATHS.some((authPath) => path.endsWith(authPath));
 };
+
+const withLocale = (init: RequestInit | undefined, locale: string): RequestInit => {
+  const headers = new Headers(init?.headers);
+  if (!headers.has('x-locale')) headers.set('x-locale', locale);
+  return { ...init, headers };
+};
+
+const requestUrl = (input: RequestInfo | URL): string =>
+  typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
 
 const withAccessToken = (init: RequestInit, accessToken: string): RequestInit => {
   const headers = new Headers(init.headers);
@@ -46,6 +57,7 @@ export const createSessionFetch = ({
   session,
   onExpired,
   fetchImpl,
+  locale,
 }: SessionFetchOptions): typeof fetch => {
   const doFetch = fetchImpl ?? globalThis.fetch.bind(globalThis);
   let refreshing: Promise<string | null> | null = null;
@@ -79,11 +91,13 @@ export const createSessionFetch = ({
     return refreshing;
   };
 
-  return async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+  return async (input: RequestInfo | URL, givenInit?: RequestInit): Promise<Response> => {
+    const url = requestUrl(input);
+    // Only API calls: a signed storage URL would reject an unknown header.
+    const init = locale && isApiRequest(url, baseUrl) ? withLocale(givenInit, locale()) : givenInit;
     const response = await doFetch(input, init);
     if (response.status !== 401 || !session.read()) return response;
 
-    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
     // Storage uploads get a signed URL that is not an API request; a 401 there
     // must not sign the editor out.
     if (!isApiRequest(url, baseUrl) || isAuthRequest(url)) return response;

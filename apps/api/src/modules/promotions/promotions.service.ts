@@ -63,7 +63,10 @@ export class PromotionsService {
 
   async list(siteId: string): Promise<Promotion[]> {
     const rows = await this.db.forSite(siteId, (tx) =>
-      tx.promotion.findMany({ orderBy: [{ sort: 'asc' }, { createdAt: 'desc' }] }),
+      tx.promotion.findMany({
+        where: { deletedAt: null },
+        orderBy: [{ sort: 'asc' }, { createdAt: 'desc' }],
+      }),
     );
     return rows.map(toPromotion);
   }
@@ -108,7 +111,7 @@ export class PromotionsService {
     actorId: string,
   ): Promise<Promotion> {
     const row = await this.db.forSite(siteId, async (tx) => {
-      const current = await tx.promotion.findUnique({ where: { id: promotionId } });
+      const current = await tx.promotion.findFirst({ where: { id: promotionId, deletedAt: null } });
       if (!current) throw ApiException.notFound('ไม่พบโปรโมชั่นนี้');
       return tx.promotion.update({
         where: { id: promotionId },
@@ -140,22 +143,45 @@ export class PromotionsService {
     return toPromotion(row);
   }
 
+  /** Soft delete: the undo toast calls `restore`; the trash sweep purges it later. */
   async remove(siteId: string, promotionId: string, actorId: string): Promise<void> {
-    const row = await this.db.forSite(siteId, async (tx) => {
-      const current = await tx.promotion.findUnique({ where: { id: promotionId } });
+    await this.db.forSite(siteId, async (tx) => {
+      const current = await tx.promotion.findFirst({ where: { id: promotionId, deletedAt: null } });
       if (!current) throw ApiException.notFound('ไม่พบโปรโมชั่นนี้');
-      await tx.promotion.delete({ where: { id: promotionId } });
-      return current;
-    });
-
-    await this.audit.log({
-      siteId,
-      userId: actorId,
-      action: 'promotion.delete',
-      target: promotionId,
-      meta: { title: row.title },
+      await tx.promotion.update({ where: { id: promotionId }, data: { deletedAt: new Date() } });
+      await this.audit.record(tx, {
+        siteId,
+        userId: actorId,
+        action: 'promotion.delete',
+        target: promotionId,
+        meta: { title: current.title },
+      });
     });
     await this.publishJobs.enqueueChrome(siteId);
+  }
+
+  /** Brings a deleted promotion back with its id, so links and sorting survive. */
+  async restore(siteId: string, promotionId: string, actorId: string): Promise<Promotion> {
+    const row = await this.db.forSite(siteId, async (tx) => {
+      const current = await tx.promotion.findFirst({
+        where: { id: promotionId, deletedAt: { not: null } },
+      });
+      if (!current) throw ApiException.notFound('ไม่พบโปรโมชั่นนี้ในถังขยะ');
+      const restored = await tx.promotion.update({
+        where: { id: promotionId },
+        data: { deletedAt: null },
+      });
+      await this.audit.record(tx, {
+        siteId,
+        userId: actorId,
+        action: 'promotion.restore',
+        target: promotionId,
+        meta: { title: current.title },
+      });
+      return restored;
+    });
+    await this.publishJobs.enqueueChrome(siteId);
+    return toPromotion(row);
   }
 
   /** Offers a visitor may see right now: switched on and inside their dates. */
@@ -163,7 +189,7 @@ export class PromotionsService {
     const rows = await this.db.forSite(siteId, (tx) =>
       tx.promotion.findMany({
         orderBy: [{ sort: 'asc' }, { createdAt: 'desc' }],
-        where: { active: true },
+        where: { active: true, deletedAt: null },
       }),
     );
     const now = new Date();

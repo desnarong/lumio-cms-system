@@ -1,6 +1,7 @@
 import { Editable } from '../../engine/editable.js';
 import type { BlockRenderProps } from '../../types.js';
 import type { ButtonProps } from './schema.js';
+import { bt } from '../../i18n.js';
 
 export const ButtonBlock = ({ props, block }: BlockRenderProps<ButtonProps>) => (
   <div className={`lumio-button lumio-button--${props.align}`}>
@@ -17,7 +18,7 @@ export const ButtonBlock = ({ props, block }: BlockRenderProps<ButtonProps>) => 
         value={props.label}
         runs={block.textStyles?.['props.label']}
         layout={block.textLayouts?.['props.label']}
-        label="ข้อความปุ่ม"
+        label={bt('ข้อความปุ่ม')}
       />
     </a>
   </div>

@@ -161,7 +161,7 @@ export const EditorToolbar = ({
       </div>
 
       <div className="editor-toolbar__group" role="group" aria-label={t('editor.toolbar.viewport')}>
-        {EDITOR_DEVICES.map((item) => (
+        {EDITOR_DEVICES().map((item) => (
           <IconButton
             key={item.id}
             aria-label={t('editor.toolbar.viewAs', { device: t(DEVICE_LABEL_KEYS[item.id]) })}

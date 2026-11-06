@@ -6,6 +6,8 @@ import { loadPageLatestPosts } from '../../../lib/block-posts';
 import { loadPagePromotions } from '../../../lib/block-promotions';
 import { loadPreviewOrNull } from '../../../lib/content';
 import { requestHost } from '../../../lib/request-host';
+import { requestLocale } from '../../../lib/request-locale';
+import { storefrontT } from '../../../lib/messages';
 import { buildMetadata } from '../../../seo';
 
 /**
@@ -24,7 +26,10 @@ export async function generateMetadata({ params }: PreviewPageProps): Promise<Me
   const { token } = await params;
   const host = await requestHost();
   const page = await loadPreviewOrNull(token);
-  if (!page) return { title: 'ลิงก์ตัวอย่างหมดอายุ', robots: { index: false, follow: false } };
+  if (!page) {
+    const t = storefrontT(await requestLocale());
+    return { title: t('preview.expired'), robots: { index: false, follow: false } };
+  }
   return {
     ...buildMetadata(page, host),
     robots: { index: false, follow: false, nocache: true },
@@ -45,7 +50,7 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
   return (
     <>
       <p className="site-locale-notice" role="note">
-        ตัวอย่างฉบับร่าง — หน้านี้ยังไม่เผยแพร่ ผู้เยี่ยมชมทั่วไปเปิดไม่ได้
+        {storefrontT(page.content.locale)('preview.notice')}
       </p>
       <PageView
         page={page}
@@ -54,7 +59,7 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
         {...(shopProducts ? { shopProducts } : {})}
         {...(latestPosts ? { latestPosts } : {})}
         {...(promotions ? { promotions } : {})}
-      {...(promotions ? { promotions } : {})}
+        {...(promotions ? { promotions } : {})}
       />
     </>
   );

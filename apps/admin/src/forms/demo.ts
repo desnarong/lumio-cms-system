@@ -110,6 +110,7 @@ const demoSubmissions = (): FormSubmission[] => [
  */
 export const createDemoFormsApi = (): FormsApi => {
   let forms: Form[] = [contactForm(), quoteForm()];
+  let trashedForms: Form[] = [];
   let submissions: FormSubmission[] = demoSubmissions();
 
   const summaryOf = (form: Form): FormSummary => {
@@ -193,9 +194,16 @@ export const createDemoFormsApi = (): FormsApi => {
     },
 
     remove: async (formId) => {
-      requireForm(formId);
+      // Soft delete like the API: the form and its messages wait in the trash.
+      trashedForms.push(requireForm(formId));
       forms = forms.filter((entry) => entry.id !== formId);
-      submissions = submissions.filter((entry) => entry.formId !== formId);
+    },
+    restore: async (formId) => {
+      const form = trashedForms.find((entry) => entry.id === formId);
+      if (!form) throw new Error('ไม่พบฟอร์มนี้ในถังขยะ');
+      trashedForms = trashedForms.filter((entry) => entry.id !== formId);
+      forms = [...forms, form];
+      return form;
     },
 
     listSubmissions: async (formId, query: SubmissionQuery = {}): Promise<SubmissionPage> => {
@@ -206,9 +214,7 @@ export const createDemoFormsApi = (): FormsApi => {
         .filter((entry) => (query.status ? entry.status === query.status : true))
         .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
-      const start = query.cursor
-        ? filtered.findIndex((entry) => entry.id === query.cursor) + 1
-        : 0;
+      const start = query.cursor ? filtered.findIndex((entry) => entry.id === query.cursor) + 1 : 0;
       const items = filtered.slice(start, start + limit);
       const next = start + limit < filtered.length ? (items.at(-1)?.id ?? null) : null;
       return { items, cursor: next };

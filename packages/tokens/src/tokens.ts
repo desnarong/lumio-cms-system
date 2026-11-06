@@ -46,6 +46,38 @@ export const colors = {
   },
 } as const;
 
+/**
+ * Literal colours for places a CSS variable cannot reach: the starting value
+ * of a colour <input>, OG images rendered by Satori, and QR codes drawn to SVG.
+ */
+export const literalColors = {
+  /** First colour offered by the inline text colour tool and branding hint. */
+  textSeed: '#17469D',
+  /** Default custom section background (white surface). */
+  backgroundSeed: colors.light.surface,
+  /** Share image (`/og`): warm neutral paper, ink and an amber rule. */
+  ogBackground: '#F7F3EA',
+  ogInk: '#1F2937',
+  ogMuted: '#6B7280',
+  ogAccent: '#B45309',
+  /** PromptPay QR: near-black modules on white so every banking app scans it. */
+  qrDark: '#111827',
+  qrLight: '#FFFFFF',
+} as const;
+
+/**
+ * Third-party brand colours for social links. They belong to those brands,
+ * not to our palette, so they live apart and are never themed.
+ */
+export const socialColors = {
+  line: '#06C755',
+  facebook: '#1877F2',
+  tiktok: '#111111',
+  youtube: '#FF0033',
+  instagram: '#E1306C',
+  generic: 'rgba(255, 255, 255, 0.24)',
+} as const;
+
 /** Text colour that stays readable on top of each solid brand surface. */
 export const onColors = {
   primary: '#FFFFFF',

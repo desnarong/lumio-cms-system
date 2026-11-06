@@ -19,7 +19,9 @@ const siteTables = (): string[] => {
 const migrationSql = (): string =>
   readdirSync(join(prismaDir, 'migrations'), { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
-    .map((entry) => readFileSync(join(prismaDir, 'migrations', entry.name, 'migration.sql'), 'utf8'))
+    .map((entry) =>
+      readFileSync(join(prismaDir, 'migrations', entry.name, 'migration.sql'), 'utf8'),
+    )
     .join('\n');
 
 /**

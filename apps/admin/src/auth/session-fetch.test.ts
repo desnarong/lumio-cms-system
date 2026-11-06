@@ -149,4 +149,28 @@ describe('createSessionFetch', () => {
     expect(session.read()?.accessToken).toBe('old-token');
     expect(onExpired).not.toHaveBeenCalled();
   });
+
+  it('sends the UI language to the API but not to signed storage URLs', async () => {
+    const seen = new Map<string, string | null>();
+    const fetchImpl = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      seen.set(urlOf(input), new Headers(init?.headers).get('x-locale'));
+      return json({ data: {} });
+    });
+    const sessionFetch = createSessionFetch({
+      baseUrl: BASE,
+      session: signedInStore(),
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+      locale: () => 'en',
+    });
+
+    const contents = `${BASE}/api/v1/contents`;
+    const ai = `${BASE}/api/v1/ai/run`;
+    await sessionFetch(contents);
+    await sessionFetch(ai, { headers: { 'x-locale': 'th' } });
+    await sessionFetch('https://bucket.example.com/upload?sig=1', { method: 'PUT' });
+
+    expect(seen.get(contents)).toBe('en');
+    expect(seen.get(ai)).toBe('th');
+    expect(seen.get('https://bucket.example.com/upload?sig=1')).toBeNull();
+  });
 });

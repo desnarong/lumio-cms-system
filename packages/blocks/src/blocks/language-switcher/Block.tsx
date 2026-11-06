@@ -1,6 +1,7 @@
 import { Editable } from '../../engine/editable.js';
 import type { BlockRenderProps, LanguageLink } from '../../types.js';
 import type { LanguageSwitcherProps } from './schema.js';
+import { bt } from '../../i18n.js';
 
 /**
  * `hreflang` is written lowercase on purpose: React's `hrefLang` prop is emitted
@@ -23,7 +24,9 @@ export const LanguageSwitcherBlock = ({
   props,
   block,
   languages,
+  locale,
 }: BlockRenderProps<LanguageSwitcherProps>) => {
+  const language = locale ?? languages?.find((link) => link.active)?.locale;
   const offered = languages ?? [];
   const links = props.showUnavailable ? offered : offered.filter((link) => link.available);
 
@@ -33,7 +36,7 @@ export const LanguageSwitcherBlock = ({
     // below keeps the block visible there and selectable in the canvas.
     return languages === undefined ? (
       <p className="lumio-language__note" role="note">
-        ยังมีภาษาที่เผยแพร่แล้วเพียงภาษาเดียว
+        {bt('ยังมีภาษาที่เผยแพร่แล้วเพียงภาษาเดียว', language)}
       </p>
     ) : null;
   }
@@ -42,7 +45,7 @@ export const LanguageSwitcherBlock = ({
     <nav
       className="lumio-language"
       data-display={props.display}
-      aria-label={props.label.length > 0 ? props.label : 'เลือกภาษา'}
+      aria-label={props.label.length > 0 ? props.label : bt('เลือกภาษา', language)}
     >
       {props.label.length > 0 ? (
         <Editable
@@ -52,7 +55,7 @@ export const LanguageSwitcherBlock = ({
           runs={block.textStyles?.['props.label']}
           layout={block.textLayouts?.['props.label']}
           className="lumio-language__label"
-          label="ป้ายกำกับภาษา"
+          label={bt('ป้ายกำกับภาษา')}
         />
       ) : null}
       <ul className="lumio-language__list">

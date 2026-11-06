@@ -90,6 +90,7 @@ const stubs = (options: StubsOptions = {}): Stubs => {
         form: {
           findMany: vi.fn().mockResolvedValue(options.formMany ?? []),
           findUnique: vi.fn().mockResolvedValue(options.form === undefined ? formRow() : options.form),
+          findFirst: vi.fn().mockResolvedValue(options.form === undefined ? formRow() : options.form),
           create: formCreate,
           update: formUpdate,
           delete: formDelete,
@@ -194,11 +195,15 @@ describe('FormsService', () => {
     ).rejects.toMatchObject({ code: 'not_found' });
   });
 
-  it('deletes a form and its messages with an audit log', async () => {
+  it('soft deletes a form, keeping its messages, with an audit log', async () => {
     const all = stubs();
     await service(all).remove(SITE_ID, FORM_ID, USER_ID);
 
-    expect(all.formDelete).toHaveBeenCalledWith({ where: { id: FORM_ID } });
+    expect(all.formDelete).not.toHaveBeenCalled();
+    expect(all.formUpdate).toHaveBeenCalledWith({
+      where: { id: FORM_ID },
+      data: { deletedAt: expect.any(Date) },
+    });
     expect(all.auditLogCreate).toHaveBeenCalledWith(
       expect.objectContaining({ data: expect.objectContaining({ action: 'form.delete' }) }),
     );

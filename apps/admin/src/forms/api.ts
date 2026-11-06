@@ -33,6 +33,8 @@ export interface FormsApi {
   copyToLocale(formId: string, input: CopyFormToLocaleInput): Promise<Form>;
   update(formId: string, input: UpdateFormInput): Promise<Form>;
   remove(formId: string): Promise<void>;
+  /** Undo of `remove`: the same form, same id, submissions intact. */
+  restore(formId: string): Promise<Form>;
   listSubmissions(formId: string, query?: SubmissionQuery): Promise<SubmissionPage>;
   updateSubmission(
     formId: string,
@@ -94,9 +96,7 @@ export const createHttpFormsApi = ({
     });
 
     const payload = (await response.json().catch(() => null)) as
-      | Envelope<unknown>
-      | ErrorEnvelope
-      | null;
+      Envelope<unknown> | ErrorEnvelope | null;
 
     if (!response.ok) {
       const error = payload as ErrorEnvelope | null;
@@ -124,6 +124,7 @@ export const createHttpFormsApi = ({
     remove: async (formId) => {
       await request<{ success: boolean }>(`/forms/${formId}`, { method: 'DELETE' });
     },
+    restore: (formId) => request<Form>(`/forms/${formId}/restore`, { method: 'POST' }),
     listSubmissions: async (formId, query = {}) => {
       const payload = await send(`/forms/${formId}/submissions?${queryString(query)}`);
       return {

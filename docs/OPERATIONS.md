@@ -29,6 +29,8 @@
 ## 2. ฐานข้อมูลและสิทธิ์
 
 - [ ] ใช้ role ที่ไม่ใช่เจ้าของตารางและไม่ใช่ superuser เพื่อให้ RLS มีผลจริง
+      (อย่างน้อยต้องมี role `lumio_rls` จาก migration และ log ของ API ต้องไม่มีข้อความ "bypasses row-level security"
+      — migration ต้องรันด้วย role ที่มี CREATEROLE)
 - [ ] รัน migration ด้วย `prisma migrate deploy` (ไม่ใช้ `migrate dev` บน production)
 - [ ] สำรองฐานข้อมูลก่อน migrate ทุกครั้ง และทดสอบ **restore** ไม่ใช่แค่สำรอง
 - [ ] ตรวจว่า `site_id` + RLS ครบทุกตารางใหม่ (ดู `docs/design/11-data-model.md`)

@@ -279,25 +279,28 @@ model SectionTemplate {
 }
 
 model Form {
-  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  siteId             String   @map("site_id") @db.Uuid
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId             String    @map("site_id") @db.Uuid
   name               String?
-  fields             Json     @db.JsonB
-  notify             Json     @default("{}") @db.JsonB
-  successMessage     String?  @map("success_message")
+  fields             Json      @db.JsonB
+  notify             Json      @default("{}") @db.JsonB
+  successMessage     String?   @map("success_message")
   /// Language of the field labels, or NULL when the form serves every language
   /// (docs/design/17-i18n.md 17.5).
   locale             String?
   /// Groups the languages of one form so the public site can serve the right one.
-  translationGroupId String?  @map("translation_group_id") @db.Uuid
-  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  translationGroupId String?   @map("translation_group_id") @db.Uuid
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  /// Set when deleted; the row stays restorable until the trash sweep purges it.
+  deletedAt          DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   site        Site             @relation(fields: [siteId], references: [id], onDelete: Cascade)
   submissions FormSubmission[]
 
   @@unique([siteId, translationGroupId, locale])
   @@index([siteId])
+  @@index([siteId, deletedAt])
   @@map("forms")
 }
 
@@ -668,11 +671,14 @@ model Promotion {
   sort        Int       @default(0)
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  /// Set when deleted; the row stays restorable until the trash sweep purges it.
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
   @@index([siteId, active, startsAt, endsAt])
   @@index([siteId, sort])
+  @@index([siteId, deletedAt])
   @@map("promotions")
 }
 
@@ -700,24 +706,27 @@ model Reader {
 }
 
 model MembershipPlan {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  siteId      String   @map("site_id") @db.Uuid
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId      String    @map("site_id") @db.Uuid
   name        String
-  description String   @default("")
+  description String    @default("")
   /// month | year
   interval    String
   /// Price in satang, like the shop, so money never drifts.
   price       Int
-  currency    String   @default("THB")
+  currency    String    @default("THB")
   /// active | paused; a paused plan stays on old subscriptions but hides from the site.
-  status      String   @default("active")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  status      String    @default("active")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  /// Set when deleted; the row stays restorable until the trash sweep purges it.
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   site          Site                 @relation(fields: [siteId], references: [id], onDelete: Cascade)
   subscriptions ReaderSubscription[]
 
   @@index([siteId, status])
+  @@index([siteId, deletedAt])
   @@map("membership_plans")
 }
 
@@ -769,7 +778,6 @@ model SiteBlockPack {
   @@map("site_block_packs")
 }
 
-
 /// Public API keys of one site (docs/PROGRESS.md "งานนอก MVP").
 /// Only the SHA-256 hash is stored; the plaintext is shown once at creation.
 model ApiKey {
@@ -794,23 +802,26 @@ model ApiKey {
 
 /// A service a visitor can book (docs/PROGRESS.md "งานนอก MVP").
 model BookingService {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  siteId          String   @map("site_id") @db.Uuid
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  siteId          String    @map("site_id") @db.Uuid
   name            String
-  description     String   @default("")
-  durationMinutes Int      @map("duration_minutes") @default(60)
+  description     String    @default("")
+  durationMinutes Int       @default(60) @map("duration_minutes")
   /// Price in satang; 0 means free.
-  price           Int      @default(0)
-  currency        String   @default("THB")
-  active          Boolean  @default(true)
-  sort            Int      @default(0)
-  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  price           Int       @default(0)
+  currency        String    @default("THB")
+  active          Boolean   @default(true)
+  sort            Int       @default(0)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  /// Set when deleted; the row stays restorable until the trash sweep purges it.
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   site     Site      @relation(fields: [siteId], references: [id], onDelete: Cascade)
   bookings Booking[]
 
   @@index([siteId, active, sort])
+  @@index([siteId, deletedAt])
   @@map("booking_services")
 }
 
@@ -844,13 +855,13 @@ model Booking {
 
 /// White-label branding of this installation (platform level, no site id).
 model AgencyBranding {
-  id            String   @id @default("default")
-  brandName     String   @default("Lumio") @map("brand_name")
-  logoUrl       String?  @map("logo_url")
-  supportEmail  String?  @map("support_email")
-  hideBranding  Boolean  @default(false) @map("hide_branding")
-  accentColor   String?  @map("accent_color")
-  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id           String   @id @default("default")
+  brandName    String   @default("Lumio") @map("brand_name")
+  logoUrl      String?  @map("logo_url")
+  supportEmail String?  @map("support_email")
+  hideBranding Boolean  @default(false) @map("hide_branding")
+  accentColor  String?  @map("accent_color")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("agency_branding")
 }

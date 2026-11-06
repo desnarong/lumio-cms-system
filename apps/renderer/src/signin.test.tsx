@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { SIGN_IN_NOTICES, SignInPanel } from './components/SignInPanel';
+import { SignInPanel } from './components/SignInPanel';
+import { EN, TH } from './lib/messages';
 
 const saved = [
   { number: 'LM-261022-AB12CD', token: 'token-1', createdAt: '2026-10-22T03:00:00.000Z' },
@@ -35,17 +36,23 @@ describe('SignInPanel', () => {
   it('explains what went wrong without leaking whether an order exists', () => {
     const html = renderToStaticMarkup(<SignInPanel saved={[]} error="not-found" />);
 
-    expect(html).toContain(SIGN_IN_NOTICES['not-found'] ?? '');
+    expect(html).toContain(TH['signin.notice.notFound']);
     expect(html).toContain('role="alert"');
   });
 
   it('falls back to the not-found message for an unknown code', () => {
     const html = renderToStaticMarkup(<SignInPanel saved={[]} error="weird" />);
-    expect(html).toContain(SIGN_IN_NOTICES['not-found'] ?? '');
+    expect(html).toContain(TH['signin.notice.notFound']);
   });
 
   it('has exactly one primary action', () => {
     const html = renderToStaticMarkup(<SignInPanel saved={saved} />);
     expect(html.match(/shop-button shop-button--large/g) ?? []).toHaveLength(1);
+  });
+
+  it('renders in English when the request asks for it', () => {
+    const html = renderToStaticMarkup(<SignInPanel saved={[]} error="not-found" locale="en" />);
+    expect(html).toContain(EN['signin.notice.notFound']);
+    expect(html).not.toMatch(/[฀-฾เ-๿]/);
   });
 });

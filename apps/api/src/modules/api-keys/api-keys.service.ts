@@ -100,15 +100,18 @@ export class ApiKeysService {
     const row = await this.db.forSite(siteId, async (tx) => {
       const current = await tx.apiKey.findUnique({ where: { id: keyId } });
       if (!current) throw ApiException.notFound('ไม่พบกุญแจนี้');
-      return tx.apiKey.update({ where: { id: keyId }, data: { revokedAt: new Date() } });
-    });
-
-    await this.audit.log({
-      siteId,
-      userId: actorId,
-      action: 'api_key.revoke',
-      target: keyId,
-      meta: { name: row.name },
+      const revoked = await tx.apiKey.update({
+        where: { id: keyId },
+        data: { revokedAt: new Date() },
+      });
+      await this.audit.record(tx, {
+        siteId,
+        userId: actorId,
+        action: 'api_key.revoke',
+        target: keyId,
+        meta: { name: revoked.name },
+      });
+      return revoked;
     });
     return toView(row);
   }

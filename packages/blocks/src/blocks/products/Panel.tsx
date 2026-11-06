@@ -16,35 +16,36 @@ import {
   type ProductSourceLimit,
   type ProductsProps,
 } from './schema.js';
+import { bt } from '../../i18n.js';
 
-const COLUMN_LABELS: Record<ProductColumns, string> = {
-  '2': '2 คอลัมน์',
-  '3': '3 คอลัมน์',
-  '4': '4 คอลัมน์',
-};
+const COLUMN_LABELS = (): Record<ProductColumns, string> => ({
+  '2': bt('2 คอลัมน์'),
+  '3': bt('3 คอลัมน์'),
+  '4': bt('4 คอลัมน์'),
+});
 
-const SOURCE_LABELS: Record<ProductSource, string> = {
-  manual: 'ตั้งสินค้าเองในหน้านี้',
-  shop: 'ดึงจากร้านค้า (อัปเดตอัตโนมัติ)',
-  sale: 'สินค้าลดราคา (มีราคาก่อนลด)',
-};
+const SOURCE_LABELS = (): Record<ProductSource, string> => ({
+  manual: bt('ตั้งสินค้าเองในหน้านี้'),
+  shop: bt('ดึงจากร้านค้า (อัปเดตอัตโนมัติ)'),
+  sale: bt('สินค้าลดราคา (มีราคาก่อนลด)'),
+});
 
-const SOURCE_LIMIT_LABELS: Record<ProductSourceLimit, string> = {
-  3: '3 ชิ้น',
-  6: '6 ชิ้น',
-  9: '9 ชิ้น',
-  12: '12 ชิ้น',
-};
+const SOURCE_LIMIT_LABELS = (): Record<ProductSourceLimit, string> => ({
+  3: bt('3 ชิ้น'),
+  6: bt('6 ชิ้น'),
+  9: bt('9 ชิ้น'),
+  12: bt('12 ชิ้น'),
+});
 
 const newProduct = (): ProductCard => ({
   image: null,
-  name: 'สินค้าใหม่',
-  description: 'อธิบายสินค้าสั้น ๆ ให้ลูกค้าเห็นคุณค่า',
+  name: bt('สินค้าใหม่'),
+  description: bt('อธิบายสินค้าสั้น ๆ ให้ลูกค้าเห็นคุณค่า'),
   price: 0,
   currency: '฿',
   badge: '',
   link: '/shop',
-  buttonLabel: 'ดูสินค้า',
+  buttonLabel: bt('ดูสินค้า'),
   soldOut: false,
 });
 
@@ -60,74 +61,79 @@ export const ProductsPanel = ({ props, style, mode, onChange }: BlockPanelProps<
 
   return (
     <>
-      <PanelSection title="เนื้อหา">
+      <PanelSection title={bt('เนื้อหา')}>
         <TextField
-          label="หัวข้อส่วน"
+          label={bt('หัวข้อส่วน')}
           value={props.heading}
           onChange={(event) => onChange('props.heading', event.target.value)}
         />
         <TextField
-          label="คำอธิบายส่วน"
+          label={bt('คำอธิบายส่วน')}
           value={props.subheading}
           onChange={(event) => onChange('props.subheading', event.target.value)}
         />
         <Select
-          label="แหล่งสินค้า"
-          hint="ดึงจากร้านค้าเพื่อให้สินค้าใหม่ขึ้นเอง และสินค้าที่ลบแล้วหายไปเอง"
+          label={bt('แหล่งสินค้า')}
+          hint={bt('ดึงจากร้านค้าเพื่อให้สินค้าใหม่ขึ้นเอง และสินค้าที่ลบแล้วหายไปเอง')}
           value={props.source}
           options={PRODUCT_SOURCES.map((source) => ({
             value: source,
-            label: SOURCE_LABELS[source],
+            label: SOURCE_LABELS()[source],
           }))}
           onChange={(event) => onChange('props.source', event.target.value)}
         />
         <Select
-          label="จำนวนคอลัมน์"
+          label={bt('จำนวนคอลัมน์')}
           value={props.columns}
           options={PRODUCT_COLUMNS.map((column) => ({
             value: column,
-            label: COLUMN_LABELS[column],
+            label: COLUMN_LABELS()[column],
           }))}
           onChange={(event) => onChange('props.columns', event.target.value)}
         />
         <Switch
-          label="แสดงราคา"
+          label={bt('แสดงราคา')}
           checked={props.showPrice}
           onChange={(checked) => onChange('props.showPrice', checked)}
         />
         <Switch
-          label="แสดงคำอธิบายสินค้า"
+          label={bt('แสดงคำอธิบายสินค้า')}
           checked={props.showDescription}
           onChange={(checked) => onChange('props.showDescription', checked)}
         />
       </PanelSection>
 
       {props.source !== 'manual' ? (
-        <PanelSection title="สินค้าจากร้านค้า">
+        <PanelSection title={bt('สินค้าจากร้านค้า')}>
           <p className="lumio-panel-hint">
-            สินค้าที่เผยแพร่ในร้านจะขึ้นตรงนี้อัตโนมัติ สินค้าที่ลบหรือเก็บเข้าคลังจะไม่แสดง
+            {bt('สินค้าที่เผยแพร่ในร้านจะขึ้นตรงนี้อัตโนมัติ สินค้าที่ลบหรือเก็บเข้าคลังจะไม่แสดง')}
           </p>
           <TextField
-            label="หมวดหมู่สินค้า (ไม่บังคับ)"
-            hint="เว้นว่างเพื่อแสดงทุกหมวดหมู่"
+            label={bt('หมวดหมู่สินค้า (ไม่บังคับ)')}
+            hint={bt('เว้นว่างเพื่อแสดงทุกหมวดหมู่')}
             value={props.sourceCategory}
             onChange={(event) => onChange('props.sourceCategory', event.target.value)}
           />
           <Select
-            label="จำนวนสินค้าที่แสดง"
+            label={bt('จำนวนสินค้าที่แสดง')}
             value={String(props.sourceLimit)}
             options={PRODUCT_SOURCE_LIMITS.map((limit) => ({
               value: String(limit),
-              label: SOURCE_LIMIT_LABELS[limit],
+              label: SOURCE_LIMIT_LABELS()[limit],
             }))}
             onChange={(event) => onChange('props.sourceLimit', Number(event.target.value) || 6)}
           />
         </PanelSection>
       ) : (
-        <PanelSection title={`สินค้า (${props.items.length}/${PRODUCTS_MAX_ITEMS})`}>
+        <PanelSection
+          title={bt('สินค้า ({length}/{PRODUCTS_MAX_ITEMS})', undefined, {
+            length: props.items.length,
+            PRODUCTS_MAX_ITEMS: PRODUCTS_MAX_ITEMS,
+          })}
+        >
           <PanelItemList
             items={props.items}
-            addLabel="เพิ่มสินค้า"
+            addLabel={bt('เพิ่มสินค้า')}
             max={PRODUCTS_MAX_ITEMS}
             create={newProduct}
             onChange={(items) => onChange('props.items', items)}
@@ -138,12 +144,14 @@ export const ProductsPanel = ({ props, style, mode, onChange }: BlockPanelProps<
               return (
                 <>
                   <ImagePicker
-                    label="รูปสินค้า"
+                    label={bt('รูปสินค้า')}
                     value={item.image?.src ?? null}
                     alt={item.image?.alt ?? ''}
                     disabled={!mediaPicker}
                     hint={
-                      mediaPicker ? 'ภาพจัตุรัสจะดูเรียบร้อยที่สุด' : 'ยังไม่ได้เชื่อมคลังรูปภาพในหน้านี้'
+                      mediaPicker
+                        ? bt('ภาพจัตุรัสจะดูเรียบร้อยที่สุด')
+                        : bt('ยังไม่ได้เชื่อมคลังรูปภาพในหน้านี้')
                     }
                     onPick={() => {
                       void mediaPicker
@@ -158,18 +166,18 @@ export const ProductsPanel = ({ props, style, mode, onChange }: BlockPanelProps<
                     onChange={(url) => updateItem(index, { image: imageFromUrl(url, item.name) })}
                   />
                   <TextField
-                    label="ชื่อสินค้า"
+                    label={bt('ชื่อสินค้า')}
                     value={item.name}
                     onChange={(event) => updateItem(index, { name: event.target.value })}
                   />
                   <Textarea
-                    label="คำอธิบายสินค้า"
+                    label={bt('คำอธิบายสินค้า')}
                     rows={2}
                     value={item.description}
                     onChange={(event) => updateItem(index, { description: event.target.value })}
                   />
                   <TextField
-                    label="ราคา"
+                    label={bt('ราคา')}
                     type="number"
                     min={0}
                     value={String(item.price)}
@@ -178,8 +186,8 @@ export const ProductsPanel = ({ props, style, mode, onChange }: BlockPanelProps<
                     }
                   />
                   <TextField
-                    label="ราคาก่อนลด (ไม่บังคับ)"
-                    hint="ใส่เมื่อต้องการขีดราคาเดิมทิ้ง"
+                    label={bt('ราคาก่อนลด (ไม่บังคับ)')}
+                    hint={bt('ใส่เมื่อต้องการขีดราคาเดิมทิ้ง')}
                     type="number"
                     min={0}
                     value={item.compareAtPrice === undefined ? '' : String(item.compareAtPrice)}
@@ -191,29 +199,29 @@ export const ProductsPanel = ({ props, style, mode, onChange }: BlockPanelProps<
                     }}
                   />
                   <TextField
-                    label="สกุลเงิน"
+                    label={bt('สกุลเงิน')}
                     value={item.currency}
                     onChange={(event) => updateItem(index, { currency: event.target.value })}
                   />
                   <TextField
-                    label="ป้ายกำกับ"
-                    hint="เช่น ขายดี หรือ ใหม่"
+                    label={bt('ป้ายกำกับ')}
+                    hint={bt('เช่น ขายดี หรือ ใหม่')}
                     value={item.badge}
                     onChange={(event) => updateItem(index, { badge: event.target.value })}
                   />
                   <TextField
-                    label="ลิงก์สินค้า"
-                    hint="เช่น /shop หรือ https://..."
+                    label={bt('ลิงก์สินค้า')}
+                    hint={bt('เช่น /shop หรือ https://...')}
                     value={item.link}
                     onChange={(event) => updateItem(index, { link: event.target.value })}
                   />
                   <TextField
-                    label="ข้อความบนปุ่ม"
+                    label={bt('ข้อความบนปุ่ม')}
                     value={item.buttonLabel}
                     onChange={(event) => updateItem(index, { buttonLabel: event.target.value })}
                   />
                   <Switch
-                    label="สินค้าหมด"
+                    label={bt('สินค้าหมด')}
                     checked={item.soldOut}
                     onChange={(checked) => updateItem(index, { soldOut: checked })}
                   />
@@ -224,13 +232,13 @@ export const ProductsPanel = ({ props, style, mode, onChange }: BlockPanelProps<
         </PanelSection>
       )}
 
-      <PanelSection title="การ์ด">
+      <PanelSection title={bt('การ์ด')}>
         <Select
-          label="รูปแบบการ์ด"
+          label={bt('รูปแบบการ์ด')}
           value={props.cardStyle}
           options={[
-            { value: 'card', label: 'การ์ดมีขอบ' },
-            { value: 'plain', label: 'เรียบ (ไม่มีขอบ)' },
+            { value: 'card', label: bt('การ์ดมีขอบ') },
+            { value: 'plain', label: bt('เรียบ (ไม่มีขอบ)') },
           ]}
           onChange={(event) => onChange('props.cardStyle', event.target.value)}
         />

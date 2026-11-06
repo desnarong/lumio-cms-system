@@ -21,6 +21,7 @@ interface TextLayoutControlsProps {
 
 /** Moves one editable text without moving the rest of its block. */
 const TextLayoutControls = ({ field, layout, onChange }: TextLayoutControlsProps) => {
+  const t = useT();
   const update = (patch: Partial<TextLayout>): void => {
     const next = { ...layout, ...patch };
     const untouched = next.x === 0 && next.y === 0 && next.scale === 100;
@@ -36,24 +37,52 @@ const TextLayoutControls = ({ field, layout, onChange }: TextLayoutControlsProps
     <div className="editor-text-layout">
       <div className="editor-text-layout__head">
         <span className="editor-text-layout__label">{field.label}</span>
-        <div className="editor-text-layout__nudge" role="group" aria-label={`ย้าย ${field.label}`}>
-          <Button type="button" variant="ghost" size="sm" aria-label="ขึ้น" onClick={() => nudge(0, -8)}>
+        <div
+          className="editor-text-layout__nudge"
+          role="group"
+          aria-label={t('editor.textLayout.move', { field: field.label })}
+        >
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label={t('editor.textLayout.up')}
+            onClick={() => nudge(0, -8)}
+          >
             <Icon name="arrow-up" size={14} />
           </Button>
-          <Button type="button" variant="ghost" size="sm" aria-label="ลง" onClick={() => nudge(0, 8)}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label={t('editor.textLayout.down')}
+            onClick={() => nudge(0, 8)}
+          >
             <Icon name="arrow-down" size={14} />
           </Button>
-          <Button type="button" variant="ghost" size="sm" aria-label="ซ้าย" onClick={() => nudge(-8, 0)}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label={t('editor.textLayout.left')}
+            onClick={() => nudge(-8, 0)}
+          >
             <Icon name="arrow-left" size={14} />
           </Button>
-          <Button type="button" variant="ghost" size="sm" aria-label="ขวา" onClick={() => nudge(8, 0)}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label={t('editor.textLayout.right')}
+            onClick={() => nudge(8, 0)}
+          >
             <Icon name="arrow-right" size={14} />
           </Button>
         </div>
       </div>
       <div className="editor-text-layout__fields">
         <TextField
-          label="แนวนอน (px)"
+          label={t('editor.textLayout.x')}
           type="number"
           min={-600}
           max={600}
@@ -65,7 +94,7 @@ const TextLayoutControls = ({ field, layout, onChange }: TextLayoutControlsProps
           }
         />
         <TextField
-          label="แนวตั้ง (px)"
+          label={t('editor.textLayout.y')}
           type="number"
           min={-600}
           max={600}
@@ -78,7 +107,7 @@ const TextLayoutControls = ({ field, layout, onChange }: TextLayoutControlsProps
         />
       </div>
       <Slider
-        label="ขนาดข้อความ (%)"
+        label={t('editor.textLayout.scale')}
         min={50}
         max={300}
         step={5}
@@ -88,7 +117,7 @@ const TextLayoutControls = ({ field, layout, onChange }: TextLayoutControlsProps
       />
       {layout.x !== 0 || layout.y !== 0 || layout.scale !== 100 ? (
         <Button type="button" variant="ghost" size="sm" onClick={() => onChange(undefined)}>
-          คืนตำแหน่งเดิม
+          {t('editor.textLayout.reset')}
         </Button>
       ) : null}
     </div>
@@ -101,11 +130,16 @@ interface TextLayoutSectionProps {
   onChange: (path: string, layout: TextLayout | undefined) => void;
 }
 
+const TextLayoutTitle = () => <>{useT()('editor.textLayout.title')}</>;
+const TextLayoutHint = () => <>{useT()('editor.textLayout.hint')}</>;
+
 const TextLayoutSection = ({ block, fields, onChange }: TextLayoutSectionProps) => (
   <section className="editor-inspector__text-layouts">
-    <h3 className="editor-inspector__subtitle">ย้ายและปรับขนาดข้อความ</h3>
+    <h3 className="editor-inspector__subtitle">
+      <TextLayoutTitle />
+    </h3>
     <p className="editor-inspector__hint">
-      ขยับทีละ 8 พิกเซลด้วยปุ่มลูกศร หรือพิมพ์ตัวเลขด้านล่าง
+      <TextLayoutHint />
     </p>
     {fields.map((field) => (
       <TextLayoutControls
@@ -178,6 +212,14 @@ export const BlockInspector = ({
 
   const definition = registry.get(block.type);
   const Panel = definition?.Panel;
+  // Blocks saved before a field existed lack it; the renderer fills schema
+  // defaults, so the panel must see the same props or it reads undefined.
+  const parsed = definition?.schema.safeParse({
+    version: block.version,
+    props: block.props,
+    style: block.style,
+  });
+  const panelProps = parsed?.success ? parsed.data.props : block.props;
   const hidden = block.style.visibility[device] === false;
 
   return (
@@ -194,12 +236,7 @@ export const BlockInspector = ({
         ) : null}
         {Panel ? (
           <PanelAccordion key={block.id}>
-            <Panel
-              props={block.props}
-              style={block.style}
-              mode={panelMode}
-              onChange={onChange}
-            />
+            <Panel props={panelProps} style={block.style} mode={panelMode} onChange={onChange} />
           </PanelAccordion>
         ) : (
           <p className="editor-inspector__hint">{t('editor.noPanel')}</p>

@@ -2,24 +2,26 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import QRCode from 'qrcode';
 import { formatBaht } from '@lumio/shared';
+import { money, shippingFee, storefrontT, type StorefrontKey } from '../../../lib/messages';
 import { ShopShell } from '../../../components/ShopShell';
 import { requestHost } from '../../../lib/request-host';
 import { requestLocale } from '../../../lib/request-locale';
 import { loadOrderOrNull } from '../../../lib/shop';
 import { apiBaseUrl } from '../../../lib/site-locales';
+import { literalColors } from '@lumio/tokens';
 
-export const metadata: Metadata = {
-  title: 'คำสั่งซื้อของคุณ',
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = storefrontT(await requestLocale());
+  return { title: t('order.metaTitle'), robots: { index: false, follow: false } };
+}
 
-const STATUS_LABEL: Record<string, string> = {
-  pending: 'รอชำระเงิน',
-  paid: 'ชำระเงินแล้ว',
-  shipped: 'จัดส่งแล้ว',
-  completed: 'สำเร็จ',
-  cancelled: 'ยกเลิก',
-  refunded: 'คืนเงินแล้ว',
+const STATUS_LABEL: Record<string, StorefrontKey> = {
+  pending: 'order.status.pending',
+  paid: 'order.status.paid',
+  shipped: 'order.status.shipped',
+  completed: 'order.status.completed',
+  cancelled: 'order.status.cancelled',
+  refunded: 'order.status.refunded',
 };
 
 const formatDateTime = (iso: string): string => {
@@ -33,23 +35,26 @@ export interface OrderPageProps {
   searchParams: Promise<{ slip?: string }>;
 }
 
-const SLIP_NOTICE: Record<string, string> = {
-  verified: 'ได้รับสลิปแล้ว ยอดเงินตรงกับคำสั่งซื้อ ระบบยืนยันการชำระเงินให้ทันที',
-  review: 'ได้รับสลิปแล้ว ร้านจะตรวจสอบและยืนยันการชำระเงินให้เร็วที่สุด',
-  error: 'ส่งสลิปไม่สำเร็จ กรุณาตรวจสอบยอดเงินและเลขอ้างอิง แล้วลองอีกครั้ง',
-  'too-large': 'ไฟล์สลิปใหญ่เกิน 4MB กรุณาย่อรูปแล้วลองใหม่',
-  type: 'สลิปต้องเป็นรูป JPG, PNG หรือ WebP',
+const SLIP_NOTICE: Record<string, StorefrontKey> = {
+  verified: 'order.slip.verified',
+  review: 'order.slip.review',
+  error: 'order.slip.error',
+  'too-large': 'order.slip.tooLarge',
+  type: 'order.slip.type',
 };
 
 export default async function OrderPage({ params, searchParams }: OrderPageProps) {
   const host = await requestHost();
   const locale = await requestLocale();
+  const t = storefrontT(locale);
   const { token } = await params;
   const { slip: slipNotice } = await searchParams;
+  const slipKey = slipNotice ? SLIP_NOTICE[slipNotice] : undefined;
   const found = await loadOrderOrNull(host, token, locale);
   if (!found) notFound();
 
   const { order, payment } = found;
+  const statusKey = STATUS_LABEL[order.status];
   const apiBase = apiBaseUrl();
   const receiptBase = apiBase
     ? `${apiBase}/api/v1/public/${encodeURIComponent(host)}/shop/orders/${encodeURIComponent(order.token)}`
@@ -65,83 +70,76 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
           type: 'svg',
           margin: 1,
           width: 240,
-          color: { dark: '#111827', light: '#ffffff' },
+          color: { dark: literalColors.qrDark, light: literalColors.qrLight },
         }).catch(() => null)
       : null;
 
   return (
-    <ShopShell chrome={found} path={`/order/${order.token}`}>
+    <ShopShell chrome={found} locale={locale} path={`/order/${order.token}`}>
       <header className="shop-hero">
-        <h1 className="shop-hero__title">คำสั่งซื้อ {order.number}</h1>
+        <h1 className="shop-hero__title">{t('order.title', { number: order.number })}</h1>
         <p className="shop-hero__subtitle">
-          {STATUS_LABEL[order.status] ?? order.status} · สั่งเมื่อ {formatDateTime(order.createdAt)}
+          {statusKey ? t(statusKey) : order.status} ·{' '}
+          {t('order.placedAt', { date: formatDateTime(order.createdAt) })}
         </p>
       </header>
 
       {order.status === 'refunded' ? (
         <p className="shop-notice">
-          ร้านคืนเงิน {formatBaht(order.refundedAmount)} บาท ให้คุณแล้ว
+          {t('order.refunded', { amount: formatBaht(order.refundedAmount) })}
           {order.refundReason ? ` — ${order.refundReason}` : ''}
           <br />
-          เงินอาจใช้เวลาถึง 7 วันทำการจึงจะปรากฏในบัญชี
+          {t('order.refundDelay')}
         </p>
       ) : null}
 
-      {slipNotice && SLIP_NOTICE[slipNotice] ? (
-        <p className="shop-notice">{SLIP_NOTICE[slipNotice]}</p>
-      ) : null}
+      {slipKey ? <p className="shop-notice">{t(slipKey)}</p> : null}
 
       {order.status === 'pending' && qr ? (
         <section className="shop-payment" aria-labelledby="payment-heading">
           <h2 className="shop-section-title" id="payment-heading">
-            ชำระเงินด้วยพร้อมเพย์
+            {t('order.promptpay.title')}
           </h2>
           <div className="shop-payment__qr" dangerouslySetInnerHTML={{ __html: qr }} />
-          <p className="shop-payment__amount">ยอดที่ต้องชำระ {formatBaht(order.total)} บาท</p>
-          <p className="shop-payment__hint">
-            สแกน QR ด้วยแอปธนาคาร แล้วรอร้านยืนยันการชำระเงิน ระบบจะแสดงสถานะใหม่ในหน้านี้
+          <p className="shop-payment__amount">
+            {t('order.amountDue', { amount: formatBaht(order.total) })}
           </p>
+          <p className="shop-payment__hint">{t('order.promptpay.hint')}</p>
           {payment.promptPayId ? (
-            <p className="shop-payment__id">พร้อมเพย์ {payment.promptPayId}</p>
+            <p className="shop-payment__id">
+              {t('order.promptpay.id', { id: payment.promptPayId })}
+            </p>
           ) : null}
         </section>
       ) : order.status === 'pending' && order.paymentUrl ? (
         <section className="shop-payment">
           <h2 className="shop-section-title">
-            {order.paymentMethod === 'bbl' ? 'ชำระเงินผ่านธนาคารกรุงเทพ' : 'ชำระเงินด้วยบัตร'}
+            {order.paymentMethod === 'bbl' ? t('order.bbl.title') : t('order.card.title')}
           </h2>
           <p className="shop-payment__hint">
-            {order.paymentMethod === 'bbl'
-              ? 'ชำระด้วยบัตรหรือ QR บนหน้าจ่ายเงินของธนาคาร แล้วกลับมาที่หน้านี้เพื่อดูสถานะ'
-              : 'ชำระผ่านหน้าจ่ายเงินที่ปลอดภัยของ Stripe แล้วกลับมาที่หน้านี้เพื่อดูสถานะ'}
+            {order.paymentMethod === 'bbl' ? t('order.bbl.hint') : t('order.card.hint')}
           </p>
           <a className="shop-button" href={order.paymentUrl}>
-            เปิดหน้าชำระเงิน
+            {t('order.openPayment')}
           </a>
         </section>
       ) : order.status === 'pending' ? (
-        <p className="shop-notice">
-          ร้านจะติดต่อกลับเพื่อยืนยันคำสั่งซื้อและการชำระเงินด้วยวิธีที่คุณเลือก
-        </p>
+        <p className="shop-notice">{t('order.contactLater')}</p>
       ) : null}
 
       {order.slip && order.slip.status !== 'rejected' ? (
         <p className="shop-notice">
-          {order.slip.status === 'verified'
-            ? 'ร้านได้รับสลิปและยืนยันการชำระเงินแล้ว'
-            : 'ร้านได้รับสลิปแล้ว กำลังตรวจสอบการชำระเงิน'}{' '}
-          (อ้างอิง {order.slip.reference})
+          {order.slip.status === 'verified' ? t('order.slipVerified') : t('order.slipPending')}{' '}
+          {t('order.slipReference', { reference: order.slip.reference })}
         </p>
       ) : null}
 
       {canUploadSlip ? (
         <section className="shop-payment" aria-labelledby="slip-heading">
           <h2 className="shop-section-title" id="slip-heading">
-            แนบสลิปการโอน
+            {t('order.slipUpload.title')}
           </h2>
-          <p className="shop-payment__hint">
-            อัปโหลดสลิปเพื่อให้ร้านตรวจสอบเร็วขึ้น ถ้ายอดเงินตรงกับคำสั่งซื้อ ระบบจะยืนยันให้ทันที
-          </p>
+          <p className="shop-payment__hint">{t('order.slipUpload.hint')}</p>
           <form
             className="shop-slip"
             action={`/order/${order.token}/slip`}
@@ -149,7 +147,7 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
             encType="multipart/form-data"
           >
             <label className="shop-field">
-              <span>ยอดที่โอน (บาท)</span>
+              <span>{t('order.slipUpload.amount')}</span>
               <input
                 name="amount"
                 required
@@ -158,15 +156,15 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
               />
             </label>
             <label className="shop-field">
-              <span>เลขอ้างอิงจากสลิป</span>
+              <span>{t('order.slipUpload.reference')}</span>
               <input name="reference" required minLength={4} maxLength={60} />
             </label>
             <label className="shop-field">
-              <span>รูปสลิป (JPG, PNG, WebP ไม่เกิน 4MB)</span>
+              <span>{t('order.slipUpload.file')}</span>
               <input name="slip" type="file" accept="image/jpeg,image/png,image/webp" required />
             </label>
             <button className="shop-button" type="submit">
-              ส่งสลิปให้ร้าน
+              {t('order.slipUpload.submit')}
             </button>
           </form>
         </section>
@@ -174,7 +172,7 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
 
       <div className="shop-order">
         <section className="shop-order__card">
-          <h2 className="shop-section-title">รายการสินค้า</h2>
+          <h2 className="shop-section-title">{t('order.items')}</h2>
           <ul className="shop-order__items">
             {order.items.map((item, index) => (
               <li key={`${item.productId ?? item.title}-${item.variantId ?? index}`}>
@@ -182,22 +180,22 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
                   {item.title}
                   {item.variantLabel ? ` (${item.variantLabel})` : ''} × {item.quantity}
                 </span>
-                <span>{formatBaht(item.lineTotal)} บาท</span>
+                <span>{money(t, item.lineTotal)}</span>
               </li>
             ))}
           </ul>
           <dl className="shop-summary__list">
             <div>
-              <dt>ยอดสินค้า</dt>
-              <dd>{formatBaht(order.subtotal)} บาท</dd>
+              <dt>{t('common.subtotal')}</dt>
+              <dd>{money(t, order.subtotal)}</dd>
             </div>
             <div>
-              <dt>ค่าจัดส่ง</dt>
-              <dd>{order.shippingFee === 0 ? 'ฟรี' : `${formatBaht(order.shippingFee)} บาท`}</dd>
+              <dt>{t('common.shipping')}</dt>
+              <dd>{shippingFee(t, order.shippingFee)}</dd>
             </div>
             <div className="shop-summary__grand">
-              <dt>รวมทั้งสิ้น</dt>
-              <dd>{formatBaht(order.total)} บาท</dd>
+              <dt>{t('common.total')}</dt>
+              <dd>{money(t, order.total)}</dd>
             </div>
           </dl>
           {receiptBase && ['paid', 'shipped', 'completed'].includes(order.status) ? (
@@ -208,23 +206,23 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
                 target="_blank"
                 rel="noreferrer"
               >
-                เปิดใบเสร็จ
+                {t('order.receipt')}
               </a>
               <a className="shop-link-button" href={`${receiptBase}/receipt.pdf`}>
-                ดาวน์โหลด PDF
+                {t('order.receiptPdf')}
               </a>
             </div>
           ) : null}
         </section>
 
         <section className="shop-order__card">
-          <h2 className="shop-section-title">ข้อมูลจัดส่ง</h2>
+          <h2 className="shop-section-title">{t('order.shipping')}</h2>
           <p>{order.customerName}</p>
           <p>{order.customerPhone}</p>
-          {order.trackingNumber ? <p>เลขพัสดุ {order.trackingNumber}</p> : null}
-          <p className="shop-payment__hint">
-            เก็บหน้านี้ไว้เพื่อตรวจสอบสถานะคำสั่งซื้อ อย่าแชร์ลิงก์ให้ผู้อื่น
-          </p>
+          {order.trackingNumber ? (
+            <p>{t('order.tracking', { number: order.trackingNumber })}</p>
+          ) : null}
+          <p className="shop-payment__hint">{t('order.keepPrivate')}</p>
         </section>
       </div>
     </ShopShell>

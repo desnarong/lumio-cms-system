@@ -997,7 +997,7 @@ export class ShopService {
     tx: Prisma.TransactionClient,
   ): Promise<{ title: string; buyQty: number; getQty: number }[]> {
     const rows = await tx.promotion.findMany({
-      where: { active: true, kind: 'bundle' },
+      where: { active: true, kind: 'bundle', deletedAt: null },
       orderBy: [{ sort: 'asc' }, { createdAt: 'desc' }],
     });
     const now = new Date();

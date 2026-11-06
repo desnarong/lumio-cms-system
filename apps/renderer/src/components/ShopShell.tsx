@@ -17,6 +17,8 @@ export interface ShopShellProps {
   children: ReactNode;
   /** Optional heading block above the content (the product page uses its own). */
   hideTracker?: boolean;
+  /** Request language for the header/footer labels; Thai when not given. */
+  locale?: string | null;
 }
 
 /**
@@ -24,7 +26,13 @@ export interface ShopShellProps {
  * row and therefore cannot use `PageView`. Chrome comes from the same public API,
  * so the shop looks like the rest of the site after any template change.
  */
-export const ShopShell = ({ chrome, path, children, hideTracker = false }: ShopShellProps) => {
+export const ShopShell = ({
+  chrome,
+  path,
+  children,
+  hideTracker = false,
+  locale,
+}: ShopShellProps) => {
   const theme = siteTheme(chrome.site.themeTokens);
 
   return (
@@ -35,11 +43,17 @@ export const ShopShell = ({ chrome, path, children, hideTracker = false }: ShopS
         menus={chrome.menus}
         blocks={chrome.globalBlocks.header}
         currentPath={path}
+        locale={locale}
       />
       <main className="site-main shop-main" id="main">
         {children}
       </main>
-      <SiteFooter site={chrome.site} menus={chrome.menus} blocks={chrome.globalBlocks.footer} />
+      <SiteFooter
+        site={chrome.site}
+        menus={chrome.menus}
+        blocks={chrome.globalBlocks.footer}
+        locale={locale}
+      />
     </div>
   );
 };

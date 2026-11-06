@@ -6,11 +6,12 @@ import { bookingIsPast, loadBooking } from '../../../lib/booking';
 import { requestHost } from '../../../lib/request-host';
 import { requestLocale } from '../../../lib/request-locale';
 import { loadShop } from '../../../lib/shop';
+import { storefrontLocale, storefrontT } from '../../../lib/messages';
 
-export const metadata: Metadata = {
-  title: 'รายการจอง',
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = storefrontT(await requestLocale());
+  return { title: t('booking.confirm.metaTitle'), robots: { index: false, follow: false } };
+}
 
 export interface BookingTokenPageProps {
   params: Promise<{ token: string }>;
@@ -21,12 +22,11 @@ export interface BookingTokenPageProps {
  * Confirmation of one booking, reached only through the token returned after
  * booking. It never lists other bookings, so a guessed link reveals nothing.
  */
-export default async function BookingTokenPage({
-  params,
-  searchParams,
-}: BookingTokenPageProps) {
+export default async function BookingTokenPage({ params, searchParams }: BookingTokenPageProps) {
   const host = await requestHost();
   const locale = await requestLocale();
+  const lang = storefrontLocale(locale);
+  const t = storefrontT(lang);
   const [{ token }, { cancelled }] = await Promise.all([params, searchParams]);
   const [chrome, booking] = await Promise.all([
     loadShop(host, locale),
@@ -38,15 +38,13 @@ export default async function BookingTokenPage({
   const cancelledNow = cancelled === '1' || booking.status === 'cancelled';
 
   return (
-    <ShopShell chrome={chrome} path={`/booking/${token}`} hideTracker>
+    <ShopShell chrome={chrome} locale={locale} path={`/booking/${token}`} hideTracker>
       <header className="shop-hero">
         <h1 className="shop-hero__title">
-          {cancelledNow ? 'ยกเลิกนัดแล้ว' : 'ได้รับคำขอจองแล้ว'}
+          {cancelledNow ? t('booking.confirm.cancelled') : t('booking.confirm.received')}
         </h1>
         <p className="shop-hero__subtitle">
-          {cancelledNow
-            ? 'หากต้องการเวลาใหม่ กลับไปที่หน้าจองคิวได้เลย'
-            : 'เราจะติดต่อกลับเพื่อยืนยันนัดหมายของคุณ'}
+          {cancelledNow ? t('booking.confirm.cancelledHint') : t('booking.confirm.receivedHint')}
         </p>
       </header>
 
@@ -54,27 +52,27 @@ export default async function BookingTokenPage({
         <div className="shop-order__card">
           <dl className="shop-specs__list">
             <div className="shop-specs__row">
-              <dt>บริการ</dt>
+              <dt>{t('common.service')}</dt>
               <dd>{booking.serviceName}</dd>
             </div>
             <div className="shop-specs__row">
-              <dt>วันเวลา</dt>
-              <dd>{bookingRangeLabel(booking.startsAt, booking.endsAt)}</dd>
+              <dt>{t('booking.confirm.when')}</dt>
+              <dd>{bookingRangeLabel(booking.startsAt, booking.endsAt, lang)}</dd>
             </div>
             <div className="shop-specs__row">
-              <dt>ชื่อ</dt>
+              <dt>{t('common.name')}</dt>
               <dd>{booking.customerName}</dd>
             </div>
             <div className="shop-specs__row">
-              <dt>สถานะ</dt>
-              <dd>{BOOKING_STATUS_LABELS[booking.status].th}</dd>
+              <dt>{t('common.status')}</dt>
+              <dd>{BOOKING_STATUS_LABELS[booking.status][lang]}</dd>
             </div>
           </dl>
 
           {!cancelledNow && !past ? (
             <form method="post" action={`/booking/${encodeURIComponent(token)}/cancel`}>
               <button className="shop-button shop-button--ghost" type="submit">
-                ยกเลิกนัดนี้
+                {t('booking.confirm.cancel')}
               </button>
             </form>
           ) : null}

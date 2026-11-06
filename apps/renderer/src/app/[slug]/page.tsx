@@ -11,6 +11,7 @@ import { requestHost } from '../../lib/request-host';
 import { requestLocale } from '../../lib/request-locale';
 import { buildMetadata } from '../../seo';
 import { reportNotFound } from '../../lib/not-found';
+import { storefrontT } from '../../lib/messages';
 
 export const revalidate = 3_600;
 
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: SlugPageProps): Promise<Metad
   const locale = await requestLocale();
   const { slug } = await params;
   const page = await loadPageOrNull(host, slug, locale);
-  return page ? buildMetadata(page, host) : { title: 'ไม่พบหน้านี้' };
+  return page ? buildMetadata(page, host) : { title: storefrontT(locale)('page.notFound') };
 }
 
 export default async function SlugPage({ params }: SlugPageProps) {

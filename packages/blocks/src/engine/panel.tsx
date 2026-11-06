@@ -22,6 +22,8 @@ import {
   type SpacingScale,
 } from '@lumio/shared';
 import { alignmentOptions } from '../blocks/common.js';
+import { literalColors } from '@lumio/tokens';
+import { bt } from '../i18n.js';
 
 interface PanelAccordionCommand {
   open: boolean;
@@ -63,7 +65,7 @@ export const PanelAccordion = ({ children }: PanelAccordionProps) => {
             variant="ghost"
             onClick={() => setCommand({ open: true, id: Date.now() })}
           >
-            ขยายทั้งหมด
+            {bt('ขยายทั้งหมด')}
           </Button>
           <Button
             type="button"
@@ -71,7 +73,7 @@ export const PanelAccordion = ({ children }: PanelAccordionProps) => {
             variant="ghost"
             onClick={() => setCommand({ open: false, id: Date.now() })}
           >
-            ย่อทั้งหมด
+            {bt('ย่อทั้งหมด')}
           </Button>
         </div>
         {children}
@@ -117,32 +119,35 @@ export const PanelSection = ({ title, children, defaultOpen }: PanelSectionProps
   );
 };
 
-const SPACING_LABELS: Record<SpacingScale, string> = {
-  none: 'ไม่มี',
-  sm: 'เล็ก',
-  md: 'กลาง',
-  lg: 'ใหญ่',
-  xl: 'ใหญ่มาก',
-};
+const SPACING_LABELS = (): Record<SpacingScale, string> => ({
+  none: bt('ไม่มี'),
+  sm: bt('เล็ก'),
+  md: bt('กลาง'),
+  lg: bt('ใหญ่'),
+  xl: bt('ใหญ่มาก'),
+});
 
-const BACKGROUND_LABELS: Record<Background, string> = {
-  none: 'ไม่มี',
-  surface: 'พื้นผิว',
-  muted: 'เทาอ่อน',
-  accent: 'สีเน้น',
-  brand: 'สีแบรนด์',
-};
+const BACKGROUND_LABELS = (): Record<Background, string> => ({
+  none: bt('ไม่มี'),
+  surface: bt('พื้นผิว'),
+  muted: bt('เทาอ่อน'),
+  accent: bt('สีเน้น'),
+  brand: bt('สีแบรนด์'),
+});
 
-const ANIMATION_LABELS: Record<Animation, string> = {
-  none: 'ไม่มี',
-  'fade-up': 'เลื่อนขึ้นแล้วจาง',
-  'fade-in': 'จางเข้า',
-  'zoom-in': 'ขยายเข้า',
-};
+const ANIMATION_LABELS = (): Record<Animation, string> => ({
+  none: bt('ไม่มี'),
+  'fade-up': bt('เลื่อนขึ้นแล้วจาง'),
+  'fade-in': bt('จางเข้า'),
+  'zoom-in': bt('ขยายเข้า'),
+});
 
-const spacingOptions = SPACING_SCALE.map((value) => ({ value, label: SPACING_LABELS[value] }));
-const backgroundOptions = BACKGROUNDS.map((value) => ({ value, label: BACKGROUND_LABELS[value] }));
-const animationOptions = ANIMATIONS.map((value) => ({ value, label: ANIMATION_LABELS[value] }));
+const spacingOptions = SPACING_SCALE.map((value) => ({ value, label: SPACING_LABELS()[value] }));
+const backgroundOptions = BACKGROUNDS.map((value) => ({
+  value,
+  label: BACKGROUND_LABELS()[value],
+}));
+const animationOptions = ANIMATIONS.map((value) => ({ value, label: ANIMATION_LABELS()[value] }));
 
 export interface CommonStylePanelProps {
   style: BlockStyle;
@@ -156,16 +161,16 @@ export interface CommonStylePanelProps {
  */
 export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProps) => (
   <>
-    <PanelSection title="ระยะห่างและพื้นหลัง">
+    <PanelSection title={bt('ระยะห่างและพื้นหลัง')}>
       <Select
-        label="ระยะห่างบน-ล่าง"
+        label={bt('ระยะห่างบน-ล่าง')}
         value={style.paddingY}
         options={spacingOptions}
         onChange={(event) => onChange('style.paddingY', event.target.value)}
       />
       <TextField
-        label="ระยะห่างบน-ล่างกำหนดเอง (px)"
-        hint="เว้นว่างเพื่อใช้ค่าด้านบน — ถ้ากำหนดบน/ล่างแยกไว้ จะใช้ค่านั้นแทน"
+        label={bt('ระยะห่างบน-ล่างกำหนดเอง (px)')}
+        hint={bt('เว้นว่างเพื่อใช้ค่าด้านบน — ถ้ากำหนดบน/ล่างแยกไว้ จะใช้ค่านั้นแทน')}
         type="number"
         min={0}
         max={240}
@@ -183,14 +188,14 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
         }}
       />
       <Select
-        label="ระยะห่างซ้าย-ขวา"
+        label={bt('ระยะห่างซ้าย-ขวา')}
         value={style.paddingX}
         options={spacingOptions}
         onChange={(event) => onChange('style.paddingX', event.target.value)}
       />
       <TextField
-        label="ระยะห่างซ้าย-ขวากำหนดเอง (px)"
-        hint="เว้นว่างเพื่อใช้ค่าด้านบน"
+        label={bt('ระยะห่างซ้าย-ขวากำหนดเอง (px)')}
+        hint={bt('เว้นว่างเพื่อใช้ค่าด้านบน')}
         type="number"
         min={0}
         max={240}
@@ -204,8 +209,8 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
         }}
       />
       <TextField
-        label="ระยะห่างด้านบน (px)"
-        hint="เว้นว่างเพื่อใช้ระยะบน-ล่าง"
+        label={bt('ระยะห่างด้านบน (px)')}
+        hint={bt('เว้นว่างเพื่อใช้ระยะบน-ล่าง')}
         type="number"
         min={0}
         max={240}
@@ -219,8 +224,8 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
         }}
       />
       <TextField
-        label="ระยะห่างด้านล่าง (px)"
-        hint="เว้นว่างเพื่อใช้ระยะบน-ล่าง"
+        label={bt('ระยะห่างด้านล่าง (px)')}
+        hint={bt('เว้นว่างเพื่อใช้ระยะบน-ล่าง')}
         type="number"
         min={0}
         max={240}
@@ -234,8 +239,8 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
         }}
       />
       <TextField
-        label="เลื่อนบล็อกขึ้น/ลง (px)"
-        hint="ค่าลบ = เลื่อนขึ้น, ค่าบวก = เลื่อนลง"
+        label={bt('เลื่อนบล็อกขึ้น/ลง (px)')}
+        hint={bt('ค่าลบ = เลื่อนขึ้น, ค่าบวก = เลื่อนลง')}
         type="number"
         min={-1200}
         max={1200}
@@ -249,8 +254,8 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
         }}
       />
       <TextField
-        label="ความกว้างสูงสุด (px)"
-        hint="เว้นว่างเพื่อเต็มความกว้างของหน้า"
+        label={bt('ความกว้างสูงสุด (px)')}
+        hint={bt('เว้นว่างเพื่อเต็มความกว้างของหน้า')}
         type="number"
         min={160}
         max={2400}
@@ -264,8 +269,8 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
         }}
       />
       <TextField
-        label="ความสูงขั้นต่ำ (px)"
-        hint="เว้นว่างเพื่อให้สูงตามเนื้อหา"
+        label={bt('ความสูงขั้นต่ำ (px)')}
+        hint={bt('เว้นว่างเพื่อให้สูงตามเนื้อหา')}
         type="number"
         min={80}
         max={2400}
@@ -279,15 +284,15 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
         }}
       />
       <Select
-        label="พื้นหลัง"
+        label={bt('พื้นหลัง')}
         value={style.background}
         options={backgroundOptions}
         onChange={(event) => onChange('style.background', event.target.value)}
       />
       <ColorPicker
-        label="สีพื้นหลังกำหนดเอง"
-        hint="เลือกสีได้ตามใจ สีนี้จะทับค่าพื้นหลังด้านบนและเต็มความกว้างของแถบ"
-        value={style.backgroundColor ?? '#FFFFFF'}
+        label={bt('สีพื้นหลังกำหนดเอง')}
+        hint={bt('เลือกสีได้ตามใจ สีนี้จะทับค่าพื้นหลังด้านบนและเต็มความกว้างของแถบ')}
+        value={style.backgroundColor ?? literalColors.backgroundSeed}
         onChange={(value) => onChange('style.backgroundColor', value)}
       />
       {style.backgroundColor ? (
@@ -297,22 +302,19 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
           size="sm"
           onClick={() => onChange('style.backgroundColor', undefined)}
         >
-          ล้างสีพื้นหลัง
+          {bt('ล้างสีพื้นหลัง')}
         </Button>
       ) : null}
       <Switch
-        label="พื้นหลังเต็มความกว้างหน้าจอ"
-        description="ปิดเมื่อต้องการให้สีพื้นหลังอยู่เฉพาะคอลัมน์เนื้อหา"
+        label={bt('พื้นหลังเต็มความกว้างหน้าจอ')}
+        description={bt('ปิดเมื่อต้องการให้สีพื้นหลังอยู่เฉพาะคอลัมน์เนื้อหา')}
         checked={style.backgroundFullWidth !== false}
         onChange={(checked) => onChange('style.backgroundFullWidth', checked)}
       />
       <Select
-        label="ตำแหน่งข้อความ"
+        label={bt('ตำแหน่งข้อความ')}
         value={style.textAlign ?? 'inherit'}
-        options={[
-          { value: 'inherit', label: 'ตามต้นแบบ' },
-          ...alignmentOptions,
-        ]}
+        options={[{ value: 'inherit', label: bt('ตามต้นแบบ') }, ...alignmentOptions()]}
         onChange={(event) =>
           onChange(
             'style.textAlign',
@@ -321,7 +323,7 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
         }
       />
       <Slider
-        label="ขนาดข้อความ (%)"
+        label={bt('ขนาดข้อความ (%)')}
         min={50}
         max={300}
         step={5}
@@ -330,8 +332,8 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
         onChange={(value) => onChange('style.textScale', value === 100 ? undefined : value)}
       />
       <TextField
-        label="เลื่อนข้อความแนวนอน (px)"
-        hint="ค่าลบเลื่อนไปทางซ้าย ค่าบวกเลื่อนไปทางขวา"
+        label={bt('เลื่อนข้อความแนวนอน (px)')}
+        hint={bt('ค่าลบเลื่อนไปทางซ้าย ค่าบวกเลื่อนไปทางขวา')}
         type="number"
         min={-600}
         max={600}
@@ -344,8 +346,8 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
         }
       />
       <TextField
-        label="เลื่อนข้อความแนวตั้ง (px)"
-        hint="ค่าลบเลื่อนขึ้น ค่าบวกเลื่อนลง"
+        label={bt('เลื่อนข้อความแนวตั้ง (px)')}
+        hint={bt('ค่าลบเลื่อนขึ้น ค่าบวกเลื่อนลง')}
         type="number"
         min={-600}
         max={600}
@@ -357,17 +359,14 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
           )
         }
       />
-      <div className="lumio-panel-nudge" role="group" aria-label="ย้ายข้อความทีละ 8 พิกเซล">
+      <div className="lumio-panel-nudge" role="group" aria-label={bt('ย้ายข้อความทีละ 8 พิกเซล')}>
         <Button
           type="button"
           variant="secondary"
           size="sm"
-          aria-label="ย้ายข้อความขึ้น"
+          aria-label={bt('ย้ายข้อความขึ้น')}
           onClick={() =>
-            onChange(
-              'style.offsetY',
-              Math.min(600, Math.max(-600, (style.offsetY ?? 0) - 8)),
-            )
+            onChange('style.offsetY', Math.min(600, Math.max(-600, (style.offsetY ?? 0) - 8)))
           }
         >
           <Icon name="arrow-up" size={16} />
@@ -376,12 +375,9 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
           type="button"
           variant="secondary"
           size="sm"
-          aria-label="ย้ายข้อความลง"
+          aria-label={bt('ย้ายข้อความลง')}
           onClick={() =>
-            onChange(
-              'style.offsetY',
-              Math.min(600, Math.max(-600, (style.offsetY ?? 0) + 8)),
-            )
+            onChange('style.offsetY', Math.min(600, Math.max(-600, (style.offsetY ?? 0) + 8)))
           }
         >
           <Icon name="arrow-down" size={16} />
@@ -390,12 +386,9 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
           type="button"
           variant="secondary"
           size="sm"
-          aria-label="ย้ายข้อความไปทางซ้าย"
+          aria-label={bt('ย้ายข้อความไปทางซ้าย')}
           onClick={() =>
-            onChange(
-              'style.offsetX',
-              Math.min(600, Math.max(-600, (style.offsetX ?? 0) - 8)),
-            )
+            onChange('style.offsetX', Math.min(600, Math.max(-600, (style.offsetX ?? 0) - 8)))
           }
         >
           <Icon name="arrow-left" size={16} />
@@ -404,12 +397,9 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
           type="button"
           variant="secondary"
           size="sm"
-          aria-label="ย้ายข้อความไปทางขวา"
+          aria-label={bt('ย้ายข้อความไปทางขวา')}
           onClick={() =>
-            onChange(
-              'style.offsetX',
-              Math.min(600, Math.max(-600, (style.offsetX ?? 0) + 8)),
-            )
+            onChange('style.offsetX', Math.min(600, Math.max(-600, (style.offsetX ?? 0) + 8)))
           }
         >
           <Icon name="arrow-right" size={16} />
@@ -425,7 +415,7 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
             onChange('style.offsetY', 0);
           }}
         >
-          คืนตำแหน่งเดิม
+          {bt('คืนตำแหน่งเดิม')}
         </Button>
       ) : null}
       {style.textScale && style.textScale !== 100 ? (
@@ -435,43 +425,43 @@ export const CommonStylePanel = ({ style, mode, onChange }: CommonStylePanelProp
           size="sm"
           onClick={() => onChange('style.textScale', undefined)}
         >
-          คืนขนาดข้อความเดิม
+          {bt('คืนขนาดข้อความเดิม')}
         </Button>
       ) : null}
     </PanelSection>
 
     {mode === 'pro' ? (
-      <PanelSection title="ขั้นสูง">
+      <PanelSection title={bt('ขั้นสูง')}>
         <Select
-          label="อนิเมชัน"
+          label={bt('อนิเมชัน')}
           value={style.animation}
           options={animationOptions}
           onChange={(event) => onChange('style.animation', event.target.value)}
         />
         <Select
-          label="แสดงบนมือถือ"
+          label={bt('แสดงบนมือถือ')}
           value={style.visibility.mobile ? 'yes' : 'no'}
           options={[
-            { value: 'yes', label: 'แสดง' },
-            { value: 'no', label: 'ซ่อน' },
+            { value: 'yes', label: bt('แสดง') },
+            { value: 'no', label: bt('ซ่อน') },
           ]}
           onChange={(event) => onChange('style.visibility.mobile', event.target.value === 'yes')}
         />
         <Select
-          label="แสดงบนแท็บเล็ต"
+          label={bt('แสดงบนแท็บเล็ต')}
           value={style.visibility.tablet ? 'yes' : 'no'}
           options={[
-            { value: 'yes', label: 'แสดง' },
-            { value: 'no', label: 'ซ่อน' },
+            { value: 'yes', label: bt('แสดง') },
+            { value: 'no', label: bt('ซ่อน') },
           ]}
           onChange={(event) => onChange('style.visibility.tablet', event.target.value === 'yes')}
         />
         <Select
-          label="แสดงบนเดสก์ท็อป"
+          label={bt('แสดงบนเดสก์ท็อป')}
           value={style.visibility.desktop ? 'yes' : 'no'}
           options={[
-            { value: 'yes', label: 'แสดง' },
-            { value: 'no', label: 'ซ่อน' },
+            { value: 'yes', label: bt('แสดง') },
+            { value: 'no', label: bt('ซ่อน') },
           ]}
           onChange={(event) => onChange('style.visibility.desktop', event.target.value === 'yes')}
         />
@@ -511,7 +501,7 @@ export const PanelItemList = ({
             size="sm"
             onClick={() => onChange(items.filter((__, position) => position !== index))}
           >
-            ลบ
+            {bt('ลบ')}
           </Button>
         </div>
       ))}

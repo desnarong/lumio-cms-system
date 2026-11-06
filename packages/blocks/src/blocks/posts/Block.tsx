@@ -2,6 +2,7 @@ import { Editable } from '../../engine/editable.js';
 import { Img } from '../../engine/img.js';
 import type { BlockRenderProps, LatestPostCard } from '../../types.js';
 import type { PostsProps } from './schema.js';
+import { bt } from '../../i18n.js';
 
 /** One card fed by the blog itself, so deleted posts can never linger here. */
 const LiveCard = ({
@@ -9,11 +10,13 @@ const LiveCard = ({
   showImage,
   showExcerpt,
   showDate,
+  locale,
 }: {
   item: LatestPostCard;
   showImage: boolean;
   showExcerpt: boolean;
   showDate: boolean;
+  locale?: string | undefined;
 }) => (
   <li className="lumio-posts__card">
     {showImage ? (
@@ -32,13 +35,13 @@ const LiveCard = ({
         </div>
       ) : null}
       <a className="lumio-posts__link" href={item.link}>
-        อ่านต่อ
+        {bt('อ่านต่อ', locale)}
       </a>
     </div>
   </li>
 );
 
-export const PostsBlock = ({ props, block, latestPosts }: BlockRenderProps<PostsProps>) => {
+export const PostsBlock = ({ props, block, latestPosts, locale }: BlockRenderProps<PostsProps>) => {
   const live = props.source === 'latest' && latestPosts !== undefined;
   const liveCards = live ? latestPosts.slice(0, props.sourceLimit) : null;
 
@@ -51,7 +54,7 @@ export const PostsBlock = ({ props, block, latestPosts }: BlockRenderProps<Posts
         runs={block.textStyles?.['props.heading']}
         layout={block.textLayouts?.['props.heading']}
         className="lumio-posts__heading"
-        label="หัวข้อส่วนบทความ"
+        label={bt('หัวข้อส่วนบทความ')}
       />
       <Editable
         as="p"
@@ -61,12 +64,12 @@ export const PostsBlock = ({ props, block, latestPosts }: BlockRenderProps<Posts
         runs={block.textStyles?.['props.subheading']}
         layout={block.textLayouts?.['props.subheading']}
         className="lumio-posts__subheading"
-        label="คำอธิบายส่วนบทความ"
+        label={bt('คำอธิบายส่วนบทความ')}
       />
       {liveCards !== null ? (
         liveCards.length === 0 ? (
           <p className="lumio-posts__empty" role="note">
-            ยังไม่มีบทความที่เผยแพร่
+            {bt('ยังไม่มีบทความที่เผยแพร่', locale)}
           </p>
         ) : (
           <ul className="lumio-posts__grid">
@@ -77,6 +80,7 @@ export const PostsBlock = ({ props, block, latestPosts }: BlockRenderProps<Posts
                 showImage={props.showImage}
                 showExcerpt={props.showExcerpt}
                 showDate={props.showDate}
+                locale={locale}
               />
             ))}
           </ul>
@@ -110,7 +114,7 @@ export const PostsBlock = ({ props, block, latestPosts }: BlockRenderProps<Posts
                   runs={block.textStyles?.[`props.items.${index}.title`]}
                   layout={block.textLayouts?.[`props.items.${index}.title`]}
                   className="lumio-posts__title"
-                  label="หัวข้อบทความ"
+                  label={bt('หัวข้อบทความ')}
                 />
                 {props.showExcerpt ? (
                   <Editable
@@ -121,7 +125,7 @@ export const PostsBlock = ({ props, block, latestPosts }: BlockRenderProps<Posts
                     runs={block.textStyles?.[`props.items.${index}.excerpt`]}
                     layout={block.textLayouts?.[`props.items.${index}.excerpt`]}
                     className="lumio-posts__excerpt"
-                    label="เกริ่นนำบทความ"
+                    label={bt('เกริ่นนำบทความ')}
                   />
                 ) : null}
                 <div className="lumio-posts__meta">
@@ -130,7 +134,7 @@ export const PostsBlock = ({ props, block, latestPosts }: BlockRenderProps<Posts
                 </div>
                 {item.link.length > 0 ? (
                   <a className="lumio-posts__link" href={item.link}>
-                    {item.buttonLabel || 'อ่านต่อ'}
+                    {item.buttonLabel || bt('อ่านต่อ', locale)}
                   </a>
                 ) : null}
               </div>

@@ -7,6 +7,7 @@ import type {
   PromotionCard,
   ShopProductCard,
 } from '../types.js';
+import { bt } from '../i18n.js';
 import { BlockShell } from './shell.js';
 
 export interface BlockRendererProps {
@@ -23,6 +24,8 @@ export interface BlockRendererProps {
   latestPosts?: readonly LatestPostCard[];
   /** Live offers; passed to a feature grid that follows the promotion list. */
   promotions?: readonly PromotionCard[];
+  /** Language the page is read in, for the text blocks write themselves (th when absent). */
+  locale?: string;
 }
 
 export interface BlockTreeRendererProps extends Omit<BlockRendererProps, 'block'> {
@@ -30,9 +33,9 @@ export interface BlockTreeRendererProps extends Omit<BlockRendererProps, 'block'
 }
 
 /** Shown when a page references a block type this build does not ship. */
-export const UnknownBlock = ({ block }: { block: BlockNode }) => (
+export const UnknownBlock = ({ block, locale }: { block: BlockNode; locale?: string }) => (
   <div className="lumio-block__unknown" role="note">
-    ยังไม่รองรับบล็อกประเภท “{block.type}”
+    {bt('ยังไม่รองรับบล็อกประเภท “{type}”', locale, { type: block.type })}
   </div>
 );
 
@@ -42,13 +45,10 @@ interface SharedBlockData {
   shopProducts?: readonly ShopProductCard[];
   latestPosts?: readonly LatestPostCard[];
   promotions?: readonly PromotionCard[];
+  locale?: string;
 }
 
-const renderBlock = (
-  definition: AnyBlockDefinition,
-  block: BlockNode,
-  shared: SharedBlockData,
-) => {
+const renderBlock = (definition: AnyBlockDefinition, block: BlockNode, shared: SharedBlockData) => {
   const parsed = definition.schema.safeParse({
     version: block.version,
     props: block.props,
@@ -72,6 +72,7 @@ const renderBlock = (
       {...(shared.shopProducts ? { shopProducts: shared.shopProducts } : {})}
       {...(shared.latestPosts ? { latestPosts: shared.latestPosts } : {})}
       {...(shared.promotions ? { promotions: shared.promotions } : {})}
+      {...(shared.locale ? { locale: shared.locale } : {})}
     />
   );
 };
@@ -89,6 +90,7 @@ export const BlockRenderer = ({
   shopProducts,
   latestPosts,
   promotions,
+  locale,
 }: BlockRendererProps) => {
   const definition = blockRegistry.get(block.type);
   const shared: SharedBlockData = {
@@ -97,13 +99,14 @@ export const BlockRenderer = ({
     ...(shopProducts ? { shopProducts } : {}),
     ...(latestPosts ? { latestPosts } : {}),
     ...(promotions ? { promotions } : {}),
+    ...(locale ? { locale } : {}),
   };
   return (
     <BlockShell block={block}>
       {definition ? (
         renderBlock(definition, block, shared)
       ) : (
-        <UnknownBlock block={block} />
+        <UnknownBlock block={block} {...(locale ? { locale } : {})} />
       )}
       {block.children.length > 0 ? (
         <div className="lumio-block__children">

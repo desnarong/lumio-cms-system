@@ -133,7 +133,10 @@ export class BookingService {
 
   async listServices(siteId: string): Promise<BookingServiceView[]> {
     const rows = await this.db.forSite(siteId, (tx) =>
-      tx.bookingService.findMany({ orderBy: [{ sort: 'asc' }, { createdAt: 'asc' }] }),
+      tx.bookingService.findMany({
+        where: { deletedAt: null },
+        orderBy: [{ sort: 'asc' }, { createdAt: 'asc' }],
+      }),
     );
     return rows.map(toService);
   }
@@ -173,7 +176,9 @@ export class BookingService {
     actorId: string,
   ): Promise<BookingServiceView> {
     const row = await this.db.forSite(siteId, async (tx) => {
-      const current = await tx.bookingService.findUnique({ where: { id: serviceId } });
+      const current = await tx.bookingService.findFirst({
+        where: { id: serviceId, deletedAt: null },
+      });
       if (!current) throw ApiException.notFound('ไม่พบบริการนี้');
       return tx.bookingService.update({
         where: { id: serviceId },
@@ -197,20 +202,51 @@ export class BookingService {
     return toService(row);
   }
 
+  /**
+   * Soft delete: bookings keep pointing at the service, so undo restores the
+   * link too (a hard delete would null `service_id` on every booking).
+   */
   async deleteService(siteId: string, serviceId: string, actorId: string): Promise<void> {
-    const row = await this.db.forSite(siteId, async (tx) => {
-      const current = await tx.bookingService.findUnique({ where: { id: serviceId } });
+    await this.db.forSite(siteId, async (tx) => {
+      const current = await tx.bookingService.findFirst({
+        where: { id: serviceId, deletedAt: null },
+      });
       if (!current) throw ApiException.notFound('ไม่พบบริการนี้');
-      await tx.bookingService.delete({ where: { id: serviceId } });
-      return current;
+      await tx.bookingService.update({ where: { id: serviceId }, data: { deletedAt: new Date() } });
+      await this.audit.record(tx, {
+        siteId,
+        userId: actorId,
+        action: 'booking.service.delete',
+        target: serviceId,
+        meta: { name: current.name },
+      });
     });
-    await this.audit.log({
-      siteId,
-      userId: actorId,
-      action: 'booking.service.delete',
-      target: serviceId,
-      meta: { name: row.name },
+  }
+
+  async restoreService(
+    siteId: string,
+    serviceId: string,
+    actorId: string,
+  ): Promise<BookingServiceView> {
+    const row = await this.db.forSite(siteId, async (tx) => {
+      const current = await tx.bookingService.findFirst({
+        where: { id: serviceId, deletedAt: { not: null } },
+      });
+      if (!current) throw ApiException.notFound('ไม่พบบริการนี้ในถังขยะ');
+      const restored = await tx.bookingService.update({
+        where: { id: serviceId },
+        data: { deletedAt: null },
+      });
+      await this.audit.record(tx, {
+        siteId,
+        userId: actorId,
+        action: 'booking.service.restore',
+        target: serviceId,
+        meta: { name: current.name },
+      });
+      return restored;
     });
+    return toService(row);
   }
 
   /* ------------------------------------------------------------- bookings */
@@ -369,7 +405,7 @@ export class BookingService {
     if (!settings.enabled) throw ApiException.notFound('เว็บนี้ยังไม่เปิดรับการจอง');
 
     const service = await this.db.forSite(site.id, (tx) =>
-      tx.bookingService.findUnique({ where: { id: input.serviceId } }),
+      tx.bookingService.findFirst({ where: { id: input.serviceId, deletedAt: null } }),
     );
     if (!service || !service.active) throw ApiException.notFound('ไม่พบบริการนี้');
 
@@ -450,14 +486,17 @@ export class BookingService {
       if (current.startsAt.getTime() < Date.now()) {
         throw ApiException.validation('เลยเวลานัดแล้ว กรุณาติดต่อร้านโดยตรง');
       }
-      return tx.booking.update({ where: { id: current.id }, data: { status: 'cancelled' } });
-    });
-
-    await this.audit.log({
-      siteId: site.id,
-      action: 'booking.cancel',
-      target: row.id,
-      meta: { by: 'visitor' },
+      const cancelled = await tx.booking.update({
+        where: { id: current.id },
+        data: { status: 'cancelled' },
+      });
+      await this.audit.record(tx, {
+        siteId: site.id,
+        action: 'booking.cancel',
+        target: cancelled.id,
+        meta: { by: 'visitor' },
+      });
+      return cancelled;
     });
     return toBooking(row);
   }

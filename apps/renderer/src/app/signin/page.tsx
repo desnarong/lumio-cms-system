@@ -6,11 +6,12 @@ import { SAVED_ORDERS_COOKIE, parseSavedOrders } from '../../lib/customer';
 import { requestHost } from '../../lib/request-host';
 import { requestLocale } from '../../lib/request-locale';
 import { loadShop } from '../../lib/shop';
+import { storefrontT } from '../../lib/messages';
 
-export const metadata: Metadata = {
-  title: 'บัญชีของฉัน',
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = storefrontT(await requestLocale());
+  return { title: t('member.account'), robots: { index: false, follow: false } };
+}
 
 export interface SignInPageProps {
   searchParams: Promise<{ error?: string }>;
@@ -24,19 +25,18 @@ export interface SignInPageProps {
 export default async function SignInPage({ searchParams }: SignInPageProps) {
   const host = await requestHost();
   const locale = await requestLocale();
+  const t = storefrontT(locale);
   const { error } = await searchParams;
   const shop = await loadShop(host, locale);
   const saved = parseSavedOrders((await cookies()).get(SAVED_ORDERS_COOKIE)?.value);
 
   return (
-    <ShopShell chrome={shop} path="/signin">
+    <ShopShell chrome={shop} locale={locale} path="/signin">
       <header className="shop-hero">
-        <h1 className="shop-hero__title">บัญชีของฉัน</h1>
-        <p className="shop-hero__subtitle">
-          เปิดดูคำสั่งซื้อและติดตามสถานะได้โดยไม่ต้องจำรหัสผ่าน
-        </p>
+        <h1 className="shop-hero__title">{t('member.account')}</h1>
+        <p className="shop-hero__subtitle">{t('signin.subtitle')}</p>
       </header>
-      <SignInPanel saved={saved} error={error ?? null} />
+      <SignInPanel saved={saved} error={error ?? null} locale={locale} />
     </ShopShell>
   );
 }

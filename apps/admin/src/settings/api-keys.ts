@@ -46,10 +46,7 @@ export const createHttpApiKeysApi = ({
       },
     });
 
-    const payload = (await response.json().catch(() => null)) as
-      | Envelope<T>
-      | ErrorEnvelope
-      | null;
+    const payload = (await response.json().catch(() => null)) as Envelope<T> | ErrorEnvelope | null;
 
     if (!response.ok) {
       const error = payload as ErrorEnvelope | null;
@@ -104,7 +101,7 @@ export const createDemoApiKeysApi = (): ApiKeysApi => {
     },
     revoke: async (keyId) => {
       const key = keys.find((entry) => entry.id === keyId);
-      if (!key) throw new Error('ไม่พบกุญแจนี้');
+      if (!key) throw new Error(translateNow('apiKeys.notFound'));
       key.revokedAt = new Date().toISOString();
       return key;
     },

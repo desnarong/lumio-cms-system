@@ -2,6 +2,7 @@ import { Editable } from '../../engine/editable.js';
 import { Img } from '../../engine/img.js';
 import type { BlockRenderProps } from '../../types.js';
 import type { ImageProps } from './schema.js';
+import { bt } from '../../i18n.js';
 
 export const ImageBlock = ({ props, block }: BlockRenderProps<ImageProps>) => (
   <figure
@@ -28,8 +29,8 @@ export const ImageBlock = ({ props, block }: BlockRenderProps<ImageProps>) => (
       runs={block.textStyles?.['props.caption']}
       layout={block.textLayouts?.['props.caption']}
       className="lumio-image__caption"
-      label="คำบรรยายภาพ"
-      placeholder="คำบรรยายภาพ (ไม่บังคับ)"
+      label={bt('คำบรรยายภาพ')}
+      placeholder={bt('คำบรรยายภาพ (ไม่บังคับ)')}
     />
   </figure>
 );

@@ -1,15 +1,16 @@
 import { ImageResponse } from 'next/og';
+import { literalColors } from '@lumio/tokens';
 
 export const runtime = 'nodejs';
 
 const SIZE = { width: 1200, height: 630 };
 
-/** Matches the public theme's warm neutral background and ink. */
+/** Satori cannot read CSS variables, so the share image uses literal tokens. */
 const COLORS = {
-  background: '#f7f3ea',
-  ink: '#1f2937',
-  muted: '#6b7280',
-  accent: '#b45309',
+  background: literalColors.ogBackground,
+  ink: literalColors.ogInk,
+  muted: literalColors.ogMuted,
+  accent: literalColors.ogAccent,
 };
 
 export const GET = async (request: Request): Promise<ImageResponse> => {

@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "0.28.0",
+  "version": "0.29.0",
   "private": true,
   "scripts": {
     "build": "nest build",
@@ -29,7 +29,7 @@
     "@nestjs/jwt": "^12.0.3",
     "@nestjs/platform-express": "^11.2.7",
     "@node-rs/argon2": "^2.2.2",
-    "@prisma/client": "5.22.0",
+    "@prisma/client": "6.19.3",
     "bullmq": "^6.3.19",
     "ioredis": "^5.11.1",
     "nodemailer": "^10.1.7",
@@ -48,7 +48,7 @@
     "@types/node": "^22.9.0",
     "@types/nodemailer": "^8.0.2",
     "@types/pdfkit": "^0.17.6",
-    "prisma": "5.22.0",
+    "prisma": "6.19.3",
     "rimraf": "^6.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",

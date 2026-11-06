@@ -7,6 +7,8 @@ export interface QuantityStepperProps {
   defaultValue: number;
   max: number;
   id?: string;
+  /** Accessible names, translated by the server page (keeps the catalogue out of the bundle). */
+  labels: { decrease: string; quantity: string; increase: string };
 }
 
 const clamp = (value: number, max: number): number => {
@@ -19,7 +21,7 @@ const clamp = (value: number, max: number): number => {
  * JavaScript the shop ships, and the number input still works if it never
  * hydrates.
  */
-export const QuantityStepper = ({ name, defaultValue, max, id }: QuantityStepperProps) => {
+export const QuantityStepper = ({ name, defaultValue, max, id, labels }: QuantityStepperProps) => {
   const [value, setValue] = useState(() => clamp(defaultValue, max));
 
   return (
@@ -27,7 +29,7 @@ export const QuantityStepper = ({ name, defaultValue, max, id }: QuantityStepper
       <button
         type="button"
         className="shop-stepper__button"
-        aria-label="ลดจำนวน"
+        aria-label={labels.decrease}
         onClick={() => setValue((current) => clamp(current - 1, max))}
       >
         −
@@ -41,13 +43,13 @@ export const QuantityStepper = ({ name, defaultValue, max, id }: QuantityStepper
         min={1}
         max={max}
         value={value}
-        aria-label="จำนวนสินค้า"
+        aria-label={labels.quantity}
         onChange={(event) => setValue(clamp(Number(event.target.value), max))}
       />
       <button
         type="button"
         className="shop-stepper__button"
-        aria-label="เพิ่มจำนวน"
+        aria-label={labels.increase}
         onClick={() => setValue((current) => clamp(current + 1, max))}
       >
         +

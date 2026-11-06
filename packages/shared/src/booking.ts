@@ -248,12 +248,17 @@ const THAI_MONTHS = [
   'ธ.ค.',
 ];
 
-/** `2026-11-03` → "จ. 3 พ.ย." */
-export const bookingDateLabel = (date: string): string => {
+const EN_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const EN_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/** `2026-11-03` → "จ. 3 พ.ย." (th) or "Tue 3 Nov" (en). */
+export const bookingDateLabel = (date: string, locale: 'th' | 'en' = 'th'): string => {
   const parsed = new Date(`${date}T00:00:00.000Z`);
   if (Number.isNaN(parsed.getTime())) return date;
-  const weekday = THAI_DAYS[parsed.getUTCDay()] ?? '';
-  const month = THAI_MONTHS[parsed.getUTCMonth()] ?? '';
+  const days = locale === 'en' ? EN_DAYS : THAI_DAYS;
+  const months = locale === 'en' ? EN_MONTHS : THAI_MONTHS;
+  const weekday = days[parsed.getUTCDay()] ?? '';
+  const month = months[parsed.getUTCMonth()] ?? '';
   return `${weekday} ${parsed.getUTCDate()} ${month}`.trim();
 };
 
@@ -266,8 +271,7 @@ export const bookingRangeLabel = (
   const date = siteDateOf(startsAt);
   const start = siteTimeOf(startsAt);
   const end = siteTimeOf(endsAt);
-  if (locale === 'en') return `${date} ${start}–${end}`;
-  return `${bookingDateLabel(date)} ${start}–${end}`;
+  return `${bookingDateLabel(date, locale)} ${start}–${end}`;
 };
 
 /** Adds minutes to `HH:MM`, or null when the result would pass midnight. */

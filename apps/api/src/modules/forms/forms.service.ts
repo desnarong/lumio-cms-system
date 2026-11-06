@@ -100,6 +100,7 @@ export class FormsService {
   async list(siteId: string): Promise<FormSummary[]> {
     const { rows, counts, newCounts } = await this.db.forSite(siteId, async (tx) => {
       const rows = await tx.form.findMany({
+        where: { deletedAt: null },
         orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
         take: 100,
       });
@@ -134,7 +135,7 @@ export class FormsService {
 
   async get(siteId: string, formId: string): Promise<Form> {
     const row = await this.db.forSite(siteId, (tx) =>
-      tx.form.findUnique({ where: { id: formId } }),
+      tx.form.findFirst({ where: { id: formId, deletedAt: null } }),
     );
     if (!row) throw ApiException.notFound('ไม่พบฟอร์มนี้');
     return toForm(row);
@@ -187,7 +188,7 @@ export class FormsService {
     actorId: string,
   ): Promise<Form> {
     const row = await this.db.forSite(siteId, async (tx) => {
-      const source = await tx.form.findUnique({ where: { id: formId } });
+      const source = await tx.form.findFirst({ where: { id: formId, deletedAt: null } });
       if (!source) throw ApiException.notFound('ไม่พบฟอร์มนี้');
 
       const locale = input.locale.trim().toLowerCase();
@@ -238,7 +239,7 @@ export class FormsService {
     actorId: string,
   ): Promise<Form> {
     const row = await this.db.forSite(siteId, async (tx) => {
-      const current = await tx.form.findUnique({ where: { id: formId }, select: { id: true } });
+      const current = await tx.form.findFirst({ where: { id: formId, deletedAt: null }, select: { id: true } });
       if (!current) throw ApiException.notFound('ไม่พบฟอร์มนี้');
 
       const updated = await tx.form.update({
@@ -270,10 +271,11 @@ export class FormsService {
 
   async remove(siteId: string, formId: string, actorId: string): Promise<void> {
     await this.db.forSite(siteId, async (tx) => {
-      const current = await tx.form.findUnique({ where: { id: formId }, select: { name: true } });
+      const current = await tx.form.findFirst({ where: { id: formId, deletedAt: null }, select: { name: true } });
       if (!current) throw ApiException.notFound('ไม่พบฟอร์มนี้');
 
-      await tx.form.delete({ where: { id: formId } });
+      // Soft delete: submissions stay, and the undo toast calls `restore`.
+      await tx.form.update({ where: { id: formId }, data: { deletedAt: new Date() } });
       await tx.auditLog.create({
         data: {
           siteId,
@@ -284,6 +286,25 @@ export class FormsService {
         },
       });
     });
+  }
+
+  async restore(siteId: string, formId: string, actorId: string): Promise<Form> {
+    const row = await this.db.forSite(siteId, async (tx) => {
+      const current = await tx.form.findFirst({ where: { id: formId, deletedAt: { not: null } } });
+      if (!current) throw ApiException.notFound('ไม่พบฟอร์มนี้ในถังขยะ');
+      const restored = await tx.form.update({ where: { id: formId }, data: { deletedAt: null } });
+      await tx.auditLog.create({
+        data: {
+          siteId,
+          userId: actorId,
+          action: 'form.restore',
+          target: formId,
+          meta: { name: current.name },
+        },
+      });
+      return restored;
+    });
+    return toForm(row);
   }
 
   async listSubmissions(
@@ -356,7 +377,7 @@ export class FormsService {
     const site = await resolveSiteByHost(this.db, host);
 
     const result = await this.db.forSite(site.id, async (tx) => {
-      const row = await tx.form.findUnique({ where: { id: formId } });
+      const row = await tx.form.findFirst({ where: { id: formId, deletedAt: null } });
       if (!row) throw ApiException.notFound('ไม่พบฟอร์มนี้');
 
       const form = toForm(row);

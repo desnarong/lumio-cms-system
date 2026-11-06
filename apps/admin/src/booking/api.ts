@@ -20,6 +20,8 @@ export interface BookingApi {
   createService(input: BookingServiceInput): Promise<BookingService>;
   updateService(serviceId: string, input: UpdateBookingServiceInput): Promise<BookingService>;
   deleteService(serviceId: string): Promise<void>;
+  /** Undo of `deleteService`: same id, so its bookings stay linked. */
+  restoreService(serviceId: string): Promise<BookingService>;
   bookings(query?: BookingListQuery): Promise<BookingList>;
   setStatus(bookingId: string, status: BookingStatus): Promise<Booking>;
 }
@@ -71,10 +73,7 @@ export const createHttpBookingApi = ({
       },
     });
 
-    const payload = (await response.json().catch(() => null)) as
-      | Envelope<T>
-      | ErrorEnvelope
-      | null;
+    const payload = (await response.json().catch(() => null)) as Envelope<T> | ErrorEnvelope | null;
 
     if (!response.ok) {
       const error = payload as ErrorEnvelope | null;
@@ -91,8 +90,7 @@ export const createHttpBookingApi = ({
     settings: () => send<BookingSettings>('/booking/settings'),
     updateSettings: (input) =>
       send<BookingSettings>('/booking/settings', { method: 'PUT', body: JSON.stringify(input) }),
-    services: async () =>
-      (await send<{ items: BookingService[] }>('/booking/services')).items,
+    services: async () => (await send<{ items: BookingService[] }>('/booking/services')).items,
     createService: (input) =>
       send<BookingService>('/booking/services', { method: 'POST', body: JSON.stringify(input) }),
     updateService: (serviceId, input) =>
@@ -103,6 +101,8 @@ export const createHttpBookingApi = ({
     deleteService: async (serviceId) => {
       await send(`/booking/services/${serviceId}`, { method: 'DELETE' });
     },
+    restoreService: (serviceId) =>
+      send<BookingService>(`/booking/services/${serviceId}/restore`, { method: 'POST' }),
     bookings: (query = {}) =>
       send<BookingList>(`/booking/bookings${queryString(query as Record<string, unknown>)}`),
     setStatus: (bookingId, status) =>
@@ -116,6 +116,7 @@ export const createHttpBookingApi = ({
 /** In-memory booking backend so the screen works before the API is up. */
 export const createDemoBookingApi = (): BookingApi => {
   let settings: BookingSettings = { ...DEFAULT_BOOKING_SETTINGS, enabled: true };
+  const trashedServices: BookingService[] = [];
   const services: BookingService[] = [
     {
       id: 'demo-service-1',
@@ -182,13 +183,20 @@ export const createDemoBookingApi = (): BookingApi => {
     },
     updateService: async (serviceId, input) => {
       const service = services.find((entry) => entry.id === serviceId);
-      if (!service) throw new Error('ไม่พบบริการนี้');
+      if (!service) throw new Error(translateNow('booking.serviceNotFound'));
       Object.assign(service, input, { updatedAt: new Date().toISOString() });
       return service;
     },
     deleteService: async (serviceId) => {
       const index = services.findIndex((entry) => entry.id === serviceId);
-      if (index >= 0) services.splice(index, 1);
+      if (index >= 0) trashedServices.push(...services.splice(index, 1));
+    },
+    restoreService: async (serviceId) => {
+      const index = trashedServices.findIndex((entry) => entry.id === serviceId);
+      const [service] = index >= 0 ? trashedServices.splice(index, 1) : [];
+      if (!service) throw new Error(translateNow('booking.serviceNotInTrash'));
+      services.push(service);
+      return service;
     },
     bookings: async (query = {}) => {
       const items = booked.filter(
@@ -200,7 +208,7 @@ export const createDemoBookingApi = (): BookingApi => {
     },
     setStatus: async (bookingId, status) => {
       const booking = booked.find((entry) => entry.id === bookingId);
-      if (!booking) throw new Error('ไม่พบรายการจองนี้');
+      if (!booking) throw new Error(translateNow('booking.bookingNotFound'));
       booking.status = status;
       booking.updatedAt = new Date().toISOString();
       return booking;

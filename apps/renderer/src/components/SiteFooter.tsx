@@ -15,6 +15,8 @@ import {
   legalLinks,
   socialLinks,
 } from '../lib/chrome';
+import { socialColors } from '@lumio/tokens';
+import { storefrontT } from '../lib/messages';
 
 export interface SiteFooterProps {
   site: PublicSite;
@@ -25,6 +27,8 @@ export interface SiteFooterProps {
   languages?: readonly LanguageLink[];
   /** Live shop products for a products block that reads the catalog. */
   shopProducts?: readonly ShopProductCard[];
+  /** Request language for the footer's own labels; the active language link otherwise. */
+  locale?: string | null;
 }
 
 type SocialKind = 'line' | 'facebook' | 'tiktok' | 'youtube' | 'instagram' | 'generic';
@@ -40,15 +44,24 @@ const kindOf = (label: string): SocialKind => {
 };
 
 const SOCIAL_STYLE: Record<SocialKind, { color: string; glyph: string }> = {
-  line: { color: '#06C755', glyph: 'LINE' },
-  facebook: { color: '#1877F2', glyph: 'f' },
-  tiktok: { color: '#111111', glyph: '♪' },
-  youtube: { color: '#FF0033', glyph: '▶' },
-  instagram: { color: '#E1306C', glyph: '◎' },
-  generic: { color: 'rgba(255, 255, 255, 0.24)', glyph: '•' },
+  line: { color: socialColors.line, glyph: 'LINE' },
+  facebook: { color: socialColors.facebook, glyph: 'f' },
+  tiktok: { color: socialColors.tiktok, glyph: '♪' },
+  youtube: { color: socialColors.youtube, glyph: '▶' },
+  instagram: { color: socialColors.instagram, glyph: '◎' },
+  generic: { color: socialColors.generic, glyph: '•' },
 };
 
-export const SiteFooter = ({ site, menus, blocks = [], languages, shopProducts }: SiteFooterProps) => {
+export const SiteFooter = ({
+  site,
+  menus,
+  blocks = [],
+  languages,
+  shopProducts,
+  locale,
+}: SiteFooterProps) => {
+  const language = locale ?? languages?.find((link) => link.active)?.locale ?? site.localeDefault;
+  const t = storefrontT(language);
   const social = socialLinks(site);
   const legal = legalLinks(site);
   const background = footerBackground(site);
@@ -75,6 +88,7 @@ export const SiteFooter = ({ site, menus, blocks = [], languages, shopProducts }
             <div className="site-footer__blocks">
               <BlockTreeRenderer
                 blocks={blocks}
+                locale={language}
                 {...(languages ? { languages } : {})}
                 {...(shopProducts ? { shopProducts } : {})}
               />
@@ -87,7 +101,7 @@ export const SiteFooter = ({ site, menus, blocks = [], languages, shopProducts }
         {menus.footer.length > 0 ? (
           <nav
             className={`site-nav site-nav--footer site-nav--align-${menuAlignFromSettings(site.settings, 'footer')}`}
-            aria-label="เมนูส่วนท้าย"
+            aria-label={t('footer.menu')}
           >
             <ul className="site-nav__list">
               {menus.footer.map((item, index) => (
@@ -133,7 +147,7 @@ export const SiteFooter = ({ site, menus, blocks = [], languages, shopProducts }
       <div className="site-footer__bottom">
         <p className="site-footer__copyright">{footerCopyright(site)}</p>
         {legal.length > 0 ? (
-          <nav className="site-footer__legal" aria-label="ข้อกำหนดและนโยบาย">
+          <nav className="site-footer__legal" aria-label={t('footer.legal')}>
             <ul className="site-footer__legal-list">
               {legal.map((link) => (
                 <li key={`${link.href}-${link.label}`}>
@@ -147,7 +161,12 @@ export const SiteFooter = ({ site, menus, blocks = [], languages, shopProducts }
         ) : null}
       </div>
 
-      <a className="site-back-to-top" href="#" aria-label="กลับขึ้นด้านบน" title="กลับขึ้นด้านบน">
+      <a
+        className="site-back-to-top"
+        href="#"
+        aria-label={t('footer.backToTop')}
+        title={t('footer.backToTop')}
+      >
         <Icon name="arrow-up" size={22} />
       </a>
     </footer>

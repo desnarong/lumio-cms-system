@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import { MessagesProvider, ToastProvider } from '@lumio/ui';
@@ -26,7 +27,7 @@ import type { Role } from '@lumio/shared';
 
 const billing = {} as unknown as BillingApi;
 
-const render = (node: JSX.Element): string =>
+const render = (node: ReactElement): string =>
   renderToStaticMarkup(
     <MessagesProvider locale="th">
       <ToastProvider>{node}</ToastProvider>

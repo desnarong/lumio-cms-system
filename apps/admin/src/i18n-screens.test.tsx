@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import { MessagesProvider, ToastProvider } from '@lumio/ui';
@@ -33,7 +34,7 @@ import { WizardPage } from './wizard/WizardPage.js';
 import { createDemoWizardApi } from './wizard/demo.js';
 
 /** Renders one screen in English, the way the language switch does. */
-const english = (node: JSX.Element): string =>
+const english = (node: ReactElement): string =>
   renderToStaticMarkup(
     <MessagesProvider locale="en">
       <ToastProvider>{node}</ToastProvider>

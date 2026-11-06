@@ -1,4 +1,4 @@
-import { translateNow } from '@lumio/ui';
+import { translateNow, uiLocaleNow } from '@lumio/ui';
 import type { AuthApi } from './auth/api.js';
 import { createHttpAuthApi } from './auth/api.js';
 import { createDemoAuthApi, DEMO_EMAIL, DEMO_PASSWORD } from './auth/demo.js';
@@ -177,6 +177,7 @@ export const createAdminClients = ({
   const fetchImpl = createSessionFetch({
     baseUrl,
     session,
+    locale: uiLocaleNow,
     ...(onSessionExpired ? { onExpired: onSessionExpired } : {}),
   });
 

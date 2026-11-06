@@ -43,12 +43,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Advisory only: two advisories remain and neither is fixable in this
-      # batch (braces has no published patched version; @nestjs/core needs a
-      # Nest 11 major upgrade). See docs/design/23-security-review.md.
+      # Blocking: a new high or critical advisory fails the build. Only low and
+      # moderate ones remain (docs/design/23-security-review.md).
       - name: Dependency audit
         run: pnpm audit --audit-level=high
-        continue-on-error: true
 
       - name: Prepare database
         run: |

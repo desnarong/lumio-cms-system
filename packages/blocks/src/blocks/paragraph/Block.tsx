@@ -1,6 +1,7 @@
 import { Editable } from '../../engine/editable.js';
 import type { BlockRenderProps } from '../../types.js';
 import type { ParagraphProps } from './schema.js';
+import { bt } from '../../i18n.js';
 
 export const ParagraphBlock = ({ props, block }: BlockRenderProps<ParagraphProps>) => (
   <Editable
@@ -14,6 +15,6 @@ export const ParagraphBlock = ({ props, block }: BlockRenderProps<ParagraphProps
       props.width === 'full' ? ' lumio-paragraph--full' : ''
     }`}
     style={{ textAlign: props.align }}
-    label="ข้อความย่อหน้า"
+    label={bt('ข้อความย่อหน้า')}
   />
 );

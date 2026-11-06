@@ -99,6 +99,11 @@ export interface BlockRenderProps<P> {
    * back to the saved items.
    */
   latestPosts?: readonly LatestPostCard[];
+  /**
+   * Language the page is read in, so text a block writes itself ("Read more",
+   * "Sold out") matches the page. Absent in the editor, which follows the admin.
+   */
+  locale?: string;
   /** Offers a feature grid may show instead of hand-typed cards. */
   promotions?: readonly PromotionCard[];
 }

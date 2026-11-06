@@ -125,7 +125,10 @@ export const MembershipView = ({
           ) : null}
         </header>
         {plans.length === 0 ? (
-          <EmptyState title={t('membership.plansTitle')} description={t('membership.readersEmpty')} />
+          <EmptyState
+            title={t('membership.plansTitle')}
+            description={t('membership.readersEmpty')}
+          />
         ) : (
           <ul className="settings-list">
             {plans.map((plan) => (
@@ -282,7 +285,12 @@ const PlanDialog = ({ open, plan, busy, error, onCancel, onSubmit }: PlanDialogP
   };
 
   return (
-    <div className="membership__dialog" role="dialog" aria-modal="true" aria-label={t('membership.plansTitle')}>
+    <div
+      className="membership__dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-label={t('membership.plansTitle')}
+    >
       <div className="membership__dialog-body">
         <TextField
           label={t('membership.planName')}
@@ -397,7 +405,14 @@ export const MembershipPage = ({ api, canManage, headerTabs }: MembershipPagePro
     setBusy(true);
     try {
       await api.deletePlan(plan.id);
-      toast.push({ tone: 'success', title: t('membership.planDeleted') });
+      toast.push({
+        tone: 'success',
+        title: t('membership.planDeleted'),
+        undo: {
+          label: t('common.undo'),
+          onClick: () => void api.restorePlan(plan.id).then(load),
+        },
+      });
       await load();
     } catch (deleteError) {
       toast.push({ tone: 'danger', title: messageOf(deleteError, t('api.networkError')) });

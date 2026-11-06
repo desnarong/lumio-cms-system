@@ -369,7 +369,7 @@ export class PublicService {
     const resolved = await this.resolveSite(host);
     const rows = await this.db.forSite(resolved.siteId, (tx) =>
       tx.promotion.findMany({
-        where: { active: true },
+        where: { active: true, deletedAt: null },
         orderBy: [{ sort: 'asc' }, { createdAt: 'desc' }],
       }),
     );
@@ -581,7 +581,7 @@ export class PublicService {
   /** Plans a locked page may offer, so the teaser can show the join button. */
   private async activePlans(tx: Prisma.TransactionClient): Promise<PublicMembershipPlan[]> {
     const rows = await tx.membershipPlan.findMany({
-      where: { status: 'active' },
+      where: { status: 'active', deletedAt: null },
       orderBy: [{ interval: 'asc' }, { price: 'asc' }],
       select: {
         id: true,
@@ -666,7 +666,10 @@ export class PublicService {
       translationGroupId: true,
     } as const;
 
-    const rows = await tx.form.findMany({ where: { id: { in: [...formIds] } }, select: fields });
+    const rows = await tx.form.findMany({
+      where: { id: { in: [...formIds] }, deletedAt: null },
+      select: fields,
+    });
     const groups = rows
       .map((row) => row.translationGroupId)
       .filter((value): value is string => typeof value === 'string' && value.length > 0);
@@ -674,7 +677,7 @@ export class PublicService {
       groups.length === 0
         ? []
         : await tx.form.findMany({
-            where: { translationGroupId: { in: groups } },
+            where: { translationGroupId: { in: groups }, deletedAt: null },
             select: fields,
           });
 

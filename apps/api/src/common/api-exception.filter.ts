@@ -8,8 +8,11 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { ZodError } from 'zod';
+import type { ApiLocale } from '@lumio/shared';
 import { ApiException, type ApiErrorCode } from './api-error';
+import { translateErrorMessage } from './error-messages';
 import { NotModifiedException } from './not-modified';
+import { localeOfRequest, type LocaleRequest } from './request-locale.decorator';
 
 const STATUS_TO_CODE: Record<number, ApiErrorCode> = {
   [HttpStatus.BAD_REQUEST]: 'validation_error',
@@ -26,10 +29,31 @@ interface ErrorBody {
   details?: unknown[];
 }
 
+const isMessageDetail = (detail: unknown): detail is { message: string } =>
+  typeof detail === 'object' &&
+  detail !== null &&
+  typeof (detail as { message?: unknown }).message === 'string';
+
+/** Services throw Thai; an English request gets the English wording (AGENTS.md rule 4). */
+const localizeBody = (body: ErrorBody, locale: ApiLocale): ErrorBody => {
+  if (locale === 'th') return body;
+  return {
+    ...body,
+    message: translateErrorMessage(body.message, locale),
+    ...(body.details && {
+      details: body.details.map((detail) =>
+        isMessageDetail(detail)
+          ? { ...detail, message: translateErrorMessage(detail.message, locale) }
+          : detail,
+      ),
+    }),
+  };
+};
+
 /**
  * Turns every thrown error into the standard error envelope from
- * docs/design/12-api.md 12.4: `{ error, message, details }` with a Thai
- * message that is safe to show to the user.
+ * docs/design/12-api.md 12.4: `{ error, message, details }` with a message
+ * that is safe to show to the user, in Thai or (on request) English.
  */
 @Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
@@ -48,7 +72,8 @@ export class ApiExceptionFilter implements ExceptionFilter {
     }
 
     const { status, body } = this.toError(exception);
-    response.status(status).json(body);
+    const locale = localeOfRequest(host.switchToHttp().getRequest<LocaleRequest>());
+    response.status(status).json(localizeBody(body, locale));
   }
 
   private toError(exception: unknown): { status: number; body: ErrorBody } {

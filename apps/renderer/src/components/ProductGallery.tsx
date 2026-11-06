@@ -5,6 +5,8 @@ import { useState } from 'react';
 export interface ProductGalleryProps {
   images: string[];
   title: string;
+  /** Accessible names, translated by the server page. `{index}` and `{title}` are filled here. */
+  labels: { thumbnail: string; fullSize: string };
 }
 
 /**
@@ -12,7 +14,7 @@ export interface ProductGalleryProps {
  * Keeping it client-side means a thumbnail switches the picture without a page
  * load, and the door to the full-size file stays a plain link.
  */
-export const ProductGallery = ({ images, title }: ProductGalleryProps) => {
+export const ProductGallery = ({ images, title, labels }: ProductGalleryProps) => {
   const [active, setActive] = useState(0);
 
   if (images.length === 0) {
@@ -38,7 +40,7 @@ export const ProductGallery = ({ images, title }: ProductGalleryProps) => {
                 className={`shop-product__thumb${
                   index === active ? ' shop-product__thumb--active' : ''
                 }`}
-                aria-label={`ดูรูปที่ ${index + 1}`}
+                aria-label={labels.thumbnail.replace('{index}', String(index + 1))}
                 aria-current={index === active ? 'true' : undefined}
                 onClick={() => setActive(index)}
               >
@@ -53,7 +55,7 @@ export const ProductGallery = ({ images, title }: ProductGalleryProps) => {
         href={current}
         target="_blank"
         rel="noreferrer"
-        aria-label={`ดูรูป ${title} ขนาดเต็ม`}
+        aria-label={labels.fullSize.replace('{title}', title)}
       >
         <img
           className="shop-product__image"

@@ -5,17 +5,18 @@ import { CommonStylePanel, PanelSection } from '../../engine/panel.js';
 import type { BlockPanelProps } from '../../types.js';
 import { alignmentOptions, buttonSizeOptions, buttonVariantOptions } from '../common.js';
 import type { ButtonProps } from './schema.js';
+import { bt } from '../../i18n.js';
 
 export const ButtonPanel = ({ props, style, mode, onChange }: BlockPanelProps<ButtonProps>) => (
   <>
-    <PanelSection title="เนื้อหา">
+    <PanelSection title={bt('เนื้อหา')}>
       <TextField
-        label="ข้อความบนปุ่ม"
+        label={bt('ข้อความบนปุ่ม')}
         value={props.label}
         onChange={(event) => onChange('props.label', event.target.value)}
       />
       <LinkPicker
-        label="ปลายทางเมื่อกด"
+        label={bt('ปลายทางเมื่อกด')}
         value={props.href}
         external={props.external}
         onChange={(href) => onChange('props.href', href)}
@@ -23,27 +24,27 @@ export const ButtonPanel = ({ props, style, mode, onChange }: BlockPanelProps<Bu
       />
     </PanelSection>
 
-    <PanelSection title="รูปแบบปุ่ม">
+    <PanelSection title={bt('รูปแบบปุ่ม')}>
       <Select
-        label="รูปแบบปุ่ม"
+        label={bt('รูปแบบปุ่ม')}
         value={props.variant}
-        options={buttonVariantOptions}
+        options={buttonVariantOptions()}
         onChange={(event) => onChange('props.variant', event.target.value)}
       />
       <Select
-        label="ขนาดปุ่ม"
+        label={bt('ขนาดปุ่ม')}
         value={props.size}
-        options={buttonSizeOptions}
+        options={buttonSizeOptions()}
         onChange={(event) => onChange('props.size', event.target.value)}
       />
       <Select
-        label="การจัดวาง"
+        label={bt('การจัดวาง')}
         value={props.align}
-        options={alignmentOptions}
+        options={alignmentOptions()}
         onChange={(event) => onChange('props.align', event.target.value)}
       />
       <Switch
-        label="กว้างเต็มพื้นที่"
+        label={bt('กว้างเต็มพื้นที่')}
         checked={props.fullWidth}
         onChange={(checked) => onChange('props.fullWidth', checked)}
       />

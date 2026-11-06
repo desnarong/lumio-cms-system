@@ -16,6 +16,8 @@ export interface MembershipApi {
   createPlan(input: MembershipPlanInput): Promise<MembershipPlan>;
   updatePlan(planId: string, input: UpdateMembershipPlanInput): Promise<MembershipPlan>;
   deletePlan(planId: string): Promise<void>;
+  /** Undo of `deletePlan`: the same plan, same id. */
+  restorePlan(planId: string): Promise<MembershipPlan>;
   readers(query?: ReaderListQuery): Promise<MembershipReaderList>;
   summary(): Promise<MembershipSummary>;
   /** Stops or resumes the next renewal; the paid period always stays. */
@@ -72,9 +74,7 @@ export const createHttpMembershipApi = ({
     });
 
     const payload = (await response.json().catch(() => null)) as
-      | Envelope<unknown>
-      | ErrorEnvelope
-      | null;
+      Envelope<unknown> | ErrorEnvelope | null;
 
     if (!response.ok) {
       const error = payload as ErrorEnvelope | null;
@@ -91,7 +91,8 @@ export const createHttpMembershipApi = ({
     (await send(path, init)).data as T;
 
   return {
-    plans: async () => request<{ items: MembershipPlan[] }>('/membership/plans').then((r) => r.items),
+    plans: async () =>
+      request<{ items: MembershipPlan[] }>('/membership/plans').then((r) => r.items),
     createPlan: (input) =>
       request<MembershipPlan>('/membership/plans', {
         method: 'POST',
@@ -105,6 +106,8 @@ export const createHttpMembershipApi = ({
     deletePlan: async (planId) => {
       await send(`/membership/plans/${planId}`, { method: 'DELETE' });
     },
+    restorePlan: (planId) =>
+      request<MembershipPlan>(`/membership/plans/${planId}/restore`, { method: 'POST' }),
     readers: (query = {}) =>
       request<MembershipReaderList>(
         `/membership/readers${queryString(query as Record<string, unknown>)}`,

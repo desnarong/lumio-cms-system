@@ -464,7 +464,7 @@ describe('PublicService.getPage', () => {
     expect(page.forms.map((form) => form.id)).toEqual([FORM_ID]);
     expect(page.forms[0]?.fields).toHaveLength(DEFAULT_CONTACT_FORM_FIELDS.length);
     expect(formFindMany).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: { in: [FORM_ID] } } }),
+      expect.objectContaining({ where: { id: { in: [FORM_ID] }, deletedAt: null } }),
     );
   });
 

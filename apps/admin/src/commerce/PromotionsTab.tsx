@@ -19,18 +19,19 @@ import {
   Textarea,
   useT,
   useToast,
+  type MessageKey,
 } from '@lumio/ui';
 import type { MediaPickerApi } from '@lumio/blocks';
 import type { CommerceApi } from './api.js';
 import { ApiError } from '../api-error.js';
 
-const KIND_LABELS: Record<PromotionKind, string> = {
-  bundle: 'ซื้อ X แถม Y',
-  discount: 'ลดราคา',
-  shipping: 'ส่งฟรี',
-  gift: 'ของแถม',
-  install: 'ติดตั้งฟรี',
-  other: 'อื่น ๆ',
+const KIND_LABELS: Record<PromotionKind, MessageKey> = {
+  bundle: 'promo.kind.bundle',
+  discount: 'promo.kind.discount',
+  shipping: 'promo.kind.shipping',
+  gift: 'promo.kind.gift',
+  install: 'promo.kind.install',
+  other: 'promo.kind.other',
 };
 
 interface Draft {
@@ -156,11 +157,11 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
   const save = async (): Promise<void> => {
     const input = inputFrom(draft);
     if (input.title.length === 0) {
-      setFormError('กรอกชื่อโปรโมชั่นก่อนบันทึก');
+      setFormError(t('promo.titleRequired'));
       return;
     }
     if (input.kind === 'bundle' && (!input.buyQty || !input.getQty)) {
-      setFormError('ระบุจำนวนที่ซื้อและจำนวนที่แถม');
+      setFormError(t('promo.bundleRequired'));
       return;
     }
     setSaving(true);
@@ -174,7 +175,7 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
         setItems((current) => current.map((item) => (item.id === updated.id ? updated : item)));
       }
       setEditing(null);
-      toast.push({ tone: 'success', title: 'บันทึกโปรโมชั่นแล้ว' });
+      toast.push({ tone: 'success', title: t('promo.saved') });
     } catch (saveError) {
       setFormError(saveError instanceof ApiError ? saveError.message : t('common.genericError'));
     } finally {
@@ -189,26 +190,14 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
       await api.removePromotion(promotion.id);
       toast.push({
         tone: 'success',
-        title: 'ลบโปรโมชั่นแล้ว',
+        title: t('promo.deleted'),
         undo: {
           label: t('common.undo'),
           onClick: () => {
             void (async () => {
               try {
-                const restored = await api.createPromotion({
-                  title: promotion.title,
-                  description: promotion.description,
-                  kind: promotion.kind,
-                  badge: promotion.badge,
-                  imageUrl: promotion.imageUrl,
-                  imageAlt: promotion.imageAlt,
-                  buyQty: promotion.buyQty,
-                  getQty: promotion.getQty,
-                  startsAt: promotion.startsAt,
-                  endsAt: promotion.endsAt,
-                  active: promotion.active,
-                  sort: promotion.sort,
-                });
+                // The API kept the row, so undo brings back the same id.
+                const restored = await api.restorePromotion(promotion.id);
                 setItems((current) => [...current, restored]);
               } catch {
                 setItems(previous);
@@ -229,12 +218,12 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
   return (
     <div className="commerce-tab">
       <PageHeader
-        title="โปรโมชั่น"
-        description="ข้อเสนอที่หน้าโปรโมชั่นดึงไปแสดงอัตโนมัติ เช่น ซื้อ 10 แถม 1 หรือส่งฟรี"
+        title={t('commerce.promotions')}
+        description={t('promo.description')}
         actions={
           canManage ? (
             <Button variant="primary" onClick={openNew}>
-              เพิ่มโปรโมชั่น
+              {t('promo.add')}
             </Button>
           ) : null
         }
@@ -249,7 +238,7 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
       ) : error ? (
         <EmptyState
           tone="error"
-          title="โหลดโปรโมชั่นไม่สำเร็จ"
+          title={t('promo.loadError')}
           description={error}
           action={
             <Button variant="secondary" onClick={() => void load()}>
@@ -259,11 +248,9 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
         />
       ) : items.length === 0 ? (
         <EmptyState
-          title="ยังไม่มีโปรโมชั่น"
-          description="สร้างข้อเสนอแรก เช่น ซื้อ 10 แถม 1 แล้วหน้าโปรโมชั่นจะแสดงให้เอง"
-          {...(canManage
-            ? { action: <Button onClick={openNew}>เพิ่มโปรโมชั่น</Button> }
-            : {})}
+          title={t('promo.empty')}
+          description={t('promo.emptyHint')}
+          {...(canManage ? { action: <Button onClick={openNew}>{t('promo.add')}</Button> } : {})}
         />
       ) : (
         <ul className="promotions-grid">
@@ -278,9 +265,9 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
                 />
               ) : null}
               <div className="promotion-card__head">
-                <span className="promotion-card__kind">{KIND_LABELS[promotion.kind]}</span>
+                <span className="promotion-card__kind">{t(KIND_LABELS[promotion.kind])}</span>
                 <span className={promotion.active ? 'chip chip--success' : 'chip'}>
-                  {promotion.active ? 'เปิดใช้' : 'ปิดอยู่'}
+                  {promotion.active ? t('promo.active') : t('promo.inactive')}
                 </span>
               </div>
               <h3 className="promotion-card__title">{promotion.title}</h3>
@@ -289,25 +276,29 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
               ) : null}
               <p className="promotion-card__meta">
                 {promotion.kind === 'bundle' && promotion.buyQty && promotion.getQty
-                  ? `ซื้อ ${promotion.buyQty} แถม ${promotion.getQty}`
+                  ? t('promo.buyGet', { buy: promotion.buyQty, get: promotion.getQty })
                   : null}
                 {promotion.startsAt || promotion.endsAt ? (
                   <span>
-                    {promotion.startsAt ? `เริ่ม ${promotionDay(promotion.startsAt)}` : null}
+                    {promotion.startsAt
+                      ? t('promo.starts', { date: promotionDay(promotion.startsAt) })
+                      : null}
                     {promotion.startsAt && promotion.endsAt ? ' · ' : null}
-                    {promotion.endsAt ? `ถึง ${promotionDay(promotion.endsAt)}` : null}
+                    {promotion.endsAt
+                      ? t('promo.ends', { date: promotionDay(promotion.endsAt) })
+                      : null}
                   </span>
                 ) : (
-                  <span>ไม่มีวันหมดอายุ</span>
+                  <span>{t('promo.noExpiry')}</span>
                 )}
               </p>
               {canManage ? (
                 <div className="promotion-card__actions">
                   <Button size="sm" variant="secondary" onClick={() => openEdit(promotion)}>
-                    แก้ไข
+                    {t('promo.editAction')}
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => void remove(promotion)}>
-                    ลบ
+                    {t('common.delete')}
                   </Button>
                 </div>
               ) : null}
@@ -318,8 +309,8 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
 
       <Modal
         open={editing !== null}
-        title={editing === 'new' ? 'เพิ่มโปรโมชั่น' : 'แก้ไขโปรโมชั่น'}
-        description="ตั้งชื่อ เงื่อนไข และช่วงเวลา — โปรแบบซื้อ X แถม Y ระบบคิดของแถมในตะกร้าให้อัตโนมัติ"
+        title={editing === 'new' ? t('promo.add') : t('promo.edit')}
+        description={t('promo.formHint')}
         onClose={() => setEditing(null)}
         footer={
           <>
@@ -334,29 +325,29 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
       >
         <div className="promotion-form">
           <TextField
-            label="ชื่อโปรโมชั่น"
+            label={t('promo.name')}
             value={draft.title}
             autoFocus
-            placeholder="เช่น ซื้อ 10 แถม 1"
+            placeholder={t('promo.namePlaceholder')}
             onChange={(event) => setDraft({ ...draft, title: event.target.value })}
           />
           <Select
-            label="ประเภทโปรโมชั่น"
+            label={t('promo.kind')}
             value={draft.kind}
-            options={PROMOTION_KINDS.map((kind) => ({ value: kind, label: KIND_LABELS[kind] }))}
+            options={PROMOTION_KINDS.map((kind) => ({ value: kind, label: t(KIND_LABELS[kind]) }))}
             onChange={(event) => setDraft({ ...draft, kind: event.target.value as PromotionKind })}
           />
           {draft.kind === 'bundle' ? (
             <div className="promotion-form__row">
               <TextField
-                label="ซื้อ (ชิ้น)"
+                label={t('promo.buyQty')}
                 type="number"
                 min={2}
                 value={draft.buyQty}
                 onChange={(event) => setDraft({ ...draft, buyQty: event.target.value })}
               />
               <TextField
-                label="แถม (ชิ้น)"
+                label={t('promo.getQty')}
                 type="number"
                 min={1}
                 value={draft.getQty}
@@ -365,13 +356,13 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
             </div>
           ) : null}
           <ImagePicker
-            label="รูปโปรโมชั่น (ไม่บังคับ)"
-            hint="ใช้รูปแนวนอน เพื่อให้การ์ดบนหน้าเว็บดูเต็มและสวยที่สุด"
+            label={t('promo.image')}
+            hint={t('promo.imageHint')}
             value={draft.imageUrl || null}
             alt={draft.imageAlt || draft.title}
             aspect="wide"
             disabled={!mediaPicker}
-            pickLabel="เลือกรูป"
+            pickLabel={t('promo.pickImage')}
             onPick={() => {
               void mediaPicker
                 ?.pick({ aspect: 'wide' })
@@ -388,35 +379,35 @@ export const PromotionsTab = ({ api, canManage, mediaPicker = null }: Promotions
           />
           {draft.imageUrl ? (
             <TextField
-              label="คำอธิบายรูป (ไม่บังคับ)"
-              hint="เว้นว่างได้ ระบบจะใช้ชื่อโปรโมชั่นแทน"
+              label={t('promo.imageAlt')}
+              hint={t('promo.imageAltHint')}
               value={draft.imageAlt}
-              placeholder="เช่น หลอด LED ขั้ว E27 ในโปรซื้อ 10 แถม 1"
+              placeholder={t('promo.imageAltPlaceholder')}
               onChange={(event) => setDraft({ ...draft, imageAlt: event.target.value })}
             />
           ) : null}
           <Textarea
-            label="รายละเอียด"
+            label={t('promo.details')}
             rows={2}
             value={draft.description}
             onChange={(event) => setDraft({ ...draft, description: event.target.value })}
           />
           <div className="promotion-form__row">
             <TextField
-              label="เริ่มวันที่ (ไม่บังคับ)"
+              label={t('promo.startDate')}
               type="date"
               value={draft.startsAt}
               onChange={(event) => setDraft({ ...draft, startsAt: event.target.value })}
             />
             <TextField
-              label="สิ้นสุดวันที่ (ไม่บังคับ)"
+              label={t('promo.endDate')}
               type="date"
               value={draft.endsAt}
               onChange={(event) => setDraft({ ...draft, endsAt: event.target.value })}
             />
           </div>
           <Switch
-            label="เปิดใช้โปรโมชั่นนี้"
+            label={t('promo.enable')}
             checked={draft.active}
             onChange={(checked) => setDraft({ ...draft, active: checked })}
           />

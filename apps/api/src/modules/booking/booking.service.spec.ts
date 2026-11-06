@@ -93,7 +93,11 @@ const emailStub = () =>
     sendForSite: vi.fn().mockResolvedValue(true),
   }) as unknown as EmailService;
 
-const auditStub = () => ({ log: vi.fn().mockResolvedValue(undefined) }) as unknown as AuditService;
+const auditStub = () =>
+  ({
+    log: vi.fn().mockResolvedValue(undefined),
+    record: vi.fn().mockResolvedValue(undefined),
+  }) as unknown as AuditService;
 
 const siteTx = (settings: BookingSettings) => ({
   site: {
@@ -151,7 +155,7 @@ describe('BookingService', () => {
     const bookings = new BookingService(
       dbWith({
         ...siteTx(openSettings()),
-        bookingService: { findUnique: vi.fn().mockResolvedValue(serviceRow()) },
+        bookingService: { findFirst: vi.fn().mockResolvedValue(serviceRow()) },
         booking: { findMany: vi.fn().mockResolvedValue([]), create },
       }),
       auditStub(),
@@ -187,7 +191,7 @@ describe('BookingService', () => {
     const bookings = new BookingService(
       dbWith({
         ...siteTx(openSettings({ maxPerSlot: 1 })),
-        bookingService: { findUnique: vi.fn().mockResolvedValue(serviceRow()) },
+        bookingService: { findFirst: vi.fn().mockResolvedValue(serviceRow()) },
         booking: {
           findMany: vi.fn().mockResolvedValue([
             { startsAt: start, endsAt: new Date(start.getTime() + DAY / 24) },
