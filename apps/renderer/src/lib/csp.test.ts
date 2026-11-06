@@ -17,11 +17,11 @@ describe('buildContentSecurityPolicy', () => {
     expect(directiveOf(csp, 'script-src')).toContain("'unsafe-eval'");
   });
 
-  it('allows the chosen design fonts while keeping scripts locked down', () => {
+  it('serves the design fonts from this origin only', () => {
     const csp = buildContentSecurityPolicy({ nonce: 'n' });
 
-    expect(directiveOf(csp, 'style-src')).toContain('https://fonts.googleapis.com');
-    expect(directiveOf(csp, 'font-src')).toContain('https://fonts.gstatic.com');
+    expect(directiveOf(csp, 'style-src')).toBe("style-src 'self' 'unsafe-inline'");
+    expect(directiveOf(csp, 'font-src')).toBe("font-src 'self' data:");
   });
 
   it('lets checkout redirect to the payment providers and nowhere else', () => {
