@@ -49,7 +49,9 @@ describe.skipIf(!process.env.DATABASE_URL || !destructive)('pageview partitions 
     process.env.PAGEVIEW_RETENTION_MONTHS = '3';
     process.env.PAGEVIEW_PARTITIONS_AHEAD = '1';
     db = new PrismaService();
-    await db.$connect();
+    // As Nest boots it: this also drops forSite() to the RLS session role, so
+    // the seeded sites' page views stay out of this site's queries.
+    await db.onModuleInit();
     service = new RetentionService(db);
 
     // Start from the shape the init migration leaves: only the default partition.
