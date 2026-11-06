@@ -2,16 +2,13 @@
   "ci": {
     "collect": {
       "startServerCommand": "pnpm --filter renderer start",
-      "url": [
-        "http://localhost:49200/"
-      ],
+      "url": ["http://localhost:49200/"],
       "numberOfRuns": 1,
       "settings": {
         "preset": "desktop"
       }
     },
     "assert": {
-      "budgetsFile": "lighthouse-budget.json",
       "assertions": {
         "categories:performance": [
           "error",
@@ -53,6 +50,36 @@
           "error",
           {
             "maxNumericValue": 200
+          }
+        ],
+        "resource-summary:script:size": [
+          "error",
+          {
+            "maxNumericValue": 102400
+          }
+        ],
+        "resource-summary:stylesheet:size": [
+          "error",
+          {
+            "maxNumericValue": 51200
+          }
+        ],
+        "resource-summary:image:size": [
+          "error",
+          {
+            "maxNumericValue": 409600
+          }
+        ],
+        "resource-summary:font:size": [
+          "error",
+          {
+            "maxNumericValue": 102400
+          }
+        ],
+        "resource-summary:third-party:count": [
+          "error",
+          {
+            "maxNumericValue": 0
           }
         ]
       }
