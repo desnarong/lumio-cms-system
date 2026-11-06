@@ -32,11 +32,16 @@
 
 | ตัวชี้วัด | งบ |
 |---|---|
-| JS ที่ส่งต่อหน้า (public) | < 100 KB gzip |
+| JS ที่ส่งต่อหน้า (public) | ≤ 110 KiB gzip (runtime ของ Next 15 + React 19 ราว 103 KiB → โค้ดฝั่งเราเพิ่มได้ไม่เกินราว 7 KiB) |
 | CSS ที่ส่งต่อหน้า | < 50 KB gzip |
 | Hero image | < 200 KB (หลังบีบอัด) |
 | ฟอนต์ (subset) | < 2 ไฟล์, < 100 KB รวม |
 | Third-party scripts | 0 (ยกเว้นที่ผู้ใช้ตั้งใจเพิ่ม) |
+
+> งบ JS เดิมคือ < 100 KB แต่ runtime ของ App Router (Next 15 + React 19) ที่โหลดทุกหน้า
+> ก็ราว 101–103 KiB แล้วแม้บีบ gzip สูงสุด (zstd ของ Caddy ได้ใกล้เคียงกัน, brotli ได้ราว 85 KiB
+> แต่ `next start` และ Caddy มาตรฐานไม่มี brotli) จึงปรับเป็น 110 KiB ตั้งแต่ 0.29.6
+> ค่านี้วัดใน CI ด้วย Lighthouse (`.lighthouserc.json`, `resource-summary:script:size`)
 
 ## 14.3 Checklist ก่อน Publish หน้า
 
