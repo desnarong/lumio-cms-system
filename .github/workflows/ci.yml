@@ -92,6 +92,11 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
+      # The workspace packages resolve to their dist/ builds, which a fresh
+      # checkout does not have; without them Vite cannot load the admin.
+      - name: Build the admin's workspace dependencies
+        run: pnpm --filter "admin^..." build
+
       # The admin runs from in-memory demo data, so no database or API is needed.
       - name: End-to-end smoke tests
         run: pnpm test:e2e
