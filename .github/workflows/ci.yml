@@ -61,8 +61,11 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      # The CI database is thrown away, so DB specs that reshape tables may run.
       - name: Test
         run: pnpm test
+        env:
+          LUMIO_DESTRUCTIVE_DB_TESTS: '1'
 
       - name: Build
         run: pnpm build

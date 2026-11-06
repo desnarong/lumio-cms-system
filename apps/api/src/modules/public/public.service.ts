@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { notFoundMaxPerSite } from '../retention/retention.config';
 import type { Content, Media, Prisma, Site } from '@prisma/client';
 import {
   blockTreeSchema,
@@ -805,6 +806,9 @@ export class PublicService {
   /**
    * Counts an address that reached the renderer's 404 (docs/design/14-seo-performance.md
    * 14.1). Only the path is stored; a forged host or noise never creates a row.
+   * A site keeps at most `NOT_FOUND_MAX_PER_SITE` addresses: once full, known
+   * addresses still count hits but bots probing random paths add nothing
+   * (the daily retention sweep frees room by forgetting stale ones).
    */
   async recordNotFound(host: string, path: string): Promise<void> {
     const normalized = normalizeNotFoundPath(path);
@@ -812,13 +816,24 @@ export class PublicService {
 
     const site = await resolveSiteByHost(this.db, host);
     const now = new Date();
-    await this.db.forSite(site.id, (tx) =>
-      tx.notFound.upsert({
+    const limit = notFoundMaxPerSite();
+    await this.db.forSite(site.id, async (tx) => {
+      const seen = await tx.notFound.updateMany({
+        where: { siteId: site.id, path: normalized },
+        data: { hits: { increment: 1 }, lastSeenAt: now },
+      });
+      if (seen.count > 0) return;
+
+      const stored = await tx.notFound.count({ where: { siteId: site.id } });
+      if (stored >= limit) return;
+
+      // Upsert, not create: a concurrent report of the same address may have won.
+      await tx.notFound.upsert({
         where: { siteId_path: { siteId: site.id, path: normalized } },
         create: { siteId: site.id, path: normalized, hits: 1, lastSeenAt: now },
         update: { hits: { increment: 1 }, lastSeenAt: now },
-      }),
-    );
+      });
+    });
   }
 
 }

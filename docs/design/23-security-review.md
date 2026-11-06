@@ -134,7 +134,8 @@
 3. ✅ ใส่ security header ทั้ง API และ renderer (พร้อม CSP + nonce)
 4. ✅ `trust proxy` + Redis rate limit + lockout
 5. ✅ ยก `@nestjs/core` เป็น 11.x, เพิ่ม 2FA + virus scan + `limitInputPixels` แล้ว (ก้อนที่ 11/34/35/36)
-6. ⏳ (ถัดไป) test ระดับ HTTP (supertest) สำหรับ header/CSRF/rate limit
+6. ✅ test ระดับ HTTP (`apps/api/src/http/api.spec.ts`) สำหรับ header/CSRF/rate limit
+7. ✅ CSP + security header ของแอดมิน (ก้อนที่ 69) — แอดมินเก็บ access token ใน `localStorage` จึงต้องกัน script แปลกปลอม (`apps/admin/src/security/csp.ts`)
 
 ## ก้อนที่ 11: สิ่งที่แก้ไปแล้ว
 

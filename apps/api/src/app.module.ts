@@ -33,6 +33,7 @@ import { PublicModule } from './modules/public/public.module';
 import { PromotionsModule } from './modules/promotions/promotions.module';
 import { PublishModule } from './modules/publish/publish.module';
 import { RedirectsModule } from './modules/redirects/redirects.module';
+import { RetentionModule } from './modules/retention/retention.module';
 import { SectionTemplatesModule } from './modules/section-templates/section-templates.module';
 import { SeoModule } from './modules/seo/seo.module';
 import { SitesModule } from './modules/sites/sites.module';
@@ -68,6 +69,7 @@ import { RateLimitModule } from './common/rate-limit.module';
     FormsModule,
     SeoModule,
     AnalyticsModule,
+    RetentionModule,
     NewsletterModule,
     AppsModule,
     BankingModule,

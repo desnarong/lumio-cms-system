@@ -3,7 +3,7 @@
 > ติดตามงานย่อยตาม [`docs/design/19-roadmap.md`](design/19-roadmap.md) หัวข้อ 19.3
 > อัปเดตสถานะทุกครั้งที่จบงานหนึ่งก้อน
 
-อัปเดตล่าสุด: 2026-10-30 (ก้อนที่ 68 เสร็จ)
+อัปเดตล่าสุด: 2026-11-06 (ก้อนที่ 69 เสร็จ)
 
 ## สถานะงาน (Roadmap 19.3)
 
@@ -76,6 +76,7 @@
 | 65  | ระบบจองคิว (งานนอก MVP)                                                                                                   | ✅ เสร็จ | ตาราง `booking_services`/`bookings` + RLS, ตั้งค่าเวลาทำการ/รอบจองต่อเว็บ, หน้าจอ เติบโต › การจองคิว (บริการ/ตาราง/รายการนัด + ยืนยัน/เสร็จสิ้น/ยกเลิก + audit), หน้า `/booking` สาธารณะที่ไม่ใช้ JS พร้อมลิงก์ยืนยัน/ยกเลิกด้วยโทเคน และอีเมลแจ้งเจ้าของเว็บ, feature flag `booking` ฟรี                                                           |
 | 66  | Agency / White-label (งานนอก MVP)                                                                                         | ✅ เสร็จ | ตารางระดับแพลตฟอร์ม `agency_branding` (ไม่มี site_id/RLS), `GET/PATCH /v1/agency`, หน้าตั้งค่า › แบรนด์องค์กร (ชื่อ/โลโก้/อีเมลช่วยเหลือ/สีเน้น/ซ่อนเครดิต), ต้องมีไลเซนส์ `whitelabel` จึงบันทึกได้                                                                                                                                                |
 | 67  | Public API keys (งานนอก MVP)                                                                                              | ✅ เสร็จ | ตาราง `api_keys` + RLS, กุญแจ `lum_<site>.<secret>` เก็บเฉพาะ SHA-256 แสดงจริงครั้งเดียว, `GET/POST /v1/api-keys` + `DELETE` (audit), `GET /v1/public-api/pages                                                                                                                                                                                     | posts`ด้วย`X-Api-Key` (เฉพาะที่เผยแพร่และไม่ใช่ members), หน้าตั้งค่า › กุญแจ API, rate limit 240/นาที |
+| 69  | Hardening: CSP แอดมิน + retention ของ pageviews/404                                                                       | ✅ เสร็จ | CSP + security header ของแอดมินสร้างตอน build (`apps/admin/src/security/csp.ts`) ส่งผ่าน Nginx, partition รายเดือนของ `pageviews` + ลบทั้งเดือนเมื่อเกินระยะเก็บ, log 404 จำกัดต่อเว็บ + ล้างที่ไม่ถูกเรียกนาน (`modules/retention`)                                                                                                                |
 
 | สัญลักษณ์: ✅ เสร็จ · 🔄 กำลังทำ · ⏳ ยังไม่เริ่ม · ⚠️ ติดปัญหา |
 
@@ -3012,3 +3013,30 @@ pnpm --filter admin test src/settings/LicensePanel
 pnpm lint && pnpm typecheck && pnpm test
 ```
 
+## งานที่ทำเสร็จ (ก้อนที่ 69: CSP แอดมิน + retention)
+
+ปิด 3 ข้อจากการวิเคราะห์ระบบ 2026-11-06
+
+- **CSP ของแอดมิน** — แอดมินเก็บ access token ใน `localStorage` แต่ไม่เคยส่ง CSP เลย
+  - `apps/admin/src/security/csp.ts`: `script-src self` + hash ของสคริปต์ demo App,
+    `connect-src` เฉพาะ origin ของ `VITE_API_URL`, `frame-ancestors none`, `object-src none`,
+    `base-uri`/`form-action self` + `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`
+  - `vite build` เขียน `security-headers.conf` → Dockerfile ย้ายไป `/etc/nginx/snippets`,
+    `infra/nginx/admin.conf` include ทุก location (+ `index.html` เป็น `no-cache`); `vite preview` ส่ง header ชุดเดียวกัน
+  - สคริปต์ของ demo App ใน sandbox (`srcdoc` สืบทอด CSP) เป็นข้อความคงที่ `growth/sample-app-script.ts`
+    รับข้อความผ่าน `data-*` และ escape ชื่อ App
+  - origin เพิ่มเติม (เช่น media แบบ http ตอน dev): build arg `ADMIN_CSP_EXTRA_ORIGINS`
+- **pageviews** — `modules/retention`: worker สร้าง partition รายเดือนล่วงหน้า
+  (`PAGEVIEW_PARTITIONS_AHEAD`), ย้ายแถวเดิมออกจาก `pageviews_default` ก่อน attach,
+  เปิด RLS บน partition, drop ทั้งเดือนเมื่อเกิน `PAGEVIEW_RETENTION_MONTHS` (ล็อกด้วย advisory lock)
+  ไม่มี migration ใหม่ — รอบแรกของ worker จัดการข้อมูลเดิมให้
+- **not_found** — `recordNotFound` ไม่บันทึกที่อยู่ใหม่เมื่อเว็บมีครบ `NOT_FOUND_MAX_PER_SITE`
+  (ที่อยู่เดิมยังนับ hit), sweep รายวันลบที่ไม่ถูกเรียกเกิน `NOT_FOUND_RETENTION_DAYS` และตัดส่วนเกิน
+- **เทสต์** — admin CSP 11 เคส, planner 8, retention/404 cap 7, DB integration 4
+  (รันเฉพาะเมื่อ `LUMIO_DESTRUCTIVE_DB_TESTS=1` เพราะ drop partition — CI ตั้งให้แล้ว)
+
+```bash
+pnpm --filter admin test src/security src/growth
+pnpm --filter api test src/modules/retention
+LUMIO_DESTRUCTIVE_DB_TESTS=1 DATABASE_URL=<ฐานข้อมูลทิ้งได้> pnpm --filter api test src/modules/retention
+```

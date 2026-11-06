@@ -9,6 +9,7 @@ import { DomainsVerifier } from './modules/domains/domains.verifier';
 import { MediaPurgeProcessor } from './modules/media/media-purge.processor';
 import { MediaProcessor } from './modules/media/media.processor';
 import { PublishProcessor } from './modules/publish/publish.processor';
+import { RetentionScheduler } from './modules/retention/retention.scheduler';
 import { SiteLocaleProcessor } from './modules/sites/site-locale.processor';
 
 /**
@@ -43,8 +44,10 @@ async function bootstrap(): Promise<void> {
   backups.start();
   const domains = app.get(DomainsVerifier);
   domains.start();
+  const retention = app.get(RetentionScheduler);
+  retention.start();
   logger.log(
-    `Lumio worker booted (${queueDriverName()} queue); consuming publish, media and language jobs, sweeping both trashes, scheduling daily backups, checking pending domains`,
+    `Lumio worker booted (${queueDriverName()} queue); consuming publish, media and language jobs, sweeping both trashes, scheduling daily backups, checking pending domains, keeping page-view partitions and the 404 log bounded`,
   );
 
   const shutdown = async (): Promise<void> => {
@@ -55,6 +58,7 @@ async function bootstrap(): Promise<void> {
     mediaPurge.stop();
     backups.stop();
     domains.stop();
+    retention.stop();
     await app.close();
     logger.log('Lumio worker shutting down');
     process.exit(0);

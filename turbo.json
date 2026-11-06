@@ -18,7 +18,7 @@
     "test": {
       "dependsOn": ["^build"],
       "outputs": [],
-      "env": ["DATABASE_URL"]
+      "env": ["DATABASE_URL", "LUMIO_DESTRUCTIVE_DB_TESTS"]
     },
     "dev": {
       "cache": false,

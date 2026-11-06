@@ -15,6 +15,7 @@ import {
   useT,
   type MessageKey,
 } from '@lumio/ui';
+import { SAMPLE_APP_SCRIPT } from './sample-app-script';
 
 const BRIDGE_LABEL_KEYS: Record<AppBridgeMethod, MessageKey> = {
   'contents.list': 'bridge.contentsList',
@@ -22,6 +23,17 @@ const BRIDGE_LABEL_KEYS: Record<AppBridgeMethod, MessageKey> = {
   'media.list': 'bridge.mediaList',
   'analytics.summary': 'bridge.analyticsSummary',
 };
+
+const HTML_ESCAPES: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+/** Text and attribute values spliced into the demo App document. */
+const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, (char) => HTML_ESCAPES[char] ?? char);
 
 /** Bridge methods the App is allowed to call, given the scopes it was granted. */
 export const allowedBridgeMethods = (permissions: AppPermission[]): AppBridgeMethod[] =>
@@ -35,12 +47,12 @@ export const sampleAppDocument = (appName: string, methods: AppBridgeMethod[]): 
   const buttons = methods
     .map(
       (method) =>
-        `<button data-method="${method}">${translateNow(BRIDGE_LABEL_KEYS[method])}</button>`,
+        `<button data-method="${method}">${escapeHtml(translateNow(BRIDGE_LABEL_KEYS[method]))}</button>`,
     )
     .join('');
 
-  const calling = translateNow('demoApp.calling');
-  const denied = translateNow('demoApp.denied');
+  const calling = escapeHtml(translateNow('demoApp.calling'));
+  const denied = escapeHtml(translateNow('demoApp.denied'));
 
   return `<!doctype html>
 <html lang="th">
@@ -54,34 +66,12 @@ export const sampleAppDocument = (appName: string, methods: AppBridgeMethod[]): 
       pre { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; font-size: 12px; overflow: auto; max-height: 180px; }
     </style>
   </head>
-  <body>
-    <h1>${appName}</h1>
-    <p>${translateNow('demoApp.intro')}</p>
-    ${buttons || `<p>${translateNow('demoApp.noAccess')}</p>`}
-    <pre id="out">${translateNow('demoApp.idle')}</pre>
-    <script>
-      var CALLING = ${JSON.stringify(calling)};
-      var DENIED = ${JSON.stringify(denied)};
-      var counter = 0;
-      function call(method) {
-        counter += 1;
-        var id = 'app_' + counter;
-        var out = document.getElementById('out');
-        out.textContent = CALLING.replace('{method}', method);
-        function onMessage(event) {
-          if (!event.data || event.data.id !== id) return;
-          window.removeEventListener('message', onMessage);
-          out.textContent = event.data.ok
-            ? method + '\\n' + JSON.stringify(event.data.result, null, 2)
-            : method + '\\n' + DENIED.replace('{error}', event.data.error);
-        }
-        window.addEventListener('message', onMessage);
-        window.parent.postMessage({ id: id, method: method }, '*');
-      }
-      Array.prototype.forEach.call(document.querySelectorAll('button[data-method]'), function (button) {
-        button.addEventListener('click', function () { call(button.getAttribute('data-method')); });
-      });
-    </script>
+  <body data-calling="${calling}" data-denied="${denied}">
+    <h1>${escapeHtml(appName)}</h1>
+    <p>${escapeHtml(translateNow('demoApp.intro'))}</p>
+    ${buttons || `<p>${escapeHtml(translateNow('demoApp.noAccess'))}</p>`}
+    <pre id="out">${escapeHtml(translateNow('demoApp.idle'))}</pre>
+    <script>${SAMPLE_APP_SCRIPT}</script>
   </body>
 </html>`;
 };
